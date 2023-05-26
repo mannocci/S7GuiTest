@@ -32,16 +32,16 @@ public class JRivitScreen {
     /* Create and display the form */
     MainJFrame mf = new MainJFrame();
  
-    Worker w_mf = new Worker(mf);
+     //Worker w_mf = new Worker(mf);
     java.awt.EventQueue.invokeLater(new Runnable() {
       @Override
       public void run() {
         mf.setVisible(true);
-        try {
-          w_mf.doInBackground();
-        } catch (Exception ex) {
-          Logger.getLogger(JRivitScreen.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        try {
+//          w_mf.doInBackground();
+//        } catch (Exception ex) {
+//          Logger.getLogger(JRivitScreen.class.getName()).log(Level.SEVERE, null, ex);
+//        }
       }
     });
   }

@@ -32,7 +32,7 @@ public class Worker extends SwingWorker<String, Object> {
 
   MainJFrame mf;
   WorkThread wt;
-  private String operation;
+  private String operation="";
   DateFormat dateFormat;
   Calendar now;
 
@@ -41,6 +41,7 @@ public class Worker extends SwingWorker<String, Object> {
       this.mf = mf;
       this.wt = new WorkThread();
       this.wt.set_mf(this.mf);
+      this.wt.start();
       dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
       now = Calendar.getInstance();
     } catch (Exception ex) {
