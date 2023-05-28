@@ -21,6 +21,8 @@ import java.text.SimpleDateFormat;
 import javax.swing.SwingWorker;
 import java.time.LocalDate;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,22 +32,28 @@ import java.util.logging.Logger;
  */
 public class Worker extends SwingWorker<String, Object> {
 
-  MainJFrame mf;
+  JRivitMain mf;
   WorkThread wt;
+  ButtonThread bt;
   private String operation="";
+
   DateFormat dateFormat;
   Calendar now;
 
-  Worker(MainJFrame mf) {
+  Worker(JRivitMain mf) {
     try {
       this.mf = mf;
       this.wt = new WorkThread();
       this.wt.set_mf(this.mf);
       this.wt.start();
-      dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+      this.bt = new ButtonThread();
+      this.bt.set_mf(mf);
+      this.bt.start();
+      
+      dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
       now = Calendar.getInstance();
     } catch (Exception ex) {
-      Logger.getLogger(JRivitScreen.class.getName()).log(Level.SEVERE, null, ex);
+      Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
       throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
   }
@@ -55,12 +63,15 @@ public class Worker extends SwingWorker<String, Object> {
     try {
       switch (this.operation) {
         case "start":
-          this.mf.setjLabel_B_1(now.getTime().toString());
+          Date orario = now.getTime();
+          //this.dateFormat.setTimeZone(TimeZone.getTimeZone("Europe/London"));
+          this.mf.set_jLabel_B_L(this.dateFormat.format(orario));
           this.mf.repaint();
           break;
+
       }
     } catch (Exception ex) {
-      Logger.getLogger(JRivitScreen.class.getName()).log(Level.SEVERE, null, ex);
+      Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
       throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
     return "ok";

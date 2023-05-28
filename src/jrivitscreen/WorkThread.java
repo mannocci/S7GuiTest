@@ -39,8 +39,8 @@ import java.util.Scanner;
  */
 public class WorkThread extends Thread {
 
-    private MainJFrame mf;
-    private String pathWatch = "/tmp/gpio/";
+    private JRivitMain mf;
+    private String pathWatch = "/tmp/";
     private WatchService watcher;
 
     public WorkThread() throws IOException {
@@ -51,11 +51,11 @@ public class WorkThread extends Thread {
             Logger.getLogger(WorkThread.class.getName()).log(Level.SEVERE, null, ex);
         }
         Path dir = Paths.get(this.pathWatch);
-        dir.register(watcher, ENTRY_MODIFY);
+        dir.register(watcher, ENTRY_MODIFY, ENTRY_CREATE, ENTRY_MODIFY);
         System.out.println("Watch Service Modify file registered for dir: " + dir.getFileName());
     }
 
-    public void set_mf(MainJFrame mf) {
+    public void set_mf(JRivitMain mf) {
         this.mf = mf;
     }
 
@@ -82,23 +82,51 @@ public class WorkThread extends Thread {
                 String data = "";
                 //System.out.println(kind.name() + ": " + fileName);
 
-                if (kind == ENTRY_MODIFY) {
-                    try {
-                        File myObj = new File("/tmp/gpio/" + fileName.toString());
-                        Scanner myReader = new Scanner(myObj);
-                        while (myReader.hasNextLine()) {
-                            data = myReader.nextLine();
-                            //System.out.println(data);
-                        }
-                        myReader.close();
-                    } catch (FileNotFoundException e) {
-                        System.out.println("An error occurred.");
-                        e.printStackTrace();
+                if (kind == ENTRY_DELETE) {
+                    switch (fileName.toString()) {
+                        case "aria":
+                            aria_chiusa();
+                            break;
                     }
-                    
-                    if (! data.isEmpty() && data.contentEquals("0")) {
-                        //System.out.printf("il pulsante %s è stato premuto\n", fileName);
-                        this.send_p(fileName.toString());
+                }
+                if (kind == ENTRY_CREATE) {
+                    switch (fileName.toString()) {
+                        case "aria":
+                            aria_aperta();
+                            break;
+                        case "errore_tiro":
+                            errore_tiro();
+                            break;
+                    }
+                }
+                if (kind == ENTRY_MODIFY) {
+                    switch (fileName.toString()) {
+//                        case "PR1":
+//                        case "PR2":
+//                        case "PR3":
+//                        case "PL1":
+//                        case "PL2":
+//                        case "PL3":
+//                            read_pulsane_premuto(fileName.toString());
+//                            break;
+                        case "tiri":
+                            read_tiri();
+                            break;
+                        case "lavori.txt":
+                            read_lavori();
+                            break;
+                        case "info.txt":
+                            read_info();
+                            break;
+                        case "warning.txt":
+                            read_warning();
+                            break;
+                        case "setup_lan.txt":
+                            read_setup_lan();
+                            break;   
+                        case "setup_wifi.txt":
+                            read_setup_wifi();
+                            break;                           
                     }
 
                     //System.out.printf("il pulsante %s è stato premuto",fileName.toString());
@@ -116,4 +144,76 @@ public class WorkThread extends Thread {
         }
     }
 
+//    private void read_pulsane_premuto(String nomeFile) {
+//        String data = "";
+//        try {
+//            File myObj = new File("/tmp/gpio/" + nomeFile);
+//            Scanner myReader = new Scanner(myObj);
+//            while (myReader.hasNextLine()) {
+//                data = myReader.nextLine();
+//                //System.out.println(data);
+//            }
+//            myReader.close();
+//        } catch (FileNotFoundException e) {
+//            System.out.println("An error occurred.");
+//            e.printStackTrace();
+//        }
+//
+//        if (!data.isEmpty() && data.contentEquals("0")) {
+//            //System.out.printf("il pulsante %s è stato premuto\n", fileName);
+//            this.send_p(nomeFile);
+//        }
+//    }
+    private void aria_aperta() {
+        this.mf.aria_aperta();
+        this.mf.repaint();
+    }
+
+    private void aria_chiusa() {
+        this.mf.aria_chiusa();
+        this.mf.repaint();
+    }
+
+    private void read_tiri() {
+        String data = "";
+        try {
+            File myObj = new File("/tmp/gpio/tiri");
+            Scanner myReader = new Scanner(myObj);
+            while (myReader.hasNextLine()) {
+                data = myReader.nextLine();
+                //System.out.println(data);
+            }
+            myReader.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+        this.mf.nr_tiri(Integer.parseInt(data));
+        this.mf.repaint();
+    }
+
+    private void errore_tiro() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    private void read_lavori() {
+        this.mf.LeggiLavori();
+        this.mf.repaint();
+    }
+    private void read_info() {
+        this.mf.LeggiInfo();
+        this.mf.repaint();
+    }
+    private void read_warning() {
+        this.mf.LeggiWarning();
+        this.mf.repaint();
+    } 
+    private void read_setup_lan() {
+        this.mf.LeggiSetupLan();
+        this.mf.repaint();
+    } 
+        private void read_setup_wifi() {
+        this.mf.LeggiSetupWiFi();
+        this.mf.repaint();
+    } 
 }
