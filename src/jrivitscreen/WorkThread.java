@@ -42,6 +42,7 @@ public class WorkThread extends Thread {
     private JRivitMain mf;
     private String pathWatch = "/tmp/";
     private WatchService watcher;
+    private Path fileName;
 
     public WorkThread() throws IOException {
         // create gpio controller by file (run bash script before !)     
@@ -78,7 +79,7 @@ public class WorkThread extends Thread {
 
                 @SuppressWarnings("unchecked")
                 WatchEvent<Path> ev = (WatchEvent<Path>) event;
-                Path fileName = ev.context();
+                fileName = ev.context();
                 String data = "";
                 //System.out.println(kind.name() + ": " + fileName);
 
@@ -91,16 +92,20 @@ public class WorkThread extends Thread {
                 }
                 if (kind == ENTRY_CREATE) {
                     switch (fileName.toString()) {
-                        case "aria":
-                            aria_aperta();
-                            break;
-                        case "errore_tiro":
-                            errore_tiro();
-                            break;
+                        case "aria" -> aria_aperta();
+//                        case "errore_tiro" -> errore_tiro();
                     }
                 }
                 if (kind == ENTRY_MODIFY) {
                     switch (fileName.toString()) {
+                        case "tiri" -> read_tiri();
+                        case "errore_tiro" -> errore_tiro();
+                        case "info.txt" -> read_info();
+                        case "warning.txt" -> read_warning();
+                        case "setup_lan.txt" -> read_setup_lan();
+                        case "setup_wifi.txt" -> read_setup_wifi();
+                        case "lavori.txt" -> read_lavori();
+                    }
 //                        case "PR1":
 //                        case "PR2":
 //                        case "PR3":
@@ -109,25 +114,6 @@ public class WorkThread extends Thread {
 //                        case "PL3":
 //                            read_pulsane_premuto(fileName.toString());
 //                            break;
-                        case "tiri":
-                            read_tiri();
-                            break;
-                        case "lavori.txt":
-                            read_lavori();
-                            break;
-                        case "info.txt":
-                            read_info();
-                            break;
-                        case "warning.txt":
-                            read_warning();
-                            break;
-                        case "setup_lan.txt":
-                            read_setup_lan();
-                            break;   
-                        case "setup_wifi.txt":
-                            read_setup_wifi();
-                            break;                           
-                    }
 
                     //System.out.printf("il pulsante %s è stato premuto",fileName.toString());
                     try {
@@ -177,11 +163,11 @@ public class WorkThread extends Thread {
     private void read_tiri() {
         String data = "";
         try {
-            File myObj = new File("/tmp/gpio/tiri");
+            File myObj = new File(pathWatch+this.fileName.toString());
             Scanner myReader = new Scanner(myObj);
             while (myReader.hasNextLine()) {
                 data = myReader.nextLine();
-                //System.out.println(data);
+                //System.out.println("letto nr tiri "+data);
             }
             myReader.close();
         } catch (FileNotFoundException e) {
@@ -193,27 +179,46 @@ public class WorkThread extends Thread {
     }
 
     private void errore_tiro() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        String data = "";
+        try {
+            File myObj = new File(pathWatch+this.fileName.toString());
+            Scanner myReader = new Scanner(myObj);
+            while (myReader.hasNextLine()) {
+                data = myReader.nextLine();
+                //System.out.println("letto nr tiri "+data);
+            }
+            myReader.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+        this.mf.nr_errori(Integer.parseInt(data));
+        this.mf.errore_tiro();
+        this.mf.repaint();       
     }
 
     private void read_lavori() {
         this.mf.LeggiLavori();
         this.mf.repaint();
     }
+
     private void read_info() {
         this.mf.LeggiInfo();
         this.mf.repaint();
     }
+
     private void read_warning() {
         this.mf.LeggiWarning();
         this.mf.repaint();
-    } 
+    }
+
     private void read_setup_lan() {
         this.mf.LeggiSetupLan();
         this.mf.repaint();
-    } 
-        private void read_setup_wifi() {
+    }
+
+    private void read_setup_wifi() {
         this.mf.LeggiSetupWiFi();
         this.mf.repaint();
-    } 
+    }
 }

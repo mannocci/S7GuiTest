@@ -752,7 +752,11 @@ public class JRivitMain extends javax.swing.JFrame {
     public void set_jLabel_B_L(String msg) {
         this.jLabel_B_L.setText(msg);
     }
-
+/**
+ * Imposta il colore rosso come sfondo al pannello e presume che l'aria sia off
+ * Il controllo del tiro viene fatto dall'App JControl, che rimuove il file aria
+ * 
+ */
     private void set_errore_tiro() {
         this.jButtonPL1.setEnabled(true);
         this.jButtonPL2.setEnabled(true);
@@ -1166,7 +1170,7 @@ public class JRivitMain extends javax.swing.JFrame {
     }
 
     /**
-     * nr_tiri chiamato da WorkerThread imposta l'interfaccia
+     * @param nr_tiri int  - chiamato da WorkerThread imposta l'interfaccia
      */
     public void nr_tiri(int tiri) {
         if (this.nr_lotti_da_fare > 0) {
@@ -1206,4 +1210,8 @@ public class JRivitMain extends javax.swing.JFrame {
     public void errore_tiro() {
         this.set_errore_tiro();
     }
+
+  void nr_errori(int tiri_errati) {
+    this.jLabel_Errati.setText(""+tiri_errati);
+  }
 }
