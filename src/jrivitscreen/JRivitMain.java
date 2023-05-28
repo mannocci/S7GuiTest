@@ -494,6 +494,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 this.AllertDialogStop = "Annullare il Lavoro ?";
                 this.jLabelDialog.setText(AllertDialogStop);
                 PanelDialog();
+
                 break;
             case "setup":
                 PanelSetupLan();
@@ -512,6 +513,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 break;
             case "dialog":
                 //Pulsante Sì alla domanda Annulla il lavoro
+                this.aria_chiusa();
                 PanelStart();
                 break;
         }
@@ -1150,14 +1152,17 @@ public class JRivitMain extends javax.swing.JFrame {
      * aria_chiusa chiamato da WorkerThread imposta l'interfaccia
      */
     public void aria_chiusa() {
-
+        
+        this.jLabel_B_R.setText("Aria Chiusa");
+        this.jLabel_B_R.setBackground(Color.red);
     }
 
     /**
      * aria_aperta chiamato da WorkerThread imposta l'interfaccia
      */
     public void aria_aperta() {
-
+        this.jLabel_B_R.setText("Aria Aperta");
+        this.jLabel_B_R.setBackground(Color.green);
     }
 
     /**
@@ -1165,15 +1170,15 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     public void nr_tiri(int tiri) {
         if (this.nr_lotti_da_fare > 0) {
-            if ((tiri == (this.nr_lotti_da_fare * this.nr_tiri_da_fare)) ){
+            if ((tiri == (this.nr_lotti_da_fare * this.nr_tiri_da_fare))) {
                 // E' Finito il lavoro !
             }
-            if(tiri == (this.nr_tiri_da_fare*this.nr_lotti_fatti)){
+            if (tiri == (this.nr_tiri_da_fare * this.nr_lotti_fatti)) {
                 //Finito un lotto
                 this.nr_lotti_fatti++;
             }
-            
-        } else { 
+
+        } else {
             if (this.nr_tiri_da_fare == -1) {
                 //Lavoro senza fine
             } else {
