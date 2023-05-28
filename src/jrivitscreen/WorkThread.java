@@ -178,6 +178,10 @@ public class WorkThread extends Thread {
         this.mf.repaint();
     }
 
+    /**
+     * Errore_tiro
+     * legge nr tiri errati e li passa al RivitMain
+     */
     private void errore_tiro() {
         String data = "";
         try {
@@ -196,27 +200,37 @@ public class WorkThread extends Thread {
         this.mf.errore_tiro();
         this.mf.repaint();       
     }
-
+/**
+ * Legge il file con la descrizione dei lavori
+ */
     private void read_lavori() {
         this.mf.LeggiLavori();
         this.mf.repaint();
     }
-
+/**
+ * Legge il file con la descrizione delle info di sistema
+ */
     private void read_info() {
         this.mf.LeggiInfo();
         this.mf.repaint();
     }
-
+/**
+ * Legge il file con la descrizione dei Warning
+ */
     private void read_warning() {
         this.mf.LeggiWarning();
         this.mf.repaint();
     }
-
+/**
+ * Legge il file con la descrizione della configurazione della LAN
+ */
     private void read_setup_lan() {
         this.mf.LeggiSetupLan();
         this.mf.repaint();
     }
-
+/**
+ * Legge il file con la descrizione della configurazione della WiFi
+ */
     private void read_setup_wifi() {
         this.mf.LeggiSetupWiFi();
         this.mf.repaint();
