@@ -40,9 +40,19 @@ import java.util.Scanner;
 public class WorkThread extends Thread {
 
     private JRivitMain mf;
-    private String pathWatch = "/tmp/";
+    private final String pathWatch = "/tmp/CT/";
     private WatchService watcher;
     private Path fileName;
+    private final String TiriOk = "tiri_ok";
+    private final String Errati = "tiri_errati";
+    private final String Annullati = "tiri_annullati";
+    private final String Info = "info.txt";
+    private final String Warning = "warning.txt";
+    private final String SetupLan = "setup_lan.txt";
+    private final String SetupWiFi = "setup_wifi.txt";
+    private final String ListaLavori = "lavori.txt";
+    private final String Aria = "aria";
+    private final String Errore = "errore";
 
     public WorkThread() throws IOException {
         // create gpio controller by file (run bash script before !)     
@@ -80,31 +90,30 @@ public class WorkThread extends Thread {
                 @SuppressWarnings("unchecked")
                 WatchEvent<Path> ev = (WatchEvent<Path>) event;
                 fileName = ev.context();
-                String data = "";
                 //System.out.println(kind.name() + ": " + fileName);
 
-                if (kind == ENTRY_DELETE) {
-                    switch (fileName.toString()) {
-                        case "aria":
-                            aria_chiusa();
-                            break;
-                    }
-                }
-                if (kind == ENTRY_CREATE) {
-                    switch (fileName.toString()) {
-                        case "aria" -> aria_aperta();
-//                        case "errore_tiro" -> errore_tiro();
-                    }
-                }
                 if (kind == ENTRY_MODIFY) {
                     switch (fileName.toString()) {
-                        case "tiri" -> read_tiri();
-                        case "errore_tiro" -> errore_tiro();
-                        case "info.txt" -> read_info();
-                        case "warning.txt" -> read_warning();
-                        case "setup_lan.txt" -> read_setup_lan();
-                        case "setup_wifi.txt" -> read_setup_wifi();
-                        case "lavori.txt" -> read_lavori();
+                        case "tiri_ok" ->
+                            read_tiri();
+                        case "tiri_errati" ->
+                            tiri_errati();
+                        case "tiri_annullati" ->
+                            tiri_annullati();
+                        case "errore" ->
+                            errore();
+                        case "info.txt" ->
+                            read_info();
+                        case "warning.txt" ->
+                            read_warning();
+                        case "setup_lan.txt" ->
+                            read_setup_lan();
+                        case "setup_wifi.txt" ->
+                            read_setup_wifi();
+                        case "lavori.txt" ->
+                            read_lavori();
+                        case "aria" ->
+                            mostra_stato_aria();
                     }
 //                        case "PR1":
 //                        case "PR2":
@@ -150,89 +159,67 @@ public class WorkThread extends Thread {
 //            this.send_p(nomeFile);
 //        }
 //    }
-    private void aria_aperta() {
-        this.mf.aria_aperta();
-        this.mf.repaint();
-    }
-
-    private void aria_chiusa() {
-        this.mf.aria_chiusa();
-        this.mf.repaint();
-    }
-
     private void read_tiri() {
-        String data = "";
-        try {
-            File myObj = new File(pathWatch+this.fileName.toString());
-            Scanner myReader = new Scanner(myObj);
-            while (myReader.hasNextLine()) {
-                data = myReader.nextLine();
-                //System.out.println("letto nr tiri "+data);
-            }
-            myReader.close();
-        } catch (FileNotFoundException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
+        this.mf.nr_tiri(Integer.parseInt(mf.LeggiFile("tiri")));
+    }
+
+    private void mostra_stato_aria() {
+        String stato = mf.LeggiFile("tiri");
+        if (stato.equals("0")) {
+            this.mf.aria_chiusa();
+        } else {
+            this.mf.aria_aperta();
         }
-        this.mf.nr_tiri(Integer.parseInt(data));
-        this.mf.repaint();
     }
 
     /**
-     * Errore_tiro
-     * legge nr tiri errati e li passa al RivitMain
+     * Errore_tiro legge nr tiri errati e li passa al RivitMain
      */
-    private void errore_tiro() {
-        String data = "";
-        try {
-            File myObj = new File(pathWatch+this.fileName.toString());
-            Scanner myReader = new Scanner(myObj);
-            while (myReader.hasNextLine()) {
-                data = myReader.nextLine();
-                //System.out.println("letto nr tiri "+data);
-            }
-            myReader.close();
-        } catch (FileNotFoundException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
-        this.mf.nr_errori(Integer.parseInt(data));
-        this.mf.errore_tiro();
-        this.mf.repaint();       
+    private void tiri_errati() {
+        this.mf.nr_errori(Integer.parseInt(this.mf.LeggiFile(this.Errati)));
     }
-/**
- * Legge il file con la descrizione dei lavori
- */
+
+    /**
+     * Legge il file con la descrizione dei lavori
+     */
     private void read_lavori() {
         this.mf.LeggiLavori();
-        this.mf.repaint();
     }
-/**
- * Legge il file con la descrizione delle info di sistema
- */
+
+    /**
+     * Legge il file con la descrizione delle info di sistema
+     */
     private void read_info() {
         this.mf.LeggiInfo();
-        this.mf.repaint();
     }
-/**
- * Legge il file con la descrizione dei Warning
- */
+
+    /**
+     * Legge il file con la descrizione dei Warning
+     */
     private void read_warning() {
         this.mf.LeggiWarning();
-        this.mf.repaint();
     }
-/**
- * Legge il file con la descrizione della configurazione della LAN
- */
+
+    /**
+     * Legge il file con la descrizione della configurazione della LAN
+     */
     private void read_setup_lan() {
         this.mf.LeggiSetupLan();
-        this.mf.repaint();
     }
-/**
- * Legge il file con la descrizione della configurazione della WiFi
- */
+
+    /**
+     * Legge il file con la descrizione della configurazione della WiFi
+     */
     private void read_setup_wifi() {
         this.mf.LeggiSetupWiFi();
-        this.mf.repaint();
+    }
+
+    private void tiri_annullati() {
+        this.mf.nr_errori(Integer.parseInt(this.mf.LeggiFile(this.Errore)));
+        this.mf.tiri_errati();
+    }
+
+    private void errore() {
+        this.mf.errore();
     }
 }

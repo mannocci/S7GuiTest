@@ -771,6 +771,8 @@ public class JRivitMain extends javax.swing.JFrame {
         this.jPanelStarted.setOpaque(true);
         this.jLabel_B_R.setText("Aria OFF");
         this.jLabel_B_R.setBackground(Color.DARK_GRAY);
+        this.change_buttons(this.Img_Continua, this.Img_Ok, this.Img_Estende,
+                this.Img_Stop, this.Img_Pause, this.Img_Annulla);
     }
 
     /**
@@ -902,8 +904,9 @@ public class JRivitMain extends javax.swing.JFrame {
         this.jPanelSetupLan.setVisible(false);
         this.jPanelWarning.setVisible(false);
         this.jPanelDialog.setVisible(false);
-        this.change_buttons(this.Img_Continua, this.Img_Ok, this.Img_Estende,
-                this.Img_Stop, this.Img_Pause, this.Img_Annulla);
+        this.change_buttons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
+                this.Img_Stop, this.Img_Pause, this.Img_Nulla);
+       
     }
 
     /**
@@ -1302,22 +1305,30 @@ public class JRivitMain extends javax.swing.JFrame {
     void errore() {
         String strErrore = LeggiFile("errore");
         switch (strErrore) {
-            case "0" -> this.reset_errore_tiro();
-            case "1" -> this.set_errore_tiro();
-            default -> throw new AssertionError();
+            case "0" ->
+                this.reset_errore_tiro();
+            case "1" ->
+                this.set_errore_tiro();
+            default ->
+                throw new AssertionError();
         }
     }
-/**
- * reset_errore_tiro ripristina i colori di default
- * Imposta ARIA ON ?? DA RIFARE
- */
+
+    /**
+     * reset_errore_tiro ripristina i colori di default Imposta ARIA ON ?? DA
+     * RIFARE
+     */
     private void reset_errore_tiro() {
         this.jButtonPL1.setEnabled(false);
         this.jButtonPL2.setEnabled(false);
         this.jButtonPL3.setEnabled(false);
         this.jButtonPR3.setEnabled(false);
-        this.jPanelStarted.setBackground(Color.green);
+        //this.jPanelStarted.setBackground(Color.green);
         this.jPanelStarted.setOpaque(false);
         this.jLabel_B_R.setText("Aria ON");
-        this.jLabel_B_R.setBackground(Color.GREEN);    }
+        this.jLabel_B_R.setBackground(Color.GREEN);
+        this.change_buttons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
+                this.Img_Stop, this.Img_Pause, this.Img_Nulla);
+
+    }
 }
