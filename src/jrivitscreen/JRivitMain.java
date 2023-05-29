@@ -20,6 +20,9 @@ import java.awt.Color;
 import java.awt.event.ItemEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -37,41 +40,48 @@ import javax.swing.UnsupportedLookAndFeelException;
  */
 public class JRivitMain extends javax.swing.JFrame {
 
-  private ImageIcon Img_Exit, Img_Ok, Img_Nulla, Img_Freccia_su,
-          Img_Freccia_giu, Img_Warning, Img_Setup, Img_Play;
-  private Worker w_mf;
-  private String FocusPanelName;
-  private ImageIcon Img_Continua;
-  private ImageIcon Img_Estende;
-  private ImageIcon Img_Stop;
-  private ImageIcon Img_Pause;
-  private ImageIcon Img_Annulla;
-  private ImageIcon Img_Lan;
-  private ImageIcon Img_WiFi;
-  private String fileNameWarning;
-  private ImageIcon Img_Freccia_sx;
-  private ImageIcon Img_Freccia_dx;
-  private ImageIcon Img_Cancel;
-  private String fileNameInfo;
-  private String fileNameSetupLan;
-  private String fileNameSetupWiFi;
-  private String fileNameLavori;
-  private String AllertDialogAnnulla;
-  private String AllertDialogStop;
-  private String fileNomeDevice;
-  private String fileNameLavoriDescrizione;
-  private String Lavorodescrizione;
-  private ImageIcon Img_Info;
-  private int nr_lotti_da_fare;
-  private int nr_tiri_da_fare;
-  private int nr_lotti_fatti;
-  private int nr_tiri_fatti;
-  private final String PathTmp = "/tmp/CT/";
+    private ImageIcon Img_Exit, Img_Ok, Img_Nulla, Img_Freccia_su,
+            Img_Freccia_giu, Img_Warning, Img_Setup, Img_Play;
+    private Worker w_mf;
+    private String FocusPanelName;
+    private ImageIcon Img_Continua;
+    private ImageIcon Img_Estende;
+    private ImageIcon Img_Stop;
+    private ImageIcon Img_Pause;
+    private ImageIcon Img_Annulla;
+    private ImageIcon Img_Lan;
+    private ImageIcon Img_WiFi;
+    private String fileNameWarning;
+    private ImageIcon Img_Freccia_sx;
+    private ImageIcon Img_Freccia_dx;
+    private ImageIcon Img_Cancel;
+    private String fileNameInfo;
+    private String fileNameSetupLan;
+    private String fileNameSetupWiFi;
+    private String fileNameLavori;
+    private String AllertDialogAnnulla;
+    private String AllertDialogStop;
+    private String fileNomeDevice;
+    private String fileNameLavoriDescrizione;
+    private String Lavorodescrizione;
+    private ImageIcon Img_Info;
+    private int nr_lotti_da_fare;
+    private int nr_tiri_da_fare;
+    private int nr_lotti_fatti;
+    private int nr_tiri_fatti;
+    private final String PathTmp = "/tmp/CT/";
+    private final String LavoroScelto = "/tmp/lavoro_scelto.txt";
+    private final String Sessione = "sessione";//Dove è scritto il nome del Lavoro
+    private final String TiriOk = "tiri_ok";
+    private final String Errati = "tiri_errati";
+    private final String Tiri = "tiri";
+    private final String Annullati = "tiri_annullati";
 
-  /**
-   * Creates new form JRivitMain
-   */
-  public JRivitMain() {
+//Dopo una sospensione
+    /**
+     * Creates new form JRivitMain
+     */
+    public JRivitMain() {
 //        try {
 //            UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 //        } catch (ClassNotFoundException ex) {
@@ -83,51 +93,51 @@ public class JRivitMain extends javax.swing.JFrame {
 //        } catch (UnsupportedLookAndFeelException ex) {
 //            Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
 //        }
-    initComponents();
+        initComponents();
 
-    this.FocusPanelName = "main";
-    this.fileNameWarning = "warning.txt";
-    this.fileNameSetupLan = "setup_lan.txt";
-    this.fileNameSetupWiFi = "setup_wifi";
-    this.fileNameInfo = "info.txt";
-    this.fileNameLavori = "lavori.txt";
-    this.fileNameLavoriDescrizione = "lavori_descrizione.txt";
-    this.fileNomeDevice = "nome_device.txt";
-    this.AllertDialogStop = "Annullare Tiro ?";
-    Img_Exit = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/exit.png"));
-    Img_Ok = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/ok.png"));
-    Img_Nulla = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/nulla.png"));
-    Img_Freccia_su = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/freccia_su.png"));
-    Img_Freccia_giu = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/freccia_giu.png"));
-    Img_Warning = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/warning.png"));
-    Img_Setup = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/setup.png"));
-    Img_Play = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/play_circle.png"));
-    Img_Continua = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/play_pause.png"));
-    Img_Estende = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/sync_alt.png"));
-    Img_Stop = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/stop_circle.png"));
-    Img_Pause = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/pause.png"));
-    Img_Annulla = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/cancel.png"));
-    Img_Cancel = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/cancel.png"));
-    Img_Lan = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/lan.png"));
-    Img_WiFi = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/cell.png"));
-    Img_Info = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/info.png"));
+        this.FocusPanelName = "main";
+        this.fileNameWarning = "warning.txt";
+        this.fileNameSetupLan = "setup_lan.txt";
+        this.fileNameSetupWiFi = "setup_wifi";
+        this.fileNameInfo = "info.txt";
+        this.fileNameLavori = "lavori.txt";
+        this.fileNameLavoriDescrizione = "lavori_descrizione.txt";
+        this.fileNomeDevice = "nome_device.txt";
+        this.AllertDialogStop = "Annullare Tiro ?";
+        Img_Exit = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/exit.png"));
+        Img_Ok = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/ok.png"));
+        Img_Nulla = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/nulla.png"));
+        Img_Freccia_su = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/freccia_su.png"));
+        Img_Freccia_giu = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/freccia_giu.png"));
+        Img_Warning = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/warning.png"));
+        Img_Setup = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/setup.png"));
+        Img_Play = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/play_circle.png"));
+        Img_Continua = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/play_pause.png"));
+        Img_Estende = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/sync_alt.png"));
+        Img_Stop = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/stop_circle.png"));
+        Img_Pause = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/pause.png"));
+        Img_Annulla = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/cancel.png"));
+        Img_Cancel = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/cancel.png"));
+        Img_Lan = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/lan.png"));
+        Img_WiFi = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/cell.png"));
+        Img_Info = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/info.png"));
 
-    w_mf = new Worker(this);
-    w_mf.set_operation("start");
-    try {
-      w_mf.doInBackground();
-    } catch (Exception ex) {
-      Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
+        w_mf = new Worker(this);
+        w_mf.set_operation("start");
+        try {
+            w_mf.doInBackground();
+        } catch (Exception ex) {
+            Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        this.PanelMain();
     }
-    this.PanelMain();
-  }
 
-  /**
-   * This method is called from within the constructor to initialize the form.
-   * WARNING: Do NOT modify this code. The content of this method is always
-   * regenerated by the Form Editor.
-   */
-  @SuppressWarnings("unchecked")
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
   // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
   private void initComponents() {
 
@@ -505,311 +515,297 @@ public class JRivitMain extends javax.swing.JFrame {
     pack();
   }// </editor-fold>//GEN-END:initComponents
 /**
-   * Evento click Pulsante 1 dx
-   *
-   * @param evt
-   */
+     * Evento click Pulsante 1 dx
+     *
+     * @param evt
+     */
     private void jButtonPR1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPR1ActionPerformed
-      // Pulsante R1  - Passare a ?
-      // Considerare la variabile Basic nel DB se si deve andare in start o started
-      switch (this.FocusPanelName) {
-        case "main" ->
-          PanelStart();
-        case "start" ->
-          PulsanteSu();
-        case "started" -> {
-          this.AllertDialogStop = "Annullare il Lavoro ?";
-          this.jLabelDialog.setText(AllertDialogStop);
-          PanelDialog();
+        // Pulsante R1  - Passare a ?
+        // Considerare la variabile Basic nel DB se si deve andare in start o started
+        switch (this.FocusPanelName) {
+            case "main" ->
+                PanelStart();
+            case "start" ->
+                PulsanteSu();
+            case "started" -> {
+                this.AllertDialogStop = "Annullare il Lavoro ?";
+                this.jLabelDialog.setText(AllertDialogStop);
+                PanelDialog();
+            }
+            case "setup" ->
+                PanelSetupLan();
+            case "warning" ->
+                PulsanteSu();
+            case "info" ->
+                PulsanteSu();
+            case "setup lan" ->
+                PulsanteSu();
+            case "setup wifi" ->
+                PulsanteSu();
+            case "dialog" -> {
+                //Pulsante Sì alla domanda Annulla il lavoro
+                this.aria_chiusa();
+                PanelStart();
+            }
         }
-        case "setup" ->
-          PanelSetupLan();
-        case "warning" ->
-          PulsanteSu();
-        case "info" ->
-          PulsanteSu();
-        case "setup lan" ->
-          PulsanteSu();
-        case "setup wifi" ->
-          PulsanteSu();
-        case "dialog" -> {
-          //Pulsante Sì alla domanda Annulla il lavoro
-          this.aria_chiusa();
-          PanelStart();
-        }
-      }
 
     }//GEN-LAST:event_jButtonPR1ActionPerformed
-  /**
-   * Evento click Pulsante 1 sx
-   *
-   * @param evt
-   */
-    private void jButtonPL1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPL1ActionPerformed
-      // Pulsante L1
-      switch (this.FocusPanelName) {
-        case "main" ->
-          PanelWarning();
-        case "start" ->
-          PanelMain();
-        case "started" ->
-          PanelStart();
-        case "setup" ->
-          PanelMain();
-        case "warning" ->
-          PanelMain();
-        case "info" ->
-          PanelMain();
-        case "setup lan" ->
-          PulsanteSu();
-        case "setup wifi" ->
-          PulsanteSu();
-        case "dialog" ->
-          PanelStart();
-      }
-    }//GEN-LAST:event_jButtonPL1ActionPerformed
-  /**
-   * Evento click Pulsante 2 sx
-   *
-   * @param evt
-   */
-    private void jButtonPL2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPL2ActionPerformed
-      //Pulsante L2
-      switch (this.FocusPanelName) {
-        case "main" ->
-          PanelInfo();
-//        case "start" ->
-        case "started" ->
-          PanelStart();
-        case "setup" ->
-          PanelSetupLan();
-        case "warning" ->
-          PulsanteSu();
-        case "info" ->
-          PulsanteSu();
-        case "setup lan" ->
-          PulsanteSu();
-        case "setup wifi" ->
-          PulsanteSu();
-        case "dialog" ->
-          PanelStarted();
-      }
-    }//GEN-LAST:event_jButtonPL2ActionPerformed
-  /**
-   * Evento click Pulsante 3 sx
-   *
-   * @param evt
-   */
-    private void jButtonPL3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPL3ActionPerformed
-      //Pulsante L3
-      switch (this.FocusPanelName) {
-        case "main" ->
-          PanelSetup();
-//      case "start" 
-        case "started" ->
-          PanelStart();
-        case "setup" ->
-          PanelSetupLan();
-        case "warning" ->
-          PulsanteSu();
-        case "info" ->
-          PulsanteSu();
-        case "setup lan" ->
-          PulsanteSu();
-        case "setup wifi" ->
-          PulsanteSu();
-        case "dialog" ->
-          PanelStart();
-      }
-    }//GEN-LAST:event_jButtonPL3ActionPerformed
-  /**
-   * Evento click Pulsante 2 dx
-   *
-   * @param evt
-   */
-    private void jButtonPR2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPR2ActionPerformed
-      //Pulsante R2
-      switch (this.FocusPanelName) {
-        case "main" ->
-          PanelStart();
-        case "start" ->
-          PulsanteGiu();
-        case "started" -> {
-          this.AllertDialogStop = "Lavoro in Pausa ?";
-          PanelDialog();
-        }
-        case "setup" ->
-          PanelSetupLan();
-        case "warning" ->
-          PulsanteGiu();
-        case "info" ->
-          PulsanteGiu();
-        case "setup lan" ->
-          PulsanteGiu();
-        case "setup wifi" ->
-          PulsanteGiu();
-        case "dialog" ->
-          PanelStarted();
-      }
-    }//GEN-LAST:event_jButtonPR2ActionPerformed
-  /**
-   * Evento click Pulsante 3 dx
-   *
-   * @param evt
-   */
-    private void jButtonPR3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPR3ActionPerformed
-      // Pulsante R3
-      switch (this.FocusPanelName) {
-        case "main" ->
-          PanelStart();
-        case "start" -> {
-          String lavoro = this.listLavori.getSelectedItem();
-          this.jLabelNomeDevice.setText(this.getNomeDelDevice());
-          this.jLabelNomeLavoro.setText(lavoro);
-          this.jLabel_B_R.setText("Aria ON");
-          this.jLabel_B_R.setBackground(Color.GREEN);
-          String[] det_lavoro = lavoro.split(",");
-          String[] det_nr_lotti = det_lavoro[1].split("=");
-          String[] det_nr_tiri = det_lavoro[2].split("=");
-          nr_lotti_da_fare = Integer.parseInt(det_nr_lotti[1]);
-          nr_tiri_da_fare = Integer.parseInt(det_nr_tiri[1]);
-          nr_lotti_fatti = 0;
-          nr_tiri_fatti = 0;
-          this.jLabelContatore.setText(nr_lotti_fatti + "/" + nr_lotti_da_fare
-                  + " - " + nr_tiri_fatti + "/" + nr_tiri_da_fare);
-          this.jProgressBar.setMaximum(Integer.valueOf(det_nr_tiri[1]));
-          PanelStarted();
-        }
-        case "started" -> {
-          this.AllertDialogStop = "Annullare il Tiro ?";
-          this.jLabelDialog.setText(AllertDialogAnnulla);
-          PanelDialog();
-        }
-        case "setup" ->
-          PanelSetupLan();
-        case "warning" ->
-          PulsanteSu();
-        case "info" ->
-          PulsanteSu();
-        case "setup lan" ->
-          PanelSetup();
-        case "setup wifi" ->
-          PanelSetup();
-        case "dialog" ->
-          PanelStart();
-      }
-    }//GEN-LAST:event_jButtonPR3ActionPerformed
-  private void listLavoriItemStateChanged(java.awt.event.ItemEvent evt) {
-
-  }
-    private void listLavoriActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listLavoriActionPerformed
-      // TODO add your handling code here:
-    }//GEN-LAST:event_listLavoriActionPerformed
-  /**
-   * PanelMain Set Panel visibile for PanelMain
-   */
-  private void PanelMain() {
-    this.FocusPanelName = "main";
-    this.jPanelMain.setVisible(true);
-    this.jPanelSetup.setVisible(false);
-    this.jPanelStart.setVisible(true);
-    this.jPanelStarted.setVisible(false);
-    this.jPanelSetupLan.setVisible(false);
-    this.jPanelInfo.setVisible(false);
-    this.jPanelSetupWiFi.setVisible(false);
-    this.jPanelSetupLan.setVisible(false);
-    this.jPanelWarning.setVisible(false);
-    this.jPanelDialog.setVisible(false);
-    this.change_buttons(Img_Warning, Img_Info, Img_Setup,
-            Img_Play, Img_Nulla, Img_Nulla);
-  }
-
-  /**
-   * Setup dei pulsanti
-   */
-  private void change_buttons(ImageIcon I1, ImageIcon I2, ImageIcon I3,
-          ImageIcon I4, ImageIcon I5, ImageIcon I6) {
-    this.jButtonPL1.setIcon(I1);
-    this.jButtonPL2.setIcon(I2);
-    this.jButtonPL3.setIcon(I3);
-    this.jButtonPR1.setIcon(I4);
-    this.jButtonPR2.setIcon(I5);
-    this.jButtonPR3.setIcon(I6);
-    if (FocusPanelName.equals("started")) {
-      this.jButtonPL1.setEnabled(false);
-      this.jButtonPL2.setEnabled(false);
-      this.jButtonPL3.setEnabled(false);
-      this.jButtonPR3.setEnabled(false);
-    } else {
-      this.jButtonPL1.setEnabled(true);
-      this.jButtonPL2.setEnabled(true);
-      this.jButtonPL3.setEnabled(true);
-      this.jButtonPR3.setEnabled(true);
-    }
-  }
-
-  /**
-   * Settext nella Label alla base del pannello a sx
-   *
-   * @param msg
-   */
-  public void set_jLabel_B_L(String msg) {
-    this.jLabel_B_L.setText(msg);
-  }
-
-  /**
-   * Imposta il colore rosso come sfondo al pannello e presume che l'aria sia
-   * off Il controllo del tiro viene fatto dall'App JControl, che rimuove il
-   * file aria
-   *
-   */
-  private void set_errore_tiro() {
-    this.jButtonPL1.setEnabled(true);
-    this.jButtonPL2.setEnabled(true);
-    this.jButtonPL3.setEnabled(true);
-    this.jButtonPR3.setEnabled(true);
-    this.jPanelStarted.setBackground(Color.red);
-    this.jPanelStarted.setOpaque(true);
-    this.jLabel_B_R.setText("Aria OFF");
-    this.jLabel_B_R.setBackground(Color.DARK_GRAY);
-    this.change_buttons(this.Img_Continua, this.Img_Ok, this.Img_Estende,
-            this.Img_Stop, this.Img_Pause, this.Img_Annulla);
-  }
-
-  /**
-   * @param args the command line arguments
-   */
-  public static void main(String args[]) {
-    /* Set the Nimbus look and feel */
-    //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-    /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+    /**
+     * Evento click Pulsante 1 sx
+     *
+     * @param evt
      */
-    try {
-      for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-        if ("Nimbus".equals(info.getName())) {
-          javax.swing.UIManager.setLookAndFeel(info.getClassName());
-          break;
+    private void jButtonPL1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPL1ActionPerformed
+        // Pulsante L1
+        switch (this.FocusPanelName) {
+            case "main" ->
+                PanelWarning();
+            case "start" ->
+                PanelMain();
+            case "started" ->
+                PanelStart();
+            case "setup" ->
+                PanelMain();
+            case "warning" ->
+                PanelMain();
+            case "info" ->
+                PanelMain();
+            case "setup lan" ->
+                PulsanteSu();
+            case "setup wifi" ->
+                PulsanteSu();
+            case "dialog" ->
+                PanelStart();
         }
-      }
-    } catch (ClassNotFoundException ex) {
-      java.util.logging.Logger.getLogger(JRivitMain.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-    } catch (InstantiationException ex) {
-      java.util.logging.Logger.getLogger(JRivitMain.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-    } catch (IllegalAccessException ex) {
-      java.util.logging.Logger.getLogger(JRivitMain.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-    } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-      java.util.logging.Logger.getLogger(JRivitMain.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-    }
-    //</editor-fold>
+    }//GEN-LAST:event_jButtonPL1ActionPerformed
+    /**
+     * Evento click Pulsante 2 sx
+     *
+     * @param evt
+     */
+    private void jButtonPL2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPL2ActionPerformed
+        //Pulsante L2
+        switch (this.FocusPanelName) {
+            case "main" ->
+                PanelInfo();
+//        case "start" ->
+            case "started" ->
+                PanelStart();
+            case "setup" ->
+                PanelSetupLan();
+            case "warning" ->
+                PulsanteSu();
+            case "info" ->
+                PulsanteSu();
+            case "setup lan" ->
+                PulsanteSu();
+            case "setup wifi" ->
+                PulsanteSu();
+            case "dialog" ->
+                PanelStarted();
+        }
+    }//GEN-LAST:event_jButtonPL2ActionPerformed
+    /**
+     * Evento click Pulsante 3 sx
+     *
+     * @param evt
+     */
+    private void jButtonPL3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPL3ActionPerformed
+        //Pulsante L3
+        switch (this.FocusPanelName) {
+            case "main" ->
+                PanelSetup();
+//      case "start" 
+            case "started" ->
+                PanelStart();
+            case "setup" ->
+                PanelSetupLan();
+            case "warning" ->
+                PulsanteSu();
+            case "info" ->
+                PulsanteSu();
+            case "setup lan" ->
+                PulsanteSu();
+            case "setup wifi" ->
+                PulsanteSu();
+            case "dialog" ->
+                PanelStart();
+        }
+    }//GEN-LAST:event_jButtonPL3ActionPerformed
+    /**
+     * Evento click Pulsante 2 dx
+     *
+     * @param evt
+     */
+    private void jButtonPR2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPR2ActionPerformed
+        //Pulsante R2
+        switch (this.FocusPanelName) {
+            case "main" ->
+                PanelStart();
+            case "start" ->
+                PulsanteGiu();
+            case "started" -> {
+                this.AllertDialogStop = "Lavoro in Pausa ?";
+                PanelDialog();
+            }
+            case "setup" ->
+                PanelSetupLan();
+            case "warning" ->
+                PulsanteGiu();
+            case "info" ->
+                PulsanteGiu();
+            case "setup lan" ->
+                PulsanteGiu();
+            case "setup wifi" ->
+                PulsanteGiu();
+            case "dialog" ->
+                PanelStarted();
+        }
+    }//GEN-LAST:event_jButtonPR2ActionPerformed
+    /**
+     * Evento click Pulsante 3 dx
+     *
+     * @param evt
+     */
+    private void jButtonPR3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPR3ActionPerformed
+        // Pulsante R3
+        switch (this.FocusPanelName) {
+            case "main" ->
+                PanelStart();
+            case "start" -> {
 
-    /* Create and display the form */
-    java.awt.EventQueue.invokeLater(new Runnable() {
-      public void run() {
-        new JRivitMain().setVisible(true);
-      }
-    });
-  }
+                PanelStarted();
+            }
+            case "started" -> {
+                this.AllertDialogStop = "Annullare il Tiro ?";
+                this.jLabelDialog.setText(AllertDialogAnnulla);
+                PanelDialog();
+            }
+            case "setup" ->
+                PanelSetupLan();
+            case "warning" ->
+                PulsanteSu();
+            case "info" ->
+                PulsanteSu();
+            case "setup lan" ->
+                PanelSetup();
+            case "setup wifi" ->
+                PanelSetup();
+            case "dialog" ->
+                PanelStart();
+        }
+    }//GEN-LAST:event_jButtonPR3ActionPerformed
+    private void listLavoriItemStateChanged(java.awt.event.ItemEvent evt) {
+
+    }
+    private void listLavoriActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listLavoriActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_listLavoriActionPerformed
+    /**
+     * PanelMain Set Panel visibile for PanelMain
+     */
+    private void PanelMain() {
+        this.FocusPanelName = "main";
+        this.jPanelMain.setVisible(true);
+        this.jPanelSetup.setVisible(false);
+        this.jPanelStart.setVisible(true);
+        this.jPanelStarted.setVisible(false);
+        this.jPanelSetupLan.setVisible(false);
+        this.jPanelInfo.setVisible(false);
+        this.jPanelSetupWiFi.setVisible(false);
+        this.jPanelSetupLan.setVisible(false);
+        this.jPanelWarning.setVisible(false);
+        this.jPanelDialog.setVisible(false);
+        this.change_buttons(Img_Warning, Img_Info, Img_Setup,
+                Img_Play, Img_Nulla, Img_Nulla);
+    }
+
+    /**
+     * Setup dei pulsanti
+     */
+    private void change_buttons(ImageIcon I1, ImageIcon I2, ImageIcon I3,
+            ImageIcon I4, ImageIcon I5, ImageIcon I6) {
+        this.jButtonPL1.setIcon(I1);
+        this.jButtonPL2.setIcon(I2);
+        this.jButtonPL3.setIcon(I3);
+        this.jButtonPR1.setIcon(I4);
+        this.jButtonPR2.setIcon(I5);
+        this.jButtonPR3.setIcon(I6);
+        if (FocusPanelName.equals("started")) {
+            this.jButtonPL1.setEnabled(false);
+            this.jButtonPL2.setEnabled(false);
+            this.jButtonPL3.setEnabled(false);
+            this.jButtonPR3.setEnabled(false);
+        } else {
+            this.jButtonPL1.setEnabled(true);
+            this.jButtonPL2.setEnabled(true);
+            this.jButtonPL3.setEnabled(true);
+            this.jButtonPR3.setEnabled(true);
+        }
+    }
+
+    /**
+     * Settext nella Label alla base del pannello a sx
+     *
+     * @param msg
+     */
+    public void set_jLabel_B_L(String msg) {
+        this.jLabel_B_L.setText(msg);
+    }
+
+    /**
+     * Imposta il colore rosso come sfondo al pannello e presume che l'aria sia
+     * off Il controllo del tiro viene fatto dall'App JControl, che rimuove il
+     * file aria
+     *
+     */
+    private void set_errore_tiro() {
+        this.jButtonPL1.setEnabled(true);
+        this.jButtonPL2.setEnabled(true);
+        this.jButtonPL3.setEnabled(true);
+        this.jButtonPR3.setEnabled(true);
+        this.jPanelStarted.setBackground(Color.red);
+        this.jPanelStarted.setOpaque(true);
+        this.jLabel_B_R.setText("Aria OFF");
+        this.jLabel_B_R.setBackground(Color.DARK_GRAY);
+        this.change_buttons(this.Img_Continua, this.Img_Ok, this.Img_Estende,
+                this.Img_Stop, this.Img_Pause, this.Img_Annulla);
+    }
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(JRivitMain.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(JRivitMain.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(JRivitMain.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(JRivitMain.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new JRivitMain().setVisible(true);
+            }
+        });
+    }
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JButton jButtonPL1;
@@ -855,479 +851,603 @@ public class JRivitMain extends javax.swing.JFrame {
   private java.awt.TextArea textAreaDescrizioneLavoro;
   // End of variables declaration//GEN-END:variables
 
-  /**
-   * Show PanelStart da questo pannello si fa la scelta del lavoro dalla lista
-   * creata da JControl nel file lavori.txt
-   */
-  private void PanelStart() {
-    this.LeggiLavori();
-    this.LeggiFileLavoriDescrizione();
-    this.FocusPanelName = "start";
-    this.jPanelMain.setVisible(false);
-    this.jPanelSetup.setVisible(false);
-    this.jPanelStart.setVisible(true);
-    this.jPanelStarted.setVisible(false);
-    this.jPanelSetupLan.setVisible(false);
-    this.jPanelInfo.setVisible(false);
-    this.jPanelSetupWiFi.setVisible(false);
-    this.jPanelSetupLan.setVisible(false);
-    this.jPanelWarning.setVisible(false);
-    this.jPanelDialog.setVisible(false);
-    this.change_buttons(this.Img_Exit, this.Img_Nulla, this.Img_Nulla,
-            this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Ok);
+    /**
+     * Show PanelStart da questo pannello si fa la scelta del lavoro dalla lista
+     * creata da JControl nel file lavori.txt
+     */
+    private void PanelStart() {
+        int selezionato = 0, i = 0;
+        this.LeggiLavori();
+        this.LeggiFileLavoriDescrizione();
 
-    int selezionato = this.listLavori.getSelectedIndex();
+        this.FocusPanelName = "start";
+        this.jPanelMain.setVisible(false);
+        this.jPanelSetup.setVisible(false);
+        this.jPanelStart.setVisible(true);
+        this.jPanelStarted.setVisible(false);
+        this.jPanelSetupLan.setVisible(false);
+        this.jPanelInfo.setVisible(false);
+        this.jPanelSetupWiFi.setVisible(false);
+        this.jPanelSetupLan.setVisible(false);
+        this.jPanelWarning.setVisible(false);
+        this.jPanelDialog.setVisible(false);
+        this.change_buttons(this.Img_Exit, this.Img_Nulla, this.Img_Nulla,
+                this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Ok);
+        //Se il file sessione non contiene 0
+        // vuole dire che da una pausa si vuole riprendere un lavoro
+        String Sessione = "";
+        Sessione = LeggiFile(this.Sessione);
+        switch (Sessione) {
+            case "0":
+                selezionato = this.listLavori.getSelectedIndex();
+                break;
+            default:
+                String[] items = this.listLavori.getSelectedItems();
+                for (i = 0; i < items.length; i++) {
+                    if (items[i].startsWith(Sessione+",")) {
+                        break;
+                    }
+                }
+                selezionato = i;
+                //Ripristina i valori dei tiri
 
-    if (selezionato == -1) {
-      selezionato = 1;
-    }
-    this.textAreaDescrizioneLavoro.setText(this.Lavorodescrizione);
-  }
+                break;
 
-  /**
-   * Pannello dopo aver fatto la scelta del Lavoro, tale scelta deve essere
-   * scritta nel file /tmp/lavoro_scelto.txt L'App JControl sollecitato
-   * dall'evento modifica lavoro_scelto o creazione del file, aggiorna il DB (DA
-   * FARE) Mostra il conteggio dei tiri e la barra di avanzamento dei lavori,
-   * ...
-   */
-  private void PanelStarted() {
-    this.FocusPanelName = "started";
-    this.jPanelMain.setVisible(false);
-    this.jPanelSetup.setVisible(false);
-    this.jPanelStart.setVisible(false);
-    this.jPanelStarted.setVisible(true);
-    this.jPanelSetupLan.setVisible(false);
-    this.jPanelInfo.setVisible(false);
-    this.jPanelSetupWiFi.setVisible(false);
-    this.jPanelSetupLan.setVisible(false);
-    this.jPanelWarning.setVisible(false);
-    this.jPanelDialog.setVisible(false);
-    this.change_buttons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
-            this.Img_Stop, this.Img_Pause, this.Img_Nulla);
-
-  }
-
-  /**
-   * Pannello che mostra il contenuto del file /tmp/warning.txt
-   */
-  private void PanelWarning() {
-    this.FocusPanelName = "warning";
-    this.jPanelMain.setVisible(false);
-    this.jPanelSetup.setVisible(false);
-    this.jPanelStart.setVisible(false);
-    this.jPanelStarted.setVisible(false);
-    this.jPanelSetupLan.setVisible(false);
-    this.jPanelInfo.setVisible(false);
-    this.jPanelSetupWiFi.setVisible(false);
-    this.jPanelSetupLan.setVisible(false);
-    this.jPanelWarning.setVisible(true);
-    this.jPanelDialog.setVisible(false);
-    this.change_buttons(this.Img_Exit, this.Img_Freccia_sx, this.Img_Freccia_dx,
-            this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Nulla);
-    LeggiWarning();
-  }
-
-  /**
-   * Alla pressione del pulsante che simula la freccia in su muovendosi sulla
-   * lista
-   */
-  private void PulsanteSu() {
-    int nrItem = 0;
-    int nrCurItem = 0;
-    java.awt.List lista = null;
-    switch (this.FocusPanelName) {
-      case "start" -> {
-        lista = this.listLavori;
-        int selezionato = this.listLavori.getSelectedIndex();
+        }
         if (selezionato == -1) {
-          selezionato = 1;
+            selezionato = 1;
         }
+        this.listLavori.select(selezionato);
         this.textAreaDescrizioneLavoro.setText(this.Lavorodescrizione);
-      }
-      case "setup wifi" ->
-        lista = this.listSetupWiFi;
-      case "setup lan" ->
-        lista = this.listSetupLan;
-      case "info" ->
-        lista = this.listInfo;
-      case "warning" ->
-        lista = this.listWarning;
-    }//EndSwitch
-    if (lista != null) {
-      nrItem = lista.getItemCount();
-      nrCurItem = lista.getSelectedIndex();
-      if (nrCurItem > 0) {
-        nrCurItem--;
-      } else {
-        nrCurItem = nrItem;//Va all'ultimo Item
-      }
-      lista.select(nrCurItem);
-    }//End LIsta not NULL
+    }
 
-  }//End PulsanteSu
+    /**
+     * Pannello dopo aver fatto la scelta del Lavoro, tale scelta deve essere
+     * scritta nel file /tmp/lavoro_scelto.txt L'App JControl sollecitato
+     * dall'evento modifica lavoro_scelto o creazione del file, aggiorna il DB
+     * (DA FARE) Mostra il conteggio dei tiri e la barra di avanzamento dei
+     * lavori, ...
+     */
+    private void PanelStarted() {
+        this.FocusPanelName = "started";
+        this.jPanelMain.setVisible(false);
+        this.jPanelSetup.setVisible(false);
+        this.jPanelStart.setVisible(false);
+        this.jPanelStarted.setVisible(true);
+        this.jPanelSetupLan.setVisible(false);
+        this.jPanelInfo.setVisible(false);
+        this.jPanelSetupWiFi.setVisible(false);
+        this.jPanelSetupLan.setVisible(false);
+        this.jPanelWarning.setVisible(false);
+        this.jPanelDialog.setVisible(false);
+        this.change_buttons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
+                this.Img_Stop, this.Img_Pause, this.Img_Nulla);
+        String lavoro = this.listLavori.getSelectedItem();
+        this.jLabelNomeDevice.setText(this.getNomeDelDevice());
+        this.jLabelNomeLavoro.setText(lavoro);
+        this.jLabel_B_R.setText("Aria ON");
+        this.jLabel_B_R.setBackground(Color.GREEN);
+        String[] det_lavoro = lavoro.split(",");
+        String[] det_nr_lotti = det_lavoro[1].split("=");
+        String[] det_nr_tiri = det_lavoro[2].split("=");
+        nr_lotti_da_fare = Integer.parseInt(det_nr_lotti[1]);
+        nr_tiri_da_fare = Integer.parseInt(det_nr_tiri[1]);
+        this.update_tiri_errati(this.Errati);
+        this.update_tiri_ok(this.TiriOk);
+        this.update_tiri_annullati(this.Annullati);
+        this.jLabelContatore.setText(nr_lotti_fatti + "/" + nr_lotti_da_fare
+                + " - " + nr_tiri_fatti + "/" + nr_tiri_da_fare);
+        this.jProgressBar.setMaximum(Integer.valueOf(det_nr_tiri[1]));
+    }
 
-  /**
-   * Simula la pressione del pulsante per scorrere la lista in giù
-   */
-  private void PulsanteGiu() {
-    int nrItem = 0;
-    int nrCurItem = 0;
-    java.awt.List lista = null;
-    switch (this.FocusPanelName) {
-      case "start" -> {
-        lista = this.listLavori;
-        int selezionato = this.listLavori.getSelectedIndex();
-        if (selezionato == -1) {
-          selezionato = 1;
+    /**
+     * Pannello che mostra il contenuto del file /tmp/warning.txt
+     */
+    private void PanelWarning() {
+        this.FocusPanelName = "warning";
+        this.jPanelMain.setVisible(false);
+        this.jPanelSetup.setVisible(false);
+        this.jPanelStart.setVisible(false);
+        this.jPanelStarted.setVisible(false);
+        this.jPanelSetupLan.setVisible(false);
+        this.jPanelInfo.setVisible(false);
+        this.jPanelSetupWiFi.setVisible(false);
+        this.jPanelSetupLan.setVisible(false);
+        this.jPanelWarning.setVisible(true);
+        this.jPanelDialog.setVisible(false);
+        this.change_buttons(this.Img_Exit, this.Img_Freccia_sx, this.Img_Freccia_dx,
+                this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Nulla);
+        LeggiWarning();
+    }
+
+    /**
+     * Alla pressione del pulsante che simula la freccia in su muovendosi sulla
+     * lista
+     */
+    private void PulsanteSu() {
+        int nrItem = 0;
+        int nrCurItem = 0;
+        java.awt.List lista = null;
+        switch (this.FocusPanelName) {
+            case "start" -> {
+                lista = this.listLavori;
+                int selezionato = this.listLavori.getSelectedIndex();
+                if (selezionato == -1) {
+                    selezionato = 1;
+                }
+                this.textAreaDescrizioneLavoro.setText(this.Lavorodescrizione);
+            }
+            case "setup wifi" ->
+                lista = this.listSetupWiFi;
+            case "setup lan" ->
+                lista = this.listSetupLan;
+            case "info" ->
+                lista = this.listInfo;
+            case "warning" ->
+                lista = this.listWarning;
+        }//EndSwitch
+        if (lista != null) {
+            nrItem = lista.getItemCount();
+            nrCurItem = lista.getSelectedIndex();
+            if (nrCurItem > 0) {
+                nrCurItem--;
+            } else {
+                nrCurItem = nrItem;//Va all'ultimo Item
+            }
+            lista.select(nrCurItem);
+        }//End LIsta not NULL
+
+    }//End PulsanteSu
+
+    /**
+     * Simula la pressione del pulsante per scorrere la lista in giù
+     */
+    private void PulsanteGiu() {
+        int nrItem = 0;
+        int nrCurItem = 0;
+        java.awt.List lista = null;
+        switch (this.FocusPanelName) {
+            case "start" -> {
+                lista = this.listLavori;
+                int selezionato = this.listLavori.getSelectedIndex();
+                if (selezionato == -1) {
+                    selezionato = 1;
+                }
+                this.textAreaDescrizioneLavoro.setText(this.Lavorodescrizione);
+            }
+            case "setup wifi" ->
+                lista = this.listSetupWiFi;
+            case "setup lan" ->
+                lista = this.listSetupLan;
+            case "info" ->
+                lista = this.listInfo;
+            case "warning" ->
+                lista = this.listWarning;
+        }//EndSwitch
+        if (lista != null) {
+            nrItem = lista.getItemCount();
+            nrCurItem = lista.getSelectedIndex();
+            if (nrCurItem < nrItem) {
+                nrCurItem++;
+            } else {
+                nrCurItem = 0;//ritorna al primo Item
+            }
+            lista.select(nrCurItem);
+        }//End LIsta not NULL
+
+    }//End PulsanteSu
+
+    /**
+     * Pannello per la configurazione della LAN Legge il file /tmp/setup_lan.txt
+     */
+    private void PanelSetupLan() {
+        this.FocusPanelName = "setup lan";
+        this.jPanelMain.setVisible(false);
+        this.jPanelSetup.setVisible(false);
+        this.jPanelStart.setVisible(false);
+        this.jPanelStarted.setVisible(false);
+        this.jPanelSetupLan.setVisible(false);
+        this.jPanelInfo.setVisible(false);
+        this.jPanelSetupWiFi.setVisible(false);
+        this.jPanelSetupLan.setVisible(true);
+        this.jPanelWarning.setVisible(false);
+        this.jPanelDialog.setVisible(false);
+        this.change_buttons(this.Img_Exit, this.Img_Nulla, this.Img_Nulla,
+                this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Ok);
+        LeggiSetupLan();
+    }
+
+    /**
+     * Pannello per il setup della WiFi Legge il file /tmp/setup_wifi.txt
+     */
+    private void PanelSetupWifi() {
+        this.FocusPanelName = "setup wifi";
+        this.jPanelMain.setVisible(false);
+        this.jPanelSetup.setVisible(false);
+        this.jPanelStart.setVisible(false);
+        this.jPanelStarted.setVisible(false);
+        this.jPanelSetupLan.setVisible(false);
+        this.jPanelInfo.setVisible(false);
+        this.jPanelSetupWiFi.setVisible(true);
+        this.jPanelSetupLan.setVisible(false);
+        this.jPanelWarning.setVisible(false);
+        this.jPanelDialog.setVisible(false);
+        this.change_buttons(this.Img_Exit, this.Img_Nulla, this.Img_Nulla,
+                this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Ok);
+        LeggiSetupWiFi();
+    }
+
+    /**
+     * Pannello che mostra il contenuto del file /tmp/info.txt
+     */
+    private void PanelInfo() {
+        this.FocusPanelName = "info";
+        this.jPanelMain.setVisible(false);
+        this.jPanelSetup.setVisible(false);
+        this.jPanelStart.setVisible(false);
+        this.jPanelStarted.setVisible(false);
+        this.jPanelSetupLan.setVisible(false);
+        this.jPanelInfo.setVisible(true);
+        this.jPanelSetupWiFi.setVisible(false);
+        this.jPanelSetupLan.setVisible(false);
+        this.jPanelWarning.setVisible(false);
+        this.jPanelDialog.setVisible(false);
+        this.change_buttons(this.Img_Exit, this.Img_Freccia_sx, this.Img_Freccia_dx,
+                this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Nulla);
+        LeggiInfo();
+    }
+
+    /**
+     * Pannello necessario per la conferma della scelta Stop/Pausa del lavoro Lo
+     * Stop cancella il lavoro, la pausa memorizza (file pausa.txt) il nome del
+     * Lavoro messo in Pausa. L'APP Control alla creazione del file
+     * /tmp/pausa.txt aggiorna il DB (DA FARE)
+     */
+    private void PanelDialog() {
+        this.FocusPanelName = "dialog";
+        this.jPanelMain.setVisible(false);
+        this.jPanelSetup.setVisible(false);
+        this.jPanelStart.setVisible(false);
+        this.jPanelStarted.setVisible(false);
+        this.jPanelSetupLan.setVisible(false);
+        this.jPanelInfo.setVisible(false);
+        this.jPanelSetupWiFi.setVisible(false);
+        this.jPanelSetupLan.setVisible(false);
+        this.jPanelWarning.setVisible(false);
+        this.jPanelDialog.setVisible(true);
+        this.change_buttons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
+                this.Img_Ok, this.Img_Cancel, this.Img_Nulla);
+    }
+
+    /**
+     * LeggiFileList carica eventuali Warning dal file /tmp/warning.txt
+     */
+    private void LeggiFileList(String NomeFile, java.awt.List ls) {
+        ls.removeAll();
+        List<String> fileLetto = LeggiFileElenco(NomeFile);
+        for (String riga : fileLetto) {
+            ls.add(riga);
         }
-        this.textAreaDescrizioneLavoro.setText(this.Lavorodescrizione);
-      }
-      case "setup wifi" ->
-        lista = this.listSetupWiFi;
-      case "setup lan" ->
-        lista = this.listSetupLan;
-      case "info" ->
-        lista = this.listInfo;
-      case "warning" ->
-        lista = this.listWarning;
-    }//EndSwitch
-    if (lista != null) {
-      nrItem = lista.getItemCount();
-      nrCurItem = lista.getSelectedIndex();
-      if (nrCurItem < nrItem) {
-        nrCurItem++;
-      } else {
-        nrCurItem = 0;//ritorna al primo Item
-      }
-      lista.select(nrCurItem);
-    }//End LIsta not NULL
+        ls.select(0);
 
-  }//End PulsanteSu
+    }//End LeggiFileList
 
-  /**
-   * Pannello per la configurazione della LAN Legge il file /tmp/setup_lan.txt
-   */
-  private void PanelSetupLan() {
-    this.FocusPanelName = "setup lan";
-    this.jPanelMain.setVisible(false);
-    this.jPanelSetup.setVisible(false);
-    this.jPanelStart.setVisible(false);
-    this.jPanelStarted.setVisible(false);
-    this.jPanelSetupLan.setVisible(false);
-    this.jPanelInfo.setVisible(false);
-    this.jPanelSetupWiFi.setVisible(false);
-    this.jPanelSetupLan.setVisible(true);
-    this.jPanelWarning.setVisible(false);
-    this.jPanelDialog.setVisible(false);
-    this.change_buttons(this.Img_Exit, this.Img_Nulla, this.Img_Nulla,
-            this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Ok);
-    LeggiSetupLan();
-  }
+    /**
+     * LeggiFileList carica eventuali Warning dal file /tmp/warning.txt
+     */
+    private void LeggiFileLavoriDescrizione() {
+        this.Lavorodescrizione = LeggiFile(this.fileNameLavoriDescrizione);
+    }//End LeggiFileLavoriDescrizione
 
-  /**
-   * Pannello per il setup della WiFi Legge il file /tmp/setup_wifi.txt
-   */
-  private void PanelSetupWifi() {
-    this.FocusPanelName = "setup wifi";
-    this.jPanelMain.setVisible(false);
-    this.jPanelSetup.setVisible(false);
-    this.jPanelStart.setVisible(false);
-    this.jPanelStarted.setVisible(false);
-    this.jPanelSetupLan.setVisible(false);
-    this.jPanelInfo.setVisible(false);
-    this.jPanelSetupWiFi.setVisible(true);
-    this.jPanelSetupLan.setVisible(false);
-    this.jPanelWarning.setVisible(false);
-    this.jPanelDialog.setVisible(false);
-    this.change_buttons(this.Img_Exit, this.Img_Nulla, this.Img_Nulla,
-            this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Ok);
-    LeggiSetupWiFi();
-  }
-
-  /**
-   * Pannello che mostra il contenuto del file /tmp/info.txt
-   */
-  private void PanelInfo() {
-    this.FocusPanelName = "info";
-    this.jPanelMain.setVisible(false);
-    this.jPanelSetup.setVisible(false);
-    this.jPanelStart.setVisible(false);
-    this.jPanelStarted.setVisible(false);
-    this.jPanelSetupLan.setVisible(false);
-    this.jPanelInfo.setVisible(true);
-    this.jPanelSetupWiFi.setVisible(false);
-    this.jPanelSetupLan.setVisible(false);
-    this.jPanelWarning.setVisible(false);
-    this.jPanelDialog.setVisible(false);
-    this.change_buttons(this.Img_Exit, this.Img_Freccia_sx, this.Img_Freccia_dx,
-            this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Nulla);
-    LeggiInfo();
-  }
-
-  /**
-   * Pannello necessario per la conferma della scelta Stop/Pausa del lavoro Lo
-   * Stop cancella il lavoro, la pausa memorizza (file pausa.txt) il nome del
-   * Lavoro messo in Pausa. L'APP Control alla creazione del file /tmp/pausa.txt
-   * aggiorna il DB (DA FARE)
-   */
-  private void PanelDialog() {
-    this.FocusPanelName = "dialog";
-    this.jPanelMain.setVisible(false);
-    this.jPanelSetup.setVisible(false);
-    this.jPanelStart.setVisible(false);
-    this.jPanelStarted.setVisible(false);
-    this.jPanelSetupLan.setVisible(false);
-    this.jPanelInfo.setVisible(false);
-    this.jPanelSetupWiFi.setVisible(false);
-    this.jPanelSetupLan.setVisible(false);
-    this.jPanelWarning.setVisible(false);
-    this.jPanelDialog.setVisible(true);
-    this.change_buttons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
-            this.Img_Ok, this.Img_Cancel, this.Img_Nulla);
-  }
-
-  /**
-   * LeggiFileList carica eventuali Warning dal file /tmp/warning.txt
-   */
-  private void LeggiFileList(String NomeFile, java.awt.List ls) {
-    ls.removeAll();
-    List<String> fileLetto = LeggiFileElenco(NomeFile);
-    for (String riga : fileLetto) {
-      ls.add(riga);
-    }
-    ls.select(0);
-
-  }//End LeggiFileList
-
-  /**
-   * LeggiFileList carica eventuali Warning dal file /tmp/warning.txt
-   */
-  private void LeggiFileLavoriDescrizione() {
-    this.Lavorodescrizione = LeggiFile(this.fileNameLavoriDescrizione);
-  }//End LeggiFileLavoriDescrizione
-
-  public String LeggiFile(String NomeFile) {
-    String contenutoFile = "";
-    try {
-      File myObj = new File(this.PathTmp + NomeFile);
-      Scanner myReader = new Scanner(myObj);
-      while (myReader.hasNextLine()) {
-        contenutoFile += myReader.nextLine();
-      }
-      myReader.close();
-    } catch (FileNotFoundException e) {
-      System.out.println("An error occurred.");
-      return "Errore lettura file";
-    }
-    return contenutoFile;
-  }//End LeggiFileLavoriDescrizione
-
-  public List<String> LeggiFileElenco(String NomeFile) {
-    List<String> ListaRighe = new ArrayList<String>();
-    try {
-      File myObj = new File(this.PathTmp + NomeFile);
-      Scanner myReader = new Scanner(myObj);
-      while (myReader.hasNextLine()) {
-        ListaRighe.add(myReader.nextLine());
-      }
-      myReader.close();
-    } catch (FileNotFoundException e) {
-      System.out.println("An error occurred.");
-      return ListaRighe;
-    }
-    return ListaRighe;
-  }
-
-  /**
-   * LeggiWarning carica eventuali Warning dal file /tmp/warning.txt
-   */
-  public void LeggiWarning() {
-    LeggiFileList(this.fileNameWarning, this.listWarning);
-    this.repaint();
-  }//End LeggiInfo
-
-  /**
-   * LeggiInfo carica eventuali Informazioni dal file /tmp/info.txt
-   */
-  public void LeggiInfo() {
-    LeggiFileList(this.fileNameInfo, this.listInfo);
-    this.repaint();
-  }//End LeggiInfo
-
-  /**
-   * LeggiSetuplan carica eventuali Informazioni dal file /tmp/setup_lan.txt
-   */
-  public void LeggiSetupLan() {
-    LeggiFileList(this.fileNameSetupLan, this.listSetupLan);
-    this.repaint();
-  }//End LeggiSetupLan
-
-  /**
-   * LeggiSetupWiFi carica eventuali Informazioni dal file /tmp/setup_wifi.txt
-   */
-  public void LeggiSetupWiFi() {
-    LeggiFileList(this.fileNameSetupWiFi, this.listSetupWiFi);
-    this.repaint();
-  }//End LeggiSetupWiFi
-
-  /**
-   * LeggiLavori carica eventuali Informazioni dal file /tmp/setup_wifi.txt
-   */
-  public void LeggiLavori() {
-    LeggiFileList(this.fileNameLavori, this.listLavori);
-    this.repaint();
-  }//End LeggiSetupWiFi
-
-  /**
-   * Metodo per prendere l'imput dai pulsanti fisici Non Serve
-   *
-   * @param p String nome pulsante
-   */
-  public void pulsante_hw(String p) {
-    switch (p) {
-      case "PL1" ->
-        jButtonPL1ActionPerformed(null);
-      case "PL2" ->
-        jButtonPL2ActionPerformed(null);
-      case "PL3" ->
-        jButtonPL3ActionPerformed(null);
-      case "PR1" ->
-        jButtonPR1ActionPerformed(null);
-      case "PR2" ->
-        jButtonPR2ActionPerformed(null);
-      case "PR3" ->
-        jButtonPR3ActionPerformed(null);
-    }
-  }
-
-  /**
-   * Legge il file "/tmp/nome_device.txt"
-   *
-   * @return Nome del device
-   */
-  private String getNomeDelDevice() {
-    return LeggiFile(this.fileNomeDevice);
-  }
-
-  /**
-   * Pannello di Setup l'utente deve scegliere tra setup Lan o WiFi
-   */
-  private void PanelSetup() {
-    this.FocusPanelName = "setup";
-    this.jPanelMain.setVisible(false);
-    this.jPanelSetup.setVisible(true);
-    this.jPanelStart.setVisible(false);
-    this.jPanelStarted.setVisible(false);
-    this.jPanelSetupLan.setVisible(false);
-    this.jPanelInfo.setVisible(false);
-    this.jPanelSetupWiFi.setVisible(false);
-    this.jPanelWarning.setVisible(false);
-    this.jPanelDialog.setVisible(false);
-    this.change_buttons(this.Img_Exit, this.Img_Nulla, this.Img_Nulla,
-            this.Img_Lan, this.Img_WiFi, this.Img_Nulla);
-  }
-
-  /**
-   * aria_chiusa chiamato da WorkerThread imposta l'interfaccia
-   */
-  public void aria_chiusa() {
-    this.jLabel_B_R.setText("Aria Chiusa");
-    this.jLabel_B_R.setBackground(Color.red);
-    this.repaint();
-  }
-
-  /**
-   * aria_aperta chiamato da WorkerThread imposta l'interfaccia
-   */
-  public void aria_aperta() {
-    this.jLabel_B_R.setText("Aria Aperta");
-    this.jLabel_B_R.setBackground(Color.green);
-    this.repaint();
-  }
-
-  /**
-   *
-   * @param tiri int - chiamato da WorkerThread imposta l'interfaccia
-   * aggiornando i campi associati ai nr dei tiri e aggiorna i lotti fatti
-   */
-  public void nr_tiri(int tiri) {
-    if (this.nr_lotti_da_fare > 0) {
-      if ((tiri == (this.nr_lotti_da_fare * this.nr_tiri_da_fare))) {
-        // E' Finito il lavoro !
-      }
-      if (tiri == (this.nr_tiri_da_fare * this.nr_lotti_fatti)) {
-        //Finito un lotto
-        this.nr_lotti_fatti++;
-      }
-
-    } else {
-      if (this.nr_tiri_da_fare == -1) {
-        //Lavoro senza fine
-      } else {
-        if ((tiri == (this.nr_tiri_da_fare))) {
-          // E' Finito il lavoro !
+    /**
+     * LeggiFile Metodo utilizzato da più metodi per lettura del file
+     *
+     * @param NomeFile - Nome del file da leggere
+     * @return String - riga letta
+     */
+    public String LeggiFile(String NomeFile) {
+        String contenutoFile = "";
+        try {
+            File myObj = new File(this.PathTmp + NomeFile);
+            Scanner myReader = new Scanner(myObj);
+            while (myReader.hasNextLine()) {
+                contenutoFile += myReader.nextLine();
+            }
+            myReader.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("An error occurred.");
+            return "Errore lettura file";
         }
-      }
+        return contenutoFile;
+    }//End LeggiFileLavoriDescrizione
+
+    /**
+     * LeggiFileElenco, legge il file e aggiorna una List awt
+     *
+     * @param NomeFile - Nome file da leggere come elenco
+     * @return List<String>
+     */
+    public List<String> LeggiFileElenco(String NomeFile) {
+        List<String> ListaRighe = new ArrayList<String>();
+        try {
+            File myObj = new File(this.PathTmp + NomeFile);
+            Scanner myReader = new Scanner(myObj);
+            while (myReader.hasNextLine()) {
+                ListaRighe.add(myReader.nextLine());
+            }
+            myReader.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("An error occurred.");
+            return ListaRighe;
+        }
+        return ListaRighe;
     }
 
-    if (this.nr_lotti_da_fare > 0) {
-      this.nr_tiri_fatti = tiri
-              - (this.nr_lotti_fatti * this.nr_tiri_da_fare);
+    /**
+     * ScriviFile metodo generico per scrivere una riga in un file
+     *
+     * @param NomeFile
+     * @param CosaScrivere String testo da scrivere nel file
+     */
+    public void ScriviFile(String NomeFile, String CosaScrivere) {
+        try {
+            FileWriter fw = new FileWriter(NomeFile);
+            PrintWriter pw = new PrintWriter(fw);
+            pw.print(CosaScrivere);
+            pw.flush();
+            pw.close();
+        } catch (IOException ex) {
+            Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
-    this.jLabelValidi.setText("" + tiri);
-    this.jProgressBar.setValue(tiri);
-    this.jLabelContatore.setText(nr_lotti_fatti + "/" + nr_lotti_da_fare
-            + " - " + nr_tiri_fatti + "/" + nr_tiri_da_fare);
-    this.repaint();
-  }
+    /**
+     * LeggiWarning carica eventuali Warning dal file /tmp/warning.txt
+     */
+    public void LeggiWarning() {
+        LeggiFileList(this.fileNameWarning, this.listWarning);
+        this.repaint();
+    }//End LeggiInfo
 
-  /**
-   * tiri_errati chiamato da WorkerThread imposta l'interfaccia
-   */
-  public void tiri_errati() {
-    this.set_errore_tiro();
-    this.repaint();
-  }
+    /**
+     * LeggiInfo carica eventuali Informazioni dal file /tmp/info.txt
+     */
+    public void LeggiInfo() {
+        LeggiFileList(this.fileNameInfo, this.listInfo);
+        this.repaint();
+    }//End LeggiInfo
 
-  /**
-   * Aggiorna il Label dei tiri errati
-   *
-   * @param tiri_errati
-   */
-  void nr_errori(int tiri_errati) {
-    this.jLabelErrati.setText("" + tiri_errati);
-    this.repaint();
-  }
+    /**
+     * LeggiSetuplan carica eventuali Informazioni dal file /tmp/setup_lan.txt
+     */
+    public void LeggiSetupLan() {
+        LeggiFileList(this.fileNameSetupLan, this.listSetupLan);
+        this.repaint();
+    }//End LeggiSetupLan
 
-  void errore() {
-    String strErrore = LeggiFile("errore");
-    switch (strErrore) {
-      case "0" ->
-        this.reset_errore_tiro();
-      case "1" ->
+    /**
+     * LeggiSetupWiFi carica eventuali Informazioni dal file /tmp/setup_wifi.txt
+     */
+    public void LeggiSetupWiFi() {
+        LeggiFileList(this.fileNameSetupWiFi, this.listSetupWiFi);
+        this.repaint();
+    }//End LeggiSetupWiFi
+
+    /**
+     * LeggiLavori carica eventuali Informazioni dal file /tmp/setup_wifi.txt
+     */
+    public void LeggiLavori() {
+        LeggiFileList(this.fileNameLavori, this.listLavori);
+        this.repaint();
+    }//End LeggiSetupWiFi
+
+    /**
+     * Metodo per prendere l'imput dai pulsanti fisici Non Serve
+     *
+     * @param p String nome pulsante
+     */
+    public void pulsante_hw(String p) {
+        switch (p) {
+            case "PL1" ->
+                jButtonPL1ActionPerformed(null);
+            case "PL2" ->
+                jButtonPL2ActionPerformed(null);
+            case "PL3" ->
+                jButtonPL3ActionPerformed(null);
+            case "PR1" ->
+                jButtonPR1ActionPerformed(null);
+            case "PR2" ->
+                jButtonPR2ActionPerformed(null);
+            case "PR3" ->
+                jButtonPR3ActionPerformed(null);
+        }
+    }
+
+    /**
+     * Legge il file "/tmp/nome_device.txt"
+     *
+     * @return Nome del device
+     */
+    private String getNomeDelDevice() {
+        return LeggiFile(this.fileNomeDevice);
+    }
+
+    /**
+     * Pannello di Setup l'utente deve scegliere tra setup Lan o WiFi
+     */
+    private void PanelSetup() {
+        this.FocusPanelName = "setup";
+        this.jPanelMain.setVisible(false);
+        this.jPanelSetup.setVisible(true);
+        this.jPanelStart.setVisible(false);
+        this.jPanelStarted.setVisible(false);
+        this.jPanelSetupLan.setVisible(false);
+        this.jPanelInfo.setVisible(false);
+        this.jPanelSetupWiFi.setVisible(false);
+        this.jPanelWarning.setVisible(false);
+        this.jPanelDialog.setVisible(false);
+        this.change_buttons(this.Img_Exit, this.Img_Nulla, this.Img_Nulla,
+                this.Img_Lan, this.Img_WiFi, this.Img_Nulla);
+    }
+
+    /**
+     * aria_chiusa chiamato da WorkerThread imposta l'interfaccia
+     */
+    public void aria_chiusa() {
+        this.jLabel_B_R.setText("Aria Chiusa");
+        this.jLabel_B_R.setBackground(Color.red);
+        this.repaint();
+    }
+
+    /**
+     * aria_aperta chiamato da WorkerThread imposta l'interfaccia
+     */
+    public void aria_aperta() {
+        this.jLabel_B_R.setText("Aria Aperta");
+        this.jLabel_B_R.setBackground(Color.green);
+        this.repaint();
+    }
+
+    /**
+     *
+     * @param tiri int - chiamato da WorkerThread imposta l'interfaccia
+     * aggiornando i campi associati ai nr dei tiri e aggiorna i lotti fatti
+     */
+    public void nr_tiri_Lotti(int tiri) {
+        if (this.nr_lotti_da_fare > 0) {
+            if ((tiri == (this.nr_lotti_da_fare * this.nr_tiri_da_fare))) {
+                // E' Finito il lavoro !
+            }
+            if (tiri == (this.nr_tiri_da_fare * this.nr_lotti_fatti)) {
+                //Finito un lotto
+                this.nr_lotti_fatti++;
+            }
+
+        } else {
+            if (this.nr_tiri_da_fare == -1) {
+                //Lavoro senza fine
+            } else {
+                if ((tiri == (this.nr_tiri_da_fare))) {
+                    // E' Finito il lavoro !
+                }
+            }
+        }
+
+        if (this.nr_lotti_da_fare > 0) {
+            this.nr_tiri_fatti = tiri
+                    - (this.nr_lotti_fatti * this.nr_tiri_da_fare);
+        }
+
+        this.jLabelValidi.setText("" + tiri);
+        this.jProgressBar.setValue(tiri);
+        this.jLabelContatore.setText(nr_lotti_fatti + "/" + nr_lotti_da_fare
+                + " - " + nr_tiri_fatti + "/" + nr_tiri_da_fare);
+        this.repaint();
+    }
+
+    /**
+     * tiri_errati chiamato da WorkerThread imposta l'interfaccia
+     */
+    public void tiri_errati() {
         this.set_errore_tiro();
-      default ->
-        throw new AssertionError();
+        this.repaint();
     }
-  }
 
-  /**
-   * reset_errore_tiro ripristina i colori di default Imposta ARIA ON ?? DA
-   * RIFARE
-   */
-  private void reset_errore_tiro() {
-    this.jButtonPL1.setEnabled(false);
-    this.jButtonPL2.setEnabled(false);
-    this.jButtonPL3.setEnabled(false);
-    this.jButtonPR3.setEnabled(false);
-    //this.jPanelStarted.setBackground(Color.green);
-    this.jPanelStarted.setOpaque(false);
-    this.jLabel_B_R.setText("Aria ON");
-    this.jLabel_B_R.setBackground(Color.GREEN);
-    this.change_buttons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
-            this.Img_Stop, this.Img_Pause, this.Img_Nulla);
+    /**
+     * Aggiorna il Label dei tiri errati
+     *
+     * @param tiri_errati
+     */
+    void nr_errori(int tiri_errati) {
+        this.jLabelErrati.setText("" + tiri_errati);
+        this.repaint();
+    }
 
-  }
+    void errore() {
+        String strErrore = LeggiFile("errore");
+        switch (strErrore) {
+            case "0" ->
+                this.reset_errore_tiro();
+            case "1" ->
+                this.set_errore_tiro();
+        }
+    }
+
+    /**
+     * reset_errore_tiro ripristina i colori di default Imposta ARIA ON ?? DA
+     * RIFARE
+     */
+    private void reset_errore_tiro() {
+        this.jButtonPL1.setEnabled(false);
+        this.jButtonPL2.setEnabled(false);
+        this.jButtonPL3.setEnabled(false);
+        this.jButtonPR3.setEnabled(false);
+        //this.jPanelStarted.setBackground(Color.green);
+        this.jPanelStarted.setOpaque(false);
+        this.jLabel_B_R.setText("Aria ON");
+        this.jLabel_B_R.setBackground(Color.GREEN);
+        this.change_buttons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
+                this.Img_Stop, this.Img_Pause, this.Img_Nulla);
+
+    }
+
+    /**
+     * Scive i numero totale di tiri a prescindere
+     *
+     * @param NomeFile String - nome del file dove Control Scrive il nr di Tiri
+     * fatti nella sessione corrente
+     */
+    void tiri(String NomeFile) {
+        this.jLabel_B_C.setText(LeggiFile(NomeFile));
+    }
+
+    void risposta_attesa_tiro_errato(String RispostaTiroErrato) {
+        switch (LeggiFile(RispostaTiroErrato)) {
+            case "1": //Continua non devo contare il tiro come ok
+                this.reset_errore_tiro();
+                break;
+            case "4": //Annulla
+                this.AllertDialogStop = "Annullare il Tiro ?";
+                this.jLabelDialog.setText(AllertDialogAnnulla);
+                PanelDialog();
+                break;
+            case "2": //OK
+            case "3": // Estendi
+                this.reset_errore_tiro();
+                int t = Integer.parseInt(this.jLabel_Validi.getText());
+                t++;
+                this.jLabel_Validi.setText("" + t);
+                break;
+        }
+        this.reset_errore_tiro();
+    }
+
+    /**
+     * Aggiorna il LabelValidi
+     *
+     * @param TiriOk - NomeFile tiri_ok
+     */
+    void update_tiri_ok(String TiriOk) {
+        this.nr_tiri_Lotti(Integer.parseInt(LeggiFile(TiriOk)));
+        this.repaint();
+    }
+
+    /**
+     * Metodo update_tiri_errati aggiorna la Label JaLabelErrati
+     *
+     * @param Errati
+     */
+    void update_tiri_errati(String Errati) {
+        this.nr_errori(Integer.parseInt(this.LeggiFile(Errati)));
+    }
+
+    /**
+     * metodo update_tiri_annullati aggiorna la Label centrale alla base del
+     * panel
+     *
+     * @param Annullati
+     */
+    void update_tiri_annullati(String Annullati) {
+        this.jLabel_B_C.setText("Annullati " + Integer.parseInt(this.LeggiFile(Annullati)));
+    }
 }

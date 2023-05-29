@@ -45,6 +45,7 @@ public class WorkThread extends Thread {
     private Path fileName;
     private final String TiriOk = "tiri_ok";
     private final String Errati = "tiri_errati";
+    private final String Tiri = "tiri";
     private final String Annullati = "tiri_annullati";
     private final String Info = "info.txt";
     private final String Warning = "warning.txt";
@@ -53,6 +54,7 @@ public class WorkThread extends Thread {
     private final String ListaLavori = "lavori.txt";
     private final String Aria = "aria";
     private final String Errore = "errore";
+    private final String RispostaTiroErrato = "risposta_tiro_errato";
 
     public WorkThread() throws IOException {
         // create gpio controller by file (run bash script before !)     
@@ -95,9 +97,11 @@ public class WorkThread extends Thread {
                 if (kind == ENTRY_MODIFY) {
                     switch (fileName.toString()) {
                         case "tiri_ok" ->
-                            read_tiri();
+                            tiri_ok();
                         case "tiri_errati" ->
                             tiri_errati();
+                        case "tiri" ->
+                            tiri();
                         case "tiri_annullati" ->
                             tiri_annullati();
                         case "errore" ->
@@ -114,6 +118,8 @@ public class WorkThread extends Thread {
                             read_lavori();
                         case "aria" ->
                             mostra_stato_aria();
+                        case "risposta_tiro_errato" ->
+                            risposta_tiro_errato();
                     }
 //                        case "PR1":
 //                        case "PR2":
@@ -159,12 +165,12 @@ public class WorkThread extends Thread {
 //            this.send_p(nomeFile);
 //        }
 //    }
-    private void read_tiri() {
-        this.mf.nr_tiri(Integer.parseInt(mf.LeggiFile("tiri")));
+    private void tiri_ok() {
+        this.mf.update_tiri_ok(this.TiriOk);
     }
 
     private void mostra_stato_aria() {
-        String stato = mf.LeggiFile("tiri");
+        String stato = mf.LeggiFile(this.Aria);
         if (stato.equals("0")) {
             this.mf.aria_chiusa();
         } else {
@@ -176,7 +182,7 @@ public class WorkThread extends Thread {
      * Errore_tiro legge nr tiri errati e li passa al RivitMain
      */
     private void tiri_errati() {
-        this.mf.nr_errori(Integer.parseInt(this.mf.LeggiFile(this.Errati)));
+        this.mf.update_tiri_errati(this.Errati);
     }
 
     /**
@@ -215,11 +221,21 @@ public class WorkThread extends Thread {
     }
 
     private void tiri_annullati() {
-        this.mf.nr_errori(Integer.parseInt(this.mf.LeggiFile(this.Errore)));
-        this.mf.tiri_errati();
+        this.mf.update_tiri_annullati(this.Annullati);
     }
 
     private void errore() {
         this.mf.errore();
+    }
+
+    private void tiri() {
+        this.mf.tiri(this.Tiri);
+    }
+/**
+ * Metodo scopre che qualcuno ha risposto da remoto
+ * all'attesa della risposta in caso di tiro errato
+ */
+    private void risposta_tiro_errato() {
+        this.mf.risposta_attesa_tiro_errato(this.RispostaTiroErrato);
     }
 }
