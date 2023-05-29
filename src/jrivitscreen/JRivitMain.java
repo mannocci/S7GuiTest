@@ -57,6 +57,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private String AllertDialogStop;
     private String fileNomeDevice;
     private String fileNameLavoriDescrizione;
+    private String[] Lavorodescrizione;
     private ImageIcon Img_Info;
     private int nr_lotti_da_fare;
     private int nr_tiri_da_fare;
@@ -853,6 +854,8 @@ public class JRivitMain extends javax.swing.JFrame {
      * creata da JControl nel file lavori.txt
      */
     private void PanelStart() {
+        this.LeggiFileLavoriDescrizione();
+        this.LeggiLavori();
         this.FocusPanelName = "start";
         this.jPanelMain.setVisible(false);
         this.jPanelSetup.setVisible(false);
@@ -866,7 +869,13 @@ public class JRivitMain extends javax.swing.JFrame {
         this.jPanelDialog.setVisible(false);
         this.change_buttons(this.Img_Exit, this.Img_Nulla, this.Img_Nulla,
                 this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Ok);
-        this.LeggiLavori();
+
+        int selezionato = this.listLavori.getSelectedIndex();
+        if (selezionato == -1) {
+            selezionato = 1;
+        }
+        this.jTextAreaDescrizione.setText(this.Lavorodescrizione[selezionato]);
+
     }
 
     /**
@@ -921,8 +930,13 @@ public class JRivitMain extends javax.swing.JFrame {
         int nrCurItem = 0;
         java.awt.List lista = null;
         switch (this.FocusPanelName) {
-            case "start" ->
+            case "start" ->{
                 lista = this.listLavori;
+                int selezionato = this.listLavori.getSelectedIndex();
+                if (selezionato == -1) {
+                    selezionato = 1;
+                }
+                this.jTextAreaDescrizione.setText(this.Lavorodescrizione[selezionato]); }
             case "setup wifi" ->
                 lista = this.listSetupWiFi;
             case "setup lan" ->
@@ -953,21 +967,18 @@ public class JRivitMain extends javax.swing.JFrame {
         int nrCurItem = 0;
         java.awt.List lista = null;
         switch (this.FocusPanelName) {
-            case "start":
+            case "start" -> {
                 lista = this.listLavori;
-                break;
-            case "setup wifi":
-                lista = this.listSetupWiFi;
-                break;
-            case "setup lan":
-                lista = this.listSetupLan;
-                break;
-            case "info":
-                lista = this.listInfo;
-                break;
-            case "warning":
-                lista = this.listWarning;
-                break;
+                int selezionato = this.listLavori.getSelectedIndex();
+                if (selezionato == -1) {
+                    selezionato = 1;
+                }
+                this.jTextAreaDescrizione.setText(this.Lavorodescrizione[selezionato]);
+            }
+            case "setup wifi" -> lista = this.listSetupWiFi;
+            case "setup lan" -> lista = this.listSetupLan;
+            case "info" -> lista = this.listInfo;
+            case "warning" -> lista = this.listWarning;
         }//EndSwitch
         if (lista != null) {
             nrItem = lista.getItemCount();
@@ -1086,18 +1097,18 @@ public class JRivitMain extends javax.swing.JFrame {
             e.printStackTrace();
         }
     }//End LeggiFileList
+
     /**
      * LeggiFileList carica eventuali Warning dal file /tmp/warning.txt
      */
     private void LeggiFileLavoriDescrizione() {
-        String [] data = new String[this.listLavori.getItemCount()];
-        int i=0;
+        this.Lavorodescrizione = new String[this.listLavori.getItemCount()];
+        int i = 0;
         try {
             File myObj = new File(this.fileNameLavoriDescrizione);
             Scanner myReader = new Scanner(myObj);
             while (myReader.hasNextLine()) {
-                data[i++] = myReader.nextLine();
-                System.out.println(data);
+                this.Lavorodescrizione[i++] = myReader.nextLine();
             }
             myReader.close();
         } catch (FileNotFoundException e) {
@@ -1105,6 +1116,7 @@ public class JRivitMain extends javax.swing.JFrame {
             e.printStackTrace();
         }
     }//End LeggiFileLavoriDescrizione
+
     /**
      * LeggiWarning carica eventuali Warning dal file /tmp/warning.txt
      */
