@@ -20,6 +20,9 @@ import java.awt.Color;
 import java.awt.event.ItemEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -57,12 +60,13 @@ public class JRivitMain extends javax.swing.JFrame {
     private String AllertDialogStop;
     private String fileNomeDevice;
     private String fileNameLavoriDescrizione;
-    private String[] Lavorodescrizione;
+    private String Lavorodescrizione;
     private ImageIcon Img_Info;
     private int nr_lotti_da_fare;
     private int nr_tiri_da_fare;
     private int nr_lotti_fatti;
     private int nr_tiri_fatti;
+    private final String PathTmp = "/tmp/CT/";
 
     /**
      * Creates new form JRivitMain
@@ -82,14 +86,14 @@ public class JRivitMain extends javax.swing.JFrame {
         initComponents();
 
         this.FocusPanelName = "main";
-        this.fileNameWarning = "/tmp/warning.txt";
-        this.fileNameSetupLan = "/tmp/setup_lan.txt";
-        this.fileNameSetupWiFi = "/tmp/setup_wifi";
-        this.fileNameInfo = "/tmp/info.txt";
-        this.fileNameLavori = "/tmp/lavori.txt";
-        this.fileNameLavoriDescrizione = "/tmp/lavori_descrizione.txt";
-        this.fileNomeDevice = "/tmp/nome_device.txt";
-        this.AllertDialogStop = "Annullare il Tiro ?";
+        this.fileNameWarning = "warning.txt";
+        this.fileNameSetupLan = "setup_lan.txt";
+        this.fileNameSetupWiFi = "setup_wifi";
+        this.fileNameInfo = "info.txt";
+        this.fileNameLavori = "lavori.txt";
+        this.fileNameLavoriDescrizione = "lavori_descrizione.txt";
+        this.fileNomeDevice = "nome_device.txt";
+        this.AllertDialogStop = "Annullare Tiro ?";
         Img_Exit = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/exit.png"));
         Img_Ok = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/ok.png"));
         Img_Nulla = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/nulla.png"));
@@ -854,8 +858,8 @@ public class JRivitMain extends javax.swing.JFrame {
      * creata da JControl nel file lavori.txt
      */
     private void PanelStart() {
-        this.LeggiFileLavoriDescrizione();
         this.LeggiLavori();
+        this.LeggiFileLavoriDescrizione();
         this.FocusPanelName = "start";
         this.jPanelMain.setVisible(false);
         this.jPanelSetup.setVisible(false);
@@ -871,10 +875,11 @@ public class JRivitMain extends javax.swing.JFrame {
                 this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Ok);
 
         int selezionato = this.listLavori.getSelectedIndex();
+
         if (selezionato == -1) {
             selezionato = 1;
         }
-        this.jTextAreaDescrizione.setText(this.Lavorodescrizione[selezionato]);
+        this.jTextAreaDescrizione.setText(this.Lavorodescrizione);
 
     }
 
@@ -930,13 +935,14 @@ public class JRivitMain extends javax.swing.JFrame {
         int nrCurItem = 0;
         java.awt.List lista = null;
         switch (this.FocusPanelName) {
-            case "start" ->{
+            case "start" -> {
                 lista = this.listLavori;
                 int selezionato = this.listLavori.getSelectedIndex();
                 if (selezionato == -1) {
                     selezionato = 1;
                 }
-                this.jTextAreaDescrizione.setText(this.Lavorodescrizione[selezionato]); }
+                this.jTextAreaDescrizione.setText(this.Lavorodescrizione);
+            }
             case "setup wifi" ->
                 lista = this.listSetupWiFi;
             case "setup lan" ->
@@ -973,12 +979,16 @@ public class JRivitMain extends javax.swing.JFrame {
                 if (selezionato == -1) {
                     selezionato = 1;
                 }
-                this.jTextAreaDescrizione.setText(this.Lavorodescrizione[selezionato]);
+                this.jTextAreaDescrizione.setText(this.Lavorodescrizione);
             }
-            case "setup wifi" -> lista = this.listSetupWiFi;
-            case "setup lan" -> lista = this.listSetupLan;
-            case "info" -> lista = this.listInfo;
-            case "warning" -> lista = this.listWarning;
+            case "setup wifi" ->
+                lista = this.listSetupWiFi;
+            case "setup lan" ->
+                lista = this.listSetupLan;
+            case "info" ->
+                lista = this.listInfo;
+            case "warning" ->
+                lista = this.listWarning;
         }//EndSwitch
         if (lista != null) {
             nrItem = lista.getItemCount();
@@ -1079,49 +1089,60 @@ public class JRivitMain extends javax.swing.JFrame {
      * LeggiFileList carica eventuali Warning dal file /tmp/warning.txt
      */
     private void LeggiFileList(String NomeFile, java.awt.List ls) {
-        String data;
         ls.removeAll();
-        try {
-            File myObj = new File(NomeFile);
-            Scanner myReader = new Scanner(myObj);
-            while (myReader.hasNextLine()) {
-                data = myReader.nextLine();
-                System.out.println(data);
-
-                ls.add(data);
-                ls.select(0);
-            }
-            myReader.close();
-        } catch (FileNotFoundException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
+        List<String> fileLetto = LeggiFileElenco(NomeFile);
+        for (String riga : fileLetto) {
+            ls.add(riga);
         }
+        ls.select(0);
+
     }//End LeggiFileList
 
     /**
      * LeggiFileList carica eventuali Warning dal file /tmp/warning.txt
      */
     private void LeggiFileLavoriDescrizione() {
-        this.Lavorodescrizione = new String[this.listLavori.getItemCount()];
-        int i = 0;
+        this.Lavorodescrizione = LeggiFile(this.fileNameLavoriDescrizione);
+    }//End LeggiFileLavoriDescrizione
+
+    public String LeggiFile(String NomeFile) {
+        String contenutoFile = "";
         try {
-            File myObj = new File(this.fileNameLavoriDescrizione);
+            File myObj = new File(this.PathTmp + NomeFile);
             Scanner myReader = new Scanner(myObj);
             while (myReader.hasNextLine()) {
-                this.Lavorodescrizione[i++] = myReader.nextLine();
+                contenutoFile += myReader.nextLine();
             }
             myReader.close();
         } catch (FileNotFoundException e) {
             System.out.println("An error occurred.");
-            e.printStackTrace();
+            return "Errore lettura file";
         }
+        return contenutoFile;
     }//End LeggiFileLavoriDescrizione
+
+    public List<String> LeggiFileElenco(String NomeFile) {
+        List<String> ListaRighe = new ArrayList<String>();
+        try {
+            File myObj = new File(this.PathTmp + NomeFile);
+            Scanner myReader = new Scanner(myObj);
+            while (myReader.hasNextLine()) {
+                ListaRighe.add(myReader.nextLine());
+            }
+            myReader.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("An error occurred.");
+            return ListaRighe;
+        }
+        return ListaRighe;
+    }
 
     /**
      * LeggiWarning carica eventuali Warning dal file /tmp/warning.txt
      */
     public void LeggiWarning() {
         LeggiFileList(this.fileNameWarning, this.listWarning);
+        this.repaint();
     }//End LeggiInfo
 
     /**
@@ -1129,6 +1150,7 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     public void LeggiInfo() {
         LeggiFileList(this.fileNameInfo, this.listInfo);
+        this.repaint();
     }//End LeggiInfo
 
     /**
@@ -1136,6 +1158,7 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     public void LeggiSetupLan() {
         LeggiFileList(this.fileNameSetupLan, this.listSetupLan);
+        this.repaint();
     }//End LeggiSetupLan
 
     /**
@@ -1143,6 +1166,7 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     public void LeggiSetupWiFi() {
         LeggiFileList(this.fileNameSetupWiFi, this.listSetupWiFi);
+        this.repaint();
     }//End LeggiSetupWiFi
 
     /**
@@ -1150,6 +1174,7 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     public void LeggiLavori() {
         LeggiFileList(this.fileNameLavori, this.listLavori);
+        this.repaint();
     }//End LeggiSetupWiFi
 
     /**
@@ -1180,20 +1205,7 @@ public class JRivitMain extends javax.swing.JFrame {
      * @return Nome del device
      */
     private String getNomeDelDevice() {
-        String data = "";
-        try {
-            File myObj = new File(this.fileNomeDevice);
-            Scanner myReader = new Scanner(myObj);
-            while (myReader.hasNextLine()) {
-                data = myReader.nextLine();
-                //System.out.println(data);
-            }
-            myReader.close();
-        } catch (FileNotFoundException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
-        return data;
+        return LeggiFile(this.fileNomeDevice);
     }
 
     /**
@@ -1218,9 +1230,9 @@ public class JRivitMain extends javax.swing.JFrame {
      * aria_chiusa chiamato da WorkerThread imposta l'interfaccia
      */
     public void aria_chiusa() {
-
         this.jLabel_B_R.setText("Aria Chiusa");
         this.jLabel_B_R.setBackground(Color.red);
+        this.repaint();
     }
 
     /**
@@ -1229,6 +1241,7 @@ public class JRivitMain extends javax.swing.JFrame {
     public void aria_aperta() {
         this.jLabel_B_R.setText("Aria Aperta");
         this.jLabel_B_R.setBackground(Color.green);
+        this.repaint();
     }
 
     /**
@@ -1265,14 +1278,15 @@ public class JRivitMain extends javax.swing.JFrame {
         this.jProgressBar.setValue(tiri);
         this.jLabelContatore.setText(nr_lotti_fatti + "/" + nr_lotti_da_fare
                 + " - " + nr_tiri_fatti + "/" + nr_tiri_da_fare);
-        this.jPanelStarted.repaint();
+        this.repaint();
     }
 
     /**
-     * errore_tiro chiamato da WorkerThread imposta l'interfaccia
+     * tiri_errati chiamato da WorkerThread imposta l'interfaccia
      */
-    public void errore_tiro() {
+    public void tiri_errati() {
         this.set_errore_tiro();
+        this.repaint();
     }
 
     /**
@@ -1281,6 +1295,29 @@ public class JRivitMain extends javax.swing.JFrame {
      * @param tiri_errati
      */
     void nr_errori(int tiri_errati) {
-        this.jLabel_Errati.setText("" + tiri_errati);
+        this.jLabelErrati.setText("" + tiri_errati);
+        this.repaint();
     }
+
+    void errore() {
+        String strErrore = LeggiFile("errore");
+        switch (strErrore) {
+            case "0" -> this.reset_errore_tiro();
+            case "1" -> this.set_errore_tiro();
+            default -> throw new AssertionError();
+        }
+    }
+/**
+ * reset_errore_tiro ripristina i colori di default
+ * Imposta ARIA ON ?? DA RIFARE
+ */
+    private void reset_errore_tiro() {
+        this.jButtonPL1.setEnabled(false);
+        this.jButtonPL2.setEnabled(false);
+        this.jButtonPL3.setEnabled(false);
+        this.jButtonPR3.setEnabled(false);
+        this.jPanelStarted.setBackground(Color.green);
+        this.jPanelStarted.setOpaque(false);
+        this.jLabel_B_R.setText("Aria ON");
+        this.jLabel_B_R.setBackground(Color.GREEN);    }
 }
