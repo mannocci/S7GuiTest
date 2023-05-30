@@ -13,6 +13,11 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * La documentazionedel progetto del RivitScreen si trova si GitHub 
+ * https://github.com/rivit-elrenoin 
+ * repository Privato, visibile da personale della Rivit, oltre a Luca Mannocci,
+ * Fabio Fragapane, Mannocci Enrico
+ * @versione 1.0 maggio/giugno 2023
  */
 package jrivitscreen;
 
