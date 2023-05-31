@@ -32,9 +32,6 @@ import com.pi4j.io.gpio.PinPullResistance;
 import com.pi4j.io.gpio.RaspiPin;
 import com.pi4j.io.gpio.event.GpioPinDigitalStateChangeEvent;
 import com.pi4j.io.gpio.event.GpioPinListenerDigital;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -42,8 +39,10 @@ public class ButtonThread extends Thread {
 
     private JRivitMain mf;
 
-    public ButtonThread() {
+    public ButtonThread(JRivitMain mf) {
+        this.mf = mf;
         System.out.println("Push button Thread");
+
         // create gpio controller
         final GpioController gpio = GpioFactory.getInstance();
         final GpioPinDigitalInput[] pulsanti = {
@@ -61,25 +60,22 @@ public class ButtonThread extends Thread {
             @Override
             public void handleGpioPinDigitalStateChangeEvent(GpioPinDigitalStateChangeEvent event) {
                 // display pin state on console
-                String NomePulsante = event.getPin().getName().substring(0,3); 
-                read_pulsane_premuto(NomePulsante,""+event.getState());
+                String NomePulsante = event.getPin().getName().substring(0, 3);
+                read_pulsane_premuto(NomePulsante, "" + event.getState());
                 //System.out.println(" Premuto: " + NomePulsante+ " = " + event.getState());
             }
 
-        }, pulsanti);        
+        }, pulsanti);
 
-    }
-
-    public void set_mf(JRivitMain mf) {
-        this.mf = mf;
     }
 
     private void send_p(String sp) {
         this.mf.pulsante_hw(sp);
     }
+
     @Override
     public void run() {
-        
+
         for (;;) {
             try {
                 Thread.sleep(1500);
@@ -88,10 +84,11 @@ public class ButtonThread extends Thread {
             }
         }
     }
+
     private void read_pulsane_premuto(String nomeFile, String Stato) {
         if (Stato.equalsIgnoreCase("LOW")) {
             //System.out.printf("il pulsante %s è stato premuto\n", fileName);
             this.send_p(nomeFile);
         }
-    }    
+    }
 }

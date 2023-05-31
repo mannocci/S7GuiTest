@@ -21,12 +21,15 @@
  */
 package jrivitscreen;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import javax.swing.SwingWorker;
 import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Scanner;
 import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -37,52 +40,137 @@ import java.util.logging.Logger;
  */
 public class Worker extends SwingWorker<String, Object> {
 
-  JRivitMain mf;
-  WorkThread wt;
-  ButtonThread bt;
-  private String operation="";
+    JRivitMain mf;
+    ThreadWorker wt;
+    ButtonThread bt;
+    private String operation = "";
+    private int tiriAnnullati = 0;
+    private int tiriOK = 0;
 
-  DateFormat dateFormat;
-  Calendar now;
+    private DateFormat dateFormat;
+    private Calendar now;
+    private final String PathTmp = "/tmp/CT/";
+    private final String f_tiri = "tiri";
+    private final String f_tiri_ok = "tiri_ok";
+    private final String f_tiri_errati = "tiri_errati";
+    private final String f_tiri_annullati = "tiri_annullati";
+    private final String f_errore = "errore";
+    private final String f_lavoro_scelto = "lavoro_scelto.txt";
+    private final String f_risposta_tiro_errato = "risposta_tiro_errato";
+    private final String f_nome_device = "nome_device.txt";
+    private String NomeDevice;
+    private int tiriErrati;
 
-  Worker(JRivitMain mf) {
-    try {
-      this.mf = mf;
-      this.wt = new WorkThread();
-      this.wt.set_mf(this.mf);
-      this.wt.start();
-      this.bt = new ButtonThread();
-      this.bt.set_mf(mf);
-      this.bt.start();
-      
-      dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
-      now = Calendar.getInstance();
-    } catch (Exception ex) {
-      Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
-      throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    Worker(JRivitMain mf) {
+        try {
+            this.mf = mf;
+            this.wt = new ThreadWorker(this.mf);
+            this.bt = new ButtonThread(this.mf);
+            this.bt.start();
+            dateFormat = new SimpleDateFormat("HH:mm");
+            now = Calendar.getInstance();
+        } catch (Exception ex) {
+            Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
+            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        }
     }
-  }
 
-  @Override
-  protected String doInBackground() throws Exception {
-    try {
-      switch (this.operation) {
-        case "start":
-          Date orario = now.getTime();
-          //this.dateFormat.setTimeZone(TimeZone.getTimeZone("Europe/London"));
-          this.mf.set_jLabel_B_L(this.dateFormat.format(orario));
-          this.mf.repaint();
-          break;
+    @Override
+    protected String doInBackground() throws Exception {
+        try {
+            switch (this.operation) {
+                case "start" -> {
+                    Date orario = now.getTime();
+                    //this.dateFormat.setTimeZone(TimeZone.getTimeZone("Europe/London"));
+                    this.mf.set_jLabel_B_L(this.dateFormat.format(orario));
+                    this.mf.repaint();
+                    this.wt.start();//Avvio Thread Watch File in Tmp
+                    this.wt.initValues();
+                }
+                case "aggiorna_tiri_annullati" -> {
+                    this.tiriAnnullati = Integer.parseInt(LeggiFile("tiri_annullati"));
+                    this.mf.setjLabelAnnullati("" + this.tiriAnnullati);
+                }
+                case "aggiorna_nome_device" -> {
+                    this.NomeDevice = LeggiFile(this.f_nome_device);
+                    this.mf.setNomeDevice(this.NomeDevice);
+                }
+                case "tiri" -> {
+                    String Tiri = LeggiFile("tiri");
+                    this.mf.setJLabel_B_C(Tiri);
+                }
+                case "tiri_ok" -> {
+                    String Tiri = LeggiFile(this.f_tiri_ok);
+                    this.mf.set_nr_tiri_fatti(Integer.valueOf(Tiri));
+                }
+                case "gestione_errore" -> {
+                    String strErrore = LeggiFile("errore");
+                    switch (strErrore) {
+                        case "0" ->
+                            this.mf.reset_errore_tiro();
+                        case "1" ->
+                            this.mf.set_errore_tiro();
+                    }
 
-      }
-    } catch (Exception ex) {
-      Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
-      throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+                }
+                case "risposta_attesa_tiro_errato" -> {
+                    risposta_attesa_tiro_errato();
+                }
+                case "aggiorna_tiri_errati" -> {
+                    this.tiriErrati = Integer.parseInt(LeggiFile(this.f_tiri_errati));
+                    this.mf.setjLabelAnnullati("" + this.tiriErrati);
+                }
+
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
+            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        }
+        return "ok";
     }
-    return "ok";
-  }
 
-  public void set_operation(String operation) {
-    this.operation = operation;
-  }
+    public void set_operation(String operation) {
+        this.operation = operation;
+    }
+
+    void risposta_attesa_tiro_errato() {
+        switch (LeggiFile(f_risposta_tiro_errato)) {
+            case "1": //Continua non devo contare il tiro come ok
+                this.mf.reset_errore_tiro();
+                break;
+            case "4": //Annulla
+                this.mf.setAlertDialogStop("Annullare il Tiro ?");
+                break;
+            case "2": //OK
+            case "3": // Estendi
+                this.mf.reset_errore_tiro();
+                int t = Integer.parseInt(this.mf.getjLabelValidi());
+                t++;
+                this.mf.setjLabelValidi("" + t);
+                break;
+        }
+        this.mf.reset_errore_tiro();
+    }
+
+    /**
+     * LeggiFile Metodo utilizzato da più metodi per lettura del file
+     *
+     * @param NomeFile - Nome del file da leggere
+     * @return String - riga letta
+     */
+    private String LeggiFile(String NomeFile) {
+        String contenutoFile = "";
+        try {
+            File myObj = new File(this.PathTmp + NomeFile);
+            Scanner myReader = new Scanner(myObj);
+            while (myReader.hasNextLine()) {
+                contenutoFile += myReader.nextLine();
+            }
+            myReader.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("An error occurred.");
+            return "Errore lettura file";
+        }
+        return contenutoFile;
+    }//End LeggiFileLavoriDescrizione
 }

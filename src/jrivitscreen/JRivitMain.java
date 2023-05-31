@@ -22,17 +22,15 @@
 package jrivitscreen;
 
 import java.awt.Color;
+import java.awt.event.ItemEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 
 /**
  *
@@ -51,31 +49,26 @@ public class JRivitMain extends javax.swing.JFrame {
     private ImageIcon Img_Annulla;
     private ImageIcon Img_Lan;
     private ImageIcon Img_WiFi;
-    private String fileNameWarning;
     private ImageIcon Img_Freccia_sx;
     private ImageIcon Img_Freccia_dx;
     private ImageIcon Img_Cancel;
-    private String fileNameInfo;
-    private String fileNameSetupLan;
-    private String fileNameSetupWiFi;
-    private String fileNameLavori;
-    private String AllertDialogAnnulla;
-    private String AllertDialogStop;
+    private String AlertDialogAnnulla;
+    private String AlertDialogStop;
     private String fileNomeDevice;
-    private String fileNameLavoriDescrizione;
     private String Lavorodescrizione;
     private ImageIcon Img_Info;
     private int nr_lotti_da_fare;
     private int nr_tiri_da_fare;
     private int nr_lotti_fatti;
     private int nr_tiri_fatti;
-    private final String PathTmp = "/tmp/CT/";
-    private final String LavoroScelto = "/tmp/lavoro_scelto.txt";
-    private final String Sessione = "sessione";//Dove è scritto il nome del Lavoro
-    private final String TiriOk = "tiri_ok";
-    private final String Errati = "tiri_errati";
-    private final String Tiri = "tiri";
-    private final String Annullati = "tiri_annullati";
+    private Float sogliaMin = 3.0f;
+    private Float sogliaMax = 5.0f;
+    private Float pressioneIn;
+    private int nr_tiri;
+    private String sessione;
+    private int DialogQ = 100;
+    static final int Continua = 1, Accetta = 2, Estende = 3, Annulla = 4;
+    private int Stop = 0, Pausa = -1, DialogA = 200, Yes = 1000, No = 2000;
 
 //Dopo una sospensione
     /**
@@ -96,14 +89,8 @@ public class JRivitMain extends javax.swing.JFrame {
         initComponents();
 
         this.FocusPanelName = "main";
-        this.fileNameWarning = "warning.txt";
-        this.fileNameSetupLan = "setup_lan.txt";
-        this.fileNameSetupWiFi = "setup_wifi";
-        this.fileNameInfo = "info.txt";
-        this.fileNameLavori = "lavori.txt";
-        this.fileNameLavoriDescrizione = "lavori_descrizione.txt";
         this.fileNomeDevice = "nome_device.txt";
-        this.AllertDialogStop = "Annullare Tiro ?";
+        this.AlertDialogStop = "Annullare Tiro ?";
         Img_Exit = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/exit.png"));
         Img_Ok = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/ok.png"));
         Img_Nulla = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/nulla.png"));
@@ -266,7 +253,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelNomeLavoro.setBounds(20, 40, 210, 30);
 
         jProgressBar.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        jProgressBar.setOpaque(true);
+        jProgressBar.setStringPainted(true);
         jPanelStarted.add(jProgressBar);
         jProgressBar.setBounds(0, 180, 250, 40);
 
@@ -368,22 +355,13 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelStart.setMaximumSize(new java.awt.Dimension(252, 237));
         jPanelStart.setMinimumSize(new java.awt.Dimension(245, 234));
         jPanelStart.setLayout(null);
-
-        listLavori.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                listLavoriItemStateChanged(evt);
-            }
-        });
-        listLavori.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                listLavoriActionPerformed(evt);
-            }
-        });
         jPanelStart.add(listLavori);
         listLavori.setBounds(10, 10, 220, 120);
 
+        textAreaDescrizioneLavoro.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
         textAreaDescrizioneLavoro.setMaximumSize(new java.awt.Dimension(220, 75));
         textAreaDescrizioneLavoro.setMinimumSize(new java.awt.Dimension(220, 75));
+        textAreaDescrizioneLavoro.setRows(2);
         jPanelStart.add(textAreaDescrizioneLavoro);
         textAreaDescrizioneLavoro.setBounds(10, 140, 220, 75);
 
@@ -462,13 +440,13 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabel_B_L.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel_B_L.setForeground(java.awt.Color.green);
         jLabel_B_L.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel_B_L.setText("ora");
+        jLabel_B_L.setText("00:00");
         jLabel_B_L.setOpaque(true);
 
         jLabel_B_C.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel_B_C.setForeground(java.awt.Color.green);
         jLabel_B_C.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel_B_C.setText("message");
+        jLabel_B_C.setText("tot. tiri");
 
         jLabel_B_R.setBackground(java.awt.Color.lightGray);
         jLabel_B_R.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -477,7 +455,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabel_B_R.setOpaque(true);
 
         jLabel_msg.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel_msg.setForeground(java.awt.Color.red);
+        jLabel_msg.setForeground(javax.swing.UIManager.getDefaults().getColor("Actions.Green"));
         jLabel_msg.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel_msg.setText("message");
 
@@ -512,7 +490,7 @@ public class JRivitMain extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 /**
-     * Evento click Pulsante 1 dx
+     * Evento click Pulsante 1 in alto a dx
      *
      * @param evt
      */
@@ -524,9 +502,10 @@ public class JRivitMain extends javax.swing.JFrame {
                 PanelStart();
             case "start" ->
                 PulsanteSu();
-            case "started" -> {
-                this.AllertDialogStop = "Annullare il Lavoro ?";
-                this.jLabelDialog.setText(AllertDialogStop);
+            case "started" -> {//Stop
+                DialogQ = Stop;
+                this.AlertDialogStop = "Annullare il Lavoro ?";
+                this.jLabelDialog.setText(AlertDialogStop);
                 PanelDialog();
             }
             case "setup" ->
@@ -548,19 +527,34 @@ public class JRivitMain extends javax.swing.JFrame {
 
     }//GEN-LAST:event_jButtonPR1ActionPerformed
     /**
-     * Evento click Pulsante 1 sx
+     * Evento click Pulsante 1 primo in alto sx
      *
      * @param evt
      */
+
+    public void setAlertDialogAnnulla(String AlertDialogAnnulla) {
+        this.AlertDialogAnnulla = AlertDialogAnnulla;
+    }
+
+    public void setAlertDialogStop(String AlertDialogStop) {
+        this.AlertDialogStop = AlertDialogStop;
+        this.jLabelDialog.setText(AlertDialogStop);
+        PanelDialog();
+    }
+
     private void jButtonPL1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPL1ActionPerformed
-        // Pulsante L1
         switch (this.FocusPanelName) {
             case "main" ->
                 PanelWarning();
             case "start" ->
-                PanelMain();
-            case "started" ->
-                PanelStart();
+                PanelMain();//Exit verso main
+            case "started" ->//Continua
+            {
+                DialogQ = Continua;
+                this.AlertDialogStop = "Continua ?";
+                this.jLabelDialog.setText(AlertDialogStop);
+                PanelDialog();
+            }
             case "setup" ->
                 PanelMain();
             case "warning" ->
@@ -568,32 +562,38 @@ public class JRivitMain extends javax.swing.JFrame {
             case "info" ->
                 PanelMain();
             case "setup lan" ->
-                PulsanteSu();
+                PanelSetup();
             case "setup wifi" ->
-                PulsanteSu();
+                PanelSetup();
             case "dialog" ->
                 PanelStart();
         }
     }//GEN-LAST:event_jButtonPL1ActionPerformed
     /**
-     * Evento click Pulsante 2 sx
+     * Evento click Pulsante 2 centrale a sx
      *
      * @param evt
      */
     private void jButtonPL2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPL2ActionPerformed
-        //Pulsante L2
+        //Pulsante L2 Centrale a sx
         switch (this.FocusPanelName) {
             case "main" ->
                 PanelInfo();
-//        case "start" ->
-            case "started" ->
-                PanelStart();
-            case "setup" ->
-                PanelSetupLan();
-            case "warning" ->
-                PulsanteSu();
-            case "info" ->
-                PulsanteSu();
+//            case "start" ->
+            //per ora nulla
+            case "started" ->//Accetta il tiro
+            {
+                DialogQ = Accetta;
+                this.AlertDialogStop = "Accettare ?";
+                this.jLabelDialog.setText(AlertDialogStop);
+                PanelDialog();
+            }
+//            case "setup" ->
+//                PanelSetupLan();
+//            case "warning" ->
+//                PulsanteSu();
+//            case "info" ->
+//                PulsanteSu();
             case "setup lan" ->
                 PulsanteSu();
             case "setup wifi" ->
@@ -603,7 +603,7 @@ public class JRivitMain extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButtonPL2ActionPerformed
     /**
-     * Evento click Pulsante 3 sx
+     * Evento click Pulsante 3 in basso a sx
      *
      * @param evt
      */
@@ -612,41 +612,47 @@ public class JRivitMain extends javax.swing.JFrame {
         switch (this.FocusPanelName) {
             case "main" ->
                 PanelSetup();
-//      case "start" 
-            case "started" ->
-                PanelStart();
-            case "setup" ->
-                PanelSetupLan();
+//          case "start" 
+            //Per ora nulla
+            case "started" ->//Estende
+            {
+                DialogQ = Estende;
+                this.AlertDialogStop = "Estendere ?";
+                this.jLabelDialog.setText(AlertDialogStop);
+                PanelDialog();
+            }
             case "warning" ->
                 PulsanteSu();
-            case "info" ->
-                PulsanteSu();
+//            case "info" ->
+//                PulsanteSu();
             case "setup lan" ->
                 PulsanteSu();
-            case "setup wifi" ->
-                PulsanteSu();
+//            case "setup wifi" ->
+//                PulsanteSu();
             case "dialog" ->
                 PanelStart();
         }
     }//GEN-LAST:event_jButtonPL3ActionPerformed
     /**
-     * Evento click Pulsante 2 dx
+     * Evento click Pulsante 2 centrale dx
      *
      * @param evt
      */
     private void jButtonPR2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPR2ActionPerformed
         //Pulsante R2
         switch (this.FocusPanelName) {
-            case "main" ->
-                PanelStart();
+//            case "main" ->
+//                PanelStart();
             case "start" ->
                 PulsanteGiu();
-            case "started" -> {
-                this.AllertDialogStop = "Lavoro in Pausa ?";
+            case "started" -> {//Pausa del lavoro ?
+                DialogQ = Pausa;
+                this.AlertDialogStop = "pausa?";
+                this.jLabelDialog.setText(AlertDialogStop);
                 PanelDialog();
             }
             case "setup" ->
-                PanelSetupLan();
+                PanelSetupWifi();
             case "warning" ->
                 PulsanteGiu();
             case "info" ->
@@ -660,30 +666,30 @@ public class JRivitMain extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButtonPR2ActionPerformed
     /**
-     * Evento click Pulsante 3 dx
+     * Evento click Pulsante 3 in basso a dx
      *
      * @param evt
      */
     private void jButtonPR3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPR3ActionPerformed
         // Pulsante R3
         switch (this.FocusPanelName) {
-            case "main" ->
-                PanelStart();
+//            case "main" ->
+//                per ora nulla;
             case "start" -> {
-
                 PanelStarted();
             }
-            case "started" -> {
-                this.AllertDialogStop = "Annullare il Tiro ?";
-                this.jLabelDialog.setText(AllertDialogAnnulla);
+            case "started" -> {//Annullare il tiro
+                DialogQ = Annulla;
+                this.AlertDialogStop = "Annullare ?";
+                this.jLabelDialog.setText(AlertDialogAnnulla);
                 PanelDialog();
             }
-            case "setup" ->
-                PanelSetupLan();
-            case "warning" ->
-                PulsanteSu();
-            case "info" ->
-                PulsanteSu();
+//            case "setup" ->
+//                PanelSetupLan();
+//            case "warning" ->
+//                PulsanteSu();
+//            case "info" ->
+//                PulsanteSu();
             case "setup lan" ->
                 PanelSetup();
             case "setup wifi" ->
@@ -692,12 +698,6 @@ public class JRivitMain extends javax.swing.JFrame {
                 PanelStart();
         }
     }//GEN-LAST:event_jButtonPR3ActionPerformed
-    private void listLavoriItemStateChanged(java.awt.event.ItemEvent evt) {
-
-    }
-    private void listLavoriActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listLavoriActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_listLavoriActionPerformed
     /**
      * PanelMain Set Panel visibile for PanelMain
      */
@@ -756,7 +756,7 @@ public class JRivitMain extends javax.swing.JFrame {
      * file aria
      *
      */
-    private void set_errore_tiro() {
+    public void set_errore_tiro() {
         this.jButtonPL1.setEnabled(true);
         this.jButtonPL2.setEnabled(true);
         this.jButtonPL3.setEnabled(true);
@@ -854,8 +854,6 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     private void PanelStart() {
         int selezionato = 0, i = 0;
-        this.LeggiLavori();
-        this.LeggiFileLavoriDescrizione();
 
         this.FocusPanelName = "start";
         this.jPanelMain.setVisible(false);
@@ -870,32 +868,26 @@ public class JRivitMain extends javax.swing.JFrame {
         this.jPanelDialog.setVisible(false);
         this.change_buttons(this.Img_Exit, this.Img_Nulla, this.Img_Nulla,
                 this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Ok);
-        //Se il file sessione non contiene 0
+        // Se sessione non contiene 0
         // vuole dire che da una pausa si vuole riprendere un lavoro
-        String Sessione = "";
-        Sessione = LeggiFile(this.Sessione);
-        switch (Sessione) {
-            case "0":
+        switch (sessione) {
+            case "0" ->
                 selezionato = this.listLavori.getSelectedIndex();
-                break;
-            default:
+            default -> {
                 String[] items = this.listLavori.getSelectedItems();
                 for (i = 0; i < items.length; i++) {
-                    if (items[i].startsWith(Sessione+",")) {
+                    if (items[i].startsWith(sessione + ",")) {
                         break;
                     }
                 }
                 selezionato = i;
                 //Ripristina i valori dei tiri
-
-                break;
-
+            }
         }
         if (selezionato == -1) {
             selezionato = 1;
         }
         this.listLavori.select(selezionato);
-        this.textAreaDescrizioneLavoro.setText(this.Lavorodescrizione);
     }
 
     /**
@@ -920,7 +912,8 @@ public class JRivitMain extends javax.swing.JFrame {
         this.change_buttons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
                 this.Img_Stop, this.Img_Pause, this.Img_Nulla);
         String lavoro = this.listLavori.getSelectedItem();
-        this.jLabelNomeDevice.setText(this.getNomeDelDevice());
+        this.setNomeDelDevice();
+
         this.jLabelNomeLavoro.setText(lavoro);
         this.jLabel_B_R.setText("Aria ON");
         this.jLabel_B_R.setBackground(Color.GREEN);
@@ -929,18 +922,40 @@ public class JRivitMain extends javax.swing.JFrame {
         String[] det_nr_tiri = det_lavoro[2].split("=");
         nr_lotti_da_fare = Integer.parseInt(det_nr_lotti[1]);
         nr_tiri_da_fare = Integer.parseInt(det_nr_tiri[1]);
-        this.update_tiri_errati(this.Errati);
-        this.update_tiri_ok(this.TiriOk);
-        this.update_tiri_annullati(this.Annullati);
-        this.update_tiri(Tiri);
+        this.AggiornaTiriErrati();
+        this.AggiornaTiriAnnullati();
+        this.AggiornaTiri();
         this.jLabelContatore.setText(nr_lotti_fatti + "/" + nr_lotti_da_fare
                 + " - " + nr_tiri_fatti + "/" + nr_tiri_da_fare);
-        this.jProgressBar.setMaximum(Integer.valueOf(det_nr_tiri[1]));
+        this.jProgressBar.setMaximum(Integer.parseInt(det_nr_tiri[1]));
+//        String lavoroScelto = lavoro.substring(0,lavoro.indexOf(',') WIDTH);
+        this.repaint();
+    }
+
+    public void setjLabelAnnullati(String ta) {
+        this.jLabelAnnullati.setText(ta);
+        this.repaint();
+    }
+
+    public void setjLabelContatore(String c) {
+        this.jLabelContatore.setText(c);
+        this.repaint();
+    }
+
+    public void setjLabelErrati(String Errati) {
+        this.jLabelErrati.setText(Errati);
+        this.repaint();
+    }
+
+    public void setjLabelValidi(String Validi) {
+        this.jLabelValidi.setText(Validi);
+        this.repaint();
     }
 
     /**
      * Pannello che mostra il contenuto del file /tmp/warning.txt
      */
+    
     private void PanelWarning() {
         this.FocusPanelName = "warning";
         this.jPanelMain.setVisible(false);
@@ -955,7 +970,6 @@ public class JRivitMain extends javax.swing.JFrame {
         this.jPanelDialog.setVisible(false);
         this.change_buttons(this.Img_Exit, this.Img_Freccia_sx, this.Img_Freccia_dx,
                 this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Nulla);
-        LeggiWarning();
     }
 
     /**
@@ -972,6 +986,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 int selezionato = this.listLavori.getSelectedIndex();
                 if (selezionato == -1) {
                     selezionato = 1;
+                    this.listLavori.select(selezionato);
                 }
                 this.textAreaDescrizioneLavoro.setText(this.Lavorodescrizione);
             }
@@ -1001,8 +1016,6 @@ public class JRivitMain extends javax.swing.JFrame {
      * Simula la pressione del pulsante per scorrere la lista in giù
      */
     private void PulsanteGiu() {
-        int nrItem = 0;
-        int nrCurItem = 0;
         java.awt.List lista = null;
         switch (this.FocusPanelName) {
             case "start" -> {
@@ -1010,6 +1023,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 int selezionato = this.listLavori.getSelectedIndex();
                 if (selezionato == -1) {
                     selezionato = 1;
+                    this.listLavori.select(selezionato);
                 }
                 this.textAreaDescrizioneLavoro.setText(this.Lavorodescrizione);
             }
@@ -1023,8 +1037,8 @@ public class JRivitMain extends javax.swing.JFrame {
                 lista = this.listWarning;
         }//EndSwitch
         if (lista != null) {
-            nrItem = lista.getItemCount();
-            nrCurItem = lista.getSelectedIndex();
+            int nrItem = lista.getItemCount();
+            int nrCurItem = lista.getSelectedIndex();
             if (nrCurItem < nrItem) {
                 nrCurItem++;
             } else {
@@ -1052,7 +1066,6 @@ public class JRivitMain extends javax.swing.JFrame {
         this.jPanelDialog.setVisible(false);
         this.change_buttons(this.Img_Exit, this.Img_Nulla, this.Img_Nulla,
                 this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Ok);
-        LeggiSetupLan();
     }
 
     /**
@@ -1072,7 +1085,6 @@ public class JRivitMain extends javax.swing.JFrame {
         this.jPanelDialog.setVisible(false);
         this.change_buttons(this.Img_Exit, this.Img_Nulla, this.Img_Nulla,
                 this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Ok);
-        LeggiSetupWiFi();
     }
 
     /**
@@ -1092,7 +1104,6 @@ public class JRivitMain extends javax.swing.JFrame {
         this.jPanelDialog.setVisible(false);
         this.change_buttons(this.Img_Exit, this.Img_Freccia_sx, this.Img_Freccia_dx,
                 this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Nulla);
-        LeggiInfo();
     }
 
     /**
@@ -1118,126 +1129,84 @@ public class JRivitMain extends javax.swing.JFrame {
     }
 
     /**
-     * LeggiFileList carica eventuali Warning dal file /tmp/warning.txt
-     */
-    private void LeggiFileList(String NomeFile, java.awt.List ls) {
-        ls.removeAll();
-        List<String> fileLetto = LeggiFileElenco(NomeFile);
-        for (String riga : fileLetto) {
-            ls.add(riga);
-        }
-        ls.select(0);
-
-    }//End LeggiFileList
-
-    /**
-     * LeggiFileList carica eventuali Warning dal file /tmp/warning.txt
-     */
-    private void LeggiFileLavoriDescrizione() {
-        this.Lavorodescrizione = LeggiFile(this.fileNameLavoriDescrizione);
-    }//End LeggiFileLavoriDescrizione
-
-    /**
-     * LeggiFile Metodo utilizzato da più metodi per lettura del file
+     * AggiornaWarning carica eventuali Warning dal file /tmp/warning.txt
      *
-     * @param NomeFile - Nome del file da leggere
-     * @return String - riga letta
+     * @param lista
      */
-    public String LeggiFile(String NomeFile) {
-        String contenutoFile = "";
-        try {
-            File myObj = new File(this.PathTmp + NomeFile);
-            Scanner myReader = new Scanner(myObj);
-            while (myReader.hasNextLine()) {
-                contenutoFile += myReader.nextLine();
-            }
-            myReader.close();
-        } catch (FileNotFoundException e) {
-            System.out.println("An error occurred.");
-            return "Errore lettura file";
-        }
-        return contenutoFile;
-    }//End LeggiFileLavoriDescrizione
+    public void AggiornaWarning(List<String> lista) {
+        RefreshList(listWarning, lista);
+    }//End AggiornaInfo
 
     /**
-     * LeggiFileElenco, legge il file e aggiorna una List awt
+     * AggiornaInfo carica eventuali Informazioni dal file /tmp/info.txt
      *
-     * @param NomeFile - Nome file da leggere come elenco
-     * @return List<String>
+     * @param lista
      */
-    public List<String> LeggiFileElenco(String NomeFile) {
-        List<String> ListaRighe = new ArrayList<String>();
-        try {
-            File myObj = new File(this.PathTmp + NomeFile);
-            Scanner myReader = new Scanner(myObj);
-            while (myReader.hasNextLine()) {
-                ListaRighe.add(myReader.nextLine());
-            }
-            myReader.close();
-        } catch (FileNotFoundException e) {
-            System.out.println("An error occurred.");
-            return ListaRighe;
+    public void AggiornaInfo(List<String> lista) {
+        RefreshList(listInfo, lista);
+    }//End AggiornaInfo
+
+    /**
+     * AggiornaSetupLan carica eventuali Informazioni dal file
+     * /tmp/setup_lan.txt
+     *
+     * @param lista
+     */
+    public void AggiornaSetupLan(List<String> lista) {
+        RefreshList(listSetupLan, lista);
+    }//End AggiornaSetupLan
+
+    /**
+     * AggiornaSetupWiFi carica eventuali Informazioni dal file
+     * /tmp/setup_wifi.txt
+     *
+     * @param lista
+     */
+    public void AggiornaSetupWiFi(List<String> lista) {
+        RefreshList(listSetupWiFi, lista);
+    }//End AggiornaSetupWiFi
+
+    /**
+     * AggiornaLavori
+     *
+     * @param lista
+     */
+    public void AggiornaLavori(List<String> lista) {
+        RefreshList(listLavori, lista);
+    }//End AggiornaSetupWiFi
+
+    /**
+     * AggiornaLavoriDescrizione carica eventuali Informazioni dal file
+     * /tmp/setup_wifi.txt
+     *
+     * @param descrizione
+     */
+    public void AggiornaLavoriDescrizione(String descrizione) {
+        this.textAreaDescrizioneLavoro.setText(descrizione);
+        this.repaint();
+    }//End AggiornaSetupWiFi
+
+    /**
+     * AggiornaSessione carica eventuali Informazioni dal file
+     * /tmp/setup_wifi.txt
+     *
+     * @param sessione
+     */
+    public void AggiornaSessione(String sessione) {
+        this.sessione = sessione;
+    }//End AggiornaSetupWiFi
+
+    /**
+     * RefreshList riempie un generico elenco
+     */
+    private void RefreshList(java.awt.List elenco, List<String> righe) {
+        elenco.removeAll();
+        for (String riga : righe) {
+            elenco.add(riga);
         }
-        return ListaRighe;
+        elenco.select(0);
+        this.repaint();
     }
-
-    /**
-     * ScriviFile metodo generico per scrivere una riga in un file
-     *
-     * @param NomeFile
-     * @param CosaScrivere String testo da scrivere nel file
-     */
-    public void ScriviFile(String NomeFile, String CosaScrivere) {
-        try {
-            FileWriter fw = new FileWriter(NomeFile);
-            PrintWriter pw = new PrintWriter(fw);
-            pw.print(CosaScrivere);
-            pw.flush();
-            pw.close();
-        } catch (IOException ex) {
-            Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    /**
-     * LeggiWarning carica eventuali Warning dal file /tmp/warning.txt
-     */
-    public void LeggiWarning() {
-        LeggiFileList(this.fileNameWarning, this.listWarning);
-        this.repaint();
-    }//End LeggiInfo
-
-    /**
-     * LeggiInfo carica eventuali Informazioni dal file /tmp/info.txt
-     */
-    public void LeggiInfo() {
-        LeggiFileList(this.fileNameInfo, this.listInfo);
-        this.repaint();
-    }//End LeggiInfo
-
-    /**
-     * LeggiSetuplan carica eventuali Informazioni dal file /tmp/setup_lan.txt
-     */
-    public void LeggiSetupLan() {
-        LeggiFileList(this.fileNameSetupLan, this.listSetupLan);
-        this.repaint();
-    }//End LeggiSetupLan
-
-    /**
-     * LeggiSetupWiFi carica eventuali Informazioni dal file /tmp/setup_wifi.txt
-     */
-    public void LeggiSetupWiFi() {
-        LeggiFileList(this.fileNameSetupWiFi, this.listSetupWiFi);
-        this.repaint();
-    }//End LeggiSetupWiFi
-
-    /**
-     * LeggiLavori carica eventuali Informazioni dal file /tmp/setup_wifi.txt
-     */
-    public void LeggiLavori() {
-        LeggiFileList(this.fileNameLavori, this.listLavori);
-        this.repaint();
-    }//End LeggiSetupWiFi
 
     /**
      * Metodo per prendere l'imput dai pulsanti fisici Non Serve
@@ -1266,8 +1235,13 @@ public class JRivitMain extends javax.swing.JFrame {
      *
      * @return Nome del device
      */
-    private String getNomeDelDevice() {
-        return LeggiFile(this.fileNomeDevice);
+    private void setNomeDelDevice() {
+        this.w_mf.set_operation(this.fileNomeDevice);
+        try {
+            this.w_mf.doInBackground();
+        } catch (Exception ex) {
+            Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -1362,12 +1336,11 @@ public class JRivitMain extends javax.swing.JFrame {
     }
 
     void errore() {
-        String strErrore = LeggiFile("errore");
-        switch (strErrore) {
-            case "0" ->
-                this.reset_errore_tiro();
-            case "1" ->
-                this.set_errore_tiro();
+        this.w_mf.set_operation("gestione_errore");
+        try {
+            this.w_mf.doInBackground();
+        } catch (Exception ex) {
+            Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -1375,7 +1348,7 @@ public class JRivitMain extends javax.swing.JFrame {
      * reset_errore_tiro ripristina i colori di default Imposta ARIA ON ?? DA
      * RIFARE
      */
-    private void reset_errore_tiro() {
+    public void reset_errore_tiro() {
         this.jButtonPL1.setEnabled(false);
         this.jButtonPL2.setEnabled(false);
         this.jButtonPL3.setEnabled(false);
@@ -1387,6 +1360,7 @@ public class JRivitMain extends javax.swing.JFrame {
         this.change_buttons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
                 this.Img_Stop, this.Img_Pause, this.Img_Nulla);
 
+        this.repaint();
     }
 
     /**
@@ -1395,29 +1369,23 @@ public class JRivitMain extends javax.swing.JFrame {
      * @param NomeFile String - nome del file dove Control Scrive il nr di Tiri
      * fatti nella sessione corrente
      */
-    void tiri(String NomeFile) {
-        this.jLabel_B_C.setText(LeggiFile(NomeFile));
+    void tiri() {
+        this.w_mf.set_operation("tiri");
+        try {
+            this.w_mf.doInBackground();
+        } catch (Exception ex) {
+            Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
+        }
+//        this.jLabel_B_C.setText(LeggiFile(NomeFile));
     }
 
-    void risposta_attesa_tiro_errato(String RispostaTiroErrato) {
-        switch (LeggiFile(RispostaTiroErrato)) {
-            case "1": //Continua non devo contare il tiro come ok
-                this.reset_errore_tiro();
-                break;
-            case "4": //Annulla
-                this.AllertDialogStop = "Annullare il Tiro ?";
-                this.jLabelDialog.setText(AllertDialogAnnulla);
-                PanelDialog();
-                break;
-            case "2": //OK
-            case "3": // Estendi
-                this.reset_errore_tiro();
-                int t = Integer.parseInt(this.jLabel_Validi.getText());
-                t++;
-                this.jLabel_Validi.setText("" + t);
-                break;
+    void risposta_attesa_tiro_errato() {
+        this.w_mf.set_operation("risposta_attesa_tiro_errato");
+        try {
+            this.w_mf.doInBackground();
+        } catch (Exception ex) {
+            Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
         }
-        this.reset_errore_tiro();
     }
 
     /**
@@ -1425,35 +1393,156 @@ public class JRivitMain extends javax.swing.JFrame {
      *
      * @param TiriOk - NomeFile tiri_ok
      */
-    void update_tiri_ok(String TiriOk) {
-        this.nr_tiri_Lotti(Integer.parseInt(LeggiFile(TiriOk)));
-        this.repaint();
+    public void update_tiri_ok() {
+        this.w_mf.set_operation("tiri_ok");
+        try {
+            this.w_mf.doInBackground();
+        } catch (Exception ex) {
+            Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
+
+    public void set_nr_tiri_fatti(int TiriOK) {
+        this.nr_tiri_fatti = TiriOK;
+        nr_tiri_Lotti(TiriOK);
+    }
+
     /**
      * Aggiorna il Label_B_C conteggio di tutti i tiri a prescindere
      *
      * @param Tiri_tutti - NomeFile tiri
      */
-    void update_tiri(String Tiri_tutti) {
-        this.jLabel_B_C.setText("tot. tiri"+LeggiFile(Tiri_tutti));
-        this.repaint();
-    }
-    /**
-     * Metodo update_tiri_errati aggiorna la Label JaLabelErrati
-     *
-     * @param Errati
-     */
-    void update_tiri_errati(String Errati) {
-        this.nr_errori(Integer.parseInt(this.LeggiFile(Errati)));
+    void AggiornaTiri() {
+        this.w_mf.set_operation("tiri");
+        try {
+            this.w_mf.doInBackground();
+        } catch (Exception ex) {
+            Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
-     * metodo update_tiri_annullati aggiorna la Label centrale alla base del
+     * Metodo AggiornaTiriErrati aggiorna la Label JaLabelErrati
+     *
+     * @param Errati
+     */
+    void AggiornaTiriErrati() {
+        this.w_mf.set_operation("aggiorna_tiri_errati");
+        try {
+            this.w_mf.doInBackground();
+        } catch (Exception ex) {
+            Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        //this.nr_errori(Integer.parseInt(this.LeggiFile(Errati)));
+    }
+
+    /**
+     * metodo AggiornaTiriAnnullati aggiorna la Label centrale alla base del
      * panel
      *
      * @param Annullati
      */
-    void update_tiri_annullati(String Annullati) {
-        this.jLabel_B_C.setText("Annullati " + Integer.parseInt(this.LeggiFile(Annullati)));
+    void AggiornaTiriAnnullati() {
+        this.w_mf.set_operation("aggiorna_tiri_annullati");
+        try {
+            this.w_mf.doInBackground();
+        } catch (Exception ex) {
+            Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        //this.jLabel_B_C.setText("Annullati " + Integer.valueOf(this.LeggiFile(Annullati)));
+        //this.repaint();
     }
+
+    void update_pressione_aria(Float PressioneAria) {
+        this.pressioneIn = PressioneAria;
+        if (pressioneIn < this.sogliaMin) {
+            this.jLabel_msg.setForeground(java.awt.Color.red);
+        } else {
+            this.jLabel_msg.setForeground(java.awt.Color.green);
+        }
+        this.jLabel_msg.setText("Pressione Aria " + PressioneAria);
+        this.repaint();
+    }
+
+    public void update_soglie_pressione_aria_in(Float SogliaMin, Float SogliaMax) {
+        this.sogliaMin = SogliaMin;
+        this.sogliaMax = SogliaMax;
+    }
+
+    /**
+     * gestioneDialogRisposte, Non USATO !
+     *
+     * 
+     */
+    private void gestioneDialogRisposte() {
+        switch (DialogQ) {
+            case 1 -> //Continua
+                DialogAContinua();
+            case 2 -> //Accetta
+                DialogAAccetta();
+            case 3 -> //Estende
+                DialogAEstende();
+            case 4 -> //Annulla
+                DialogAAnnulla();
+            case 5 -> //Pausa
+                DialogAPausa();
+            case 6 -> //Abortire il lavoro
+                DialogAAbortire();
+        }
+    }
+
+    private void DialogAContinua() {
+        this.w_mf.set_operation("aggiorna_tiri_annullati");
+        try {
+            this.w_mf.doInBackground();
+        } catch (Exception ex) {
+            Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void DialogAAccetta() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    private void DialogAEstende() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    private void DialogAAnnulla() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    private void DialogAAbortire() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+/**
+ * DialogAPausa Non Usato per ora
+ */
+    private void DialogAPausa() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+/**
+ *  setNomeDevice set Label noeme del device
+ * @param nd  Nome del device letto dal file nome_device.txt
+ */
+    public void setNomeDevice(String nd) {
+        this.jLabelNomeDevice.setText(nd);
+        this.repaint();
+    }
+/**
+ * setJLabel_B_C
+ * @param t nr totale dei tiri file tiri
+ */
+    public void setJLabel_B_C(String t) {
+        this.jLabel_B_C.setText("tot. tiri " + t);
+        this.repaint();
+    }
+ /**
+  * getjLabelValidi Get Label tiri Validi
+  * @return la stringa con ilvalore dei tiri validi
+  */
+    public String getjLabelValidi(){
+        return this.jLabelValidi.getText();
+    }
+
 }

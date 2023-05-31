@@ -196,7 +196,7 @@
                     <EtchetBorder/>
                   </Border>
                 </Property>
-                <Property name="opaque" type="boolean" value="true"/>
+                <Property name="stringPainted" type="boolean" value="true"/>
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
@@ -504,10 +504,6 @@
           </Layout>
           <SubComponents>
             <Component class="java.awt.List" name="listLavori">
-              <Events>
-                <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="listLavoriItemStateChanged"/>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="listLavoriActionPerformed"/>
-              </Events>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
                   <AbsoluteConstraints x="10" y="10" width="220" height="120"/>
@@ -516,12 +512,16 @@
             </Component>
             <Component class="java.awt.TextArea" name="textAreaDescrizioneLavoro">
               <Properties>
+                <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
+                  <Color id="Text Cursor"/>
+                </Property>
                 <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[220, 75]"/>
                 </Property>
                 <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[220, 75]"/>
                 </Property>
+                <Property name="rows" type="int" value="2"/>
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
@@ -707,7 +707,7 @@
               <Color blue="0" green="ff" id="green" palette="1" red="0" type="palette"/>
             </Property>
             <Property name="horizontalAlignment" type="int" value="0"/>
-            <Property name="text" type="java.lang.String" value="ora"/>
+            <Property name="text" type="java.lang.String" value="00:00"/>
             <Property name="opaque" type="boolean" value="true"/>
           </Properties>
         </Component>
@@ -720,7 +720,7 @@
               <Color blue="0" green="ff" id="green" palette="1" red="0" type="palette"/>
             </Property>
             <Property name="horizontalAlignment" type="int" value="0"/>
-            <Property name="text" type="java.lang.String" value="message"/>
+            <Property name="text" type="java.lang.String" value="tot. tiri"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel_B_R">
@@ -742,7 +742,7 @@
               <Font name="Segoe UI" size="14" style="1"/>
             </Property>
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="0" green="0" id="red" palette="1" red="ff" type="palette"/>
+              <Color blue="69" green="a8" id="Actions.Green" palette="3" red="59" type="palette"/>
             </Property>
             <Property name="horizontalAlignment" type="int" value="0"/>
             <Property name="text" type="java.lang.String" value="message"/>
