@@ -80,8 +80,6 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     public JRivitMain() {
         initComponents();
-        this.canvasGraph.setBackground(Color.yellow);
-        //this.d.setVisible(false);
         this.fileNomeDevice = "nome_device.txt";
         this.AlertDialogStop = "Annullare Tiro ?";
         Img_Exit = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/exit.png"));
@@ -414,6 +412,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelCanvas.setPreferredSize(new java.awt.Dimension(250, 250));
         jPanelCanvas.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        canvasGraph.setBackground(new java.awt.Color(255, 153, 153));
         canvasGraph.setMaximumSize(new java.awt.Dimension(250, 250));
         canvasGraph.setMinimumSize(new java.awt.Dimension(250, 250));
         canvasGraph.setPreferredSize(new java.awt.Dimension(250, 250));
@@ -1332,6 +1331,7 @@ public class JRivitMain extends javax.swing.JFrame {
         this.jButtonPL2.setEnabled(false);
         this.jButtonPL3.setEnabled(false);
         this.jButtonPR3.setEnabled(false);
+        this.jLayeredPaneCenter.moveToFront(this.jPanelStarted);
         this.repaint();
     }
 
@@ -1542,11 +1542,10 @@ public class JRivitMain extends javax.swing.JFrame {
             int[] xpoints = new int[nPoints];
             for (int i = 0; i < nPoints; i++) {
                 xpoints[i] = i * 2;
-                ypoints[i] = y - Integer.parseInt(ychar[i]) / 5;
+                ypoints[i] = y - Integer.parseInt(ychar[i]) / 6;
             }
             gr.setStroke(new BasicStroke(3));
-            gr.setColor(Color.BLACK);
-            //        g2.setColor(Color.GREEN);
+            gr.setColor(Color.GREEN);
             gr.drawPolyline(xpoints, ypoints, nPoints);
 //            this.canvasGraph.repaint();
             this.repaint();
