@@ -64,6 +64,8 @@ public class ThreadWorker extends Thread {
     private final String f_lavori = "lavori.txt";
     private final String f_lavori_descrizione = "lavori_descrizione.txt";
     private final String f_aria = "aria";
+    private final String f_curva_pronta = "curva_pronta";
+    private final String f_curva = "curva";
     private final String f_errore = "errore";
     private final String f_risposta_tiro_errato = "risposta_tiro_errato";
     private final String f_sessione = "sessione";
@@ -163,8 +165,12 @@ public class ThreadWorker extends Thread {
                             read_setup_wifi();
                         case "lavori.txt" ->
                             read_lavori();
+                        case "lavori_descrizione.txt" ->
+                            read_lavori_descrizione();
                         case "aria" ->
                             mostra_stato_aria();
+//                        case "curva_pronta" ->
+//                            mostra_curva();
                         case "risposta_tiro_errato" ->
                             risposta_tiro_errato();
                     }
@@ -301,12 +307,16 @@ public class ThreadWorker extends Thread {
     }
 
     private void errore() {
-        bash_cmd_aria[4] = this.close;
-        bash_cmd_verde[4] = this.close;
-        bash_cmd_rosso[4] = this.open;
-        run_system_bash(this.bash_cmd_rosso);
-        run_system_bash(this.bash_cmd_verde);
-        run_system_bash(this.bash_cmd_aria);
+        String codiceErrore = LeggiFile(this.f_errore);
+        if ("1".equals(codiceErrore)) {
+            bash_cmd_aria[4] = this.close;
+            bash_cmd_verde[4] = this.close;
+            bash_cmd_rosso[4] = this.open;
+            run_system_bash(this.bash_cmd_rosso);
+            run_system_bash(this.bash_cmd_verde);
+            run_system_bash(this.bash_cmd_aria);
+            mostra_curva();
+        }
         this.mf.errore();
     }
 
@@ -387,7 +397,7 @@ public class ThreadWorker extends Thread {
         this.read_setup_lan();
         this.read_setup_wifi();
         this.read_lavori();
-        this.LeggiFileLavoriDescrizione();
+        this.read_lavori_descrizione();
         this.LeggiAriaInMinMax();
         this.LeggiSessione();
         this.mostra_stato_aria();
@@ -422,7 +432,7 @@ public class ThreadWorker extends Thread {
      * LeggiFileLavoriDescrizione carica eventuali ThreadWorker dal file
      * /tmp/warning.txt
      */
-    private void LeggiFileLavoriDescrizione() {
+    private void read_lavori_descrizione() {
         this.mf.AggiornaLavoriDescrizione(LeggiFile(this.f_lavori_descrizione));
     }//End LeggiFileLavoriDescrizione
 
@@ -439,7 +449,7 @@ public class ThreadWorker extends Thread {
      * @param NomeFile
      * @param CosaScrivere String testo da scrivere nel file
      */
-    private void ScriviFile(String NomeFile, String CosaScrivere) {
+    public void ScriviFile(String NomeFile, String CosaScrivere) {
         try {
             FileWriter fw = new FileWriter(this.pathWatch + NomeFile);
             PrintWriter pw = new PrintWriter(fw);
@@ -456,6 +466,10 @@ public class ThreadWorker extends Thread {
         min = Float.parseFloat(LeggiFile(f_soglia_pressione_aria_in_min));
         max = Float.parseFloat(LeggiFile(f_soglia_pressione_aria_in_max));
         this.mf.update_soglie_pressione_aria_in(min, max);
+    }
+
+    private void mostra_curva() {
+        this.mf.setCurva(LeggiFile(this.f_curva));
     }
 
 }

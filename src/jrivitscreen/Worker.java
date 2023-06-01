@@ -118,7 +118,7 @@ public class Worker extends SwingWorker<String, Object> {
                 }
                 case "aggiorna_tiri_errati" -> {
                     this.tiriErrati = Integer.parseInt(LeggiFile(this.f_tiri_errati));
-                    this.mf.setjLabelAnnullati("" + this.tiriErrati);
+                    this.mf.setjLabelErrati("" + this.tiriErrati);
                 }
 
             }
@@ -134,22 +134,26 @@ public class Worker extends SwingWorker<String, Object> {
     }
 
     void risposta_attesa_tiro_errato() {
+        // Fabio: la gestione del tiro errato deve essere fatta 
+        // da JControl. Quando i file saranno aggiornati da JControl
+        // stesso l'interfaccia si adeguerà automaticamente
         switch (LeggiFile(f_risposta_tiro_errato)) {
-            case "1": //Continua non devo contare il tiro come ok
+            case "1" -> //Continua non devo contare il tiro come ok
                 this.mf.reset_errore_tiro();
-                break;
-            case "4": //Annulla
+            case "4" -> //Annulla
                 this.mf.setAlertDialogStop("Annullare il Tiro ?");
-                break;
-            case "2": //OK
-            case "3": // Estendi
+            case "2" -> // Estendi
+            {
+                // Estendi
                 this.mf.reset_errore_tiro();
                 int t = Integer.parseInt(this.mf.getjLabelValidi());
                 t++;
                 this.mf.setjLabelValidi("" + t);
-                break;
+            }
+            case "3" -> // Accetta
+            {
+            }
         }
-        this.mf.reset_errore_tiro();
     }
 
     /**
@@ -162,11 +166,11 @@ public class Worker extends SwingWorker<String, Object> {
         String contenutoFile = "";
         try {
             File myObj = new File(this.PathTmp + NomeFile);
-            Scanner myReader = new Scanner(myObj);
-            while (myReader.hasNextLine()) {
-                contenutoFile += myReader.nextLine();
+            try (Scanner myReader = new Scanner(myObj)) {
+                while (myReader.hasNextLine()) {
+                    contenutoFile += myReader.nextLine();
+                }
             }
-            myReader.close();
         } catch (FileNotFoundException e) {
             System.out.println("An error occurred.");
             return "Errore lettura file";
