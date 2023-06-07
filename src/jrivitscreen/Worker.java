@@ -21,6 +21,9 @@
  */
 package jrivitscreen;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.text.DateFormat;
@@ -120,7 +123,9 @@ public class Worker extends SwingWorker<String, Object> {
                     this.tiriErrati = Integer.parseInt(LeggiFile(this.f_tiri_errati));
                     this.mf.setjLabelErrati("" + this.tiriErrati);
                 }
-
+                case "curva" -> {
+                    drawGrafico();
+                }
             }
         } catch (Exception ex) {
             Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
@@ -131,6 +136,31 @@ public class Worker extends SwingWorker<String, Object> {
 
     public void set_operation(String operation) {
         this.operation = operation;
+    }
+
+    private void drawGrafico() {
+//        this.mf.jLayeredPaneCenter.moveToFront(this.jPanelCanvas);
+        Graphics2D gr = (Graphics2D) this.mf.get_canvasGraph().getGraphics();
+        gr.drawString("Java Source", 10,10);
+        int y = this.mf.get_canvasGraph().getHeight();
+        String[] ychar = this.mf.getCurva().split(",");
+        int nPoints;
+        nPoints = ychar.length;
+        int[] ypoints = new int[nPoints];
+        if (nPoints > 0) {
+            int[] xpoints = new int[nPoints];
+            for (int i = 0; i < nPoints; i++) {
+                xpoints[i] = i * 2;
+                ypoints[i] = y - Integer.parseInt(ychar[i]) / 6;
+            }
+            gr.setStroke(new BasicStroke(3));
+            gr.setColor(Color.GREEN);
+            gr.drawPolyline(xpoints, ypoints, nPoints);
+            this.mf.get_canvasGraph().repaint();
+                    gr.drawString("Java Source", 10,10);
+
+            this.mf.repaint();
+        }
     }
 
     void risposta_attesa_tiro_errato() {

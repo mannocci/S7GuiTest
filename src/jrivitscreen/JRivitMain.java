@@ -22,6 +22,7 @@
 package jrivitscreen;
 
 import java.awt.BasicStroke;
+import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
@@ -1525,8 +1526,21 @@ public class JRivitMain extends javax.swing.JFrame {
     }
 
     void setCurva(String curva) {
+        this.jLayeredPaneCenter.moveToFront(this.jPanelCanvas);
+        this.repaint();
         this.Curva = curva;
-        drawGrafico();
+        this.w_mf.set_operation("curva");
+        try {
+            this.w_mf.doInBackground();
+        } catch (Exception ex) {
+            Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+//        drawGrafico();
+    }
+
+    public Canvas get_canvasGraph() {
+        return this.canvasGraph;
     }
 
     private void drawGrafico() {
