@@ -26,6 +26,9 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import javax.swing.SwingWorker;
@@ -49,10 +52,9 @@ public class Worker extends SwingWorker<String, Object> {
     private String operation = "";
     private int tiriAnnullati = 0;
     private int tiriOK = 0;
-
+    private final String pathWatch = "/tmp/CT/";
     private DateFormat dateFormat;
     private Calendar now;
-    private final String PathTmp = "/tmp/CT/";
     private final String f_tiri = "tiri";
     private final String f_tiri_ok = "tiri_ok";
     private final String f_tiri_errati = "tiri_errati";
@@ -126,6 +128,11 @@ public class Worker extends SwingWorker<String, Object> {
                 case "curva" -> {
                     drawGrafico();
                 }
+                case "lavoro_scelto" -> {
+                    String lavoro = this.mf.getLavoroScelto();
+                    this.ScriviFile(this.f_lavoro_scelto, lavoro);
+                }
+                
             }
         } catch (Exception ex) {
             Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
@@ -195,7 +202,7 @@ public class Worker extends SwingWorker<String, Object> {
     private String LeggiFile(String NomeFile) {
         String contenutoFile = "";
         try {
-            File myObj = new File(this.PathTmp + NomeFile);
+            File myObj = new File(this.pathWatch + NomeFile);
             try (Scanner myReader = new Scanner(myObj)) {
                 while (myReader.hasNextLine()) {
                     contenutoFile += myReader.nextLine();
@@ -207,4 +214,21 @@ public class Worker extends SwingWorker<String, Object> {
         }
         return contenutoFile;
     }//End LeggiFileLavoriDescrizione
+        /**
+     * ScriviFile metodo generico per scrivere una riga in un file
+     *
+     * @param NomeFile
+     * @param CosaScrivere String testo da scrivere nel file
+     */
+    public void ScriviFile(String NomeFile, String CosaScrivere) {
+        try {
+            FileWriter fw = new FileWriter(this.pathWatch + NomeFile);
+            PrintWriter pw = new PrintWriter(fw);
+            pw.print(CosaScrivere);
+            pw.flush();
+            pw.close();
+        } catch (IOException ex) {
+            Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }

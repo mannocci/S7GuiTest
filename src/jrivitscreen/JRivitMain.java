@@ -74,6 +74,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private int DialogQ = 100;
     static final int Continua = 1, Accetta = 2, Estende = 3, Annulla = 4;
     private int Stop = 0, Pausa = -1, DialogA = 200, Yes = 1000, No = 2000;
+    private String lavoroScelto;
 
 //Dopo una sospensione
     /**
@@ -121,9 +122,9 @@ public class JRivitMain extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanelLeft = new javax.swing.JPanel();
-        jButtonPL3 = new javax.swing.JButton();
-        jButtonPL2 = new javax.swing.JButton();
         jButtonPL1 = new javax.swing.JButton();
+        jButtonPL2 = new javax.swing.JButton();
+        jButtonPL3 = new javax.swing.JButton();
         jLayeredPaneCenter = new javax.swing.JLayeredPane();
         jPanelStarted = new javax.swing.JPanel();
         jLabelContatore = new javax.swing.JLabel();
@@ -155,9 +156,9 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelCanvas = new javax.swing.JPanel();
         canvasGraph = new java.awt.Canvas();
         jPanelRight = new javax.swing.JPanel();
-        jButtonPR3 = new javax.swing.JButton();
         jButtonPR1 = new javax.swing.JButton();
         jButtonPR2 = new javax.swing.JButton();
+        jButtonPR3 = new javax.swing.JButton();
         jPanelBotton = new javax.swing.JPanel();
         jLabel_B_L = new javax.swing.JLabel();
         jLabel_B_C = new javax.swing.JLabel();
@@ -168,15 +169,21 @@ public class JRivitMain extends javax.swing.JFrame {
         setMaximumSize(new java.awt.Dimension(480, 320));
         setMinimumSize(new java.awt.Dimension(480, 320));
         setName("frameMain"); // NOI18N
+        setUndecorated(true);
+        setPreferredSize(new java.awt.Dimension(480, 320));
+        setResizable(false);
         setSize(new java.awt.Dimension(480, 320));
-        getContentPane().setLayout(null);
+        setType(java.awt.Window.Type.UTILITY);
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jPanelLeft.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-
-        jButtonPL3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/setup.png"))); // NOI18N
-        jButtonPL3.addActionListener(new java.awt.event.ActionListener() {
+        jButtonPL1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/warning.png"))); // NOI18N
+        jButtonPL1.setAlignmentX(0.5F);
+        jButtonPL1.setMaximumSize(new java.awt.Dimension(67, 67));
+        jButtonPL1.setMinimumSize(new java.awt.Dimension(67, 67));
+        jButtonPL1.setPreferredSize(new java.awt.Dimension(67, 67));
+        jButtonPL1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonPL3ActionPerformed(evt);
+                jButtonPL1ActionPerformed(evt);
             }
         });
 
@@ -187,10 +194,10 @@ public class JRivitMain extends javax.swing.JFrame {
             }
         });
 
-        jButtonPL1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/warning.png"))); // NOI18N
-        jButtonPL1.addActionListener(new java.awt.event.ActionListener() {
+        jButtonPL3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/setup.png"))); // NOI18N
+        jButtonPL3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonPL1ActionPerformed(evt);
+                jButtonPL3ActionPerformed(evt);
             }
         });
 
@@ -199,26 +206,26 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelLeftLayout.setHorizontalGroup(
             jPanelLeftLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelLeftLayout.createSequentialGroup()
-                .addGap(0, 3, Short.MAX_VALUE)
-                .addGroup(jPanelLeftLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanelLeftLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(jButtonPL1, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButtonPL3, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButtonPL2, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jButtonPL2, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButtonPL3, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
         jPanelLeftLayout.setVerticalGroup(
             jPanelLeftLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelLeftLayout.createSequentialGroup()
-                .addGap(15, 15, 15)
+                .addContainerGap()
                 .addComponent(jButtonPL1, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButtonPL2, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButtonPL3, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(13, Short.MAX_VALUE))
+                .addContainerGap(24, Short.MAX_VALUE))
         );
 
-        getContentPane().add(jPanelLeft);
-        jPanelLeft.setBounds(0, 0, 72, 243);
+        getContentPane().add(jPanelLeft, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
 
         jLayeredPaneCenter.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         jLayeredPaneCenter.setOpaque(true);
@@ -228,32 +235,28 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelStarted.setMaximumSize(new java.awt.Dimension(245, 234));
         jPanelStarted.setMinimumSize(new java.awt.Dimension(245, 234));
         jPanelStarted.setName("started"); // NOI18N
-        jPanelStarted.setLayout(null);
+        jPanelStarted.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabelContatore.setFont(new java.awt.Font("SansSerif", 0, 28)); // NOI18N
+        jLabelContatore.setFont(new java.awt.Font("SansSerif", 0, 36)); // NOI18N
         jLabelContatore.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelContatore.setText("0/0");
-        jPanelStarted.add(jLabelContatore);
-        jLabelContatore.setBounds(20, 86, 210, 20);
+        jPanelStarted.add(jLabelContatore, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 100, 340, 30));
 
         jLabelNomeDevice.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
         jLabelNomeDevice.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelNomeDevice.setText("Nome Device");
-        jPanelStarted.add(jLabelNomeDevice);
-        jLabelNomeDevice.setBounds(20, 10, 210, 22);
+        jPanelStarted.add(jLabelNomeDevice, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 10, 340, -1));
 
         jLabelNomeLavoro.setFont(new java.awt.Font("Cantarell", 0, 20)); // NOI18N
         jLabelNomeLavoro.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelNomeLavoro.setText("Nome Lavoro");
-        jPanelStarted.add(jLabelNomeLavoro);
-        jLabelNomeLavoro.setBounds(20, 40, 210, 30);
+        jPanelStarted.add(jLabelNomeLavoro, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 50, 340, 30));
 
         jProgressBar.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jProgressBar.setMaximumSize(new java.awt.Dimension(245, 40));
         jProgressBar.setMinimumSize(new java.awt.Dimension(245, 40));
         jProgressBar.setStringPainted(true);
-        jPanelStarted.add(jProgressBar);
-        jProgressBar.setBounds(0, 180, 250, 40);
+        jPanelStarted.add(jProgressBar, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 140, 320, 40));
 
         jLabelErrati.setBackground(java.awt.Color.red);
         jLabelErrati.setFont(new java.awt.Font("SansSerif", 0, 24)); // NOI18N
@@ -262,8 +265,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelErrati.setText("0");
         jLabelErrati.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jLabelErrati.setOpaque(true);
-        jPanelStarted.add(jLabelErrati);
-        jLabelErrati.setBounds(160, 120, 60, 25);
+        jPanelStarted.add(jLabelErrati, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 190, 60, 25));
 
         jLabelAnnullati.setBackground(new java.awt.Color(204, 204, 204));
         jLabelAnnullati.setFont(new java.awt.Font("SansSerif", 0, 24)); // NOI18N
@@ -271,23 +273,19 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelAnnullati.setText("0");
         jLabelAnnullati.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jLabelAnnullati.setOpaque(true);
-        jPanelStarted.add(jLabelAnnullati);
-        jLabelAnnullati.setBounds(90, 120, 60, 25);
+        jPanelStarted.add(jLabelAnnullati, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 190, 60, 25));
 
         jLabel_Errati.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel_Errati.setText("Errati");
-        jPanelStarted.add(jLabel_Errati);
-        jLabel_Errati.setBounds(170, 150, 37, 22);
+        jPanelStarted.add(jLabel_Errati, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 220, -1, -1));
 
         jLabel_Annullati.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel_Annullati.setText("Annullati");
-        jPanelStarted.add(jLabel_Annullati);
-        jLabel_Annullati.setBounds(95, 150, 63, 22);
+        jPanelStarted.add(jLabel_Annullati, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 220, -1, -1));
 
         jLabel_Validi.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel_Validi.setText("Validi");
-        jPanelStarted.add(jLabel_Validi);
-        jLabel_Validi.setBounds(30, 150, 40, 22);
+        jPanelStarted.add(jLabel_Validi, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 220, -1, -1));
 
         jLabelValidi.setBackground(java.awt.Color.green);
         jLabelValidi.setFont(new java.awt.Font("SansSerif", 0, 24)); // NOI18N
@@ -295,16 +293,15 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelValidi.setText("0");
         jLabelValidi.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jLabelValidi.setOpaque(true);
-        jPanelStarted.add(jLabelValidi);
-        jLabelValidi.setBounds(20, 120, 60, 25);
+        jPanelStarted.add(jLabelValidi, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 190, 60, 25));
 
-        jLayeredPaneCenter.add(jPanelStarted, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 250, 250));
+        jLayeredPaneCenter.add(jPanelStarted, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 336, 243));
 
         jPanelSetup.setMaximumSize(new java.awt.Dimension(252, 237));
         jPanelSetup.setMinimumSize(new java.awt.Dimension(245, 234));
         jPanelSetup.setName("setup"); // NOI18N
         jPanelSetup.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-        jLayeredPaneCenter.add(jPanelSetup, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 250, 250));
+        jLayeredPaneCenter.add(jPanelSetup, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 336, 243));
 
         jPanelMain.setBackground(new java.awt.Color(255, 255, 255));
         jPanelMain.setMaximumSize(new java.awt.Dimension(250, 250));
@@ -322,17 +319,17 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelLogo.setMaximumSize(new java.awt.Dimension(250, 250));
         jLabelLogo.setMinimumSize(new java.awt.Dimension(250, 250));
         jLabelLogo.setPreferredSize(new java.awt.Dimension(250, 250));
-        jPanelMain.add(jLabelLogo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 250, 250));
+        jPanelMain.add(jLabelLogo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 336, 243));
 
-        jLayeredPaneCenter.add(jPanelMain, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 250, 250));
+        jLayeredPaneCenter.add(jPanelMain, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 336, 243));
 
         jPanelSetupLan.setMaximumSize(new java.awt.Dimension(250, 250));
         jPanelSetupLan.setMinimumSize(new java.awt.Dimension(250, 250));
         jPanelSetupLan.setName("setup lan"); // NOI18N
         jPanelSetupLan.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-        jPanelSetupLan.add(listSetupLan, new org.netbeans.lib.awtextra.AbsoluteConstraints(7, 7, 236, 150));
+        jPanelSetupLan.add(listSetupLan, new org.netbeans.lib.awtextra.AbsoluteConstraints(7, 7, 320, 230));
 
-        jLayeredPaneCenter.add(jPanelSetupLan, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 250, 250));
+        jLayeredPaneCenter.add(jPanelSetupLan, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 336, 243));
 
         jPanelSetupWiFi.setMaximumSize(new java.awt.Dimension(250, 250));
         jPanelSetupWiFi.setMinimumSize(new java.awt.Dimension(250, 250));
@@ -346,9 +343,9 @@ public class JRivitMain extends javax.swing.JFrame {
                 listSetupWiFiActionPerformed(evt);
             }
         });
-        jPanelSetupWiFi.add(listSetupWiFi, new org.netbeans.lib.awtextra.AbsoluteConstraints(7, 7, 236, 150));
+        jPanelSetupWiFi.add(listSetupWiFi, new org.netbeans.lib.awtextra.AbsoluteConstraints(7, 7, 320, 230));
 
-        jLayeredPaneCenter.add(jPanelSetupWiFi, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 250, 250));
+        jLayeredPaneCenter.add(jPanelSetupWiFi, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 336, 243));
 
         jPanelInfo.setMaximumSize(new java.awt.Dimension(250, 250));
         jPanelInfo.setMinimumSize(new java.awt.Dimension(250, 250));
@@ -360,9 +357,9 @@ public class JRivitMain extends javax.swing.JFrame {
                 listInfoActionPerformed(evt);
             }
         });
-        jPanelInfo.add(listInfo, new org.netbeans.lib.awtextra.AbsoluteConstraints(7, 7, 236, 236));
+        jPanelInfo.add(listInfo, new org.netbeans.lib.awtextra.AbsoluteConstraints(7, 7, 320, 230));
 
-        jLayeredPaneCenter.add(jPanelInfo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 250, 250));
+        jLayeredPaneCenter.add(jPanelInfo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 336, 243));
 
         jPanelWarning.setToolTipText("");
         jPanelWarning.setMaximumSize(new java.awt.Dimension(252, 237));
@@ -370,14 +367,19 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelWarning.setName("warning"); // NOI18N
         jPanelWarning.setOpaque(false);
         jPanelWarning.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-        jPanelWarning.add(listWarning, new org.netbeans.lib.awtextra.AbsoluteConstraints(7, 7, 236, 236));
 
-        jLayeredPaneCenter.add(jPanelWarning, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 250, 250));
+        listWarning.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                listWarningActionPerformed(evt);
+            }
+        });
+        jPanelWarning.add(listWarning, new org.netbeans.lib.awtextra.AbsoluteConstraints(7, 7, 320, 230));
+
+        jLayeredPaneCenter.add(jPanelWarning, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 336, 243));
 
         jPanelStart.setMaximumSize(new java.awt.Dimension(250, 250));
         jPanelStart.setMinimumSize(new java.awt.Dimension(250, 250));
         jPanelStart.setName("start"); // NOI18N
-        jPanelStart.setPreferredSize(new java.awt.Dimension(250, 250));
         jPanelStart.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         listLavori.addActionListener(new java.awt.event.ActionListener() {
@@ -385,13 +387,13 @@ public class JRivitMain extends javax.swing.JFrame {
                 listLavoriActionPerformed(evt);
             }
         });
-        jPanelStart.add(listLavori, new org.netbeans.lib.awtextra.AbsoluteConstraints(7, 7, 236, 120));
+        jPanelStart.add(listLavori, new org.netbeans.lib.awtextra.AbsoluteConstraints(7, 7, 320, 120));
 
         JTextAreaDescrizioneLavoro.setLineWrap(true);
         JTextAreaDescrizioneLavoro.setRows(5);
-        jPanelStart.add(JTextAreaDescrizioneLavoro, new org.netbeans.lib.awtextra.AbsoluteConstraints(7, 140, 236, 90));
+        jPanelStart.add(JTextAreaDescrizioneLavoro, new org.netbeans.lib.awtextra.AbsoluteConstraints(7, 140, 320, 90));
 
-        jLayeredPaneCenter.add(jPanelStart, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 250, 250));
+        jLayeredPaneCenter.add(jPanelStart, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 336, 243));
 
         jPanelDialog.setMaximumSize(new java.awt.Dimension(245, 234));
         jPanelDialog.setMinimumSize(new java.awt.Dimension(245, 234));
@@ -401,9 +403,9 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelDialog.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
         jLabelDialog.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelDialog.setText("Annullare il Tiro ?");
-        jPanelDialog.add(jLabelDialog, new org.netbeans.lib.awtextra.AbsoluteConstraints(7, 7, 236, 236));
+        jPanelDialog.add(jLabelDialog, new org.netbeans.lib.awtextra.AbsoluteConstraints(7, 7, 320, 230));
 
-        jLayeredPaneCenter.add(jPanelDialog, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 250, 250));
+        jLayeredPaneCenter.add(jPanelDialog, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 336, 243));
 
         jPanelCanvas.setAlignmentX(0.0F);
         jPanelCanvas.setAlignmentY(0.0F);
@@ -416,24 +418,22 @@ public class JRivitMain extends javax.swing.JFrame {
         canvasGraph.setBackground(new java.awt.Color(255, 153, 153));
         canvasGraph.setMaximumSize(new java.awt.Dimension(250, 250));
         canvasGraph.setMinimumSize(new java.awt.Dimension(250, 250));
-        canvasGraph.setPreferredSize(new java.awt.Dimension(250, 250));
-        jPanelCanvas.add(canvasGraph, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 250, 250));
+        jPanelCanvas.add(canvasGraph, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 330, 240));
 
-        jLayeredPaneCenter.add(jPanelCanvas, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 250, 250));
+        jLayeredPaneCenter.add(jPanelCanvas, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 336, 243));
 
-        getContentPane().add(jLayeredPaneCenter);
-        jLayeredPaneCenter.setBounds(75, 0, 250, 250);
+        getContentPane().add(jLayeredPaneCenter, new org.netbeans.lib.awtextra.AbsoluteConstraints(75, 0, -1, -1));
 
-        jPanelRight.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-
-        jButtonPR3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/nulla.png"))); // NOI18N
-        jButtonPR3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonPR3ActionPerformed(evt);
-            }
-        });
+        jPanelRight.setAlignmentX(0.0F);
+        jPanelRight.setAlignmentY(0.0F);
+        jPanelRight.setMaximumSize(new java.awt.Dimension(79, 243));
+        jPanelRight.setMinimumSize(new java.awt.Dimension(79, 243));
+        jPanelRight.setPreferredSize(new java.awt.Dimension(79, 243));
 
         jButtonPR1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/play_circle.png"))); // NOI18N
+        jButtonPR1.setMaximumSize(new java.awt.Dimension(67, 67));
+        jButtonPR1.setMinimumSize(new java.awt.Dimension(67, 67));
+        jButtonPR1.setPreferredSize(new java.awt.Dimension(67, 67));
         jButtonPR1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonPR1ActionPerformed(evt);
@@ -447,36 +447,44 @@ public class JRivitMain extends javax.swing.JFrame {
             }
         });
 
+        jButtonPR3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/nulla.png"))); // NOI18N
+        jButtonPR3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonPR3ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanelRightLayout = new javax.swing.GroupLayout(jPanelRight);
         jPanelRight.setLayout(jPanelRightLayout);
         jPanelRightLayout.setHorizontalGroup(
             jPanelRightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelRightLayout.createSequentialGroup()
-                .addGap(0, 3, Short.MAX_VALUE)
-                .addGroup(jPanelRightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanelRightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jButtonPR1, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButtonPR3, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButtonPR2, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jButtonPR2, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButtonPR3, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
         jPanelRightLayout.setVerticalGroup(
             jPanelRightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelRightLayout.createSequentialGroup()
-                .addGap(15, 15, 15)
-                .addComponent(jButtonPR1, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap()
+                .addComponent(jButtonPR1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButtonPR2, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jButtonPR2, javax.swing.GroupLayout.DEFAULT_SIZE, 72, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButtonPR3, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(13, Short.MAX_VALUE))
+                .addComponent(jButtonPR3, javax.swing.GroupLayout.DEFAULT_SIZE, 72, Short.MAX_VALUE)
+                .addGap(13, 13, 13))
         );
 
-        getContentPane().add(jPanelRight);
-        jPanelRight.setBounds(328, 0, 72, 243);
+        getContentPane().add(jPanelRight, new org.netbeans.lib.awtextra.AbsoluteConstraints(406, 0, -1, -1));
 
         jPanelBotton.setBackground(new java.awt.Color(0, 0, 0));
         jPanelBotton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jPanelBotton.setForeground(java.awt.Color.green);
         jPanelBotton.setMaximumSize(new java.awt.Dimension(400, 40));
+        jPanelBotton.setPreferredSize(new java.awt.Dimension(480, 42));
 
         jLabel_B_L.setBackground(java.awt.Color.lightGray);
         jLabel_B_L.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -509,7 +517,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 .addGap(3, 3, 3)
                 .addComponent(jLabel_B_L, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel_B_C, javax.swing.GroupLayout.DEFAULT_SIZE, 161, Short.MAX_VALUE)
+                .addComponent(jLabel_B_C, javax.swing.GroupLayout.DEFAULT_SIZE, 241, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel_B_R, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -518,16 +526,16 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelBottonLayout.setVerticalGroup(
             jPanelBottonLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelBottonLayout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(jPanelBottonLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel_B_L)
+                    .addComponent(jLabel_B_R)
                     .addComponent(jLabel_B_C)
-                    .addComponent(jLabel_B_R))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel_msg))
+                    .addComponent(jLabel_B_L))
+                .addGap(18, 18, 18)
+                .addComponent(jLabel_msg, javax.swing.GroupLayout.DEFAULT_SIZE, 34, Short.MAX_VALUE))
         );
 
-        getContentPane().add(jPanelBotton);
-        jPanelBotton.setBounds(0, 250, 400, 45);
+        getContentPane().add(jPanelBotton, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 243, -1, 77));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -562,7 +570,8 @@ public class JRivitMain extends javax.swing.JFrame {
             case "setup wifi" ->
                 PulsanteSu();
             case "dialog" -> {
-                //Pulsante Sì alla domanda Annulla il lavoro
+                //Pulsante Sì alla domanda ? 
+gestioneDialogRisposte();                
                 this.aria_chiusa();
                 PanelStart();
             }
@@ -716,8 +725,8 @@ public class JRivitMain extends javax.swing.JFrame {
         // Pulsante R3
         // Qual'è il nome del pannello in primo piano ?
         switch (this.jLayeredPaneCenter.getComponent(0).getName()) {
-//            case "main" ->
-//                per ora nulla;
+            case "main" -> System.exit(0);
+//                per ora uso il pulsante per chiudere;
             case "start" -> {
                 PanelStarted();
             }
@@ -753,6 +762,10 @@ public class JRivitMain extends javax.swing.JFrame {
     private void listSetupWiFiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listSetupWiFiActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_listSetupWiFiActionPerformed
+
+    private void listWarningActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listWarningActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_listWarningActionPerformed
     /**
      * PanelMain Set Panel visibile for PanelMain
      */
@@ -935,7 +948,7 @@ public class JRivitMain extends javax.swing.JFrame {
         this.change_buttons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
                 this.Img_Stop, this.Img_Pause, this.Img_Nulla);
         String lavoro = this.listLavori.getSelectedItem();
-//        this.setNomeDelDevice(); Fatto all'avvio dell'AppScreen
+        this.setNomeDelDevice(); //Fatto all'avvio dell'AppScreen
         this.jLabelNomeLavoro.setText(lavoro);
         String[] det_lavoro = lavoro.split(",");
         String[] det_nr_lotti = det_lavoro[1].split("=");
@@ -947,9 +960,59 @@ public class JRivitMain extends javax.swing.JFrame {
         this.AggiornaTiri();
         this.jLabelContatore.setText(nr_lotti_fatti + "/" + nr_lotti_da_fare
                 + " - " + nr_tiri_fatti + "/" + nr_tiri_da_fare);
-        this.jProgressBar.setMaximum(Integer.parseInt(det_nr_tiri[1]));
-//        String lavoroScelto = lavoro.substring(0,lavoro.indexOf(',') WIDTH);
+        if (nr_lotti_da_fare != 0) {
+            this.jProgressBar.setMaximum(nr_tiri_da_fare * nr_lotti_da_fare);
+        } else {
+            this.jProgressBar.setMaximum(nr_tiri_da_fare);
+        }
+        lavoroScelto = lavoro.substring(0, lavoro.indexOf(','));
         this.repaint();
+        this.w_mf.set_operation("lavoro_scelto");
+        try {
+            this.w_mf.doInBackground();
+        } catch (Exception ex) {
+            Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public String getLavorodescrizione() {
+        return Lavorodescrizione;
+    }
+
+    public java.awt.List getListInfo() {
+        return listInfo;
+    }
+
+    public java.awt.List getListLavori() {
+        return listLavori;
+    }
+
+    public java.awt.List getListSetupLan() {
+        return listSetupLan;
+    }
+
+    public java.awt.List getListSetupWiFi() {
+        return listSetupWiFi;
+    }
+
+    public java.awt.List getListWarning() {
+        return listWarning;
+    }
+
+    public JLabel getjLabelNomeDevice() {
+        return jLabelNomeDevice;
+    }
+
+    public JLabel getjLabelNomeLavoro() {
+        return jLabelNomeLavoro;
+    }
+
+    public String getLavoroScelto() {
+        return this.lavoroScelto;
+    }
+
+    public void setLavoroScelto(String lavoroScelto) {
+        this.lavoroScelto = lavoroScelto;
     }
 
     public void setjLabelAnnullati(String ta) {
@@ -1205,7 +1268,7 @@ public class JRivitMain extends javax.swing.JFrame {
      * @return Nome del device
      */
     private void setNomeDelDevice() {
-        this.w_mf.set_operation(this.fileNomeDevice);
+        this.w_mf.set_operation("aggiorna_nome_device");
         try {
             this.w_mf.doInBackground();
         } catch (Exception ex) {
@@ -1564,6 +1627,24 @@ public class JRivitMain extends javax.swing.JFrame {
 //            this.canvasGraph.repaint();
             this.repaint();
         }
+    }
+
+    public void setListInfo(java.awt.List listInfo) {
+        this.listInfo = listInfo;
+    }
+
+    public void setListLavori(String[] lista_lavori) {
+        for (int i = 0; i < lista_lavori.length; i++) {
+            this.listLavori.add(lista_lavori[i]);
+        }
+    }
+
+    public void setListSetupLan(java.awt.List listSetupLan) {
+        this.listSetupLan = listSetupLan;
+    }
+
+    public void setListSetupWiFi(java.awt.List listSetupWiFi) {
+        this.listSetupWiFi = listSetupWiFi;
     }
 
     String getCurva() {
