@@ -61,6 +61,7 @@ public class Worker extends SwingWorker<String, Object> {
     private final String f_tiri_annullati = "tiri_annullati";
     private final String f_errore = "errore";
     private final String f_lavoro_scelto = "lavoro_scelto.txt";
+    private final String f_started = "started"; // se il lavoro è in corso contiene "1"
     private final String f_risposta_tiro_errato = "risposta_tiro_errato";
     private final String f_nome_device = "nome_device.txt";
     private String NomeDevice;
@@ -71,7 +72,6 @@ public class Worker extends SwingWorker<String, Object> {
             this.mf = mf;
             this.wt = new ThreadWorker(this.mf);
             this.bt = new ButtonThread(this.mf);
-            this.bt.start();
             dateFormat = new SimpleDateFormat("HH:mm");
             now = Calendar.getInstance();
         } catch (Exception ex) {
@@ -85,6 +85,7 @@ public class Worker extends SwingWorker<String, Object> {
         try {
             switch (this.operation) {
                 case "start" -> {
+                    this.bt.start();
                     Date orario = now.getTime();
                     //this.dateFormat.setTimeZone(TimeZone.getTimeZone("Europe/London"));
                     this.mf.set_jLabel_B_L(this.dateFormat.format(orario));
@@ -92,9 +93,11 @@ public class Worker extends SwingWorker<String, Object> {
                     this.wt.start();//Avvio Thread Watch File in Tmp
                     this.wt.initValues();
                 }
-                case "aggiorna_tiri_annullati" -> {
-                    this.tiriAnnullati = Integer.parseInt(LeggiFile("tiri_annullati"));
-                    this.mf.setjLabelAnnullati("" + this.tiriAnnullati);
+                case "stop_lavoro" -> {
+                    ScriviFile(this.f_started, "0");
+                }
+                case "continua", "accetta", "estendi", "annulla" -> {
+                    ScriviFile(this.f_risposta_tiro_errato, this.operation);
                 }
                 case "aggiorna_nome_device" -> {
                     this.NomeDevice = LeggiFile(this.f_nome_device);
@@ -108,15 +111,8 @@ public class Worker extends SwingWorker<String, Object> {
                     String Tiri = LeggiFile(this.f_tiri_ok);
                     this.mf.set_nr_tiri_fatti(Integer.valueOf(Tiri));
                 }
-                case "gestione_errore" -> {
-                    String strErrore = LeggiFile("errore");
-                    switch (strErrore) {
-                        case "0" ->
-                            this.mf.reset_errore_tiro();
-                        case "1" ->
-                            this.mf.set_errore_tiro();
-                    }
-
+                case "reset_errore" -> {
+                    ScriviFile(f_errore, "0");
                 }
                 case "risposta_attesa_tiro_errato" -> {
                     risposta_attesa_tiro_errato();
@@ -131,8 +127,9 @@ public class Worker extends SwingWorker<String, Object> {
                 case "lavoro_scelto" -> {
                     String lavoro = this.mf.getLavoroScelto();
                     this.ScriviFile(this.f_lavoro_scelto, lavoro);
+                    this.ScriviFile(this.f_started, "1");
                 }
-                
+
             }
         } catch (Exception ex) {
             Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
@@ -148,7 +145,7 @@ public class Worker extends SwingWorker<String, Object> {
     private void drawGrafico() {
 //        this.mf.jLayeredPaneCenter.moveToFront(this.jPanelCanvas);
         Graphics2D gr = (Graphics2D) this.mf.get_canvasGraph().getGraphics();
-        gr.drawString("Java Source", 10,10);
+        gr.drawString("Java Source", 10, 10);
         int y = this.mf.get_canvasGraph().getHeight();
         String[] ychar = this.mf.getCurva().split(",");
         int nPoints;
@@ -164,7 +161,7 @@ public class Worker extends SwingWorker<String, Object> {
             gr.setColor(Color.GREEN);
             gr.drawPolyline(xpoints, ypoints, nPoints);
             this.mf.get_canvasGraph().repaint();
-                    gr.drawString("Java Source", 10,10);
+            gr.drawString("Java Source", 10, 10);
 
             this.mf.repaint();
         }
@@ -214,17 +211,18 @@ public class Worker extends SwingWorker<String, Object> {
         }
         return contenutoFile;
     }//End LeggiFileLavoriDescrizione
-        /**
+
+    /**
      * ScriviFile metodo generico per scrivere una riga in un file
      *
      * @param NomeFile
-     * @param CosaScrivere String testo da scrivere nel file
+     * @param Testo String testo da scrivere nel file
      */
-    public void ScriviFile(String NomeFile, String CosaScrivere) {
+    public void ScriviFile(String NomeFile, String Testo) {
         try {
             FileWriter fw = new FileWriter(this.pathWatch + NomeFile);
             PrintWriter pw = new PrintWriter(fw);
-            pw.print(CosaScrivere);
+            pw.print(Testo);
             pw.flush();
             pw.close();
         } catch (IOException ex) {
