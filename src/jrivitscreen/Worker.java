@@ -32,11 +32,9 @@ import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import javax.swing.SwingWorker;
-import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Scanner;
-import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -64,6 +62,7 @@ public class Worker extends SwingWorker<String, Object> {
     private final String f_started = "started"; // se il lavoro è in corso contiene "1"
     private final String f_risposta_tiro_errato = "risposta_tiro_errato";
     private final String f_nome_device = "nome_device.txt";
+    private final String f_aria = "aria";
     private String NomeDevice;
     private int tiriErrati;
 
@@ -74,7 +73,7 @@ public class Worker extends SwingWorker<String, Object> {
             this.bt = new ButtonThread(this.mf);
             dateFormat = new SimpleDateFormat("HH:mm");
             now = Calendar.getInstance();
-        } catch (Exception ex) {
+        } catch (IOException ex) {
             Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
             throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
         }
@@ -95,6 +94,7 @@ public class Worker extends SwingWorker<String, Object> {
                 }
                 case "stop_lavoro" -> {
                     ScriviFile(this.f_started, "0");
+                    ScriviFile(this.f_aria, "0");
                 }
                 case "continua", "accetta", "estendi", "annulla" -> {
                     ScriviFile(this.f_risposta_tiro_errato, this.operation);
@@ -109,7 +109,7 @@ public class Worker extends SwingWorker<String, Object> {
                 }
                 case "tiri_ok" -> {
                     String Tiri = LeggiFile(this.f_tiri_ok);
-                    this.mf.set_nr_tiri_fatti(Integer.valueOf(Tiri));
+                    this.mf.set_nr_tiri_fatti(Integer.parseInt(Tiri));
                 }
                 case "reset_errore" -> {
                     ScriviFile(f_errore, "0");
@@ -129,11 +129,10 @@ public class Worker extends SwingWorker<String, Object> {
                     this.ScriviFile(this.f_lavoro_scelto, lavoro);
                     this.ScriviFile(this.f_started, "1");
                 }
-
             }
-        } catch (Exception ex) {
+        } catch (NumberFormatException ex) {
             Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
-            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+            throw new UnsupportedOperationException("Errore "+ ex.getMessage()); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
         }
         return "ok";
     }
@@ -213,7 +212,7 @@ public class Worker extends SwingWorker<String, Object> {
     }//End LeggiFileLavoriDescrizione
 
     /**
-     * ScriviFile metodo generico per scrivere una riga in un file
+     * ScriviFile metodo generico per scrivere un testo in un file
      *
      * @param NomeFile
      * @param Testo String testo da scrivere nel file
@@ -221,10 +220,10 @@ public class Worker extends SwingWorker<String, Object> {
     public void ScriviFile(String NomeFile, String Testo) {
         try {
             FileWriter fw = new FileWriter(this.pathWatch + NomeFile);
-            PrintWriter pw = new PrintWriter(fw);
-            pw.print(Testo);
-            pw.flush();
-            pw.close();
+            try (PrintWriter pw = new PrintWriter(fw)) {
+                pw.print(Testo);
+                pw.flush();
+            }
         } catch (IOException ex) {
             Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
         }

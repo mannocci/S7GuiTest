@@ -63,12 +63,14 @@ public class ThreadWorker extends Thread {
     private final String f_setup_wifi = "setup_wifi.txt";
     private final String f_lavori = "lavori.txt";
     private final String f_lavori_descrizione = "lavori_descrizione.txt";
+    private final String f_started = "started"; // se il lavoro è in corso contiene "1"
     private final String f_aria = "aria";
     private final String f_curva_pronta = "curva_pronta";
     private final String f_curva = "curva";
     private final String f_errore = "errore";
     private final String f_risposta_tiro_errato = "risposta_tiro_errato";
     private final String f_sessione = "sessione";
+    private final String f_pressione_aria_in = "pressione_aria_in";
     private final String f_soglia_pressione_aria_in_min = "soglia_pressione_aria_in_min";
     private final String f_soglia_pressione_aria_in_max = "soglia_pressione_aria_in_max";
     String open = "255";
@@ -171,7 +173,7 @@ public class ThreadWorker extends Thread {
                             mostra_stato_aria();
 //                        case "curva_pronta" ->
 //                            mostra_curva();
-                        case "risposta_tiro_errato" ->
+                        case "risposta_tiro_erratto" ->
                             risposta_tiro_errato();
                     }
                     try {
@@ -316,8 +318,8 @@ public class ThreadWorker extends Thread {
             run_system_bash(this.bash_cmd_verde);
             run_system_bash(this.bash_cmd_aria);
             mostra_curva();
+            this.mf.set_errore_tiro();
         }
-        this.mf.errore();
     }
 
     private void tiri() {
@@ -333,25 +335,11 @@ public class ThreadWorker extends Thread {
     }
 
     /**
-     * PressioneAria vie utilizzato ogni secondo
+     * PressioneAria viene letta ogni secondo
      */
     private void PressioneAria() {
-        /* da portare in JControl
-        Process process;
-        BufferedReader reader;
-        process = run_system_bash(this.bash_cmd_pressione_aria);
-        if (process != null) {
-            reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line;
-            try {
-                line = reader.readLine();
-            } catch (IOException ex) {
-                Logger.getLogger(ThreadWorker.class.getName()).log(Level.SEVERE, null, ex);
-                line = " errore lettura";
-            }
-        }
-         */
-        String line = this.LeggiFile("pressione_aria_in");
+
+        String line = this.LeggiFile(this.f_pressione_aria_in);
         this.mf.update_pressione_aria(Float.valueOf(line));
     }
 
@@ -386,6 +374,9 @@ public class ThreadWorker extends Thread {
         }
     }
 
+    /**
+     * inizializza i valori in base al contenuto dei file
+     */
     public void initValues() {
         this.tiri_ok();
         this.tiri_errati();

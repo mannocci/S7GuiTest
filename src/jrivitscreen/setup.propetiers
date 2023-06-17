@@ -1,0 +1,10 @@
+srvkey=AAAASSSDDDD
+data_versione=17/06/2023
+versione=1.0
+ip_db="127.0.0.1"
+pathWatch=/tmp/CT/
+db=jdbc:mariadb://localhost:3306
+db_name=rivit
+db_user=DrivitB
+db_pwd=%%DBRivit
+

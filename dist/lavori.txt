@@ -1,4 +1,0 @@
-Lav 1,Lotti=2,Tiri=30
-Lav 2,Lotti=0,Tiri=10
-Lav 3,Lotti=0,Tiri=-1
-lav 4,Lotti=4,Tiri=10
