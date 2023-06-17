@@ -30,7 +30,11 @@ import java.awt.Graphics2D;
 import java.awt.event.ItemEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Properties;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -73,8 +77,13 @@ public class JRivitMain extends javax.swing.JFrame {
     private String Curva;
     private int DialogQ = 100;
     static final int Continua = 1, Accetta = 2, Estende = 3, Annulla = 4;
-    private int Stop = 0, Pausa = -1, DialogA = 200, Yes = 1000, No = 2000;
+    private final int Stop = 0, Pausa = -1, DialogA = 200, Yes = 1000, No = 2000;
     private String lavoroScelto;
+    private final SimpleDateFormat formatter;
+    private Properties setup;
+    private final String versione;
+    private final String data_release;
+    private final String srvKey;
 
 //Dopo una sospensione
     /**
@@ -101,14 +110,21 @@ public class JRivitMain extends javax.swing.JFrame {
         Img_Lan = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/lan.png"));
         Img_WiFi = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/cell.png"));
         Img_Info = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/info.png"));
-
-        w_mf = new Worker(this);
-        w_mf.set_operation("start");
-        try {
-            w_mf.doInBackground();
-        } catch (Exception ex) {
+        
+        formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        try (InputStream in = this.getClass().getResourceAsStream("setup.propetiers")) {
+            setup = new Properties();
+            setup.load(in);
+        } catch (IOException ex) {
             Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
         }
+        versione = setup.getProperty("versione", "1.0");
+        data_release = setup.getProperty("data_versione", "14/12/2022");
+        srvKey = setup.getProperty("srvkey", "");
+        System.out.println("JRivitScreen ver. "+versione+" release " + data_release);
+
+        w_mf = new Worker(this);
+        esegui("start");
         this.PanelMain();
     }
 
@@ -188,6 +204,7 @@ public class JRivitMain extends javax.swing.JFrame {
         });
 
         jButtonPL2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/info.png"))); // NOI18N
+        jButtonPL2.setPreferredSize(new java.awt.Dimension(67, 67));
         jButtonPL2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonPL2ActionPerformed(evt);
@@ -195,6 +212,8 @@ public class JRivitMain extends javax.swing.JFrame {
         });
 
         jButtonPL3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/setup.png"))); // NOI18N
+        jButtonPL3.setAlignmentX(0.5F);
+        jButtonPL3.setPreferredSize(new java.awt.Dimension(67, 67));
         jButtonPL3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonPL3ActionPerformed(evt);
@@ -382,16 +401,17 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelStart.setName("start"); // NOI18N
         jPanelStart.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        listLavori.setFont(new java.awt.Font("Lucida Grande", 0, 16)); // NOI18N
         listLavori.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 listLavoriActionPerformed(evt);
             }
         });
-        jPanelStart.add(listLavori, new org.netbeans.lib.awtextra.AbsoluteConstraints(7, 7, 320, 120));
+        jPanelStart.add(listLavori, new org.netbeans.lib.awtextra.AbsoluteConstraints(7, 7, 320, 130));
 
         JTextAreaDescrizioneLavoro.setLineWrap(true);
         JTextAreaDescrizioneLavoro.setRows(5);
-        jPanelStart.add(JTextAreaDescrizioneLavoro, new org.netbeans.lib.awtextra.AbsoluteConstraints(7, 140, 320, 90));
+        jPanelStart.add(JTextAreaDescrizioneLavoro, new org.netbeans.lib.awtextra.AbsoluteConstraints(7, 150, 320, 80));
 
         jLayeredPaneCenter.add(jPanelStart, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 336, 243));
 
@@ -441,6 +461,10 @@ public class JRivitMain extends javax.swing.JFrame {
         });
 
         jButtonPR2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/nulla.png"))); // NOI18N
+        jButtonPR2.setMaximumSize(new java.awt.Dimension(67, 67));
+        jButtonPR2.setMinimumSize(new java.awt.Dimension(67, 67));
+        jButtonPR2.setPreferredSize(new java.awt.Dimension(67, 67));
+        jButtonPR2.setSize(new java.awt.Dimension(67, 67));
         jButtonPR2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonPR2ActionPerformed(evt);
@@ -448,6 +472,10 @@ public class JRivitMain extends javax.swing.JFrame {
         });
 
         jButtonPR3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/nulla.png"))); // NOI18N
+        jButtonPR3.setMaximumSize(new java.awt.Dimension(67, 67));
+        jButtonPR3.setMinimumSize(new java.awt.Dimension(67, 67));
+        jButtonPR3.setPreferredSize(new java.awt.Dimension(67, 67));
+        jButtonPR3.setSize(new java.awt.Dimension(67, 67));
         jButtonPR3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonPR3ActionPerformed(evt);
@@ -470,11 +498,11 @@ public class JRivitMain extends javax.swing.JFrame {
             jPanelRightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelRightLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButtonPR1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButtonPR1, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButtonPR2, javax.swing.GroupLayout.DEFAULT_SIZE, 72, Short.MAX_VALUE)
+                .addComponent(jButtonPR2, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButtonPR3, javax.swing.GroupLayout.DEFAULT_SIZE, 72, Short.MAX_VALUE)
+                .addComponent(jButtonPR3, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(13, 13, 13))
         );
 
@@ -504,7 +532,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabel_B_R.setText("Aria Off");
         jLabel_B_R.setOpaque(true);
 
-        jLabel_msg.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel_msg.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         jLabel_msg.setForeground(javax.swing.UIManager.getDefaults().getColor("Actions.Green"));
         jLabel_msg.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel_msg.setText("message");
@@ -571,8 +599,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 PulsanteSu();
             case "dialog" -> {
                 //Pulsante Sì alla domanda ? 
-gestioneDialogRisposte();                
-                this.aria_chiusa();
+                gestioneDialogRisposte();
                 PanelStart();
             }
         }
@@ -725,7 +752,8 @@ gestioneDialogRisposte();
         // Pulsante R3
         // Qual'è il nome del pannello in primo piano ?
         switch (this.jLayeredPaneCenter.getComponent(0).getName()) {
-            case "main" -> System.exit(0);
+            case "main" ->
+                System.exit(0);
 //                per ora uso il pulsante per chiudere;
             case "start" -> {
                 PanelStarted();
@@ -842,17 +870,11 @@ gestioneDialogRisposte();
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(JRivitMain.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(JRivitMain.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(JRivitMain.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(JRivitMain.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-
+        
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
             new JRivitMain().setVisible(true);
@@ -967,12 +989,7 @@ gestioneDialogRisposte();
         }
         lavoroScelto = lavoro.substring(0, lavoro.indexOf(','));
         this.repaint();
-        this.w_mf.set_operation("lavoro_scelto");
-        try {
-            this.w_mf.doInBackground();
-        } catch (Exception ex) {
-            Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        esegui("lavoro_scelto");
     }
 
     public String getLavorodescrizione() {
@@ -1079,6 +1096,8 @@ gestioneDialogRisposte();
                 nrCurItem = nrItem - 1;//Va all'ultimo Item
             }
             lista.select(nrCurItem);
+            // rendi visibile l'elemento selezionato
+            lista.makeVisible(nrCurItem);
         }//End LIsta not NULL
 
     }//End PulsanteSu
@@ -1116,6 +1135,8 @@ gestioneDialogRisposte();
                 nrCurItem = 0;//ritorna al primo Item
             }
             lista.select(nrCurItem);
+            // rendi visibile l'elemento selezionato
+            lista.makeVisible(nrCurItem);
         }//End LIsta not NULL
 
     }//End PulsanteSu
@@ -1268,12 +1289,7 @@ gestioneDialogRisposte();
      * @return Nome del device
      */
     private void setNomeDelDevice() {
-        this.w_mf.set_operation("aggiorna_nome_device");
-        try {
-            this.w_mf.doInBackground();
-        } catch (Exception ex) {
-            Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        esegui("aggiorna_nome_device");
     }
 
     /**
@@ -1305,7 +1321,7 @@ gestioneDialogRisposte();
 
     /**
      *
-     * @param tiri int - chiamato da WorkerThread imposta l'interfaccia
+     * @param tiri_ok int - chiamato da WorkerThread imposta l'interfaccia
      * aggiornando i campi associati ai nr dei tiri e aggiorna i lotti fatti la
      * variabile passata al metodo e letta dal file tiri_ok
      */
@@ -1374,20 +1390,12 @@ gestioneDialogRisposte();
         this.repaint();
     }
 
-    void errore() {
-        this.w_mf.set_operation("gestione_errore");
-        try {
-            this.w_mf.doInBackground();
-        } catch (Exception ex) {
-            Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
     /**
      * reset_errore_tiro ripristina i colori di default Imposta ARIA ON ?? DA
      * RIFARE
      */
     public void reset_errore_tiro() {
+        esegui("reset_errore");
         this.jPanelStarted.setBackground(Color.green);
         this.change_buttons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
                 this.Img_Stop, this.Img_Pause, this.Img_Nulla);
@@ -1402,40 +1410,21 @@ gestioneDialogRisposte();
     /**
      * Scrive i numero totale di tiri a prescindere
      *
-     * @param NomeFile String - nome del file dove Control Scrive il nr di Tiri
-     * fatti nella sessione corrente
      */
     void tiri() {
-        this.w_mf.set_operation("tiri");
-        try {
-            this.w_mf.doInBackground();
-        } catch (Exception ex) {
-            Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
-        }
-//        this.jLabel_B_C.setText(LeggiFile(NomeFile));
+        esegui("tiri");
     }
 
     void risposta_attesa_tiro_errato() {
-        this.w_mf.set_operation("risposta_attesa_tiro_errato");
-        try {
-            this.w_mf.doInBackground();
-        } catch (Exception ex) {
-            Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        esegui("risposta_attesa_tiro_errato");
     }
 
     /**
      * Aggiorna il LabelValidi
      *
-     * @param TiriOk - NomeFile tiri_ok
      */
     public void update_tiri_ok() {
-        this.w_mf.set_operation("tiri_ok");
-        try {
-            this.w_mf.doInBackground();
-        } catch (Exception ex) {
-            Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        esegui("tiri_ok");
     }
 
     public void set_nr_tiri_fatti(int TiriOK) {
@@ -1449,12 +1438,7 @@ gestioneDialogRisposte();
      * @param Tiri_tutti - NomeFile tiri
      */
     void AggiornaTiri() {
-        this.w_mf.set_operation("tiri");
-        try {
-            this.w_mf.doInBackground();
-        } catch (Exception ex) {
-            Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        esegui("tiri");
     }
 
     /**
@@ -1463,13 +1447,7 @@ gestioneDialogRisposte();
      * @param Errati
      */
     void AggiornaTiriErrati() {
-        this.w_mf.set_operation("aggiorna_tiri_errati");
-        try {
-            this.w_mf.doInBackground();
-        } catch (Exception ex) {
-            Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        //this.nr_errori(Integer.parseInt(this.LeggiFile(Errati)));
+        esegui("aggiorna_tiri_errati");
     }
 
     /**
@@ -1479,24 +1457,18 @@ gestioneDialogRisposte();
      * @param Annullati
      */
     void AggiornaTiriAnnullati() {
-        this.w_mf.set_operation("aggiorna_tiri_annullati");
-        try {
-            this.w_mf.doInBackground();
-        } catch (Exception ex) {
-            Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        //this.jLabel_B_C.setText("Annullati " + Integer.valueOf(this.LeggiFile(Annullati)));
-        //this.repaint();
+        esegui("aggiorna_tiri_annullati");
     }
 
     void update_pressione_aria(Float PressioneAria) {
         this.pressioneIn = PressioneAria;
-        if (pressioneIn < this.sogliaMin) {
+        if (pressioneIn <= this.sogliaMin) {
             this.jLabel_msg.setForeground(java.awt.Color.red);
+            this.jLabel_msg.setText("Pressione aria insufficiente: " + PressioneAria + " Bar");
         } else {
             this.jLabel_msg.setForeground(java.awt.Color.green);
+            this.jLabel_msg.setText("Pressione aria corretta: " + PressioneAria + " Bar");
         }
-        this.jLabel_msg.setText("Pressione Aria " + PressioneAria);
         this.repaint();
     }
 
@@ -1513,49 +1485,45 @@ gestioneDialogRisposte();
     private void gestioneDialogRisposte() {
         switch (DialogQ) {
             case 1 -> //Continua
-                DialogAContinua();
+                DialogContinua();
             case 2 -> //Accetta
-                DialogAAccetta();
+                DialogAccetta();
             case 3 -> //Estende
-                DialogAEstende();
+                DialogEstendi();
             case 4 -> //Annulla
-                DialogAAnnulla();
+                DialogAnnulla();
             case 5 -> //Pausa
-                DialogAPausa();
-            case 6 -> //Abortire il lavoro
-                DialogAAbortire();
+                DialogPausa();
+            case 0 -> //Abortire il lavoro
+                DialogAbortire();
         }
     }
 
-    private void DialogAContinua() {
-        this.w_mf.set_operation("aggiorna_tiri_annullati");
-        try {
-            this.w_mf.doInBackground();
-        } catch (Exception ex) {
-            Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    private void DialogContinua() {
+        esegui("continua");
     }
 
-    private void DialogAAccetta() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    private void DialogAccetta() {
+        esegui("accetta");
     }
 
-    private void DialogAEstende() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    private void DialogEstendi() {
+        esegui("estendi");
     }
 
-    private void DialogAAnnulla() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    private void DialogAnnulla() {
+        esegui("annulla");
     }
 
-    private void DialogAAbortire() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    private void DialogAbortire() {
+        esegui("stop_lavoro");
+        esegui("reset_errore");
     }
 
     /**
      * DialogAPausa Non Usato per ora
      */
-    private void DialogAPausa() {
+    private void DialogPausa() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
@@ -1592,13 +1560,7 @@ gestioneDialogRisposte();
         this.jLayeredPaneCenter.moveToFront(this.jPanelCanvas);
         this.repaint();
         this.Curva = curva;
-        this.w_mf.set_operation("curva");
-        try {
-            this.w_mf.doInBackground();
-        } catch (Exception ex) {
-            Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
+        esegui("curva");
 //        drawGrafico();
     }
 
@@ -1634,8 +1596,8 @@ gestioneDialogRisposte();
     }
 
     public void setListLavori(String[] lista_lavori) {
-        for (int i = 0; i < lista_lavori.length; i++) {
-            this.listLavori.add(lista_lavori[i]);
+        for (String lista_lavori1 : lista_lavori) {
+            this.listLavori.add(lista_lavori1);
         }
     }
 
@@ -1651,4 +1613,12 @@ gestioneDialogRisposte();
         return this.Curva;
     }
 
+    private void esegui(String operazione) {
+        this.w_mf.set_operation(operazione);
+        try {
+            this.w_mf.doInBackground();
+        } catch (Exception ex) {
+            Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }
