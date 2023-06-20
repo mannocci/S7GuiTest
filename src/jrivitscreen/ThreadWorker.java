@@ -317,7 +317,7 @@ public class ThreadWorker extends Thread {
             run_system_bash(this.bash_cmd_rosso);
             run_system_bash(this.bash_cmd_verde);
             run_system_bash(this.bash_cmd_aria);
-            mostra_curva();
+//            mostra_curva();
             this.mf.set_errore_tiro();
         }
     }
@@ -340,12 +340,15 @@ public class ThreadWorker extends Thread {
     private void PressioneAria() {
 
         String line = this.LeggiFile(this.f_pressione_aria_in);
-        this.mf.update_pressione_aria(Float.valueOf(line));
+        if (!this.f_pressione_aria_in.equals("")) {
+            this.mf.update_pressione_aria(Float.valueOf(line));
+        }
     }
 
     /**
      *
      * @param cmd String [] comando shell da avviare
+     * @return 
      */
     public Process run_system_bash(String[] cmd) {
         Process exec = null;

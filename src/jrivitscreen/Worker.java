@@ -99,6 +99,11 @@ public class Worker extends SwingWorker<String, Object> {
                 case "continua", "accetta", "estendi", "annulla" -> {
                     ScriviFile(this.f_risposta_tiro_errato, this.operation);
                 }
+                case "abort" -> {
+                    ScriviFile(this.f_started, "0");
+                    ScriviFile(this.f_aria, "0");
+                    ScriviFile(this.f_errore, "0");
+                }
                 case "aggiorna_nome_device" -> {
                     this.NomeDevice = LeggiFile(this.f_nome_device);
                     this.mf.setNomeDevice(this.NomeDevice);
