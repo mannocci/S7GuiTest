@@ -40,6 +40,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 /**
  *
@@ -110,7 +111,7 @@ public class JRivitMain extends javax.swing.JFrame {
         Img_Lan = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/lan.png"));
         Img_WiFi = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/cell.png"));
         Img_Info = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/info.png"));
-        
+
         formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         try (InputStream in = this.getClass().getResourceAsStream("setup.propetiers")) {
             setup = new Properties();
@@ -121,7 +122,7 @@ public class JRivitMain extends javax.swing.JFrame {
         versione = setup.getProperty("versione", "1.0");
         data_release = setup.getProperty("data_versione", "14/12/2022");
         srvKey = setup.getProperty("srvkey", "");
-        System.out.println("JRivitScreen ver. "+versione+" release " + data_release);
+        System.out.println("JRivitScreen ver. " + versione + " release " + data_release);
 
         w_mf = new Worker(this);
         esegui("start");
@@ -204,6 +205,7 @@ public class JRivitMain extends javax.swing.JFrame {
         });
 
         jButtonPL2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/info.png"))); // NOI18N
+        jButtonPL2.setMargin(new java.awt.Insets(4, 14, 4, 14));
         jButtonPL2.setPreferredSize(new java.awt.Dimension(67, 67));
         jButtonPL2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -224,24 +226,27 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelLeft.setLayout(jPanelLeftLayout);
         jPanelLeftLayout.setHorizontalGroup(
             jPanelLeftLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelLeftLayout.createSequentialGroup()
+            .addGroup(jPanelLeftLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanelLeftLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(jButtonPL1, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButtonPL2, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButtonPL3, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanelLeftLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButtonPL1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButtonPL3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
+            .addGroup(jPanelLeftLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jButtonPL2, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanelLeftLayout.setVerticalGroup(
             jPanelLeftLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelLeftLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jButtonPL1, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jButtonPL2, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(12, 12, 12)
                 .addComponent(jButtonPL3, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(24, Short.MAX_VALUE))
+                .addContainerGap(12, Short.MAX_VALUE))
         );
 
         getContentPane().add(jPanelLeft, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
@@ -331,7 +336,7 @@ public class JRivitMain extends javax.swing.JFrame {
 
         jLabelLogo.setBackground(new java.awt.Color(255, 255, 255));
         jLabelLogo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabelLogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/logorivit.png"))); // NOI18N
+        jLabelLogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/logori2.png"))); // NOI18N
         jLabelLogo.setAlignmentY(0.0F);
         jLabelLogo.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jLabelLogo.setIconTextGap(0);
@@ -499,11 +504,11 @@ public class JRivitMain extends javax.swing.JFrame {
             .addGroup(jPanelRightLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jButtonPR1, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jButtonPR2, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(12, 12, 12)
                 .addComponent(jButtonPR3, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(13, 13, 13))
+                .addContainerGap())
         );
 
         getContentPane().add(jPanelRight, new org.netbeans.lib.awtextra.AbsoluteConstraints(406, 0, -1, -1));
@@ -600,7 +605,6 @@ public class JRivitMain extends javax.swing.JFrame {
             case "dialog" -> {
                 //Pulsante Sì alla domanda ? 
                 gestioneDialogRisposte();
-                PanelStart();
             }
         }
 
@@ -798,6 +802,7 @@ public class JRivitMain extends javax.swing.JFrame {
      * PanelMain Set Panel visibile for PanelMain
      */
     private void PanelMain() {
+//        changePanel(this.jPanelMain); // metodo migliorato per cambio pannello. Da distribuire sostituendo tutte le chiamate a moveToFront (todo)
         this.jLayeredPaneCenter.moveToFront(this.jPanelMain);
         this.change_buttons(Img_Warning, Img_Info, Img_Setup,
                 Img_Play, Img_Nulla, Img_Nulla);
@@ -874,7 +879,7 @@ public class JRivitMain extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(JRivitMain.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-        
+
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
             new JRivitMain().setVisible(true);
@@ -967,6 +972,7 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     private void PanelStarted() {
         this.jLayeredPaneCenter.moveToFront(this.jPanelStarted);
+        this.jPanelStarted.setBackground(Color.white);
         this.change_buttons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
                 this.Img_Stop, this.Img_Pause, this.Img_Nulla);
         String lavoro = this.listLavori.getSelectedItem();
@@ -1240,14 +1246,13 @@ public class JRivitMain extends javax.swing.JFrame {
     }//End AggiornaSetupWiFi
 
     /**
-     * AggiornaSessione carica eventuali Informazioni dal file
-     * /tmp/setup_wifi.txt
+     * AggiornaSessione 
      *
      * @param sessione
      */
     public void AggiornaSessione(String sessione) {
         this.sessione = sessione;
-    }//End AggiornaSetupWiFi
+    }//End 
 
     /**
      * RefreshList riempie un generico elenco
@@ -1485,46 +1490,24 @@ public class JRivitMain extends javax.swing.JFrame {
     private void gestioneDialogRisposte() {
         switch (DialogQ) {
             case 1 -> //Continua
-                DialogContinua();
+            {
+                esegui("continua");
+                PanelStarted();
+            }
             case 2 -> //Accetta
-                DialogAccetta();
+                esegui("accetta");
             case 3 -> //Estende
-                DialogEstendi();
+                esegui("estendi");
             case 4 -> //Annulla
-                DialogAnnulla();
+                esegui("annulla");
             case 5 -> //Pausa
-                DialogPausa();
+                esegui("pausa");
             case 0 -> //Abortire il lavoro
-                DialogAbortire();
+            {
+                esegui("abort");
+                PanelStart();
+            }
         }
-    }
-
-    private void DialogContinua() {
-        esegui("continua");
-    }
-
-    private void DialogAccetta() {
-        esegui("accetta");
-    }
-
-    private void DialogEstendi() {
-        esegui("estendi");
-    }
-
-    private void DialogAnnulla() {
-        esegui("annulla");
-    }
-
-    private void DialogAbortire() {
-        esegui("stop_lavoro");
-        esegui("reset_errore");
-    }
-
-    /**
-     * DialogAPausa Non Usato per ora
-     */
-    private void DialogPausa() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     /**
@@ -1621,4 +1604,18 @@ public class JRivitMain extends javax.swing.JFrame {
             Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
+    /**
+     * metodo migliorato per cambio pannello. Da distribuire sostituendo tutte
+     * le chiamate di moveToFront (todo)
+     *
+     * @param pannello
+     */
+    private void changePanel(JPanel pannello) {
+        jLayeredPaneCenter.getComponent(0).setVisible(false);   // Nascondo il pannello attuale
+        jLayeredPaneCenter.moveToFront(pannello);
+        pannello.setVisible(true);
+    }
+;
+
 }
