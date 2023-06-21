@@ -469,7 +469,6 @@ public class JRivitMain extends javax.swing.JFrame {
         jButtonPR2.setMaximumSize(new java.awt.Dimension(67, 67));
         jButtonPR2.setMinimumSize(new java.awt.Dimension(67, 67));
         jButtonPR2.setPreferredSize(new java.awt.Dimension(67, 67));
-        jButtonPR2.setSize(new java.awt.Dimension(67, 67));
         jButtonPR2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonPR2ActionPerformed(evt);
@@ -480,7 +479,6 @@ public class JRivitMain extends javax.swing.JFrame {
         jButtonPR3.setMaximumSize(new java.awt.Dimension(67, 67));
         jButtonPR3.setMinimumSize(new java.awt.Dimension(67, 67));
         jButtonPR3.setPreferredSize(new java.awt.Dimension(67, 67));
-        jButtonPR3.setSize(new java.awt.Dimension(67, 67));
         jButtonPR3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonPR3ActionPerformed(evt);
