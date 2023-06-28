@@ -175,6 +175,8 @@ public class ThreadWorker extends Thread {
 //                            mostra_curva();
                         case "risposta_tiro_erratto" ->
                             risposta_tiro_errato();
+                        case "killScreen" ->
+                            this.mf.Exit();
                     }
                     try {
                         Thread.sleep(200);

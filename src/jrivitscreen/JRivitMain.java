@@ -24,18 +24,12 @@ package jrivitscreen;
 import java.awt.BasicStroke;
 import java.awt.Canvas;
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.event.ItemEvent;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Properties;
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
@@ -63,7 +57,6 @@ public class JRivitMain extends javax.swing.JFrame {
     private ImageIcon Img_Cancel;
     private String AlertDialogAnnulla;
     private String AlertDialogStop;
-    private String fileNomeDevice;
     private String Lavorodescrizione;
     private ImageIcon Img_Info;
     private int nr_lotti_da_fare;
@@ -73,7 +66,6 @@ public class JRivitMain extends javax.swing.JFrame {
     private Float sogliaMin = 7.0f;
     private Float sogliaMax = 10.0f;
     private Float pressioneIn;
-    private int nr_tiri;
     private String sessione;
     private String Curva;
     private int DialogQ = 100;
@@ -92,7 +84,6 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     public JRivitMain() {
         initComponents();
-        this.fileNomeDevice = "nome_device.txt";
         this.AlertDialogStop = "Annullare Tiro ?";
         Img_Exit = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/exit.png"));
         Img_Ok = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/ok.png"));
@@ -123,7 +114,7 @@ public class JRivitMain extends javax.swing.JFrame {
         data_release = setup.getProperty("data_versione", "14/12/2022");
         srvKey = setup.getProperty("srvkey", "");
         System.out.println("JRivitScreen ver. " + versione + " release " + data_release);
-
+        
         w_mf = new Worker(this);
         esegui("start");
         this.PanelMain();
@@ -601,7 +592,12 @@ public class JRivitMain extends javax.swing.JFrame {
             case "setup wifi" ->
                 PulsanteSu();
             case "dialog" -> {
-                //Pulsante Sì alla domanda ? 
+                //Pulsante Sì alla domanda ? Annulla ? Abort ?
+                if ( this.AlertDialogStop.compareToIgnoreCase("Annullare ?") == 0){
+                 
+                }else{ // Sì ad Abort
+                    
+                }
                 gestioneDialogRisposte();
             }
         }
@@ -727,7 +723,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 PulsanteGiu();
             case "started", "canvas" -> {//Pausa del lavoro ?
                 DialogQ = Pausa;
-                this.AlertDialogStop = "pausa?";
+                this.AlertDialogStop = "Pausa ?";
                 this.jLabelDialog.setText(AlertDialogStop);
                 PanelDialog();
             }
@@ -755,7 +751,7 @@ public class JRivitMain extends javax.swing.JFrame {
         // Qual'è il nome del pannello in primo piano ?
         switch (this.jLayeredPaneCenter.getComponent(0).getName()) {
             case "main" ->
-                System.exit(0);
+                this.Exit();
 //                per ora uso il pulsante per chiudere;
             case "start" -> {
                 PanelStarted();
@@ -1254,6 +1250,8 @@ public class JRivitMain extends javax.swing.JFrame {
 
     /**
      * RefreshList riempie un generico elenco
+     * @param elenco oggetto del tipo awt.List
+     * @param righe oggetto del tipo List
      */
     private void RefreshList(java.awt.List elenco, List<String> righe) {
         elenco.removeAll();
@@ -1615,5 +1613,12 @@ public class JRivitMain extends javax.swing.JFrame {
         pannello.setVisible(true);
     }
 ;
+/**
+ * Uscita dal programma
+ */
+    public void Exit() {
+        System.exit(1);
+    }
+
 
 }
