@@ -70,8 +70,8 @@ public class JRivitMain extends javax.swing.JFrame {
     private int nr_tiri_da_fare;
     private int nr_lotti_fatti;
     private int nr_tiri_fatti;
-    private Float sogliaMin = 3.0f;
-    private Float sogliaMax = 5.0f;
+    private Float sogliaMin = 7.0f;
+    private Float sogliaMax = 10.0f;
     private Float pressioneIn;
     private int nr_tiri;
     private String sessione;
