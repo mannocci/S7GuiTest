@@ -24,11 +24,15 @@ package jrivitscreen;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.PrintWriter;
+import static java.lang.Runtime.getRuntime;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import javax.swing.SwingWorker;
@@ -65,6 +69,8 @@ public class Worker extends SwingWorker<String, Object> {
     private final String f_aria = "aria";
     private String NomeDevice;
     private int tiriErrati;
+    private long Pid;
+    private String run_system_result;
 
     Worker(JRivitMain mf) {
         try {
@@ -89,6 +95,14 @@ public class Worker extends SwingWorker<String, Object> {
                     //this.dateFormat.setTimeZone(TimeZone.getTimeZone("Europe/London"));
                     this.mf.set_jLabel_B_L(this.dateFormat.format(orario));
                     this.mf.repaint();
+                   
+                    String [] Cmd = {"ps aux", "|", "grep","JRivitScreen"};
+                    this.run_system_bash(Cmd);
+                    if ( this.run_system_result.contains("JRivitScreen")){
+                        //Sessione già attiva, chiudere il programma
+                        System.out.print("Processo già attivo \n"+this.run_system_result+"\n");
+                        this.mf.Exit();
+                    }
                     this.wt.start();//Avvio Thread Watch File in Tmp
                     this.wt.initValues();
                 }
@@ -188,7 +202,7 @@ public class Worker extends SwingWorker<String, Object> {
                 t++;
                 this.mf.setjLabelValidi("" + t);
             }
-            case "3" -> // Accetta
+            case "3" -> // Accetta, come se fosse stato un tiro ok
             {
             }
         }
@@ -232,5 +246,36 @@ public class Worker extends SwingWorker<String, Object> {
         } catch (IOException ex) {
             Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    /**
+     *
+     * @param cmd String [] comando shell da avviare
+     * @return 
+     */
+    public Process run_system_bash(String[] cmd) {
+        Process exec = null;
+        try {
+            exec = getRuntime().exec(cmd);     
+           run_system_result = printResults(exec);
+            //return exec.exitValue();
+        } catch (IOException ex) {
+            Logger.getLogger(ThreadWorker.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return exec;
+    }   
+        /**
+     * printResult - utilizzato per visualizzare l'out put del metodo
+     * run_system_bash
+     *
+     * @param process
+     * @throws IOException
+     */
+    private static String printResults(Process process) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        String line;
+        while ((line = reader.readLine()) != null) {
+            System.out.println(line);
+        }
+        return line;
     }
 }
