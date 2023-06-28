@@ -96,13 +96,13 @@ public class Worker extends SwingWorker<String, Object> {
                     this.mf.set_jLabel_B_L(this.dateFormat.format(orario));
                     this.mf.repaint();
                    
-                    String [] Cmd = {"ps aux", "|", "grep","JRivitScreen"};
-                    this.run_system_bash(Cmd);
-                    if ( this.run_system_result.contains("JRivitScreen")){
-                        //Sessione già attiva, chiudere il programma
-                        System.out.print("Processo già attivo \n"+this.run_system_result+"\n");
-                        this.mf.Exit();
-                    }
+//                    String [] Cmd = {"/usr/bin/ps","aux", "|", "grep","JRivitScreen"};
+//                    this.run_system_bash(Cmd);
+//                    if ( this.run_system_result.contains("JRivitScreen")){
+//                        //Sessione già attiva, chiudere il programma
+//                        System.out.print("Processo già attivo \n"+this.run_system_result+"\n");
+//                        this.mf.Exit();
+//                    }
                     this.wt.start();//Avvio Thread Watch File in Tmp
                     this.wt.initValues();
                 }

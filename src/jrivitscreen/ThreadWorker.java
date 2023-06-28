@@ -62,7 +62,8 @@ public class ThreadWorker extends Thread {
     private final String f_setup_lan = "setup_lan.txt";
     private final String f_setup_wifi = "setup_wifi.txt";
     private final String f_lavori = "lavori.txt";
-    private final String f_lavori_descrizione = "lavori_descrizione.txt";
+    private final String f_lavoro_scelto = "lavoro_scelto.txt";
+    private final String f_in_pausa = "in_pausa";
     private final String f_started = "started"; // se il lavoro è in corso contiene "1"
     private final String f_aria = "aria";
     private final String f_curva_pronta = "curva_pronta";
@@ -168,7 +169,7 @@ public class ThreadWorker extends Thread {
                         case "lavori.txt" ->
                             read_lavori();
                         case "lavori_descrizione.txt" ->
-                            read_lavori_descrizione();
+                            read_lavoro_in_pausa();
                         case "aria" ->
                             mostra_stato_aria();
 //                        case "curva_pronta" ->
@@ -393,7 +394,8 @@ public class ThreadWorker extends Thread {
         this.read_setup_lan();
         this.read_setup_wifi();
         this.read_lavori();
-        this.read_lavori_descrizione();
+        this.read_lavoro_scelto();
+        this.read_lavoro_in_pausa();
         this.LeggiAriaInMinMax();
         this.LeggiSessione();
         this.mostra_stato_aria();
@@ -425,12 +427,12 @@ public class ThreadWorker extends Thread {
     }//End LeggiFile
 
     /**
-     * LeggiFileLavoriDescrizione carica eventuali ThreadWorker dal file
-     * /tmp/warning.txt
+     * LeggiFileLavoroInPausa
+     * /tmp/CT/inpausa
      */
-    private void read_lavori_descrizione() {
-        this.mf.AggiornaLavoriDescrizione(LeggiFile(this.f_lavori_descrizione));
-    }//End LeggiFileLavoriDescrizione
+    private void read_lavoro_in_pausa() {
+        this.mf.setInPausa(LeggiFile(this.f_in_pausa));
+    }
 
     /**
      * LeggiSessione
@@ -466,6 +468,10 @@ public class ThreadWorker extends Thread {
 
     private void mostra_curva() {
         this.mf.setCurva(LeggiFile(this.f_curva));
+    }
+
+    private void read_lavoro_scelto() {
+        this.mf.setLavoroScelto(LeggiFile(this.f_lavoro_scelto));
     }
 
 }

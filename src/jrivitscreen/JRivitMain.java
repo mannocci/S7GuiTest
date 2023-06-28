@@ -28,6 +28,7 @@ import java.awt.Graphics2D;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -77,6 +78,8 @@ public class JRivitMain extends javax.swing.JFrame {
     private final String versione;
     private final String data_release;
     private final String srvKey;
+    private List<String[]> elencoLavoriArray;
+    private String inPausa;
 
 //Dopo una sospensione
     /**
@@ -102,7 +105,8 @@ public class JRivitMain extends javax.swing.JFrame {
         Img_Lan = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/lan.png"));
         Img_WiFi = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/cell.png"));
         Img_Info = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/info.png"));
-
+        elencoLavoriArray = new ArrayList<>();
+        
         formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         try (InputStream in = this.getClass().getResourceAsStream("setup.propetiers")) {
             setup = new Properties();
@@ -114,7 +118,7 @@ public class JRivitMain extends javax.swing.JFrame {
         data_release = setup.getProperty("data_versione", "14/12/2022");
         srvKey = setup.getProperty("srvkey", "");
         System.out.println("JRivitScreen ver. " + versione + " release " + data_release);
-        
+
         w_mf = new Worker(this);
         esegui("start");
         this.PanelMain();
@@ -593,10 +597,10 @@ public class JRivitMain extends javax.swing.JFrame {
                 PulsanteSu();
             case "dialog" -> {
                 //Pulsante Sì alla domanda ? Annulla ? Abort ?
-                if ( this.AlertDialogStop.compareToIgnoreCase("Annullare ?") == 0){
-                 
-                }else{ // Sì ad Abort
-                    
+                if (this.AlertDialogStop.compareToIgnoreCase("Annullare ?") == 0) {
+
+                } else { // Sì ad Abort
+
                 }
                 gestioneDialogRisposte();
             }
@@ -969,12 +973,25 @@ public class JRivitMain extends javax.swing.JFrame {
         this.jPanelStarted.setBackground(Color.white);
         this.change_buttons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
                 this.Img_Stop, this.Img_Pause, this.Img_Nulla);
-        String lavoro = this.listLavori.getSelectedItem();
         this.setNomeDelDevice(); //Fatto all'avvio dell'AppScreen
+        if (this.inPausa.equals("1")) {
+//                   List<String> elencoTxt =  new ArrayList<>();
+            int quanti = this.listLavori.getItemCount();
+            int i;
+            for (i = 0; i < quanti; i++) {
+                if (this.elencoLavoriArray.get(i)[0].equals(this.lavoroScelto)) {
+                    break;
+                }
+            }
+            this.listLavori.select(i);
+            // Gestire il caso in cui il lavoro in pausa non viene trovato
+        }
+        String lavoro = this.listLavori.getSelectedItem();
+        int idLavoro = this.listLavori.getSelectedIndex();
+        this.lavoroScelto = this.elencoLavoriArray.get(idLavoro)[0];
         this.jLabelNomeLavoro.setText(lavoro);
-        String[] det_lavoro = lavoro.split(",");
-        String[] det_nr_lotti = det_lavoro[1].split("=");
-        String[] det_nr_tiri = det_lavoro[2].split("=");
+        String[] det_nr_lotti = this.elencoLavoriArray.get(idLavoro)[1].split("=");
+        String[] det_nr_tiri = this.elencoLavoriArray.get(idLavoro)[2].split("=");
         nr_lotti_da_fare = Integer.parseInt(det_nr_lotti[1]);
         nr_tiri_da_fare = Integer.parseInt(det_nr_tiri[1]);
         this.AggiornaTiriErrati();
@@ -987,7 +1004,7 @@ public class JRivitMain extends javax.swing.JFrame {
         } else {
             this.jProgressBar.setMaximum(nr_tiri_da_fare);
         }
-        lavoroScelto = lavoro.substring(0, lavoro.indexOf(','));
+
         this.repaint();
         esegui("lavoro_scelto");
     }
@@ -1224,23 +1241,17 @@ public class JRivitMain extends javax.swing.JFrame {
      * @param lista
      */
     public void AggiornaLavori(List<String> lista) {
-        RefreshList(listLavori, lista);
-    }//End AggiornaSetupWiFi
+        List<String> elencoTxt = new ArrayList<>();
+        for (String riga : lista) {
+            String[] lavoroSplit = riga.split("§");
+            this.elencoLavoriArray.add(lavoroSplit);
+            elencoTxt.add(lavoroSplit[0] + " " + lavoroSplit[1] + " " + lavoroSplit[2]);
+        }
+        RefreshList(listLavori, elencoTxt);
+    }//End AggiornaLavori
 
     /**
-     * AggiornaLavoriDescrizione carica eventuali Informazioni dal file
-     * /tmp/setup_wifi.txt
-     *
-     * @param descrizione
-     */
-    public void AggiornaLavoriDescrizione(String descrizione) {
-        this.Lavorodescrizione = descrizione;
-        this.JTextAreaDescrizioneLavoro.setText(descrizione);
-        this.repaint();
-    }//End AggiornaSetupWiFi
-
-    /**
-     * AggiornaSessione 
+     * AggiornaSessione
      *
      * @param sessione
      */
@@ -1250,6 +1261,7 @@ public class JRivitMain extends javax.swing.JFrame {
 
     /**
      * RefreshList riempie un generico elenco
+     *
      * @param elenco oggetto del tipo awt.List
      * @param righe oggetto del tipo List
      */
@@ -1612,7 +1624,8 @@ public class JRivitMain extends javax.swing.JFrame {
         jLayeredPaneCenter.moveToFront(pannello);
         pannello.setVisible(true);
     }
-;
+
+    ;
 /**
  * Uscita dal programma
  */
@@ -1620,5 +1633,12 @@ public class JRivitMain extends javax.swing.JFrame {
         System.exit(1);
     }
 
+    public String getInPausa() {
+        return inPausa;
+    }
+
+    public void setInPausa(String inPausa) {
+        this.inPausa = inPausa;
+    }
 
 }
