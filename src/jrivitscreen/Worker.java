@@ -61,6 +61,7 @@ public class Worker extends SwingWorker<String, Object> {
     private final String f_tiri_ok = "tiri_ok";
     private final String f_tiri_errati = "tiri_errati";
     private final String f_tiri_annullati = "tiri_annullati";
+    private final String f_lotti_ok = "lotti_ok";
     private final String f_errore = "errore";
     private final String f_lavoro_scelto = "lavoro_scelto.txt";
     private final String f_started = "started"; // se il lavoro è in corso contiene "1"
@@ -126,10 +127,6 @@ public class Worker extends SwingWorker<String, Object> {
                     String Tiri = LeggiFile("tiri");
                     this.mf.setJLabel_B_C(Tiri);
                 }
-                case "tiri_ok" -> {
-                    String Tiri = LeggiFile(this.f_tiri_ok);
-                    this.mf.set_nr_tiri_fatti(Integer.parseInt(Tiri));
-                }
                 case "reset_errore" -> {
                     ScriviFile(f_errore, "0");
                 }
@@ -137,8 +134,10 @@ public class Worker extends SwingWorker<String, Object> {
                     risposta_attesa_tiro_errato();
                 }
                 case "aggiorna_tiri_errati" -> {
-                    this.tiriErrati = Integer.parseInt(LeggiFile(this.f_tiri_errati));
-                    this.mf.setjLabelErrati("" + this.tiriErrati);
+                    this.mf.setjLabelErrati("" + LeggiFile(this.f_tiri_errati));
+                }
+                case "aggiorna_lotti_ok" -> {
+                    this.mf.set_nr_lotti_fatti(Integer.parseInt(LeggiFile(f_lotti_ok)));
                 }
                 case "curva" -> {
                     drawGrafico();

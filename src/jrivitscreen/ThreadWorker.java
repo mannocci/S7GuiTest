@@ -57,6 +57,7 @@ public class ThreadWorker extends Thread {
     private final String f_tiri_ok = "tiri_ok";
     private final String f_tiri_errati = "tiri_errati";
     private final String f_tiri_annullati = "tiri_annullati";
+    private final String f_lotti_ok = "lotti_ok";
     private final String f_info = "info.txt";
     private final String f_warning = "warning.txt";
     private final String f_setup_lan = "setup_lan.txt";
@@ -156,6 +157,8 @@ public class ThreadWorker extends Thread {
                             tiri();
                         case "tiri_annullati" ->
                             tiri_annullati();
+                        case "lotti_ok" ->
+                            lotti_ok();
                         case "errore" ->
                             errore();
                         case "info.txt" ->
@@ -168,7 +171,7 @@ public class ThreadWorker extends Thread {
                             read_setup_wifi();
                         case "lavori.txt" ->
                             read_lavori();
-                        case "lavori_descrizione.txt" ->
+                        case "lavori_descrizione.txt", "in_pausa" ->
                             read_lavoro_in_pausa();
                         case "aria" ->
                             mostra_stato_aria();
@@ -215,7 +218,8 @@ public class ThreadWorker extends Thread {
 //        }
 //    }
     private void tiri_ok() {
-        this.mf.update_tiri_ok();
+        this.mf.set_nr_tiri_fatti(Integer.parseInt(LeggiFile(f_tiri_ok)));
+        this.mf.update_tiri_lotti();
     }
 
     private void mostra_stato_aria() {
@@ -351,7 +355,7 @@ public class ThreadWorker extends Thread {
     /**
      *
      * @param cmd String [] comando shell da avviare
-     * @return 
+     * @return
      */
     public Process run_system_bash(String[] cmd) {
         Process exec = null;
@@ -427,8 +431,7 @@ public class ThreadWorker extends Thread {
     }//End LeggiFile
 
     /**
-     * LeggiFileLavoroInPausa
-     * /tmp/CT/inpausa
+     * LeggiFileLavoroInPausa /tmp/CT/inpausa
      */
     private void read_lavoro_in_pausa() {
         this.mf.setInPausa(LeggiFile(this.f_in_pausa));
@@ -460,10 +463,14 @@ public class ThreadWorker extends Thread {
     }
 
     private void LeggiAriaInMinMax() {
-        float min, max;
-        min = Float.parseFloat(LeggiFile(f_soglia_pressione_aria_in_min));
-        max = Float.parseFloat(LeggiFile(f_soglia_pressione_aria_in_max));
-        this.mf.update_soglie_pressione_aria_in(min, max);
+        try {
+            float min, max;
+            min = Float.parseFloat(LeggiFile(f_soglia_pressione_aria_in_min));
+            max = Float.parseFloat(LeggiFile(f_soglia_pressione_aria_in_max));
+            this.mf.update_soglie_pressione_aria_in(min, max);
+        } catch (NumberFormatException e) {
+            System.out.println("Contenuto dei file pressione_in non numerico !\n" + e.getMessage());
+        }
     }
 
     private void mostra_curva() {
@@ -472,6 +479,15 @@ public class ThreadWorker extends Thread {
 
     private void read_lavoro_scelto() {
         this.mf.setLavoroScelto(LeggiFile(this.f_lavoro_scelto));
+    }
+
+    private void lotti_ok() {
+        try {
+            this.mf.set_nr_lotti_fatti(Integer.parseInt(LeggiFile(this.f_lotti_ok)));
+            this.mf.update_tiri_lotti();    // aggiorna la visualizzazione
+        } catch (NumberFormatException e) {
+            System.out.println("Contenuto del file lotti_ok non numerico !\n" + e.getMessage());
+        }
     }
 
 }

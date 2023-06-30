@@ -62,7 +62,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private ImageIcon Img_Info;
     private int nr_lotti_da_fare;
     private int nr_tiri_da_fare;
-    private int nr_lotti_fatti;
+    private int nr_lotto_corrente;
     private int nr_tiri_fatti;
     private Float sogliaMin = 7.0f;
     private Float sogliaMax = 10.0f;
@@ -106,7 +106,7 @@ public class JRivitMain extends javax.swing.JFrame {
         Img_WiFi = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/cell.png"));
         Img_Info = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/info.png"));
         elencoLavoriArray = new ArrayList<>();
-        
+
         formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         try (InputStream in = this.getClass().getResourceAsStream("setup.propetiers")) {
             setup = new Properties();
@@ -284,7 +284,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelErrati.setText("0");
         jLabelErrati.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jLabelErrati.setOpaque(true);
-        jPanelStarted.add(jLabelErrati, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 190, 60, 25));
+        jPanelStarted.add(jLabelErrati, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 190, 80, 25));
 
         jLabelAnnullati.setBackground(new java.awt.Color(204, 204, 204));
         jLabelAnnullati.setFont(new java.awt.Font("SansSerif", 0, 24)); // NOI18N
@@ -292,15 +292,15 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelAnnullati.setText("0");
         jLabelAnnullati.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jLabelAnnullati.setOpaque(true);
-        jPanelStarted.add(jLabelAnnullati, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 190, 60, 25));
+        jPanelStarted.add(jLabelAnnullati, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 190, 80, 25));
 
         jLabel_Errati.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel_Errati.setText("Errati");
-        jPanelStarted.add(jLabel_Errati, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 220, -1, -1));
+        jPanelStarted.add(jLabel_Errati, new org.netbeans.lib.awtextra.AbsoluteConstraints(278, 220, -1, -1));
 
         jLabel_Annullati.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel_Annullati.setText("Annullati");
-        jPanelStarted.add(jLabel_Annullati, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 220, -1, -1));
+        jPanelStarted.add(jLabel_Annullati, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 220, -1, -1));
 
         jLabel_Validi.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel_Validi.setText("Validi");
@@ -312,7 +312,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelValidi.setText("0");
         jLabelValidi.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jLabelValidi.setOpaque(true);
-        jPanelStarted.add(jLabelValidi, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 190, 60, 25));
+        jPanelStarted.add(jLabelValidi, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 190, 80, 25));
 
         jLayeredPaneCenter.add(jPanelStarted, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 336, 243));
 
@@ -401,7 +401,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelStart.setName("start"); // NOI18N
         jPanelStart.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        listLavori.setFont(new java.awt.Font("Lucida Grande", 0, 16)); // NOI18N
+        listLavori.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
         listLavori.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 listLavoriActionPerformed(evt);
@@ -994,6 +994,7 @@ public class JRivitMain extends javax.swing.JFrame {
         String[] det_nr_tiri = this.elencoLavoriArray.get(idLavoro)[2].split("=");
         nr_lotti_da_fare = Integer.parseInt(det_nr_lotti[1]);
         nr_tiri_da_fare = Integer.parseInt(det_nr_tiri[1]);
+        /*
         this.AggiornaTiriErrati();
         this.AggiornaTiriAnnullati();
         this.AggiornaTiri();
@@ -1004,7 +1005,7 @@ public class JRivitMain extends javax.swing.JFrame {
         } else {
             this.jProgressBar.setMaximum(nr_tiri_da_fare);
         }
-
+         */
         this.repaint();
         esegui("lavoro_scelto");
     }
@@ -1333,73 +1334,39 @@ public class JRivitMain extends javax.swing.JFrame {
     }
 
     /**
-     *
-     * @param tiri_ok int - chiamato da WorkerThread imposta l'interfaccia
-     * aggiornando i campi associati ai nr dei tiri e aggiorna i lotti fatti la
-     * variabile passata al metodo e letta dal file tiri_ok
+     * visualizza i dati aggiornati
      */
-    public void nr_tiri_Lotti(int tiri_ok) {
-        int tiri = tiri_ok;
+    public void update_tiri_lotti() {
+        this.jLabelValidi.setText("" + nr_tiri_fatti);
 
-        if (this.nr_lotti_da_fare > 1 && tiri > 0) {
-            if ((tiri == (this.nr_lotti_da_fare * this.nr_tiri_da_fare))) {
+        if (this.nr_tiri_da_fare == -1) {
+            //Lavoro senza fine
+            this.jPanelStarted.setBackground(Color.GRAY);
+            this.jProgressBar.setVisible(false);
+            this.jLabelNomeLavoro.setText("Lavoro senza limiti");
+            this.jLabelContatore.setText("" + nr_tiri_fatti);
+        } else {
+            if (this.nr_lotti_da_fare > nr_lotto_corrente && nr_tiri_fatti >= nr_tiri_da_fare) {
                 // E' Finito il lavoro !
                 this.jPanelStarted.setBackground(Color.BLUE);
             } else {
                 this.jPanelStarted.setBackground(Color.WHITE);
             }
-            if (tiri == (this.nr_tiri_da_fare)) {
-                //Finito un lotto fare flash con il colore
-                this.nr_lotti_fatti++;
-                this.jPanelStarted.setBackground(Color.BLUE);
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                this.jPanelStarted.setBackground(Color.WHITE);
-            }
-
-        } else {
-            if (this.nr_tiri_da_fare == -1) {
-                //Lavoro senza fine
-                this.jPanelStarted.setBackground(Color.DARK_GRAY);
-
-            } else {
-                if ((tiri == (this.nr_tiri_da_fare))) {
-                    // E' Finito il lavoro !
-                    this.jPanelStarted.setBackground(Color.BLUE);
-                }
-            }
+            this.jLabelContatore.setText(nr_lotto_corrente + "/" + nr_lotti_da_fare
+                    + " - " + nr_tiri_fatti + "/" + nr_tiri_da_fare);
+            this.jProgressBar.setMaximum(nr_lotti_da_fare*nr_tiri_da_fare);
+            this.jProgressBar.setValue(nr_tiri_fatti+((nr_lotto_corrente-1)*nr_tiri_da_fare)); // calcolo dei tiri complessivi per l'avanzamento della barra
+            this.jProgressBar.setVisible(true);
         }
-
-        if (this.nr_lotti_da_fare > 0) {
-            this.nr_tiri_fatti = tiri
-                    - (this.nr_lotti_fatti * this.nr_tiri_da_fare);
-        }
-
-        this.jLabelValidi.setText("" + tiri);
-        this.jProgressBar.setValue(tiri);
-        this.jLabelContatore.setText(nr_lotti_fatti + "/" + nr_lotti_da_fare
-                + " - " + nr_tiri_fatti + "/" + nr_tiri_da_fare);
         this.repaint();
     }
+
 
     /**
      * tiri_errati chiamato da WorkerThread imposta l'interfaccia
      */
     public void tiri_errati() {
         this.set_errore_tiro();
-        this.repaint();
-    }
-
-    /**
-     * Aggiorna il Label dei tiri errati
-     *
-     * @param tiri_errati
-     */
-    void nr_errori(int tiri_errati) {
-        this.jLabelErrati.setText("" + tiri_errati);
         this.repaint();
     }
 
@@ -1419,30 +1386,13 @@ public class JRivitMain extends javax.swing.JFrame {
         this.jLayeredPaneCenter.moveToFront(this.jPanelStarted);
         this.repaint();
     }
-
-    /**
-     * Scrive i numero totale di tiri a prescindere
-     *
-     */
-    void tiri() {
-        esegui("tiri");
-    }
-
+ 
     void risposta_attesa_tiro_errato() {
         esegui("risposta_attesa_tiro_errato");
     }
 
-    /**
-     * Aggiorna il LabelValidi
-     *
-     */
-    public void update_tiri_ok() {
-        esegui("tiri_ok");
-    }
-
     public void set_nr_tiri_fatti(int TiriOK) {
         this.nr_tiri_fatti = TiriOK;
-        nr_tiri_Lotti(TiriOK);
     }
 
     /**
@@ -1639,6 +1589,10 @@ public class JRivitMain extends javax.swing.JFrame {
 
     public void setInPausa(String inPausa) {
         this.inPausa = inPausa;
+    }
+
+    void set_nr_lotti_fatti(int lotti_ok) {
+        this.nr_lotto_corrente = lotti_ok;
     }
 
 }
