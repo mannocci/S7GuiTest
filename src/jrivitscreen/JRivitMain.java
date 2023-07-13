@@ -66,7 +66,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private int nr_tiri_fatti;
     private Float sogliaMin = 7.0f;
     private Float sogliaMax = 10.0f;
-    private Float pressioneIn;
+    private Float pressione_aria_in;
     private String sessione;
     private String Curva;
     private int DialogQ = 100;
@@ -80,6 +80,10 @@ public class JRivitMain extends javax.swing.JFrame {
     private final String srvKey;
     private List<String[]> elencoLavoriArray;
     private String inPausa;
+    private Float temp_rpi;
+    private Float temp_io_board;
+    private Float v_in;
+    private Float v_rpi;
 
 //Dopo una sospensione
     /**
@@ -1160,7 +1164,7 @@ public class JRivitMain extends javax.swing.JFrame {
     }//End PulsanteSu
 
     /**
-     * Pannello per la configurazione della LAN Legge il file /tmp/setup_lan.txt
+     * Pannello per la configurazione della LAN Legge il file setup_lan.txt
      */
     private void PanelSetupLan() {
         this.jLayeredPaneCenter.moveToFront(this.jPanelSetupLan);
@@ -1169,7 +1173,7 @@ public class JRivitMain extends javax.swing.JFrame {
     }
 
     /**
-     * Pannello per il setup della WiFi Legge il file /tmp/setup_wifi.txt
+     * Pannello per il setup della WiFi Legge il file setup_wifi.txt
      */
     private void PanelSetupWifi() {
         this.jLayeredPaneCenter.moveToFront(this.jPanelSetupWiFi);
@@ -1178,7 +1182,7 @@ public class JRivitMain extends javax.swing.JFrame {
     }
 
     /**
-     * Pannello che mostra il contenuto del file /tmp/info.txt
+     * Pannello che mostra il contenuto del file info.txt
      */
     private void PanelInfo() {
         this.jLayeredPaneCenter.moveToFront(this.jPanelInfo);
@@ -1199,7 +1203,7 @@ public class JRivitMain extends javax.swing.JFrame {
     }
 
     /**
-     * AggiornaWarning carica eventuali Warning dal file /tmp/warning.txt
+     * AggiornaWarning carica eventuali Warning dal file warning.txt
      *
      * @param lista
      */
@@ -1208,11 +1212,20 @@ public class JRivitMain extends javax.swing.JFrame {
     }//End AggiornaInfo
 
     /**
-     * AggiornaInfo carica eventuali Informazioni dal file /tmp/info.txt
+     * AggiornaInfo carica eventuali Informazioni dal file info.txt
      *
      * @param lista
      */
     public void AggiornaInfo(List<String> lista) {
+        // ogni volta che si inserisce un elemento in posizione 0 la lista viene spostata in avanti
+        // quindi i valori saranno visualizzati al contrario rispetto all'ordine di chiamata nel codice java
+        lista.add(0, "-------------------------------------------------------");
+        lista.add(0, "Pressione aria in ingresso: "+this.pressione_aria_in.toString() + " bar");
+        lista.add(0, "Tensione CPU: " + this.v_rpi.toString() + " V");
+        lista.add(0, "Tensione ingresso: "+this.v_in.toString() + " V");
+        lista.add(0, "Temperatura scheda I/O: " + this.temp_io_board.toString() + " °C");
+        lista.add(0, "Temperatura CPU: " + this.temp_rpi.toString() + " °C");
+        
         RefreshList(listInfo, lista);
     }//End AggiornaInfo
 
@@ -1354,13 +1367,12 @@ public class JRivitMain extends javax.swing.JFrame {
             }
             this.jLabelContatore.setText(nr_lotto_corrente + "/" + nr_lotti_da_fare
                     + " - " + nr_tiri_fatti + "/" + nr_tiri_da_fare);
-            this.jProgressBar.setMaximum(nr_lotti_da_fare*nr_tiri_da_fare);
-            this.jProgressBar.setValue(nr_tiri_fatti+((nr_lotto_corrente-1)*nr_tiri_da_fare)); // calcolo dei tiri complessivi per l'avanzamento della barra
+            this.jProgressBar.setMaximum(nr_lotti_da_fare * nr_tiri_da_fare);
+            this.jProgressBar.setValue(nr_tiri_fatti + ((nr_lotto_corrente - 1) * nr_tiri_da_fare)); // calcolo dei tiri complessivi per l'avanzamento della barra
             this.jProgressBar.setVisible(true);
         }
         this.repaint();
     }
-
 
     /**
      * tiri_errati chiamato da WorkerThread imposta l'interfaccia
@@ -1386,7 +1398,7 @@ public class JRivitMain extends javax.swing.JFrame {
         this.jLayeredPaneCenter.moveToFront(this.jPanelStarted);
         this.repaint();
     }
- 
+
     void risposta_attesa_tiro_errato() {
         esegui("risposta_attesa_tiro_errato");
     }
@@ -1423,16 +1435,26 @@ public class JRivitMain extends javax.swing.JFrame {
         esegui("aggiorna_tiri_annullati");
     }
 
-    void update_pressione_aria(Float PressioneAria) {
-        this.pressioneIn = PressioneAria;
-        if (pressioneIn <= this.sogliaMin) {
-            this.jLabel_msg.setForeground(java.awt.Color.red);
-            this.jLabel_msg.setText("Pressione aria insufficiente: " + PressioneAria + " Bar");
-        } else {
-            this.jLabel_msg.setForeground(java.awt.Color.green);
-            this.jLabel_msg.setText("Pressione aria corretta: " + PressioneAria + " Bar");
+    void update_sensori(String Valori) {
+        String[] arrayValori = Valori.split(",");
+        try {
+            this.temp_rpi = Float.valueOf(arrayValori[0]);
+            this.temp_io_board = Float.valueOf(arrayValori[1]);
+            this.v_in = Float.valueOf(arrayValori[2]);
+            this.v_rpi = Float.valueOf(arrayValori[3]);
+            this.pressione_aria_in = Float.valueOf(arrayValori[4]);
+            if (pressione_aria_in <= this.sogliaMin) {
+                this.jLabel_msg.setForeground(java.awt.Color.red);
+                this.jLabel_msg.setText("Pressione aria insufficiente: " + pressione_aria_in + " Bar");
+            } else {
+                this.jLabel_msg.setForeground(java.awt.Color.green);
+                this.jLabel_msg.setText("Pressione aria corretta: " + pressione_aria_in + " Bar");
+            }
+            this.repaint();
+        } catch (NumberFormatException e) {
+            System.out.println("jrivitscreen.JRivitMain.update_sensori() - "+ e.getMessage());
         }
-        this.repaint();
+
     }
 
     public void update_soglie_pressione_aria_in(Float SogliaMin, Float SogliaMax) {

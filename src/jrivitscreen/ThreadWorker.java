@@ -72,6 +72,7 @@ public class ThreadWorker extends Thread {
     private final String f_errore = "errore";
     private final String f_risposta_tiro_errato = "risposta_tiro_errato";
     private final String f_sessione = "sessione";
+    private final String f_sensori = "sensori";
     private final String f_pressione_aria_in = "pressione_aria_in";
     private final String f_soglia_pressione_aria_in_min = "soglia_pressione_aria_in_min";
     private final String f_soglia_pressione_aria_in_max = "soglia_pressione_aria_in_max";
@@ -161,7 +162,7 @@ public class ThreadWorker extends Thread {
                             lotti_ok();
                         case "errore" ->
                             errore();
-                        case "info.txt" ->
+                        case "sensori", "info.txt" ->
                             read_info();
                         case "warning.txt" ->
                             read_warning();
@@ -184,7 +185,7 @@ public class ThreadWorker extends Thread {
                     }
                     try {
                         Thread.sleep(200);
-                        PressioneAria();
+                        AggiornaSensori();
                     } catch (InterruptedException ex) {
                         System.out.printf("Error: " + ex);
                     }
@@ -218,8 +219,12 @@ public class ThreadWorker extends Thread {
 //        }
 //    }
     private void tiri_ok() {
-        this.mf.set_nr_tiri_fatti(Integer.parseInt(LeggiFile(f_tiri_ok)));
-        this.mf.update_tiri_lotti();
+        try {
+            this.mf.set_nr_tiri_fatti(Integer.parseInt(LeggiFile(f_tiri_ok)));
+            this.mf.update_tiri_lotti();
+        } catch (NumberFormatException e) {
+            System.out.println("File tiri_ok non numerico\n"+e.getMessage());
+        }
     }
 
     private void mostra_stato_aria() {
@@ -344,11 +349,11 @@ public class ThreadWorker extends Thread {
     /**
      * PressioneAria viene letta ogni secondo
      */
-    private void PressioneAria() {
+    private void AggiornaSensori() {
 
-        String line = this.LeggiFile(this.f_pressione_aria_in);
-        if (!this.f_pressione_aria_in.equals("")) {
-            this.mf.update_pressione_aria(Float.valueOf(line));
+        String line = this.LeggiFile(this.f_sensori);
+        if (!line.equals("")) {
+            this.mf.update_sensori(line);
         }
     }
 
@@ -388,6 +393,7 @@ public class ThreadWorker extends Thread {
      * inizializza i valori in base al contenuto dei file
      */
     public void initValues() {
+        this.AggiornaSensori();
         this.tiri_ok();
         this.tiri_errati();
         this.tiri();
@@ -403,7 +409,6 @@ public class ThreadWorker extends Thread {
         this.LeggiAriaInMinMax();
         this.LeggiSessione();
         this.mostra_stato_aria();
-        this.PressioneAria();
         this.risposta_tiro_errato();
         this.mf.repaint();
     }
