@@ -509,6 +509,11 @@
           </Layout>
           <SubComponents>
             <Component class="java.awt.List" name="listInfo">
+              <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Dialog" size="16" style="1"/>
+                </Property>
+              </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="listInfoActionPerformed"/>
               </Events>
@@ -577,7 +582,7 @@
             <Component class="java.awt.List" name="listLavori">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Lucida Grande" size="18" style="1"/>
+                  <Font name="Dialog" size="18" style="1"/>
                 </Property>
               </Properties>
               <Events>

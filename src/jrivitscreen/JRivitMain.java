@@ -66,7 +66,6 @@ public class JRivitMain extends javax.swing.JFrame {
     private int nr_tiri_fatti;
     private Float sogliaMin = 7.0f;
     private Float sogliaMax = 10.0f;
-    private Float pressione_aria_in;
     private String sessione;
     private String Curva;
     private int DialogQ = 100;
@@ -84,6 +83,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private Float temp_io_board;
     private Float v_in;
     private Float v_rpi;
+    private Float pressione_aria_in;
 
 //Dopo una sospensione
     /**
@@ -375,6 +375,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelInfo.setName("info"); // NOI18N
         jPanelInfo.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        listInfo.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
         listInfo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 listInfoActionPerformed(evt);
@@ -405,7 +406,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelStart.setName("start"); // NOI18N
         jPanelStart.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        listLavori.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
+        listLavori.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         listLavori.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 listLavoriActionPerformed(evt);
@@ -1442,7 +1443,8 @@ public class JRivitMain extends javax.swing.JFrame {
             this.temp_io_board = Float.valueOf(arrayValori[1]);
             this.v_in = Float.valueOf(arrayValori[2]);
             this.v_rpi = Float.valueOf(arrayValori[3]);
-            this.pressione_aria_in = Float.valueOf(arrayValori[4]);
+            // il valore di pressione letto dal sensore deve essere raddoppiato
+            this.pressione_aria_in = Float.parseFloat(arrayValori[4]) * 2;
             if (pressione_aria_in <= this.sogliaMin) {
                 this.jLabel_msg.setForeground(java.awt.Color.red);
                 this.jLabel_msg.setText("Pressione aria insufficiente: " + pressione_aria_in + " Bar");
