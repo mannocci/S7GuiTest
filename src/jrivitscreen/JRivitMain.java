@@ -182,7 +182,6 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabel_msg = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setMaximumSize(new java.awt.Dimension(480, 320));
         setMinimumSize(new java.awt.Dimension(480, 320));
         setName("frameMain"); // NOI18N
         setUndecorated(true);
@@ -192,94 +191,80 @@ public class JRivitMain extends javax.swing.JFrame {
         setType(java.awt.Window.Type.UTILITY);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        jPanelLeft.setAlignmentX(0.1F);
+        jPanelLeft.setAlignmentY(0.1F);
+        jPanelLeft.setMaximumSize(new java.awt.Dimension(70, 286));
+        jPanelLeft.setMinimumSize(new java.awt.Dimension(70, 286));
+        jPanelLeft.setPreferredSize(new java.awt.Dimension(70, 286));
+        jPanelLeft.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
         jButtonPL1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/warning.png"))); // NOI18N
         jButtonPL1.setAlignmentX(0.5F);
-        jButtonPL1.setMaximumSize(new java.awt.Dimension(67, 67));
-        jButtonPL1.setMinimumSize(new java.awt.Dimension(67, 67));
-        jButtonPL1.setPreferredSize(new java.awt.Dimension(67, 67));
+        jButtonPL1.setMaximumSize(new java.awt.Dimension(65, 65));
+        jButtonPL1.setMinimumSize(new java.awt.Dimension(65, 65));
+        jButtonPL1.setPreferredSize(new java.awt.Dimension(65, 65));
         jButtonPL1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonPL1ActionPerformed(evt);
             }
         });
+        jPanelLeft.add(jButtonPL1, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 6, -1, -1));
 
         jButtonPL2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/info.png"))); // NOI18N
         jButtonPL2.setMargin(new java.awt.Insets(4, 14, 4, 14));
-        jButtonPL2.setPreferredSize(new java.awt.Dimension(67, 67));
+        jButtonPL2.setPreferredSize(new java.awt.Dimension(65, 65));
         jButtonPL2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonPL2ActionPerformed(evt);
             }
         });
+        jPanelLeft.add(jButtonPL2, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 110, -1, -1));
 
         jButtonPL3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/setup.png"))); // NOI18N
         jButtonPL3.setAlignmentX(0.5F);
-        jButtonPL3.setPreferredSize(new java.awt.Dimension(67, 67));
+        jButtonPL3.setPreferredSize(new java.awt.Dimension(65, 65));
         jButtonPL3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonPL3ActionPerformed(evt);
             }
         });
+        jPanelLeft.add(jButtonPL3, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 200, -1, -1));
 
-        javax.swing.GroupLayout jPanelLeftLayout = new javax.swing.GroupLayout(jPanelLeft);
-        jPanelLeft.setLayout(jPanelLeftLayout);
-        jPanelLeftLayout.setHorizontalGroup(
-            jPanelLeftLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelLeftLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanelLeftLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButtonPL1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButtonPL3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
-            .addGroup(jPanelLeftLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jButtonPL2, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        jPanelLeftLayout.setVerticalGroup(
-            jPanelLeftLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelLeftLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jButtonPL1, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButtonPL2, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(12, 12, 12)
-                .addComponent(jButtonPL3, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(12, Short.MAX_VALUE))
-        );
-
-        getContentPane().add(jPanelLeft, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
+        getContentPane().add(jPanelLeft, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 70, 285));
 
         jLayeredPaneCenter.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         jLayeredPaneCenter.setOpaque(true);
         jLayeredPaneCenter.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jPanelStarted.setBackground(java.awt.Color.white);
+        jPanelStarted.setBackground(new java.awt.Color(204, 204, 255));
+        jPanelStarted.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jPanelStarted.setMaximumSize(new java.awt.Dimension(245, 234));
         jPanelStarted.setMinimumSize(new java.awt.Dimension(245, 234));
         jPanelStarted.setName("started"); // NOI18N
+        jPanelStarted.setPreferredSize(new java.awt.Dimension(338, 238));
         jPanelStarted.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabelContatore.setFont(new java.awt.Font("SansSerif", 0, 36)); // NOI18N
         jLabelContatore.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelContatore.setText("0/0");
-        jPanelStarted.add(jLabelContatore, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 100, 340, 30));
+        jPanelStarted.add(jLabelContatore, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 90, 315, 30));
 
-        jLabelNomeDevice.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
+        jLabelNomeDevice.setFont(new java.awt.Font("DejaVu Sans Condensed", 1, 18)); // NOI18N
         jLabelNomeDevice.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelNomeDevice.setText("Nome Device");
-        jPanelStarted.add(jLabelNomeDevice, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 10, 340, -1));
+        jPanelStarted.add(jLabelNomeDevice, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 8, 315, 30));
 
-        jLabelNomeLavoro.setFont(new java.awt.Font("Cantarell", 0, 20)); // NOI18N
+        jLabelNomeLavoro.setFont(new java.awt.Font("DejaVu Sans Condensed", 1, 18)); // NOI18N
         jLabelNomeLavoro.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelNomeLavoro.setText("Nome Lavoro");
-        jPanelStarted.add(jLabelNomeLavoro, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 50, 340, 30));
+        jPanelStarted.add(jLabelNomeLavoro, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 45, 315, 30));
 
+        jProgressBar.setFont(new java.awt.Font("Liberation Sans", 1, 14)); // NOI18N
         jProgressBar.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jProgressBar.setMaximumSize(new java.awt.Dimension(245, 40));
         jProgressBar.setMinimumSize(new java.awt.Dimension(245, 40));
         jProgressBar.setStringPainted(true);
-        jPanelStarted.add(jProgressBar, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 140, 320, 40));
+        jPanelStarted.add(jProgressBar, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 140, 315, 40));
 
         jLabelErrati.setBackground(java.awt.Color.red);
         jLabelErrati.setFont(new java.awt.Font("SansSerif", 0, 24)); // NOI18N
@@ -288,7 +273,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelErrati.setText("0");
         jLabelErrati.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jLabelErrati.setOpaque(true);
-        jPanelStarted.add(jLabelErrati, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 190, 80, 25));
+        jPanelStarted.add(jLabelErrati, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 200, 80, 25));
 
         jLabelAnnullati.setBackground(new java.awt.Color(204, 204, 204));
         jLabelAnnullati.setFont(new java.awt.Font("SansSerif", 0, 24)); // NOI18N
@@ -296,19 +281,22 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelAnnullati.setText("0");
         jLabelAnnullati.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jLabelAnnullati.setOpaque(true);
-        jPanelStarted.add(jLabelAnnullati, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 190, 80, 25));
+        jPanelStarted.add(jLabelAnnullati, new org.netbeans.lib.awtextra.AbsoluteConstraints(125, 200, 80, 25));
 
+        jLabel_Errati.setFont(new java.awt.Font("Liberation Sans", 1, 15)); // NOI18N
         jLabel_Errati.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel_Errati.setText("Errati");
-        jPanelStarted.add(jLabel_Errati, new org.netbeans.lib.awtextra.AbsoluteConstraints(278, 220, -1, -1));
+        jPanelStarted.add(jLabel_Errati, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 235, -1, -1));
 
+        jLabel_Annullati.setFont(new java.awt.Font("Liberation Sans", 1, 15)); // NOI18N
         jLabel_Annullati.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel_Annullati.setText("Annullati");
-        jPanelStarted.add(jLabel_Annullati, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 220, -1, -1));
+        jPanelStarted.add(jLabel_Annullati, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 235, -1, -1));
 
+        jLabel_Validi.setFont(new java.awt.Font("Liberation Sans", 1, 15)); // NOI18N
         jLabel_Validi.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel_Validi.setText("Validi");
-        jPanelStarted.add(jLabel_Validi, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 220, -1, -1));
+        jPanelStarted.add(jLabel_Validi, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 235, -1, -1));
 
         jLabelValidi.setBackground(java.awt.Color.green);
         jLabelValidi.setFont(new java.awt.Font("SansSerif", 0, 24)); // NOI18N
@@ -316,21 +304,21 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelValidi.setText("0");
         jLabelValidi.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jLabelValidi.setOpaque(true);
-        jPanelStarted.add(jLabelValidi, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 190, 80, 25));
+        jPanelStarted.add(jLabelValidi, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 200, 80, 25));
 
-        jLayeredPaneCenter.add(jPanelStarted, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 336, 243));
+        jLayeredPaneCenter.add(jPanelStarted, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 328, 276));
 
-        jPanelSetup.setMaximumSize(new java.awt.Dimension(252, 237));
-        jPanelSetup.setMinimumSize(new java.awt.Dimension(245, 234));
+        jPanelSetup.setMaximumSize(new java.awt.Dimension(328, 276));
+        jPanelSetup.setMinimumSize(new java.awt.Dimension(328, 276));
         jPanelSetup.setName("setup"); // NOI18N
         jPanelSetup.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-        jLayeredPaneCenter.add(jPanelSetup, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 336, 243));
+        jLayeredPaneCenter.add(jPanelSetup, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 328, 276));
 
         jPanelMain.setBackground(new java.awt.Color(255, 255, 255));
-        jPanelMain.setMaximumSize(new java.awt.Dimension(250, 250));
-        jPanelMain.setMinimumSize(new java.awt.Dimension(250, 250));
+        jPanelMain.setMaximumSize(new java.awt.Dimension(328, 276));
+        jPanelMain.setMinimumSize(new java.awt.Dimension(328, 276));
         jPanelMain.setName("main"); // NOI18N
-        jPanelMain.setPreferredSize(new java.awt.Dimension(245, 234));
+        jPanelMain.setPreferredSize(new java.awt.Dimension(328, 276));
         jPanelMain.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabelLogo.setBackground(new java.awt.Color(255, 255, 255));
@@ -342,68 +330,87 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelLogo.setMaximumSize(new java.awt.Dimension(250, 250));
         jLabelLogo.setMinimumSize(new java.awt.Dimension(250, 250));
         jLabelLogo.setPreferredSize(new java.awt.Dimension(250, 250));
-        jPanelMain.add(jLabelLogo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 336, 243));
+        jPanelMain.add(jLabelLogo, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 250, 250));
 
-        jLayeredPaneCenter.add(jPanelMain, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 336, 243));
+        jLayeredPaneCenter.add(jPanelMain, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 328, 276));
 
-        jPanelSetupLan.setMaximumSize(new java.awt.Dimension(250, 250));
-        jPanelSetupLan.setMinimumSize(new java.awt.Dimension(250, 250));
+        jPanelSetupLan.setMaximumSize(new java.awt.Dimension(328, 276));
+        jPanelSetupLan.setMinimumSize(new java.awt.Dimension(328, 276));
         jPanelSetupLan.setName("setup lan"); // NOI18N
+        jPanelSetupLan.setPreferredSize(new java.awt.Dimension(328, 276));
         jPanelSetupLan.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-        jPanelSetupLan.add(listSetupLan, new org.netbeans.lib.awtextra.AbsoluteConstraints(7, 7, 320, 230));
 
-        jLayeredPaneCenter.add(jPanelSetupLan, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 336, 243));
+        listSetupLan.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
+        jPanelSetupLan.add(listSetupLan, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 2, 320, 270));
 
-        jPanelSetupWiFi.setMaximumSize(new java.awt.Dimension(250, 250));
-        jPanelSetupWiFi.setMinimumSize(new java.awt.Dimension(250, 250));
+        jLayeredPaneCenter.add(jPanelSetupLan, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 328, 276));
+
+        jPanelSetupWiFi.setMaximumSize(new java.awt.Dimension(328, 276));
+        jPanelSetupWiFi.setMinimumSize(new java.awt.Dimension(328, 276));
         jPanelSetupWiFi.setName("setup wifi"); // NOI18N
-        jPanelSetupWiFi.setPreferredSize(new java.awt.Dimension(250, 250));
+        jPanelSetupWiFi.setPreferredSize(new java.awt.Dimension(328, 276));
         jPanelSetupWiFi.setRequestFocusEnabled(false);
         jPanelSetupWiFi.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        listSetupWiFi.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
+        listSetupWiFi.setMaximumSize(new java.awt.Dimension(320, 270));
+        listSetupWiFi.setMinimumSize(new java.awt.Dimension(320, 270));
+        listSetupWiFi.setPreferredSize(new java.awt.Dimension(320, 270));
         listSetupWiFi.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 listSetupWiFiActionPerformed(evt);
             }
         });
-        jPanelSetupWiFi.add(listSetupWiFi, new org.netbeans.lib.awtextra.AbsoluteConstraints(7, 7, 320, 230));
+        jPanelSetupWiFi.add(listSetupWiFi, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 2, 320, 270));
 
-        jLayeredPaneCenter.add(jPanelSetupWiFi, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 336, 243));
+        jLayeredPaneCenter.add(jPanelSetupWiFi, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 328, 276));
 
-        jPanelInfo.setMaximumSize(new java.awt.Dimension(250, 250));
-        jPanelInfo.setMinimumSize(new java.awt.Dimension(250, 250));
+        jPanelInfo.setMaximumSize(new java.awt.Dimension(328, 276));
+        jPanelInfo.setMinimumSize(new java.awt.Dimension(328, 276));
         jPanelInfo.setName("info"); // NOI18N
+        jPanelInfo.setPreferredSize(new java.awt.Dimension(328, 276));
         jPanelInfo.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         listInfo.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
+        listInfo.setMaximumSize(new java.awt.Dimension(328, 276));
+        listInfo.setMinimumSize(new java.awt.Dimension(328, 276));
+        listInfo.setPreferredSize(new java.awt.Dimension(328, 276));
         listInfo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 listInfoActionPerformed(evt);
             }
         });
-        jPanelInfo.add(listInfo, new org.netbeans.lib.awtextra.AbsoluteConstraints(7, 7, 320, 230));
+        jPanelInfo.add(listInfo, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 2, 320, 270));
 
-        jLayeredPaneCenter.add(jPanelInfo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 336, 243));
+        jLayeredPaneCenter.add(jPanelInfo, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 328, 276));
 
         jPanelWarning.setToolTipText("");
-        jPanelWarning.setMaximumSize(new java.awt.Dimension(252, 237));
-        jPanelWarning.setMinimumSize(new java.awt.Dimension(245, 234));
+        jPanelWarning.setMaximumSize(new java.awt.Dimension(328, 276));
+        jPanelWarning.setMinimumSize(new java.awt.Dimension(328, 276));
         jPanelWarning.setName("warning"); // NOI18N
         jPanelWarning.setOpaque(false);
+        jPanelWarning.setPreferredSize(new java.awt.Dimension(328, 276));
         jPanelWarning.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        listWarning.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
+        listWarning.setMaximumSize(new java.awt.Dimension(320, 270));
+        listWarning.setMinimumSize(new java.awt.Dimension(320, 270));
+        listWarning.setPreferredSize(new java.awt.Dimension(320, 270));
         listWarning.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 listWarningActionPerformed(evt);
             }
         });
-        jPanelWarning.add(listWarning, new org.netbeans.lib.awtextra.AbsoluteConstraints(7, 7, 320, 230));
+        jPanelWarning.add(listWarning, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 320, 270));
 
-        jLayeredPaneCenter.add(jPanelWarning, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 336, 243));
+        jLayeredPaneCenter.add(jPanelWarning, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 328, 276));
 
-        jPanelStart.setMaximumSize(new java.awt.Dimension(250, 250));
-        jPanelStart.setMinimumSize(new java.awt.Dimension(250, 250));
+        jPanelStart.setAlignmentX(1.0F);
+        jPanelStart.setAlignmentY(1.0F);
+        jPanelStart.setMaximumSize(new java.awt.Dimension(328, 276));
+        jPanelStart.setMinimumSize(new java.awt.Dimension(328, 276));
         jPanelStart.setName("start"); // NOI18N
+        jPanelStart.setPreferredSize(new java.awt.Dimension(328, 276));
         jPanelStart.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         listLavori.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
@@ -412,32 +419,39 @@ public class JRivitMain extends javax.swing.JFrame {
                 listLavoriActionPerformed(evt);
             }
         });
-        jPanelStart.add(listLavori, new org.netbeans.lib.awtextra.AbsoluteConstraints(7, 7, 320, 130));
+        jPanelStart.add(listLavori, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 2, 320, 130));
 
         JTextAreaDescrizioneLavoro.setLineWrap(true);
         JTextAreaDescrizioneLavoro.setRows(5);
-        jPanelStart.add(JTextAreaDescrizioneLavoro, new org.netbeans.lib.awtextra.AbsoluteConstraints(7, 150, 320, 80));
+        JTextAreaDescrizioneLavoro.setMaximumSize(new java.awt.Dimension(320, 80));
+        JTextAreaDescrizioneLavoro.setMinimumSize(new java.awt.Dimension(320, 80));
+        JTextAreaDescrizioneLavoro.setPreferredSize(new java.awt.Dimension(320, 80));
+        jPanelStart.add(JTextAreaDescrizioneLavoro, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 143, 320, 80));
 
-        jLayeredPaneCenter.add(jPanelStart, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 336, 243));
+        jLayeredPaneCenter.add(jPanelStart, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 328, 276));
 
-        jPanelDialog.setMaximumSize(new java.awt.Dimension(245, 234));
-        jPanelDialog.setMinimumSize(new java.awt.Dimension(245, 234));
+        jPanelDialog.setMaximumSize(new java.awt.Dimension(328, 276));
+        jPanelDialog.setMinimumSize(new java.awt.Dimension(328, 276));
         jPanelDialog.setName("dialog"); // NOI18N
+        jPanelDialog.setPreferredSize(new java.awt.Dimension(328, 276));
         jPanelDialog.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabelDialog.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+        jLabelDialog.setFont(new java.awt.Font("DejaVu Sans Condensed", 1, 24)); // NOI18N
         jLabelDialog.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelDialog.setText("Annullare il Tiro ?");
-        jPanelDialog.add(jLabelDialog, new org.netbeans.lib.awtextra.AbsoluteConstraints(7, 7, 320, 230));
+        jLabelDialog.setMaximumSize(new java.awt.Dimension(177, 30));
+        jLabelDialog.setMinimumSize(new java.awt.Dimension(177, 30));
+        jLabelDialog.setPreferredSize(new java.awt.Dimension(177, 30));
+        jPanelDialog.add(jLabelDialog, new org.netbeans.lib.awtextra.AbsoluteConstraints(3, 100, 320, 30));
 
-        jLayeredPaneCenter.add(jPanelDialog, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 336, 243));
+        jLayeredPaneCenter.add(jPanelDialog, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 328, 276));
 
         jPanelCanvas.setAlignmentX(0.0F);
         jPanelCanvas.setAlignmentY(0.0F);
-        jPanelCanvas.setMaximumSize(new java.awt.Dimension(250, 250));
-        jPanelCanvas.setMinimumSize(new java.awt.Dimension(250, 250));
+        jPanelCanvas.setMaximumSize(new java.awt.Dimension(328, 276));
+        jPanelCanvas.setMinimumSize(new java.awt.Dimension(328, 276));
         jPanelCanvas.setName("canvas"); // NOI18N
-        jPanelCanvas.setPreferredSize(new java.awt.Dimension(250, 250));
+        jPanelCanvas.setPreferredSize(new java.awt.Dimension(328, 276));
         jPanelCanvas.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         canvasGraph.setBackground(new java.awt.Color(255, 153, 153));
@@ -445,77 +459,59 @@ public class JRivitMain extends javax.swing.JFrame {
         canvasGraph.setMinimumSize(new java.awt.Dimension(250, 250));
         jPanelCanvas.add(canvasGraph, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 330, 240));
 
-        jLayeredPaneCenter.add(jPanelCanvas, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 336, 243));
+        jLayeredPaneCenter.add(jPanelCanvas, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 328, 276));
 
-        getContentPane().add(jLayeredPaneCenter, new org.netbeans.lib.awtextra.AbsoluteConstraints(75, 0, -1, -1));
+        getContentPane().add(jLayeredPaneCenter, new org.netbeans.lib.awtextra.AbsoluteConstraints(75, 2, 330, 278));
 
         jPanelRight.setAlignmentX(0.0F);
         jPanelRight.setAlignmentY(0.0F);
-        jPanelRight.setMaximumSize(new java.awt.Dimension(79, 243));
-        jPanelRight.setMinimumSize(new java.awt.Dimension(79, 243));
-        jPanelRight.setPreferredSize(new java.awt.Dimension(79, 243));
+        jPanelRight.setMaximumSize(new java.awt.Dimension(70, 286));
+        jPanelRight.setMinimumSize(new java.awt.Dimension(70, 286));
+        jPanelRight.setPreferredSize(new java.awt.Dimension(70, 286));
+        jPanelRight.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jButtonPR1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/play_circle.png"))); // NOI18N
         jButtonPR1.setMaximumSize(new java.awt.Dimension(67, 67));
         jButtonPR1.setMinimumSize(new java.awt.Dimension(67, 67));
-        jButtonPR1.setPreferredSize(new java.awt.Dimension(67, 67));
+        jButtonPR1.setPreferredSize(new java.awt.Dimension(65, 65));
         jButtonPR1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonPR1ActionPerformed(evt);
             }
         });
+        jPanelRight.add(jButtonPR1, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 6, -1, -1));
 
         jButtonPR2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/nulla.png"))); // NOI18N
         jButtonPR2.setMaximumSize(new java.awt.Dimension(67, 67));
         jButtonPR2.setMinimumSize(new java.awt.Dimension(67, 67));
-        jButtonPR2.setPreferredSize(new java.awt.Dimension(67, 67));
+        jButtonPR2.setPreferredSize(new java.awt.Dimension(65, 65));
         jButtonPR2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonPR2ActionPerformed(evt);
             }
         });
+        jPanelRight.add(jButtonPR2, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 110, -1, -1));
 
         jButtonPR3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/nulla.png"))); // NOI18N
         jButtonPR3.setMaximumSize(new java.awt.Dimension(67, 67));
         jButtonPR3.setMinimumSize(new java.awt.Dimension(67, 67));
-        jButtonPR3.setPreferredSize(new java.awt.Dimension(67, 67));
+        jButtonPR3.setPreferredSize(new java.awt.Dimension(65, 65));
         jButtonPR3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonPR3ActionPerformed(evt);
             }
         });
+        jPanelRight.add(jButtonPR3, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 200, -1, -1));
 
-        javax.swing.GroupLayout jPanelRightLayout = new javax.swing.GroupLayout(jPanelRight);
-        jPanelRight.setLayout(jPanelRightLayout);
-        jPanelRightLayout.setHorizontalGroup(
-            jPanelRightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelRightLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanelRightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButtonPR1, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButtonPR2, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButtonPR3, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
-        );
-        jPanelRightLayout.setVerticalGroup(
-            jPanelRightLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelRightLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jButtonPR1, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButtonPR2, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(12, 12, 12)
-                .addComponent(jButtonPR3, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-
-        getContentPane().add(jPanelRight, new org.netbeans.lib.awtextra.AbsoluteConstraints(406, 0, -1, -1));
+        getContentPane().add(jPanelRight, new org.netbeans.lib.awtextra.AbsoluteConstraints(406, 0, 70, 286));
 
         jPanelBotton.setBackground(new java.awt.Color(0, 0, 0));
         jPanelBotton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jPanelBotton.setForeground(java.awt.Color.green);
-        jPanelBotton.setMaximumSize(new java.awt.Dimension(400, 40));
-        jPanelBotton.setPreferredSize(new java.awt.Dimension(480, 42));
+        jPanelBotton.setMaximumSize(new java.awt.Dimension(400, 20));
+        jPanelBotton.setMinimumSize(new java.awt.Dimension(470, 20));
+        jPanelBotton.setPreferredSize(new java.awt.Dimension(480, 22));
+        jPanelBotton.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel_B_L.setBackground(java.awt.Color.lightGray);
         jLabel_B_L.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -523,50 +519,29 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabel_B_L.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel_B_L.setText("00:00");
         jLabel_B_L.setOpaque(true);
+        jPanelBotton.add(jLabel_B_L, new org.netbeans.lib.awtextra.AbsoluteConstraints(3, 5, 70, 20));
 
         jLabel_B_C.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel_B_C.setForeground(java.awt.Color.green);
         jLabel_B_C.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel_B_C.setText("tot. tiri");
+        jPanelBotton.add(jLabel_B_C, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 5, 100, 20));
 
         jLabel_B_R.setBackground(java.awt.Color.lightGray);
         jLabel_B_R.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel_B_R.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel_B_R.setText("Aria Off");
         jLabel_B_R.setOpaque(true);
+        jPanelBotton.add(jLabel_B_R, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 5, 100, 20));
 
         jLabel_msg.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         jLabel_msg.setForeground(javax.swing.UIManager.getDefaults().getColor("Actions.Green"));
         jLabel_msg.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel_msg.setText("message");
+        jLabel_msg.setAlignmentX(0.2F);
+        jPanelBotton.add(jLabel_msg, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 5, 150, 20));
 
-        javax.swing.GroupLayout jPanelBottonLayout = new javax.swing.GroupLayout(jPanelBotton);
-        jPanelBotton.setLayout(jPanelBottonLayout);
-        jPanelBottonLayout.setHorizontalGroup(
-            jPanelBottonLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelBottonLayout.createSequentialGroup()
-                .addGap(3, 3, 3)
-                .addComponent(jLabel_B_L, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel_B_C, javax.swing.GroupLayout.DEFAULT_SIZE, 241, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel_B_R, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-            .addComponent(jLabel_msg, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        jPanelBottonLayout.setVerticalGroup(
-            jPanelBottonLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelBottonLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanelBottonLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel_B_R)
-                    .addComponent(jLabel_B_C)
-                    .addComponent(jLabel_B_L))
-                .addGap(18, 18, 18)
-                .addComponent(jLabel_msg, javax.swing.GroupLayout.DEFAULT_SIZE, 34, Short.MAX_VALUE))
-        );
-
-        getContentPane().add(jPanelBotton, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 243, -1, 77));
+        getContentPane().add(jPanelBotton, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 290, 480, 30));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
