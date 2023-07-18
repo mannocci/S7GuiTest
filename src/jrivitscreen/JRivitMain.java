@@ -185,7 +185,6 @@ public class JRivitMain extends javax.swing.JFrame {
         setMinimumSize(new java.awt.Dimension(480, 320));
         setName("frameMain"); // NOI18N
         setUndecorated(true);
-        setPreferredSize(new java.awt.Dimension(480, 320));
         setResizable(false);
         setSize(new java.awt.Dimension(480, 320));
         setType(java.awt.Window.Type.UTILITY);
@@ -319,7 +318,6 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelMain.setMinimumSize(new java.awt.Dimension(328, 276));
         jPanelMain.setName("main"); // NOI18N
         jPanelMain.setPreferredSize(new java.awt.Dimension(328, 276));
-        jPanelMain.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabelLogo.setBackground(new java.awt.Color(255, 255, 255));
         jLabelLogo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -330,7 +328,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelLogo.setMaximumSize(new java.awt.Dimension(250, 250));
         jLabelLogo.setMinimumSize(new java.awt.Dimension(250, 250));
         jLabelLogo.setPreferredSize(new java.awt.Dimension(250, 250));
-        jPanelMain.add(jLabelLogo, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 250, 250));
+        jPanelMain.add(jLabelLogo);
 
         jLayeredPaneCenter.add(jPanelMain, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 328, 276));
 
@@ -354,8 +352,6 @@ public class JRivitMain extends javax.swing.JFrame {
 
         listSetupWiFi.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
         listSetupWiFi.setMaximumSize(new java.awt.Dimension(320, 270));
-        listSetupWiFi.setMinimumSize(new java.awt.Dimension(320, 270));
-        listSetupWiFi.setPreferredSize(new java.awt.Dimension(320, 270));
         listSetupWiFi.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 listSetupWiFiActionPerformed(evt);
@@ -373,8 +369,6 @@ public class JRivitMain extends javax.swing.JFrame {
 
         listInfo.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
         listInfo.setMaximumSize(new java.awt.Dimension(328, 276));
-        listInfo.setMinimumSize(new java.awt.Dimension(328, 276));
-        listInfo.setPreferredSize(new java.awt.Dimension(328, 276));
         listInfo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 listInfoActionPerformed(evt);
@@ -394,8 +388,6 @@ public class JRivitMain extends javax.swing.JFrame {
 
         listWarning.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
         listWarning.setMaximumSize(new java.awt.Dimension(320, 270));
-        listWarning.setMinimumSize(new java.awt.Dimension(320, 270));
-        listWarning.setPreferredSize(new java.awt.Dimension(320, 270));
         listWarning.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 listWarningActionPerformed(evt);
@@ -1422,10 +1414,10 @@ public class JRivitMain extends javax.swing.JFrame {
             this.pressione_aria_in = Float.parseFloat(arrayValori[4]) * 2;
             if (pressione_aria_in <= this.sogliaMin) {
                 this.jLabel_msg.setForeground(java.awt.Color.red);
-                this.jLabel_msg.setText("Pressione aria insufficiente: " + pressione_aria_in + " Bar");
+                this.jLabel_msg.setText("P. aria Err.: " + pressione_aria_in + " Bar");
             } else {
                 this.jLabel_msg.setForeground(java.awt.Color.green);
-                this.jLabel_msg.setText("Pressione aria corretta: " + pressione_aria_in + " Bar");
+                this.jLabel_msg.setText("P. aria OK: " + pressione_aria_in + " Bar");
             }
             this.repaint();
         } catch (NumberFormatException e) {
