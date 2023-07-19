@@ -182,6 +182,11 @@ public class ThreadWorker extends Thread {
                             risposta_tiro_errato();
                         case "killScreen" ->
                             this.mf.Exit();
+                        case "abort" ->
+                            abort();
+                        case "pausa" ->
+                            pausa();
+
                     }
                     try {
                         Thread.sleep(200);
@@ -223,7 +228,7 @@ public class ThreadWorker extends Thread {
             this.mf.set_nr_tiri_fatti(Integer.parseInt(LeggiFile(f_tiri_ok)));
             this.mf.update_tiri_lotti();
         } catch (NumberFormatException e) {
-            System.out.println("File tiri_ok non numerico\n"+e.getMessage());
+            System.out.println("File tiri_ok non numerico\n" + e.getMessage());
         }
     }
 
@@ -343,7 +348,28 @@ public class ThreadWorker extends Thread {
      * risposta in caso di tiro errato
      */
     private void risposta_tiro_errato() {
-        this.mf.risposta_attesa_tiro_errato();
+        String risposta = this.LeggiFile(this.f_risposta_tiro_errato);
+        bash_cmd_aria[4] = this.open;
+        bash_cmd_verde[4] = this.open;
+        bash_cmd_rosso[4] = this.close;
+        run_system_bash(this.bash_cmd_rosso);
+        run_system_bash(this.bash_cmd_verde);
+        run_system_bash(this.bash_cmd_aria);
+        this.mf.aria_aperta();
+        switch (risposta) {
+            case "continua" -> {
+                this.ScriviFile(f_risposta_tiro_errato, "1");
+            }
+            case "accetta" -> {
+                this.ScriviFile(f_risposta_tiro_errato, "3");
+            }
+            case "estendi" -> {
+                this.ScriviFile(f_risposta_tiro_errato, "2");
+            }
+            case "annulla" -> {
+                this.ScriviFile(f_risposta_tiro_errato, "4");
+            }
+        }
     }
 
     /**
@@ -495,4 +521,39 @@ public class ThreadWorker extends Thread {
         }
     }
 
+    /**
+     * Cancellazione del lavoro svolto azzerare i contatori azzera lavoro-scelto
+     * impostando prima il file ultimo_lavoro_scelto con il nome del alvoro,
+     * consentendo così al Pannello Start con la lista dei lavori di
+     * posizionarsi sull'ultimo lavoro scelto accendere led giallo
+     *
+     */
+    private void abort() {
+        String lavoro = "";
+        this.ScriviFile("tiri_annullati", "0");
+        this.ScriviFile("tiri_errati", "0");
+        this.ScriviFile("tiri_ok", "0");
+        lavoro = this.LeggiFile("lavoro_scelto.txt");
+        this.ScriviFile("lavoro_scelto.txt", "");
+        this.ScriviFile("ultimo_lavoro_scelto.txt", lavoro);
+        this.mf.setlavoroScelto(lavoro);
+        this.ScriviFile(f_aria, "0");
+        this.ScriviFile(this.f_started, "0");
+        this.ScriviFile(this.f_errore, "0");
+    }
+
+    /**
+     * I contatori rimangono tali posizionarsi sull'ultimo lavoro scelto
+     * accendere led giallo
+     *
+     */
+    private void pausa() {
+        String lavoro = this.LeggiFile("lavoro_scelto.txt");
+        this.ScriviFile("lavoro_scelto.txt", lavoro);
+        this.ScriviFile("ultimo_lavoro_scelto.txt", lavoro);
+        this.mf.setlavoroScelto(lavoro);
+        this.ScriviFile(f_aria, "0");
+        ScriviFile(this.f_started, "0");
+        ScriviFile(this.f_errore, "0");
+    }
 }

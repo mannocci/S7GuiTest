@@ -18,6 +18,8 @@
  * repository Privato, visibile da personale della Rivit, oltre a Luca Mannocci,
  * Fabio Fragapane, Mannocci Enrico
  * @versione 1.0 maggio/giugno 2023
+ * @ver 1.1 luglio 2023 aggiunto Pannello Calibrazione, 
+        corretto sequenze Pannelli pulsanti, invertito pulsante estendi annulla
  */
 package jrivitscreen;
 
@@ -42,7 +44,7 @@ import javax.swing.JPanel;
  * @author Luca Mannocci & Fabio Fragapane
  */
 public class JRivitMain extends javax.swing.JFrame {
-
+    
     private ImageIcon Img_Exit, Img_Ok, Img_Nulla, Img_Freccia_su,
             Img_Freccia_giu, Img_Warning, Img_Setup, Img_Play;
     private Worker w_mf;
@@ -84,6 +86,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private Float v_in;
     private Float v_rpi;
     private Float pressione_aria_in;
+    private String PanCur;
 
 //Dopo una sospensione
     /**
@@ -110,7 +113,7 @@ public class JRivitMain extends javax.swing.JFrame {
         Img_WiFi = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/cell.png"));
         Img_Info = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/info.png"));
         elencoLavoriArray = new ArrayList<>();
-
+        
         formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         try (InputStream in = this.getClass().getResourceAsStream("setup.propetiers")) {
             setup = new Properties();
@@ -122,7 +125,7 @@ public class JRivitMain extends javax.swing.JFrame {
         data_release = setup.getProperty("data_versione", "14/12/2022");
         srvKey = setup.getProperty("srvkey", "");
         System.out.println("JRivitScreen ver. " + versione + " release " + data_release);
-
+        
         w_mf = new Worker(this);
         esegui("start");
         this.PanelMain();
@@ -171,6 +174,10 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelDialog = new javax.swing.JLabel();
         jPanelCanvas = new javax.swing.JPanel();
         canvasGraph = new java.awt.Canvas();
+        jPanelCalibrazione = new javax.swing.JPanel();
+        jLabelNomeDeviceCal = new javax.swing.JLabel();
+        jLabelNomeLavoroCal = new javax.swing.JLabel();
+        jLabelAvvisoCalibrazione = new javax.swing.JLabel();
         jPanelRight = new javax.swing.JPanel();
         jButtonPR1 = new javax.swing.JButton();
         jButtonPR2 = new javax.swing.JButton();
@@ -232,6 +239,7 @@ public class JRivitMain extends javax.swing.JFrame {
         getContentPane().add(jPanelLeft, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 70, 285));
 
         jLayeredPaneCenter.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        jLayeredPaneCenter.setMaximumSize(new java.awt.Dimension(329, 277));
         jLayeredPaneCenter.setOpaque(true);
         jLayeredPaneCenter.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -272,7 +280,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelErrati.setText("0");
         jLabelErrati.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jLabelErrati.setOpaque(true);
-        jPanelStarted.add(jLabelErrati, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 200, 80, 25));
+        jPanelStarted.add(jLabelErrati, new org.netbeans.lib.awtextra.AbsoluteConstraints(235, 200, 80, 25));
 
         jLabelAnnullati.setBackground(new java.awt.Color(204, 204, 204));
         jLabelAnnullati.setFont(new java.awt.Font("SansSerif", 0, 24)); // NOI18N
@@ -285,17 +293,17 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabel_Errati.setFont(new java.awt.Font("Liberation Sans", 1, 15)); // NOI18N
         jLabel_Errati.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel_Errati.setText("Errati");
-        jPanelStarted.add(jLabel_Errati, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 235, -1, -1));
+        jPanelStarted.add(jLabel_Errati, new org.netbeans.lib.awtextra.AbsoluteConstraints(255, 235, -1, -1));
 
         jLabel_Annullati.setFont(new java.awt.Font("Liberation Sans", 1, 15)); // NOI18N
         jLabel_Annullati.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel_Annullati.setText("Annullati");
-        jPanelStarted.add(jLabel_Annullati, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 235, -1, -1));
+        jPanelStarted.add(jLabel_Annullati, new org.netbeans.lib.awtextra.AbsoluteConstraints(135, 235, -1, -1));
 
         jLabel_Validi.setFont(new java.awt.Font("Liberation Sans", 1, 15)); // NOI18N
         jLabel_Validi.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel_Validi.setText("Validi");
-        jPanelStarted.add(jLabel_Validi, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 235, -1, -1));
+        jPanelStarted.add(jLabel_Validi, new org.netbeans.lib.awtextra.AbsoluteConstraints(35, 235, -1, -1));
 
         jLabelValidi.setBackground(java.awt.Color.green);
         jLabelValidi.setFont(new java.awt.Font("SansSerif", 0, 24)); // NOI18N
@@ -393,7 +401,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 listWarningActionPerformed(evt);
             }
         });
-        jPanelWarning.add(listWarning, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 320, 270));
+        jPanelWarning.add(listWarning, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 2, 320, 270));
 
         jLayeredPaneCenter.add(jPanelWarning, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 328, 276));
 
@@ -411,7 +419,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 listLavoriActionPerformed(evt);
             }
         });
-        jPanelStart.add(listLavori, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 2, 320, 130));
+        jPanelStart.add(listLavori, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 2, 370, 270));
 
         JTextAreaDescrizioneLavoro.setLineWrap(true);
         JTextAreaDescrizioneLavoro.setRows(5);
@@ -434,7 +442,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelDialog.setMaximumSize(new java.awt.Dimension(177, 30));
         jLabelDialog.setMinimumSize(new java.awt.Dimension(177, 30));
         jLabelDialog.setPreferredSize(new java.awt.Dimension(177, 30));
-        jPanelDialog.add(jLabelDialog, new org.netbeans.lib.awtextra.AbsoluteConstraints(3, 100, 320, 30));
+        jPanelDialog.add(jLabelDialog, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 100, 320, 30));
 
         jLayeredPaneCenter.add(jPanelDialog, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 328, 276));
 
@@ -449,11 +457,36 @@ public class JRivitMain extends javax.swing.JFrame {
         canvasGraph.setBackground(new java.awt.Color(255, 153, 153));
         canvasGraph.setMaximumSize(new java.awt.Dimension(250, 250));
         canvasGraph.setMinimumSize(new java.awt.Dimension(250, 250));
-        jPanelCanvas.add(canvasGraph, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 330, 240));
+        jPanelCanvas.add(canvasGraph, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 327, 275));
 
         jLayeredPaneCenter.add(jPanelCanvas, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 328, 276));
 
-        getContentPane().add(jLayeredPaneCenter, new org.netbeans.lib.awtextra.AbsoluteConstraints(75, 2, 330, 278));
+        jPanelCalibrazione.setBackground(new java.awt.Color(204, 255, 204));
+        jPanelCalibrazione.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jPanelCalibrazione.setMaximumSize(new java.awt.Dimension(245, 234));
+        jPanelCalibrazione.setMinimumSize(new java.awt.Dimension(245, 234));
+        jPanelCalibrazione.setName("started"); // NOI18N
+        jPanelCalibrazione.setPreferredSize(new java.awt.Dimension(338, 238));
+        jPanelCalibrazione.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLabelNomeDeviceCal.setFont(new java.awt.Font("DejaVu Sans Condensed", 1, 18)); // NOI18N
+        jLabelNomeDeviceCal.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelNomeDeviceCal.setText("Nome Device");
+        jPanelCalibrazione.add(jLabelNomeDeviceCal, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 8, 315, 30));
+
+        jLabelNomeLavoroCal.setFont(new java.awt.Font("DejaVu Sans Condensed", 1, 24)); // NOI18N
+        jLabelNomeLavoroCal.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelNomeLavoroCal.setText("Calibrazione");
+        jPanelCalibrazione.add(jLabelNomeLavoroCal, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 110, 315, 40));
+
+        jLabelAvvisoCalibrazione.setFont(new java.awt.Font("DejaVu Sans Condensed", 1, 18)); // NOI18N
+        jLabelAvvisoCalibrazione.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelAvvisoCalibrazione.setText("Nome Lavoro");
+        jPanelCalibrazione.add(jLabelAvvisoCalibrazione, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 45, 315, 30));
+
+        jLayeredPaneCenter.add(jPanelCalibrazione, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 328, 276));
+
+        getContentPane().add(jLayeredPaneCenter, new org.netbeans.lib.awtextra.AbsoluteConstraints(75, 2, 329, 277));
 
         jPanelRight.setAlignmentX(0.0F);
         jPanelRight.setAlignmentY(0.0F);
@@ -553,37 +586,27 @@ public class JRivitMain extends javax.swing.JFrame {
                 PulsanteSu();
             case "started", "canvas" -> {//Stop
                 DialogQ = Stop;
+                this.PanCur = "started";
                 this.AlertDialogStop = "Annullare il Lavoro ?";
                 this.jLabelDialog.setText(AlertDialogStop);
                 PanelDialog();
             }
             case "setup" ->
                 PanelSetupLan();
-            case "warning" ->
-                PulsanteSu();
-            case "info" ->
-                PulsanteSu();
-            case "setup lan" ->
-                PulsanteSu();
-            case "setup wifi" ->
+            case "warning", "info", "setup lan", "setup wifi" ->
                 PulsanteSu();
             case "dialog" -> {
                 //Pulsante Sì alla domanda ? Annulla ? Abort ?
-                if (this.AlertDialogStop.compareToIgnoreCase("Annullare ?") == 0) {
-
-                } else { // Sì ad Abort
-
-                }
                 gestioneDialogRisposte();
             }
         }
 
     }//GEN-LAST:event_jButtonPR1ActionPerformed
-
+    
     public void setAlertDialogAnnulla(String AlertDialogAnnulla) {
         this.AlertDialogAnnulla = AlertDialogAnnulla;
     }
-
+    
     public void setAlertDialogStop(String AlertDialogStop) {
         this.AlertDialogStop = AlertDialogStop;
         this.jLabelDialog.setText(AlertDialogStop);
@@ -648,8 +671,11 @@ public class JRivitMain extends javax.swing.JFrame {
                 PulsanteSu();
             case "setup wifi" ->
                 PulsanteSu();
-            case "dialog" ->
-                PanelStarted();
+            case "dialog" -> {
+                if (this.PanCur.contains("started")) {
+                    PanelStarted();
+                }
+            }
         }
     }//GEN-LAST:event_jButtonPL2ActionPerformed
     /**
@@ -665,11 +691,10 @@ public class JRivitMain extends javax.swing.JFrame {
                 PanelSetup();
 //          case "start" 
             //Per ora nulla
-            case "started", "canvas" ->//Estende
-            {
-                DialogQ = Estende;
-                this.AlertDialogStop = "Estendere ?";
-                this.jLabelDialog.setText(AlertDialogStop);
+            case "started", "canvas" -> {//Annullare il tiro
+                DialogQ = Annulla;
+                this.AlertDialogStop = "Annullare ?";
+                this.jLabelDialog.setText(AlertDialogAnnulla);
                 PanelDialog();
             }
             case "warning" ->
@@ -695,7 +720,7 @@ public class JRivitMain extends javax.swing.JFrame {
         switch (this.jLayeredPaneCenter.getComponent(0).getName()) {
 //            case "main" ->
 //                PanelStart();
-            case "start" ->
+            case "start", "warning", "info", "setup lan", "setup wifi" ->
                 PulsanteGiu();
             case "started", "canvas" -> {//Pausa del lavoro ?
                 DialogQ = Pausa;
@@ -705,15 +730,7 @@ public class JRivitMain extends javax.swing.JFrame {
             }
             case "setup" ->
                 PanelSetupWifi();
-            case "warning" ->
-                PulsanteGiu();
-            case "info" ->
-                PulsanteGiu();
-            case "setup lan" ->
-                PulsanteGiu();
-            case "setup wifi" ->
-                PulsanteGiu();
-            case "dialog" ->
+            case "dialog" -> //Scelta no alla domanda ritornare al pannello started
                 PanelStarted();
         }
     }//GEN-LAST:event_jButtonPR2ActionPerformed
@@ -732,12 +749,14 @@ public class JRivitMain extends javax.swing.JFrame {
             case "start" -> {
                 PanelStarted();
             }
-            case "started", "canvas" -> {//Annullare il tiro
-                DialogQ = Annulla;
-                this.AlertDialogStop = "Annullare ?";
-                this.jLabelDialog.setText(AlertDialogAnnulla);
+
+            case "started", "canvas" ->//Estende
+            {
+                DialogQ = Estende;
+                this.AlertDialogStop = "Estendere ?";
+                this.jLabelDialog.setText(AlertDialogStop);
                 PanelDialog();
-            }
+            }            
 //            case "setup" ->
 //                PanelSetupLan();
 //            case "warning" ->
@@ -820,8 +839,8 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     public void set_errore_tiro() {
         this.jPanelStarted.setBackground(Color.red);
-        this.change_buttons(this.Img_Continua, this.Img_Ok, this.Img_Estende,
-                this.Img_Stop, this.Img_Pause, this.Img_Annulla);
+        this.change_buttons(this.Img_Continua, this.Img_Ok, this.Img_Annulla,
+                this.Img_Stop, this.Img_Pause, this.Img_Estende);
         this.jButtonPL1.setEnabled(true);
         this.jButtonPL2.setEnabled(true);
         this.jButtonPL3.setEnabled(true);
@@ -866,12 +885,15 @@ public class JRivitMain extends javax.swing.JFrame {
     private javax.swing.JButton jButtonPR2;
     private javax.swing.JButton jButtonPR3;
     private javax.swing.JLabel jLabelAnnullati;
+    private javax.swing.JLabel jLabelAvvisoCalibrazione;
     private javax.swing.JLabel jLabelContatore;
     private javax.swing.JLabel jLabelDialog;
     private javax.swing.JLabel jLabelErrati;
     private javax.swing.JLabel jLabelLogo;
     private javax.swing.JLabel jLabelNomeDevice;
+    private javax.swing.JLabel jLabelNomeDeviceCal;
     private javax.swing.JLabel jLabelNomeLavoro;
+    private javax.swing.JLabel jLabelNomeLavoroCal;
     private javax.swing.JLabel jLabelValidi;
     private javax.swing.JLabel jLabel_Annullati;
     private javax.swing.JLabel jLabel_B_C;
@@ -882,6 +904,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel_msg;
     private javax.swing.JLayeredPane jLayeredPaneCenter;
     private javax.swing.JPanel jPanelBotton;
+    private javax.swing.JPanel jPanelCalibrazione;
     private javax.swing.JPanel jPanelCanvas;
     private javax.swing.JPanel jPanelDialog;
     private javax.swing.JPanel jPanelInfo;
@@ -940,7 +963,7 @@ public class JRivitMain extends javax.swing.JFrame {
      * (DA FARE) Mostra il conteggio dei tiri e la barra di avanzamento dei
      * lavori, ...
      */
-    private void PanelStarted() {
+    public void PanelStarted() {
         this.jLayeredPaneCenter.moveToFront(this.jPanelStarted);
         this.jPanelStarted.setBackground(Color.white);
         this.change_buttons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
@@ -981,62 +1004,62 @@ public class JRivitMain extends javax.swing.JFrame {
         this.repaint();
         esegui("lavoro_scelto");
     }
-
+    
     public String getLavorodescrizione() {
         return Lavorodescrizione;
     }
-
+    
     public java.awt.List getListInfo() {
         return listInfo;
     }
-
+    
     public java.awt.List getListLavori() {
         return listLavori;
     }
-
+    
     public java.awt.List getListSetupLan() {
         return listSetupLan;
     }
-
+    
     public java.awt.List getListSetupWiFi() {
         return listSetupWiFi;
     }
-
+    
     public java.awt.List getListWarning() {
         return listWarning;
     }
-
+    
     public JLabel getjLabelNomeDevice() {
         return jLabelNomeDevice;
     }
-
+    
     public JLabel getjLabelNomeLavoro() {
         return jLabelNomeLavoro;
     }
-
+    
     public String getLavoroScelto() {
         return this.lavoroScelto;
     }
-
+    
     public void setLavoroScelto(String lavoroScelto) {
         this.lavoroScelto = lavoroScelto;
     }
-
+    
     public void setjLabelAnnullati(String ta) {
         this.jLabelAnnullati.setText(ta);
         this.repaint();
     }
-
+    
     public void setjLabelContatore(String c) {
         this.jLabelContatore.setText(c);
         this.repaint();
     }
-
+    
     public void setjLabelErrati(String Errati) {
         this.jLabelErrati.setText(Errati);
         this.repaint();
     }
-
+    
     public void setjLabelValidi(String Validi) {
         this.jLabelValidi.setText(Validi);
         this.repaint();
@@ -1188,9 +1211,9 @@ public class JRivitMain extends javax.swing.JFrame {
         // ogni volta che si inserisce un elemento in posizione 0 la lista viene spostata in avanti
         // quindi i valori saranno visualizzati al contrario rispetto all'ordine di chiamata nel codice java
         lista.add(0, "-------------------------------------------------------");
-        lista.add(0, "Pressione aria in ingresso: "+this.pressione_aria_in.toString() + " bar");
+        lista.add(0, "Pressione aria in ingresso: " + this.pressione_aria_in.toString() + " bar");
         lista.add(0, "Tensione CPU: " + this.v_rpi.toString() + " V");
-        lista.add(0, "Tensione ingresso: "+this.v_in.toString() + " V");
+        lista.add(0, "Tensione ingresso: " + this.v_in.toString() + " V");
         lista.add(0, "Temperatura scheda I/O: " + this.temp_io_board.toString() + " °C");
         lista.add(0, "Temperatura CPU: " + this.temp_rpi.toString() + " °C");
         
@@ -1319,7 +1342,7 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     public void update_tiri_lotti() {
         this.jLabelValidi.setText("" + nr_tiri_fatti);
-
+        
         if (this.nr_tiri_da_fare == -1) {
             //Lavoro senza fine
             this.jPanelStarted.setBackground(Color.GRAY);
@@ -1366,11 +1389,11 @@ public class JRivitMain extends javax.swing.JFrame {
         this.jLayeredPaneCenter.moveToFront(this.jPanelStarted);
         this.repaint();
     }
-
+    
     void risposta_attesa_tiro_errato() {
         esegui("risposta_attesa_tiro_errato");
     }
-
+    
     public void set_nr_tiri_fatti(int TiriOK) {
         this.nr_tiri_fatti = TiriOK;
     }
@@ -1402,7 +1425,7 @@ public class JRivitMain extends javax.swing.JFrame {
     void AggiornaTiriAnnullati() {
         esegui("aggiorna_tiri_annullati");
     }
-
+    
     void update_sensori(String Valori) {
         String[] arrayValori = Valori.split(",");
         try {
@@ -1421,18 +1444,19 @@ public class JRivitMain extends javax.swing.JFrame {
             }
             this.repaint();
         } catch (NumberFormatException e) {
-            System.out.println("jrivitscreen.JRivitMain.update_sensori() - "+ e.getMessage());
+            System.out.println("jrivitscreen.JRivitMain.update_sensori() - " + e.getMessage());
         }
-
+        
     }
-
+    
     public void update_soglie_pressione_aria_in(Float SogliaMin, Float SogliaMax) {
         this.sogliaMin = SogliaMin;
         this.sogliaMax = SogliaMax;
     }
 
     /**
-     * gestioneDialogRisposte, Non USATO !
+     * gestioneDialogRisposte, OK alla dialog 
+     * Pulsante PR1
      *
      *
      */
@@ -1444,18 +1468,32 @@ public class JRivitMain extends javax.swing.JFrame {
                 PanelStarted();
             }
             case 2 -> //Accetta
+            {
                 esegui("accetta");
+                PanelStarted();
+            }
             case 3 -> //Estende
+            {
                 esegui("estendi");
+                PanelStarted();
+            }
             case 4 -> //Annulla
+            {
                 esegui("annulla");
+                PanelStarted();
+            }
             case 5 -> //Pausa
+            {
                 esegui("pausa");
+                PanelStart();
+            }
             case 0 -> //Abortire il lavoro
             {
                 esegui("abort");
                 PanelStart();
             }
+            default ->
+                PanelStarted();
         }
     }
 
@@ -1487,7 +1525,7 @@ public class JRivitMain extends javax.swing.JFrame {
     public String getjLabelValidi() {
         return this.jLabelValidi.getText();
     }
-
+    
     void setCurva(String curva) {
         this.jLayeredPaneCenter.moveToFront(this.jPanelCanvas);
         this.repaint();
@@ -1495,15 +1533,15 @@ public class JRivitMain extends javax.swing.JFrame {
         esegui("curva");
 //        drawGrafico();
     }
-
+    
     public Canvas get_canvasGraph() {
         return this.canvasGraph;
     }
-
+    
     private void drawGrafico() {
         this.jLayeredPaneCenter.moveToFront(this.jPanelCanvas);
         Graphics2D gr = (Graphics2D) this.canvasGraph.getGraphics();
-
+        
         int y = this.canvasGraph.getHeight();
         String[] ychar = this.Curva.split(",");
         int nPoints;
@@ -1522,29 +1560,29 @@ public class JRivitMain extends javax.swing.JFrame {
             this.repaint();
         }
     }
-
+    
     public void setListInfo(java.awt.List listInfo) {
         this.listInfo = listInfo;
     }
-
+    
     public void setListLavori(String[] lista_lavori) {
         for (String lista_lavori1 : lista_lavori) {
             this.listLavori.add(lista_lavori1);
         }
     }
-
+    
     public void setListSetupLan(java.awt.List listSetupLan) {
         this.listSetupLan = listSetupLan;
     }
-
+    
     public void setListSetupWiFi(java.awt.List listSetupWiFi) {
         this.listSetupWiFi = listSetupWiFi;
     }
-
+    
     String getCurva() {
         return this.Curva;
     }
-
+    
     private void esegui(String operazione) {
         this.w_mf.set_operation(operazione);
         try {
@@ -1565,7 +1603,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jLayeredPaneCenter.moveToFront(pannello);
         pannello.setVisible(true);
     }
-
+    
     ;
 /**
  * Uscita dal programma
@@ -1573,17 +1611,35 @@ public class JRivitMain extends javax.swing.JFrame {
     public void Exit() {
         System.exit(1);
     }
-
+    
     public String getInPausa() {
         return inPausa;
     }
-
+    
     public void setInPausa(String inPausa) {
         this.inPausa = inPausa;
     }
-
+    
     void set_nr_lotti_fatti(int lotti_ok) {
         this.nr_lotto_corrente = lotti_ok;
     }
 
+    /**
+     * dalla operazione Abort o Pause Panel Started passa il lavoro che
+     * precedentemente era stato scelto
+     *
+     * @param lavoro scelto,
+     *
+     */
+    void setlavoroScelto(String lavoro) {
+        String llavoro;
+        for (int i = 0; i < this.listLavori.getRows(); i++) {
+            llavoro = this.listLavori.getItem(i);
+            if (llavoro.contains(lavoro)) {
+                this.listLavori.select(i);
+                break;
+            }
+        }
+    }
+    
 }
