@@ -63,8 +63,7 @@ public class Worker extends SwingWorker<String, Object> {
     private final String f_tiri_annullati = "tiri_annullati";
     private final String f_lotti_ok = "lotti_ok";
     private final String f_errore = "errore";
-    private final String f_lavoro_scelto = "lavoro_scelto.txt";
-    private final String f_started = "started"; // se il lavoro è in corso contiene "1"
+    // se il lavoro è in corso contiene "1"
     private final String f_risposta_tiro_errato = "risposta_tiro_errato";
     private final String f_nome_device = "nome_device.txt";
     private final String f_aria = "aria";
@@ -97,7 +96,7 @@ public class Worker extends SwingWorker<String, Object> {
                     //this.dateFormat.setTimeZone(TimeZone.getTimeZone("Europe/London"));
                     this.mf.set_jLabel_B_L(this.dateFormat.format(orario));
                     this.mf.repaint();
-                   
+
 //                    String [] Cmd = {"/usr/bin/ps","aux", "|", "grep","JRivitScreen"};
 //                    this.run_system_bash(Cmd);
 //                    if ( this.run_system_result.contains("JRivitScreen")){
@@ -108,51 +107,46 @@ public class Worker extends SwingWorker<String, Object> {
                     this.wt.start();//Avvio Thread Watch File in Tmp
                     this.wt.initValues();
                 }
-                case "stop_lavoro" -> {
-                    ScriviFile(this.f_started, "0");
-                    ScriviFile(this.f_aria, "0");
+                case JRivitMain.STATO_STOP, JRivitMain.STATO_PAUSA -> {
+                    ScriviFile(JRivitMain.F_STATO, this.operation);
+                    this.mf.PanelStart();
                 }
-                case "continua", "accetta", "estendi", "annulla" -> {
-                    ScriviFile(this.f_risposta_tiro_errato, this.operation);
+                case JRivitMain.CONTINUA, JRivitMain.ACCETTA, JRivitMain.ANNULLA, JRivitMain.ESTENDI -> {
+                    ScriviFile(JRivitMain.F_RISPOSTA_TIRO_ERRATO, this.operation);
+                    this.mf.ritorno_da_errore();
                 }
-                case "abort" -> {
-                    ScriviFile("abort", "1");
-                }
-                case "pausa" -> {
-                    ScriviFile("pausa", "1");
-                }                
                 case "aggiorna_nome_device" -> {
                     this.NomeDevice = LeggiFile(this.f_nome_device);
                     this.mf.setNomeDevice(this.NomeDevice);
                 }
                 case "tiri" -> {
                     String Tiri = LeggiFile("tiri");
-                    this.mf.setJLabel_B_C(Tiri);
                 }
-                case "reset_errore" -> {
-                    ScriviFile(f_errore, "0");
-                }
+
                 case "risposta_attesa_tiro_errato" -> {
                     risposta_attesa_tiro_errato();
                 }
                 case "aggiorna_tiri_errati" -> {
                     this.mf.setjLabelErrati("" + LeggiFile(this.f_tiri_errati));
                 }
+                case "aggiorna_tiri_annullati" -> {
+                    this.mf.setjLabelAnnullati("" + LeggiFile(this.f_tiri_annullati));
+                }
                 case "aggiorna_lotti_ok" -> {
-                    this.mf.set_nr_lotti_fatti(Integer.parseInt(LeggiFile(f_lotti_ok)));
+                    this.mf.set_nr_lotti_ok(Integer.parseInt(LeggiFile(f_lotti_ok)));
                 }
                 case "curva" -> {
                     drawGrafico();
                 }
                 case "lavoro_scelto" -> {
                     String lavoro = this.mf.getLavoroScelto();
-                    this.ScriviFile(this.f_lavoro_scelto, lavoro);
-                    this.ScriviFile(this.f_started, "1");
+                    this.ScriviFile(JRivitMain.F_LAVORO_SCELTO, lavoro);
+                    this.ScriviFile(JRivitMain.F_STATO, JRivitMain.STATO_AVVIATO);
                 }
             }
         } catch (NumberFormatException ex) {
             Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
-            throw new UnsupportedOperationException("Errore "+ ex.getMessage()); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+            throw new UnsupportedOperationException("Errore " + ex.getMessage()); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
         }
         return "ok";
     }
@@ -205,9 +199,9 @@ public class Worker extends SwingWorker<String, Object> {
             }
             case "3" -> // Accetta, come se fosse stato un tiro ok
             {
-                
+
             }
-            
+
         }
     }
 
@@ -227,7 +221,7 @@ public class Worker extends SwingWorker<String, Object> {
                 }
             }
         } catch (FileNotFoundException e) {
-            System.out.println("An error occurred.");
+            System.out.println("File non trovato " + NomeFile);
             return "Errore lettura file";
         }
         return contenutoFile;
@@ -250,23 +244,25 @@ public class Worker extends SwingWorker<String, Object> {
             Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
     /**
      *
      * @param cmd String [] comando shell da avviare
-     * @return 
+     * @return
      */
     public Process run_system_bash(String[] cmd) {
         Process exec = null;
         try {
-            exec = getRuntime().exec(cmd);     
-           run_system_result = printResults(exec);
+            exec = getRuntime().exec(cmd);
+            run_system_result = printResults(exec);
             //return exec.exitValue();
         } catch (IOException ex) {
             Logger.getLogger(ThreadWorker.class.getName()).log(Level.SEVERE, null, ex);
         }
         return exec;
-    }   
-        /**
+    }
+
+    /**
      * printResult - utilizzato per visualizzare l'out put del metodo
      * run_system_bash
      *

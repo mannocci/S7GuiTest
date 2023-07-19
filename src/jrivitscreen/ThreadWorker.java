@@ -63,9 +63,8 @@ public class ThreadWorker extends Thread {
     private final String f_setup_lan = "setup_lan.txt";
     private final String f_setup_wifi = "setup_wifi.txt";
     private final String f_lavori = "lavori.txt";
-    private final String f_lavoro_scelto = "lavoro_scelto.txt";
     private final String f_in_pausa = "in_pausa";
-    private final String f_started = "started"; // se il lavoro è in corso contiene "1"
+    // se il lavoro è in corso contiene "1"
     private final String f_aria = "aria";
     private final String f_curva_pronta = "curva_pronta";
     private final String f_curva = "curva";
@@ -150,12 +149,12 @@ public class ThreadWorker extends Thread {
 
                 if (kind == ENTRY_MODIFY) {
                     switch (fileName.toString()) {
+                        case "tiri" ->
+                            tiri();
                         case "tiri_ok" ->
                             tiri_ok();
                         case "tiri_errati" ->
                             tiri_errati();
-                        case "tiri" ->
-                            tiri();
                         case "tiri_annullati" ->
                             tiri_annullati();
                         case "lotti_ok" ->
@@ -214,7 +213,7 @@ public class ThreadWorker extends Thread {
 //            }
 //            myReader.close();
 //        } catch (FileNotFoundException e) {
-//            System.out.println("An error occurred.");
+//            System.out.println("File non trovato " + NomeFile);
 //            e.printStackTrace();
 //        }
 //
@@ -223,9 +222,18 @@ public class ThreadWorker extends Thread {
 //            this.send_p(nomeFile);
 //        }
 //    }
+    private void tiri() {
+        try {
+            this.mf.set_nr_tiri(Integer.parseInt(LeggiFile(f_tiri)));
+            this.mf.update_tiri_lotti();
+        } catch (NumberFormatException e) {
+            System.out.println("File tiri_ok non numerico\n" + e.getMessage());
+        }
+    }
+
     private void tiri_ok() {
         try {
-            this.mf.set_nr_tiri_fatti(Integer.parseInt(LeggiFile(f_tiri_ok)));
+            this.mf.set_nr_tiri_ok(Integer.parseInt(LeggiFile(f_tiri_ok)));
             this.mf.update_tiri_lotti();
         } catch (NumberFormatException e) {
             System.out.println("File tiri_ok non numerico\n" + e.getMessage());
@@ -300,7 +308,7 @@ public class ThreadWorker extends Thread {
             }
             myReader.close();
         } catch (FileNotFoundException e) {
-            System.out.println("An error occurred.");
+            System.out.println("File non trovato " + NomeFile);
             return ListaRighe;
         }
         return ListaRighe;
@@ -335,12 +343,11 @@ public class ThreadWorker extends Thread {
             run_system_bash(this.bash_cmd_verde);
             run_system_bash(this.bash_cmd_aria);
 //            mostra_curva();
+            this.mf.setin_errore(true);
             this.mf.set_errore_tiro();
+        } else {
+            this.mf.setin_errore(false);
         }
-    }
-
-    private void tiri() {
-        this.mf.AggiornaTiri();
     }
 
     /**
@@ -348,28 +355,10 @@ public class ThreadWorker extends Thread {
      * risposta in caso di tiro errato
      */
     private void risposta_tiro_errato() {
-        String risposta = this.LeggiFile(this.f_risposta_tiro_errato);
-        bash_cmd_aria[4] = this.open;
-        bash_cmd_verde[4] = this.open;
-        bash_cmd_rosso[4] = this.close;
-        run_system_bash(this.bash_cmd_rosso);
-        run_system_bash(this.bash_cmd_verde);
-        run_system_bash(this.bash_cmd_aria);
+        String risposta = this.LeggiFile(JRivitMain.F_RISPOSTA_TIRO_ERRATO);
+        
         this.mf.aria_aperta();
-        switch (risposta) {
-            case "continua" -> {
-                this.ScriviFile(f_risposta_tiro_errato, "1");
-            }
-            case "accetta" -> {
-                this.ScriviFile(f_risposta_tiro_errato, "3");
-            }
-            case "estendi" -> {
-                this.ScriviFile(f_risposta_tiro_errato, "2");
-            }
-            case "annulla" -> {
-                this.ScriviFile(f_risposta_tiro_errato, "4");
-            }
-        }
+        this.ScriviFile(JRivitMain.F_RISPOSTA_TIRO_ERRATO, risposta);
     }
 
     /**
@@ -420,7 +409,7 @@ public class ThreadWorker extends Thread {
      */
     public void initValues() {
         this.AggiornaSensori();
-        this.tiri_ok();
+        this.tiri();
         this.tiri_errati();
         this.tiri();
         this.tiri_annullati();
@@ -435,7 +424,6 @@ public class ThreadWorker extends Thread {
         this.LeggiAriaInMinMax();
         this.LeggiSessione();
         this.mostra_stato_aria();
-        this.risposta_tiro_errato();
         this.mf.repaint();
     }
 
@@ -455,7 +443,7 @@ public class ThreadWorker extends Thread {
             }
             myReader.close();
         } catch (FileNotFoundException e) {
-            System.out.println("An error occurred.");
+            System.out.println("File non trovato " + NomeFile);
             return "Errore lettura file";
         }
         return contenutoFile;
@@ -509,12 +497,12 @@ public class ThreadWorker extends Thread {
     }
 
     private void read_lavoro_scelto() {
-        this.mf.setLavoroScelto(LeggiFile(this.f_lavoro_scelto));
+        this.mf.setLavoroScelto(LeggiFile(JRivitMain.F_LAVORO_SCELTO));
     }
 
     private void lotti_ok() {
         try {
-            this.mf.set_nr_lotti_fatti(Integer.parseInt(LeggiFile(this.f_lotti_ok)));
+            this.mf.set_nr_lotti_ok(Integer.parseInt(LeggiFile(this.f_lotti_ok)));
             this.mf.update_tiri_lotti();    // aggiorna la visualizzazione
         } catch (NumberFormatException e) {
             System.out.println("Contenuto del file lotti_ok non numerico !\n" + e.getMessage());
@@ -529,17 +517,7 @@ public class ThreadWorker extends Thread {
      *
      */
     private void abort() {
-        String lavoro = "";
-        this.ScriviFile("tiri_annullati", "0");
-        this.ScriviFile("tiri_errati", "0");
-        this.ScriviFile("tiri_ok", "0");
-        lavoro = this.LeggiFile("lavoro_scelto.txt");
-        this.ScriviFile("lavoro_scelto.txt", "");
-        this.ScriviFile("ultimo_lavoro_scelto.txt", lavoro);
-        this.mf.setlavoroScelto(lavoro);
-        this.ScriviFile(f_aria, "0");
-        this.ScriviFile(this.f_started, "0");
-        this.ScriviFile(this.f_errore, "0");
+        ScriviFile(JRivitMain.F_STATO, JRivitMain.STATO_STOP);  //  stato di abort
     }
 
     /**
@@ -548,12 +526,6 @@ public class ThreadWorker extends Thread {
      *
      */
     private void pausa() {
-        String lavoro = this.LeggiFile("lavoro_scelto.txt");
-        this.ScriviFile("lavoro_scelto.txt", lavoro);
-        this.ScriviFile("ultimo_lavoro_scelto.txt", lavoro);
-        this.mf.setlavoroScelto(lavoro);
-        this.ScriviFile(f_aria, "0");
-        ScriviFile(this.f_started, "0");
-        ScriviFile(this.f_errore, "0");
+        this.ScriviFile(JRivitMain.F_STATO, JRivitMain.STATO_PAUSA);
     }
 }
