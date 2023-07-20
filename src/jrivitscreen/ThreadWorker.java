@@ -301,12 +301,15 @@ public class ThreadWorker extends Thread {
     public List<String> LeggiFileElenco(String NomeFile) {
         List<String> ListaRighe = new ArrayList<>();
         try {
+
             File myObj = new File(this.pathWatch + NomeFile);
-            Scanner myReader = new Scanner(myObj);
-            while (myReader.hasNextLine()) {
-                ListaRighe.add(myReader.nextLine());
+            if (myObj.exists()) {
+                try (Scanner myReader = new Scanner(myObj)) {
+                    while (myReader.hasNextLine()) {
+                        ListaRighe.add(myReader.nextLine());
+                    }
+                }
             }
-            myReader.close();
         } catch (FileNotFoundException e) {
             System.out.println("File non trovato " + NomeFile);
             return ListaRighe;
@@ -356,7 +359,7 @@ public class ThreadWorker extends Thread {
      */
     private void risposta_tiro_errato() {
         String risposta = this.LeggiFile(JRivitMain.F_RISPOSTA_TIRO_ERRATO);
-        
+
         this.mf.aria_aperta();
         this.ScriviFile(JRivitMain.F_RISPOSTA_TIRO_ERRATO, risposta);
     }
@@ -437,11 +440,13 @@ public class ThreadWorker extends Thread {
         String contenutoFile = "";
         try {
             File myObj = new File(this.pathWatch + NomeFile);
-            Scanner myReader = new Scanner(myObj);
-            while (myReader.hasNextLine()) {
-                contenutoFile += myReader.nextLine();
+            if (myObj.exists()) {
+                try (Scanner myReader = new Scanner(myObj)) {
+                    while (myReader.hasNextLine()) {
+                        contenutoFile += myReader.nextLine();
+                    }
+                }
             }
-            myReader.close();
         } catch (FileNotFoundException e) {
             System.out.println("File non trovato " + NomeFile);
             return "Errore lettura file";
