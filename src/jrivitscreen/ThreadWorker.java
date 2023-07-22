@@ -36,6 +36,7 @@ import static java.lang.Runtime.getRuntime;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
@@ -115,7 +116,9 @@ public class ThreadWorker extends Thread {
             Logger.getLogger(ThreadWorker.class.getName()).log(Level.SEVERE, null, ex);
         }
         Path dir = Paths.get(this.pathWatch);
-        dir.register(watcher, ENTRY_MODIFY);
+        dir.register(watcher, StandardWatchEventKinds.ENTRY_MODIFY,
+                StandardWatchEventKinds.ENTRY_CREATE,
+                StandardWatchEventKinds.ENTRY_DELETE);
         try {
             Thread.sleep(2000);//Attesa 2" per allocazione Classi
         } catch (InterruptedException ex) {
@@ -146,8 +149,21 @@ public class ThreadWorker extends Thread {
                 WatchEvent<Path> ev = (WatchEvent<Path>) event;
                 fileName = ev.context();
                 //System.out.println(kind.name() + ": " + fileName);
+                if (kind == StandardWatchEventKinds.ENTRY_CREATE) {
+                    switch (fileName.toString()) {
+                        case "aria" ->
+                            mostra_stato_aria();
+//                        case "curva_pronta" ->
+//                            mostra_curva();
+                        case "errore" ->
+                            errore();
+                    }
 
-                if (kind == ENTRY_MODIFY) {
+                }
+                if (kind == StandardWatchEventKinds.ENTRY_DELETE) {
+
+                }
+                if (kind == StandardWatchEventKinds.ENTRY_MODIFY) {
                     switch (fileName.toString()) {
                         case "tiri" ->
                             tiri();
@@ -159,8 +175,7 @@ public class ThreadWorker extends Thread {
                             tiri_annullati();
                         case "lotti_ok" ->
                             lotti_ok();
-                        case "errore" ->
-                            errore();
+
                         case "sensori", "info.txt" ->
                             read_info();
                         case "warning.txt" ->
@@ -173,10 +188,7 @@ public class ThreadWorker extends Thread {
                             read_lavori();
                         case "lavori_descrizione.txt", "in_pausa" ->
                             read_lavoro_in_pausa();
-                        case "aria" ->
-                            mostra_stato_aria();
-//                        case "curva_pronta" ->
-//                            mostra_curva();
+
                         case "risposta_tiro_erratto" ->
                             risposta_tiro_errato();
                         case "killScreen" ->
@@ -289,7 +301,19 @@ public class ThreadWorker extends Thread {
      * Legge il file con la descrizione dei ThreadWorker
      */
     private void read_warning() {
-        this.mf.AggiornaWarning(this.LeggiFileElenco(this.f_warning));
+        List<String> warning_file = this.LeggiFileElenco(this.f_warning);
+        int livello_warning = 0, livello = 0, posizione_riga = 0;
+
+        for (String string : warning_file) {
+            String[] warnig_list = string.split("§");
+            livello = Integer.parseInt(warnig_list[1]);
+            if (livello > livello_warning) {
+                livello_warning = livello;
+            }
+            warning_file.set(posizione_riga++, string + ", livello -> " + livello);
+        }
+        this.mf.set_warning(livello_warning);//Aggiorna l'immagine warning
+        this.mf.AggiornaWarning(warning_file);//Aggiorna lista descizioni warning
     }
 
     /**

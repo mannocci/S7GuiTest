@@ -46,7 +46,8 @@ import javax.swing.JPanel;
 public class JRivitMain extends javax.swing.JFrame {
 
     private ImageIcon Img_Exit, Img_Ok, Img_Nulla, Img_Freccia_su,
-            Img_Freccia_giu, Img_Warning, Img_Setup, Img_Play;
+            Img_Freccia_giu, Img_Warning, Img_Setup, Img_Play,
+            Img_No_Warning, Img_Err_Warning, Img_Med_Warning;
     private Worker w_mf;
     private ImageIcon Img_Continua;
     private ImageIcon Img_Estende;
@@ -102,7 +103,7 @@ public class JRivitMain extends javax.swing.JFrame {
     final static String ESTENDI = "4";
 
     private int nr_tiri;
-  
+
 //Dopo una sospensione
     /**
      * Creates new form JRivitMain
@@ -115,7 +116,10 @@ public class JRivitMain extends javax.swing.JFrame {
         Img_Nulla = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/nulla.png"));
         Img_Freccia_su = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/freccia_su.png"));
         Img_Freccia_giu = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/freccia_giu.png"));
-        Img_Warning = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/warning.png"));
+        Img_Warning = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/no_warning.png"));
+        Img_No_Warning = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/no_warning.png"));
+        Img_Med_Warning = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/warning.png"));
+        Img_Err_Warning = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/err_warning.png"));
         Img_Setup = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/setup.png"));
         Img_Play = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/play_circle.png"));
         Img_Continua = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/play_pause.png"));
@@ -127,6 +131,7 @@ public class JRivitMain extends javax.swing.JFrame {
         Img_Lan = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/lan.png"));
         Img_WiFi = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/cell.png"));
         Img_Info = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/info.png"));
+
         elencoLavoriArray = new ArrayList<>();
 
         formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -579,6 +584,28 @@ public class JRivitMain extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 /**
+     * Imposta l'immagine in base al tipo di warning 0 nessuna segnalazione 1 a
+     * 5 media segnalazione 6 a 10 errore Il file warning è così composta da due
+     * campi: il primo è la descrizione, il secondo il livello di gravità della
+     * segnalazione
+     * <descrizione>§#
+     *
+     * @param w_level livello di warning
+     */
+    public void set_warning(int w_level) {
+        switch (w_level) {
+            case 0 ->
+                this.Img_Warning = this.Img_No_Warning;
+            case 1, 2, 3, 4 ->
+                this.Img_Warning = this.Img_Med_Warning;
+            case 5, 6, 7, 8, 9 ->
+                this.Img_Warning = this.Img_Err_Warning;
+
+        }
+
+    }
+
+    /**
      * Evento click Pulsante 1 in alto a dx
      *
      * @param evt
@@ -621,6 +648,11 @@ public class JRivitMain extends javax.swing.JFrame {
         PanelDialog();
     }
 
+    /**
+     * 1^ Pulsante Sinistro
+     *
+     * @param evt
+     */
     private void jButtonPL1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPL1ActionPerformed
         // Qual'è il nome del pannello in primo piano ?
         switch (this.jLayeredPaneCenter.getComponent(0).getName()) {
@@ -743,7 +775,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 if (this.in_errore) {
                     set_errore_tiro();
                     this.in_errore = false;
-                } 
+                }
             }
         }
     }//GEN-LAST:event_jButtonPR2ActionPerformed
@@ -765,12 +797,12 @@ public class JRivitMain extends javax.swing.JFrame {
 
             case "started", "canvas" ->//Estende
             {
-               if (this.in_errore) {
-                DialogQ = Estende;
-                this.AlertDialogStop = "Estendere ?";
-                this.jLabelDialog.setText(AlertDialogStop);
-                PanelDialog();
-               } 
+                if (this.in_errore) {
+                    DialogQ = Estende;
+                    this.AlertDialogStop = "Estendere ?";
+                    this.jLabelDialog.setText(AlertDialogStop);
+                    PanelDialog();
+                }
             }
 //            case "setup" ->
 //                PanelSetupLan();
@@ -803,7 +835,7 @@ public class JRivitMain extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_listWarningActionPerformed
     /**
-     * PanelMain Set Panel visibile for PanelMain
+     * PanelMain Pannello che viene visualizzato all'avvio
      */
     private void PanelMain() {
 //        changePanel(this.jPanelMain); // metodo migliorato per cambio pannello. Da distribuire sostituendo tutte le chiamate a moveToFront (todo)
@@ -1239,6 +1271,7 @@ public class JRivitMain extends javax.swing.JFrame {
      * @param lista
      */
     public void AggiornaWarning(List<String> lista) {
+        
         RefreshList(listWarning, lista);
     }//End AggiornaInfo
 
@@ -1251,16 +1284,16 @@ public class JRivitMain extends javax.swing.JFrame {
         // ogni volta che si inserisce un elemento in posizione 0 la lista viene spostata in avanti
         // quindi i valori saranno visualizzati al contrario rispetto all'ordine di chiamata nel codice java
         try {
-        lista.add(0, "-------------------------------------------------------");
-        lista.add(0, "Pressione aria in ingresso: " + this.pressione_aria_in.toString() + " bar");
-        lista.add(0, "Tensione CPU: " + this.v_rpi.toString() + " V");
-        lista.add(0, "Tensione ingresso: " + this.v_in.toString() + " V");
-        lista.add(0, "Temperatura scheda I/O: " + this.temp_io_board.toString() + " °C");
-        lista.add(0, "Temperatura CPU: " + this.temp_rpi.toString() + " °C");
+            lista.add(0, "-------------------------------------------------------");
+            lista.add(0, "Pressione aria in ingresso: " + this.pressione_aria_in.toString() + " bar");
+            lista.add(0, "Tensione CPU: " + this.v_rpi.toString() + " V");
+            lista.add(0, "Tensione ingresso: " + this.v_in.toString() + " V");
+            lista.add(0, "Temperatura scheda I/O: " + this.temp_io_board.toString() + " °C");
+            lista.add(0, "Temperatura CPU: " + this.temp_rpi.toString() + " °C");
 
-        RefreshList(listInfo, lista);            
+            RefreshList(listInfo, lista);
         } catch (Exception e) {
-            System.out.printf("errore lettura file info "+e);
+            System.out.printf("errore lettura file info " + e);
         }
 
     }//End AggiornaInfo
@@ -1399,7 +1432,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 // E' Finito il lavoro !
                 this.jPanelStarted.setBackground(Color.BLUE);
             } else {
-                if (! this.in_errore) {
+                if (!this.in_errore) {
                     this.jPanelStarted.setBackground(Color.WHITE);
                 }
             }
@@ -1552,7 +1585,6 @@ public class JRivitMain extends javax.swing.JFrame {
         this.jLabelNomeDevice.setText(nd);
         this.repaint();
     }
-
 
     /**
      * getjLabelValidi Get Label tiri Validi
