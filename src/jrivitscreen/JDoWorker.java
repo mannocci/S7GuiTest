@@ -46,10 +46,10 @@ import java.util.logging.Logger;
  *
  * @author lucamannocci
  */
-public class Worker extends SwingWorker<String, Object> {
+public class JDoWorker extends SwingWorker<String, Object> {
 
     JRivitMain mf;
-    ThreadWorker wt;
+    JFileWorker wt;
     ButtonThread bt;
     private String operation = "";
     private int tiriAnnullati = 0;
@@ -73,10 +73,10 @@ public class Worker extends SwingWorker<String, Object> {
     private long Pid;
     private String run_system_result;
 
-    Worker(JRivitMain mf) {
+    JDoWorker(JRivitMain mf) {
         try {
             this.mf = mf;
-            this.wt = new ThreadWorker(this.mf);
+            this.wt = new JFileWorker(this.mf, this);
             this.bt = new ButtonThread(this.mf);
             dateFormat = new SimpleDateFormat("HH:mm");
             now = Calendar.getInstance();
@@ -107,22 +107,53 @@ public class Worker extends SwingWorker<String, Object> {
                     this.wt.start();//Avvio Thread Watch File in Tmp
                     this.wt.initValues();
                 }
-                case JRivitMain.STATO_STOP, JRivitMain.STATO_PAUSA -> {
-                    ScriviFile(JRivitMain.F_STATO, this.operation);
+                case "stato_stop", "stato_pausa" -> {
                     this.mf.PanelStart();
                 }
-                case JRivitMain.CONTINUA, JRivitMain.ACCETTA, JRivitMain.ANNULLA, JRivitMain.ESTENDI -> {
-                    ScriviFile(JRivitMain.F_RISPOSTA_TIRO_ERRATO, this.operation);
+                case "continua", "accetta", "annulla" -> {
+
                     this.mf.ritorno_da_errore();
                 }
                 case "aggiorna_nome_device" -> {
                     this.NomeDevice = LeggiFile(this.f_nome_device);
                     this.mf.setNomeDevice(this.NomeDevice);
                 }
-                case "tiri" -> {
-                    String Tiri = LeggiFile("tiri");
+                case "tiri_errati" -> {
+                    String Tiri = LeggiFile(JRivitMain.F_TIRI_ERRATI);
+                    try {
+                        this.mf.set_nr_tiri(Integer.parseInt(Tiri));
+                        this.mf.update_tiri_lotti();
+                    } catch (NumberFormatException e) {
+                        System.out.println("File tiri_ok non numerico\n" + e.getMessage());
+                    }
                 }
-
+                case "tiri" -> {
+                    String Tiri = LeggiFile(JRivitMain.F_TIRI);
+                    try {
+                        this.mf.set_nr_tiri(Integer.parseInt(Tiri));
+                        this.mf.update_tiri_lotti();
+                    } catch (NumberFormatException e) {
+                        System.out.println("File tiri_ok non numerico\n" + e.getMessage());
+                    }
+                }
+                case "tiri_ok" -> {
+                    String Tiri = LeggiFile(JRivitMain.F_TIRI_OK);
+                    try {
+                        this.mf.set_nr_tiri_ok(Integer.parseInt(Tiri));
+                        this.mf.update_tiri_lotti();
+                    } catch (NumberFormatException e) {
+                        System.out.println("File tiri_ok non numerico\n" + e.getMessage());
+                    }
+                }
+                case "tiri_annullati" -> {
+                    String Tiri = LeggiFile(JRivitMain.F_TIRI_ANNULLATI);
+                    try {
+                        this.mf.set_nr_tiri_annullati(Integer.parseInt(Tiri));
+                        this.mf.update_tiri_lotti();
+                    } catch (NumberFormatException e) {
+                        System.out.println("File tiri_ok non numerico\n" + e.getMessage());
+                    }
+                }
                 case "risposta_attesa_tiro_errato" -> {
                     risposta_attesa_tiro_errato();
                 }
@@ -141,7 +172,7 @@ public class Worker extends SwingWorker<String, Object> {
                 case "lavoro_scelto" -> {
                     String lavoro = this.mf.getLavoroScelto();
                     this.ScriviFile(JRivitMain.F_LAVORO_SCELTO, lavoro);
-                    this.ScriviFile(JRivitMain.F_STATO, JRivitMain.STATO_AVVIATO);
+                    this.ScriviFile(JRivitMain.F_LAVORO_AVVIATO, "");
                 }
             }
         } catch (NumberFormatException ex) {
@@ -257,7 +288,7 @@ public class Worker extends SwingWorker<String, Object> {
             run_system_result = printResults(exec);
             //return exec.exitValue();
         } catch (IOException ex) {
-            Logger.getLogger(ThreadWorker.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
         }
         return exec;
     }

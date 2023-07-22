@@ -49,7 +49,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private ImageIcon Img_Exit, Img_Ok, Img_Nulla, Img_Freccia_su,
             Img_Freccia_giu, Img_Warning, Img_Setup, Img_Play,
             Img_No_Warning, Img_Err_Warning, Img_Med_Warning;
-    private Worker w_mf;
+    private JDoWorker w_mf;
     private ImageIcon Img_Continua;
     private ImageIcon Img_Estende;
     private ImageIcon Img_Stop;
@@ -68,13 +68,13 @@ public class JRivitMain extends javax.swing.JFrame {
     private int nr_tiri_da_fare;
     private int nr_lotto_corrente;
     private int nr_tiri_ok;
+    private int nr_tiri;
+    private int nr_tiri_annullati;
     private Float sogliaMin = 7.0f;
     private Float sogliaMax = 10.0f;
     private String sessione;
     private String Curva;
     private int DialogQ = 100;
-    static final int Continua = 1, Accetta = 2, Estende = 3, Annulla = 4;
-    private final int Stop = 0, Pausa = -1, DialogA = 200, Yes = 1000, No = 2000;
     private String lavoroScelto;
     private final SimpleDateFormat formatter;
     private Properties setup;
@@ -89,22 +89,41 @@ public class JRivitMain extends javax.swing.JFrame {
     private Float v_rpi;
     private Float pressione_aria_in;
     private String PanCur;
-    private boolean in_errore;
+    private boolean in_errore = false;
+    private boolean in_pausa = false;
+    private boolean chiedi_conferma = false;
+    private boolean lavoro_concluso = false;
+    private int tiri_annullati;
+
+    public boolean isLavoro_concluso() {
+        return lavoro_concluso;
+    }
+
+    public void setLavoro_concluso(boolean lavoro_concluso) {
+        this.lavoro_concluso = lavoro_concluso;
+    }
+
     public final static String F_STATO = "stato";
 
     final static String F_LAVORO_SCELTO = "lavoro_scelto";
     final static String F_RISPOSTA_TIRO_ERRATO = "risposta_tiro_errato";
     final static String F_CHIEDE_CONFERMA_NO = "chiedi_conferma_no";
-    final static String STATO_AVVIATO = "10";
-    final static String STATO_CONCLUSO = "12";
-    final static String STATO_PAUSA = "13";
-    final static String STATO_STOP = "14";
-    final static String CONTINUA = "1";
-    final static String ACCETTA = "2";
-    final static String ANNULLA = "3";
-    final static String ESTENDI = "4";
-
-    private int nr_tiri;
+    final static String F_IN_PAUSA = "in_pausa";
+    final static String F_IN_STOP = "in_stop";
+    final static String F_LAVORO_CONCLUSO = "lavoro_concluso";
+    final static String F_LAVORO_AVVIATO = "lavoro_avviato";
+    final static String F_TIRI = "tiri";
+    final static String F_TIRI_OK = "tiri_ok";
+    final static String F_TIRI_ERRATI = "tiri_errati";
+    final static String F_TIRI_ANNULLATI = "tiri_annullati";
+    final static int STATO_AVVIATO = 10;
+    final static int STATO_CONCLUSO = 12;
+    final static int STATO_PAUSA = 13;
+    final static int STATO_STOP = 14;
+    final static int CONTINUA = 1;
+    final static int ACCETTA = 2;
+    final static int ANNULLA = 3;
+    final static int ESTENDI = 4;
 
 //Dopo una sospensione
     /**
@@ -149,7 +168,7 @@ public class JRivitMain extends javax.swing.JFrame {
         srvKey = setup.getProperty("srvkey", "");
         System.out.println("JRivitScreen ver. " + versione + " release " + data_release);
 
-        w_mf = new Worker(this);
+        w_mf = new JDoWorker(this);
         esegui("start");
         this.PanelMain();
     }
@@ -625,7 +644,7 @@ public class JRivitMain extends javax.swing.JFrame {
             case "started", "canvas" -> {//Stop
                 //esiste conferma_no come file in /tmp/CT ?
                 // se esiste non chiede conferma della scelta
-                DialogQ = Stop;
+                DialogQ = STATO_STOP;
                 this.PanCur = "started";
                 File f = new File(JRivitMain.F_CHIEDE_CONFERMA_NO);
                 if (!f.exists()) {
@@ -635,7 +654,7 @@ public class JRivitMain extends javax.swing.JFrame {
                     PanelDialog();
                 } else {
                     //passa direttamente ad annullare lavoro
-                    gestioneDialogRisposte();
+                    gestioneDialogRisposte(STATO_STOP);
                 }
             }
             case "setup" ->
@@ -644,7 +663,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 PulsanteSu();
             case "dialog" -> {
                 //Pulsante Sì alla domanda ? Annulla ? Abort ?
-                gestioneDialogRisposte();
+                gestioneDialogRisposte(DialogQ);
             }
         }
 
@@ -674,15 +693,13 @@ public class JRivitMain extends javax.swing.JFrame {
                 PanelMain();//Exit verso main
             case "started", "canvas" ->//Continua
             {
-                DialogQ = Continua;
-                File f = new File(JRivitMain.F_CHIEDE_CONFERMA_NO);
-                if (!f.exists()) {
-
+                DialogQ = CONTINUA;//Continua;
+                if (isChiedi_conferma()) {
                     this.AlertDialogStop = "Continua ?";
                     this.jLabelDialog.setText(AlertDialogStop);
                     PanelDialog();
                 } else {
-
+                    gestioneDialogRisposte(CONTINUA);
                 }
             }
             case "setup" ->
@@ -710,14 +727,13 @@ public class JRivitMain extends javax.swing.JFrame {
                 PanelInfo();
             case "started", "canvas" ->//Accetta il tiro
             {
-                DialogQ = Accetta;
-                File f = new File(JRivitMain.F_CHIEDE_CONFERMA_NO);
-                if (!f.exists()) {
-                    this.AlertDialogStop = "Accettare ?";
+                DialogQ = ACCETTA;
+                if (this.isChiedi_conferma()) {
+                    this.AlertDialogStop = "Accetta ?";
                     this.jLabelDialog.setText(AlertDialogStop);
                     PanelDialog();
                 } else {
-                    PanelStarted();
+                    gestioneDialogRisposte(ACCETTA);
                 }
             }
             case "setup lan", "setup wifi" ->
@@ -743,14 +759,13 @@ public class JRivitMain extends javax.swing.JFrame {
 //          case "start" 
             //Per ora nulla
             case "started", "canvas" -> {//Annullare il tiro
-                DialogQ = Annulla;
-                File f = new File(JRivitMain.F_CHIEDE_CONFERMA_NO);
-                if (!f.exists()) {
-                    this.AlertDialogStop = "Annullare ?";
+                DialogQ = ANNULLA;
+                if (this.isChiedi_conferma()) {
+                    this.AlertDialogStop = "Annulla ?";
                     this.jLabelDialog.setText(AlertDialogAnnulla);
                     PanelDialog();
                 } else {
-                    this.gestioneDialogRisposte();
+                    this.gestioneDialogRisposte(ANNULLA);
                 }
             }
         }
@@ -769,7 +784,7 @@ public class JRivitMain extends javax.swing.JFrame {
             case "start", "warning", "info", "setup lan", "setup wifi" ->
                 PulsanteGiu();
             case "started", "canvas" -> {//Pausa del lavoro ?
-                DialogQ = Pausa;
+                DialogQ = STATO_PAUSA;
                 this.AlertDialogStop = "Pausa ?";
                 this.jLabelDialog.setText(AlertDialogStop);
                 PanelDialog();
@@ -994,14 +1009,10 @@ public class JRivitMain extends javax.swing.JFrame {
     private java.awt.List listWarning;
     // End of variables declaration//GEN-END:variables
     /**
-     * Voiene chiamato dopo la gestione dell'errore
+     * Viene chiamato dopo la gestione dell'errore
      */
     public void ritorno_da_errore() {
-        this.jLayeredPaneCenter.moveToFront(this.jPanelStarted);
-        this.jPanelStarted.setBackground(Color.white);
-        this.change_buttons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
-                this.Img_Stop, this.Img_Pause, this.Img_Nulla);
-        this.repaint();
+        PanelStarted();
     }
 
     void set_nr_lotti_ok(int lotti_ok) {
@@ -1294,7 +1305,7 @@ public class JRivitMain extends javax.swing.JFrame {
      * @param lista
      */
     public void AggiornaWarning(List<String> lista) {
-        
+
         RefreshList(listWarning, lista);
     }//End AggiornaInfo
 
@@ -1515,18 +1526,11 @@ public class JRivitMain extends javax.swing.JFrame {
         esegui("risposta_attesa_tiro_errato");
     }
 
-    public void set_nr_tiri_fatti(int TiriOK) {
-        this.nr_tiri_ok = TiriOK;
+    public void set_nr_tiri_fatti(int Tiri_fatti) {
+        this.nr_tiri = Tiri_fatti;
     }
 
-    /**
-     * Aggiorna il Label_B_C conteggio di tutti i tiri a prescindere
-     *
-     * @param Tiri_tutti - NomeFile tiri
-     */
-    void AggiornaTiri() {
-        esegui("tiri");
-    }
+
 
     /**
      * Metodo AggiornaTiriErrati aggiorna la Label JaLabelErrati
@@ -1578,12 +1582,12 @@ public class JRivitMain extends javax.swing.JFrame {
     }
 
     /**
-     * gestioneDialogRisposte, OK alla dialog Pulsante PR1
+     * gestioneDialogRisposte, la codifica
      *
      *
      */
-    private void gestioneDialogRisposte() {
-        switch (DialogQ) {
+    private void gestioneDialogRisposte(int risposta) {
+        switch (risposta) {
             case 1 -> //Continua
             {
                 esegui("continua");
@@ -1594,12 +1598,12 @@ public class JRivitMain extends javax.swing.JFrame {
                 esegui("accetta");
                 PanelStarted();
             }
-            case 3 -> //Estende
-            {
-                esegui("estendi");
-                PanelStarted();
-            }
-            case 4 -> //Annulla
+//            case 3 -> //Estende
+//            {
+//                esegui("estendi");
+//                PanelStarted();
+//            }
+            case 3 -> //Annulla
             {
                 esegui("annulla");
                 PanelStarted();
@@ -1754,4 +1758,42 @@ public class JRivitMain extends javax.swing.JFrame {
         }
     }
 
+    /**
+     *
+     * @return se è stato impostato lo stato in pausa
+     */
+    public boolean isIn_pausa() {
+        return in_pausa;
+    }
+
+    /**
+     * imposta lo stato in pausa
+     *
+     * @param in_pausa
+     */
+    public void setIn_pausa(boolean in_pausa) {
+        this.in_pausa = in_pausa;
+    }
+
+    /**
+     * Imposta se chiedere o meno conferma quando il tiro è errato per la scelta
+     * Continua, annulla accetta
+     *
+     * @param chiedi_conferma
+     */
+    public void setChiedi_conferma(boolean chiedi_conferma) {
+        this.chiedi_conferma = chiedi_conferma;
+    }
+
+    /**
+     *
+     * @return se devo chiedere o meno la conferma per Continua, annulla accetta
+     */
+    public boolean isChiedi_conferma() {
+        return this.chiedi_conferma;
+    }
+
+    void set_nr_tiri_annullati(int tiri_annullati) {
+        this.tiri_annullati = tiri_annullati;
+    }
 }

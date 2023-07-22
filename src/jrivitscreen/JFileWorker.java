@@ -48,7 +48,7 @@ import java.util.Scanner;
  *
  * @author lucamannocci
  */
-public class ThreadWorker extends Thread {
+public class JFileWorker extends Thread {
 
     private JRivitMain mf;
     private final String pathWatch = "/tmp/CT/";
@@ -106,14 +106,16 @@ public class ThreadWorker extends Thread {
         "0",
         "uinrd",
         "2"};
+    private final JDoWorker jworker;
 
-    public ThreadWorker(JRivitMain mf) throws IOException {
+    public JFileWorker(JRivitMain mf, JDoWorker aThis) throws IOException {
         this.mf = mf;
+        this.jworker = aThis;
         // create gpio controller by file (run bash script before !)     
         try {
             watcher = FileSystems.getDefault().newWatchService();
         } catch (IOException ex) {
-            Logger.getLogger(ThreadWorker.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
         }
         Path dir = Paths.get(this.pathWatch);
         dir.register(watcher, StandardWatchEventKinds.ENTRY_MODIFY,
@@ -122,7 +124,7 @@ public class ThreadWorker extends Thread {
         try {
             Thread.sleep(2000);//Attesa 2" per allocazione Classi
         } catch (InterruptedException ex) {
-            Logger.getLogger(ThreadWorker.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         System.out.println("Watch Service Modify file registered for dir: " + dir.getFileName());
@@ -152,16 +154,23 @@ public class ThreadWorker extends Thread {
                 if (kind == StandardWatchEventKinds.ENTRY_CREATE) {
                     switch (fileName.toString()) {
                         case "aria" ->
-                            mostra_stato_aria();
-//                        case "curva_pronta" ->
-//                            mostra_curva();
+                            mostra_stato_aria(1);
                         case "errore" ->
-                            errore();
+                            errore(true);
+                        case "chiedi_conferma_no" ->
+                            imposta_chiedi_conferma(true);
                     }
 
                 }
                 if (kind == StandardWatchEventKinds.ENTRY_DELETE) {
-
+                    switch (fileName.toString()) {
+                        case "aria" ->
+                            mostra_stato_aria(0);
+                        case "errore" ->
+                            errore(false);
+                        case "chiedi_conferma_no" ->
+                            imposta_chiedi_conferma(false);
+                    }
                 }
                 if (kind == StandardWatchEventKinds.ENTRY_MODIFY) {
                     switch (fileName.toString()) {
@@ -175,7 +184,6 @@ public class ThreadWorker extends Thread {
                             tiri_annullati();
                         case "lotti_ok" ->
                             lotti_ok();
-
                         case "sensori", "info.txt" ->
                             read_info();
                         case "warning.txt" ->
@@ -188,9 +196,6 @@ public class ThreadWorker extends Thread {
                             read_lavori();
                         case "lavori_descrizione.txt", "in_pausa" ->
                             read_lavoro_in_pausa();
-
-                        case "risposta_tiro_erratto" ->
-                            risposta_tiro_errato();
                         case "killScreen" ->
                             this.mf.Exit();
                         case "abort" ->
@@ -235,6 +240,12 @@ public class ThreadWorker extends Thread {
 //        }
 //    }
     private void tiri() {
+        this.jworker.set_operation("tiri");
+        try {
+            this.jworker.doInBackground();
+        } catch (Exception ex) {
+            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
+        }
         try {
             this.mf.set_nr_tiri(Integer.parseInt(LeggiFile(f_tiri)));
             this.mf.update_tiri_lotti();
@@ -252,10 +263,9 @@ public class ThreadWorker extends Thread {
         }
     }
 
-    private void mostra_stato_aria() {
+    private void mostra_stato_aria(int stato) {
 
-        String stato = LeggiFile(this.f_aria);
-        if (stato.equals("0")) {//Aria chiusa
+        if (stato == 0) {//Aria chiusa
             bash_cmd_aria[4] = this.close;
             bash_cmd_verde[4] = this.close;
             bash_cmd_rosso[4] = this.open;
@@ -298,7 +308,7 @@ public class ThreadWorker extends Thread {
     }
 
     /**
-     * Legge il file con la descrizione dei ThreadWorker
+     * Legge il file con la descrizione dei JFileWorker
      */
     private void read_warning() {
         List<String> warning_file = this.LeggiFileElenco(this.f_warning);
@@ -356,13 +366,26 @@ public class ThreadWorker extends Thread {
         this.mf.AggiornaSetupWiFi(this.LeggiFileElenco(this.f_setup_wifi));
     }
 
+    /**
+     * Aggiona il contatore titi annullati
+     */
     private void tiri_annullati() {
-        this.mf.AggiornaTiriAnnullati();
+        this.jworker.set_operation("tiri_annullati");
+        try {
+            this.jworker.doInBackground();
+        } catch (Exception ex) {
+            Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
-    private void errore() {
-        String codiceErrore = LeggiFile(this.f_errore);
-        if ("1".equals(codiceErrore)) {
+    /**
+     * Metodo che imposta l'accensione o meni del led Rosso Viene impostata la
+     * variabile booleana <in_errore> di JRivitMain
+     *
+     * @param si_o_no
+     */
+    private void errore(boolean si_o_no) {
+        if (si_o_no == true) {
             bash_cmd_aria[4] = this.close;
             bash_cmd_verde[4] = this.close;
             bash_cmd_rosso[4] = this.open;
@@ -375,17 +398,7 @@ public class ThreadWorker extends Thread {
         } else {
             this.mf.setin_errore(false);
         }
-    }
-
-    /**
-     * Metodo scopre che qualcuno ha risposto da remoto all'attesa della
-     * risposta in caso di tiro errato
-     */
-    private void risposta_tiro_errato() {
-        String risposta = this.LeggiFile(JRivitMain.F_RISPOSTA_TIRO_ERRATO);
-
-        this.mf.aria_aperta();
-        this.ScriviFile(JRivitMain.F_RISPOSTA_TIRO_ERRATO, risposta);
+        this.mf.setin_errore(si_o_no);
     }
 
     /**
@@ -411,7 +424,7 @@ public class ThreadWorker extends Thread {
             //printResults(exec);
             //return exec.exitValue();
         } catch (IOException ex) {
-            Logger.getLogger(ThreadWorker.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
         }
         return exec;
     }
@@ -450,7 +463,7 @@ public class ThreadWorker extends Thread {
         this.read_lavoro_in_pausa();
         this.LeggiAriaInMinMax();
         this.LeggiSessione();
-        this.mostra_stato_aria();
+        this.mostra_stato_aria(0);
         this.mf.repaint();
     }
 
@@ -546,7 +559,7 @@ public class ThreadWorker extends Thread {
      *
      */
     private void abort() {
-        ScriviFile(JRivitMain.F_STATO, JRivitMain.STATO_STOP);  //  stato di abort
+        ScriviFile(JRivitMain.F_IN_STOP, "" + JRivitMain.STATO_STOP);  //  stato di abort
     }
 
     /**
@@ -555,6 +568,11 @@ public class ThreadWorker extends Thread {
      *
      */
     private void pausa() {
-        this.ScriviFile(JRivitMain.F_STATO, JRivitMain.STATO_PAUSA);
+        this.ScriviFile(JRivitMain.F_IN_PAUSA, "" + JRivitMain.STATO_PAUSA);
+    }
+
+    private void imposta_chiedi_conferma(boolean si_o_no) {
+
+        this.mf.setChiedi_conferma(si_o_no);
     }
 }
