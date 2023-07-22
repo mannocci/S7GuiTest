@@ -27,6 +27,7 @@ import java.awt.BasicStroke;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -93,6 +94,7 @@ public class JRivitMain extends javax.swing.JFrame {
 
     final static String F_LAVORO_SCELTO = "lavoro_scelto";
     final static String F_RISPOSTA_TIRO_ERRATO = "risposta_tiro_errato";
+    final static String F_CHIEDE_CONFERMA_NO = "chiedi_conferma_no";
     final static String STATO_AVVIATO = "10";
     final static String STATO_CONCLUSO = "12";
     final static String STATO_PAUSA = "13";
@@ -111,6 +113,7 @@ public class JRivitMain extends javax.swing.JFrame {
     public JRivitMain() {
         initComponents();
         this.AlertDialogStop = "Annullare Tiro ?";
+
         Img_Exit = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/exit.png"));
         Img_Ok = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/ok.png"));
         Img_Nulla = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/nulla.png"));
@@ -620,11 +623,20 @@ public class JRivitMain extends javax.swing.JFrame {
             case "start" ->
                 PulsanteSu();
             case "started", "canvas" -> {//Stop
+                //esiste conferma_no come file in /tmp/CT ?
+                // se esiste non chiede conferma della scelta
                 DialogQ = Stop;
                 this.PanCur = "started";
-                this.AlertDialogStop = "Annullare il Lavoro ?";
-                this.jLabelDialog.setText(AlertDialogStop);
-                PanelDialog();
+                File f = new File(JRivitMain.F_CHIEDE_CONFERMA_NO);
+                if (!f.exists()) {
+
+                    this.AlertDialogStop = "Annullare il Lavoro ?";
+                    this.jLabelDialog.setText(AlertDialogStop);
+                    PanelDialog();
+                } else {
+                    //passa direttamente ad annullare lavoro
+                    gestioneDialogRisposte();
+                }
             }
             case "setup" ->
                 PanelSetupLan();
@@ -663,9 +675,15 @@ public class JRivitMain extends javax.swing.JFrame {
             case "started", "canvas" ->//Continua
             {
                 DialogQ = Continua;
-                this.AlertDialogStop = "Continua ?";
-                this.jLabelDialog.setText(AlertDialogStop);
-                PanelDialog();
+                File f = new File(JRivitMain.F_CHIEDE_CONFERMA_NO);
+                if (!f.exists()) {
+
+                    this.AlertDialogStop = "Continua ?";
+                    this.jLabelDialog.setText(AlertDialogStop);
+                    PanelDialog();
+                } else {
+
+                }
             }
             case "setup" ->
                 PanelMain();
@@ -677,8 +695,6 @@ public class JRivitMain extends javax.swing.JFrame {
                 PanelSetup();
             case "setup wifi" ->
                 PanelSetup();
-            case "dialog" ->
-                PanelStart();
         }
     }//GEN-LAST:event_jButtonPL1ActionPerformed
     /**
@@ -692,24 +708,19 @@ public class JRivitMain extends javax.swing.JFrame {
         switch (this.jLayeredPaneCenter.getComponent(0).getName()) {
             case "main" ->
                 PanelInfo();
-//            case "start" ->
-            //per ora nulla
             case "started", "canvas" ->//Accetta il tiro
             {
                 DialogQ = Accetta;
-                this.AlertDialogStop = "Accettare ?";
-                this.jLabelDialog.setText(AlertDialogStop);
-                PanelDialog();
+                File f = new File(JRivitMain.F_CHIEDE_CONFERMA_NO);
+                if (!f.exists()) {
+                    this.AlertDialogStop = "Accettare ?";
+                    this.jLabelDialog.setText(AlertDialogStop);
+                    PanelDialog();
+                } else {
+                    PanelStarted();
+                }
             }
-//            case "setup" ->
-//                PanelSetupLan();
-//            case "warning" ->
-//                PulsanteSu();
-//            case "info" ->
-//                PulsanteSu();
-            case "setup lan" ->
-                PulsanteSu();
-            case "setup wifi" ->
+            case "setup lan", "setup wifi" ->
                 PulsanteSu();
             case "dialog" -> {
                 if (this.PanCur.contains("started")) {
@@ -733,20 +744,15 @@ public class JRivitMain extends javax.swing.JFrame {
             //Per ora nulla
             case "started", "canvas" -> {//Annullare il tiro
                 DialogQ = Annulla;
-                this.AlertDialogStop = "Annullare ?";
-                this.jLabelDialog.setText(AlertDialogAnnulla);
-                PanelDialog();
+                File f = new File(JRivitMain.F_CHIEDE_CONFERMA_NO);
+                if (!f.exists()) {
+                    this.AlertDialogStop = "Annullare ?";
+                    this.jLabelDialog.setText(AlertDialogAnnulla);
+                    PanelDialog();
+                } else {
+                    this.gestioneDialogRisposte();
+                }
             }
-            case "warning" ->
-                PulsanteSu();
-//            case "info" ->
-//                PulsanteSu();
-            case "setup lan" ->
-                PulsanteSu();
-//            case "setup wifi" ->
-//                PulsanteSu();
-            case "dialog" ->
-                PanelStart();
         }
     }//GEN-LAST:event_jButtonPL3ActionPerformed
     /**
@@ -791,31 +797,27 @@ public class JRivitMain extends javax.swing.JFrame {
             case "main" ->
                 this.Exit();
 //                per ora uso il pulsante per chiudere;
-            case "start" -> {
+            case "start" -> { //Scelta lavoro
                 PanelStarted();
             }
 
-            case "started", "canvas" ->//Estende
-            {
-                if (this.in_errore) {
-                    DialogQ = Estende;
-                    this.AlertDialogStop = "Estendere ?";
-                    this.jLabelDialog.setText(AlertDialogStop);
-                    PanelDialog();
-                }
-            }
+//            case "started", "canvas" ->//Estende Tolto
+//            {
+//                if (this.in_errore) {
+//                    DialogQ = Estende;
+//                    this.AlertDialogStop = "Estendere ?";
+//                    this.jLabelDialog.setText(AlertDialogStop);
+//                    PanelDialog();
+//                }
+//            }
 //            case "setup" ->
 //                PanelSetupLan();
 //            case "warning" ->
 //                PulsanteSu();
 //            case "info" ->
 //                PulsanteSu();
-            case "setup lan" ->
+            case "setup lan", "setup wifi" ->
                 PanelSetup();
-            case "setup wifi" ->
-                PanelSetup();
-            case "dialog" ->
-                PanelStart();
         }
     }//GEN-LAST:event_jButtonPR3ActionPerformed
 
@@ -840,8 +842,8 @@ public class JRivitMain extends javax.swing.JFrame {
     private void PanelMain() {
 //        changePanel(this.jPanelMain); // metodo migliorato per cambio pannello. Da distribuire sostituendo tutte le chiamate a moveToFront (todo)
         this.jLayeredPaneCenter.moveToFront(this.jPanelMain);
-        this.change_buttons(Img_Warning, Img_Info, Img_Setup,
-                Img_Play, Img_Nulla, Img_Nulla);
+        this.change_buttons(this.Img_Warning, this.Img_Info, this.Img_Setup,
+                this.Img_Play, this.Img_Nulla, this.Img_Nulla);
     }
 
     /**
@@ -850,23 +852,44 @@ public class JRivitMain extends javax.swing.JFrame {
     private void change_buttons(ImageIcon I1, ImageIcon I2, ImageIcon I3,
             ImageIcon I4, ImageIcon I5, ImageIcon I6) {
         this.jButtonPL1.setIcon(I1);
-        this.jButtonPL2.setIcon(I2);
-        this.jButtonPL3.setIcon(I3);
-        this.jButtonPR1.setIcon(I4);
-        this.jButtonPR2.setIcon(I5);
-        this.jButtonPR3.setIcon(I6);
-        // Qual'è il nome del pannello in primo piano ?
-        if (this.jLayeredPaneCenter.getComponent(0).getName().equals("started")) {
+        if (I1.equals(this.Img_Nulla)) {
             this.jButtonPL1.setEnabled(false);
-            this.jButtonPL2.setEnabled(false);
-            this.jButtonPL3.setEnabled(false);
-            this.jButtonPR3.setEnabled(false);
         } else {
             this.jButtonPL1.setEnabled(true);
+        }
+
+        this.jButtonPL2.setIcon(I2);
+        if (I2.equals(this.Img_Nulla)) {
+            this.jButtonPL2.setEnabled(false);
+        } else {
             this.jButtonPL2.setEnabled(true);
+        }
+
+        this.jButtonPL3.setIcon(I3);
+        if (I3.equals(this.Img_Nulla)) {
+            this.jButtonPL3.setEnabled(false);
+        } else {
             this.jButtonPL3.setEnabled(true);
+        }
+        this.jButtonPR1.setIcon(I4);
+        if (I4.equals(this.Img_Nulla)) {
+            this.jButtonPR1.setEnabled(false);
+        } else {
+            this.jButtonPR1.setEnabled(true);
+        }
+        this.jButtonPR2.setIcon(I5);
+        if (I5.equals(this.Img_Nulla)) {
+            this.jButtonPR2.setEnabled(false);
+        } else {
+            this.jButtonPR2.setEnabled(true);
+        }
+        this.jButtonPR3.setIcon(I6);
+        if (I6.equals(this.Img_Nulla)) {
+            this.jButtonPR3.setEnabled(false);
+        } else {
             this.jButtonPR3.setEnabled(true);
         }
+
     }
 
     /**
@@ -1142,7 +1165,7 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     private void PanelWarning() {
         this.jLayeredPaneCenter.moveToFront(this.jPanelWarning);
-        this.change_buttons(this.Img_Exit, this.Img_Freccia_sx, this.Img_Freccia_dx,
+        this.change_buttons(this.Img_Exit, this.Img_Nulla, this.Img_Nulla,
                 this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Nulla);
     }
 
@@ -1249,7 +1272,7 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     private void PanelInfo() {
         this.jLayeredPaneCenter.moveToFront(this.jPanelInfo);
-        this.change_buttons(this.Img_Exit, this.Img_Freccia_sx, this.Img_Freccia_dx,
+        this.change_buttons(this.Img_Exit, this.Img_Nulla, this.Img_Nulla,
                 this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Nulla);
     }
 
@@ -1364,18 +1387,36 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     public void pulsante_hw(String p) {
         switch (p) {
-            case "PL1" ->
-                jButtonPL1ActionPerformed(null);
-            case "PL2" ->
-                jButtonPL2ActionPerformed(null);
-            case "PL3" ->
-                jButtonPL3ActionPerformed(null);
-            case "PR1" ->
-                jButtonPR1ActionPerformed(null);
-            case "PR2" ->
-                jButtonPR2ActionPerformed(null);
-            case "PR3" ->
-                jButtonPR3ActionPerformed(null);
+            case "PL1" -> {
+                if (this.jButtonPL1.isEnabled()) {
+                    jButtonPL1ActionPerformed(null);
+                }
+            }
+            case "PL2" -> {
+                if (this.jButtonPL2.isEnabled()) {
+                    jButtonPL2ActionPerformed(null);
+                }
+            }
+            case "PL3" -> {
+                if (this.jButtonPL3.isEnabled()) {
+                    jButtonPL3ActionPerformed(null);
+                }
+            }
+            case "PR1" -> {
+                if (this.jButtonPR1.isEnabled()) {
+                    jButtonPR1ActionPerformed(null);
+                }
+            }
+            case "PR2" -> {
+                if (this.jButtonPR2.isEnabled()) {
+                    jButtonPR2ActionPerformed(null);
+                }
+            }
+            case "PR3" -> {
+                if (this.jButtonPR3.isEnabled()) {
+                    jButtonPR3ActionPerformed(null);
+                }
+            }
         }
     }
 
@@ -1515,14 +1556,16 @@ public class JRivitMain extends javax.swing.JFrame {
             this.v_rpi = Float.valueOf(arrayValori[3]);
             // il valore di pressione letto dal sensore deve essere raddoppiato
             this.pressione_aria_in = Float.parseFloat(arrayValori[4]) * 2;
-            if (pressione_aria_in <= this.sogliaMin) {
-                this.jLabel_msg.setForeground(java.awt.Color.red);
-                this.jLabel_msg.setText("P. aria Err.: " + pressione_aria_in + " Bar");
-            } else {
-                this.jLabel_msg.setForeground(java.awt.Color.green);
-                this.jLabel_msg.setText("P. aria OK: " + pressione_aria_in + " Bar");
+            if (!(this.pressione_aria_in == null)) {
+                if (pressione_aria_in <= this.sogliaMin) {
+                    this.jLabel_msg.setForeground(java.awt.Color.red);
+                    this.jLabel_msg.setText("P. aria Err.: " + pressione_aria_in + " Bar");
+                } else {
+                    this.jLabel_msg.setForeground(java.awt.Color.green);
+                    this.jLabel_msg.setText("P. aria OK: " + pressione_aria_in + " Bar");
+                }
+                this.repaint();
             }
-            this.repaint();
         } catch (NumberFormatException e) {
             System.out.println("jrivitscreen.JRivitMain.update_sensori() - " + e.getMessage());
         }

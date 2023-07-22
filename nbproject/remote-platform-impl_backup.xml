@@ -205,7 +205,7 @@
         <sshexec host="${remote.platform.host}" port="${remote.platform.port}" 
                  username="${remote.platform.user}" password="${remote.platform.password}" 
                  trust="true" usepty="true" 
-                 command="export JAVA_HOME=${remote.platform.home.dir};export DISPLAY=:0; [ -f ~/.nbprofiler/machinedata.jdk${remote.platform.java.spec.ver} ] &amp;&amp; echo &quot;Calibration data exists: skipping calibration&quot; || /bin/sh ${remote.dist.dir}/remotepack/bin/calibrate.sh"/>
+                 command="export JAVA_HOME=${remote.platform.home.dir}; [ -f ~/.nbprofiler/machinedata.jdk${remote.platform.java.spec.ver} ] &amp;&amp; echo &quot;Calibration data exists: skipping calibration&quot; || /bin/sh ${remote.dist.dir}/remotepack/bin/calibrate.sh"/>
         <scp file="${remote.platform.user}:${remote.platform.password}@${remote.platform.host}:~/.nbprofiler/machinedata.jdk${remote.platform.java.spec.ver}"
             localTofile="${user.home}/.nbprofiler/machinedata.jdk${remote.platform.java.spec.ver}.${remote.platform.host}.new" trust="true"/>
         <antcall target="profile-clean-rp"/>
@@ -216,7 +216,7 @@
         <sshexec host="${remote.platform.host}" port="${remote.platform.port}" 
                  username="${remote.platform.user}" keyfile="${remote.platform.keyfile}" 
                  passphrase="${remote.platform.passphrase}" trust="true" usepty="true" 
-                 command="export JAVA_HOME=${remote.platform.home.dir}; export DISPLAY=:0; [ -f ~/.nbprofiler/machinedata.jdk${remote.platform.java.spec.ver} ] &amp;&amp; echo &quot;Calibration data exists: skipping calibration&quot; || /bin/sh ${remote.dist.dir}/remotepack/bin/calibrate.sh"/>
+                 command="export JAVA_HOME=${remote.platform.home.dir}; [ -f ~/.nbprofiler/machinedata.jdk${remote.platform.java.spec.ver} ] &amp;&amp; echo &quot;Calibration data exists: skipping calibration&quot; || /bin/sh ${remote.dist.dir}/remotepack/bin/calibrate.sh"/>
         <scp file="${remote.platform.user}:${remote.platform.password}@${remote.platform.host}:~/.nbprofiler/machinedata.jdk${remote.platform.java.spec.ver}"
              localTofile="${user.home}/.nbprofiler/machinedata.jdk${remote.platform.java.spec.ver}.${remote.platform.host}.new" trust="true"
              keyfile="${remote.platform.keyfile}" passphrase="${remote.platform.passphrase}"/>
