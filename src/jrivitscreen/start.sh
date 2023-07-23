@@ -65,9 +65,9 @@ if [[ ! -f /tmp/lavori.txt ]];
 then
     cp lavori.txt /tmp
 fi
-if [[ ! -f /tmp/nome_device.txt ]];
+if [[ ! -f /tmp/nome_device ]];
 then
-    cp nome_device.txt /tmp
+    cp nome_device /tmp
 fi
 if [[ ! -f /tmp/setup_lan.txt ]];
 then

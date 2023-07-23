@@ -65,7 +65,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
     private final String f_errore = "errore";
     // se il lavoro è in corso contiene "1"
     private final String f_risposta_tiro_errato = "risposta_tiro_errato";
-    private final String f_nome_device = "nome_device.txt";
+    private final String f_nome_device = "nome_device";
     private final String f_aria = "aria";
     private final String f_sensori = "sensori";
     private String NomeDevice;

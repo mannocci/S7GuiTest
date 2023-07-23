@@ -107,7 +107,6 @@ public class JFileWorker extends Thread {
         "0",
         "uinrd",
         "2"};
-    
 
     public JFileWorker(JRivitMain mf, JDoWorker aThis) throws IOException {
         this.mf = mf;
@@ -305,14 +304,17 @@ public class JFileWorker extends Thread {
      * Legge il file con la descrizione delle info di sistema
      */
     private void read_info() {
-        this.jworker.set_operation("aggiorna info");
+        List<String> LeggiFileElencoInfo = this.LeggiFileElenco(this.f_info);
+        this.mf.setListInfo(LeggiFileElencoInfo);
     }
 
     /**
      * Legge il file con la descrizione dei JFileWorker
      */
     private void read_warning() {
-        this.jworker.set_operation("aggiorna warning");
+        List<String> LeggiFileElencoWarning = this.LeggiFileElenco(this.f_warning);
+        this.mf.setListWarning(LeggiFileElencoWarning);
+        
     }
 
     /**
@@ -450,9 +452,12 @@ public class JFileWorker extends Thread {
         this.read_lavori();
         this.read_lavoro_scelto();
         this.read_lavoro_in_pausa();
-        this.LeggiAriaInMinMax();
+        //this.LeggiAriaInMinMax();
         this.LeggiSessione();
         this.mostra_stato_aria(0);
+        this.read_nome_device();
+        this.mf.set_jLabel_B_L("Main");
+        
         this.mf.repaint();
     }
 
@@ -529,6 +534,14 @@ public class JFileWorker extends Thread {
 
     private void read_lavoro_scelto() {
         this.mf.setLavoroScelto(LeggiFile(JRivitMain.F_LAVORO_SCELTO));
+    }
+
+    /**
+     * legge dal file nome_device il nome del ControlRiv SN
+     * registrato nel record CT -> sn
+     */
+    private void read_nome_device() {
+        this.mf.setNomeDevice(LeggiFile(JRivitMain.F_NOME_DEVICE));
     }
 
     private void lotti_ok() {
