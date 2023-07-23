@@ -37,6 +37,7 @@ import java.text.SimpleDateFormat;
 import javax.swing.SwingWorker;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -160,8 +161,32 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     this.ScriviFile(JRivitMain.F_LAVORO_SCELTO, lavoro);
                     this.ScriviFile(JRivitMain.F_LAVORO_AVVIATO, "");
                 }
+                case "aggiorna info" -> {
+                    List<String> lista_info = this.wt.LeggiFileElenco(JRivitMain.F_INFO);
+                    List<String> lista_sensori = this.wt.LeggiFileElenco(JRivitMain.F_SENSORI);
+                    lista_info.add("=========================");
+                    for (String string : lista_sensori) {
+                        lista_info.add(string);
+                    }
+                    this.mf.AggiornaInfo(lista_info);
+                }
+                case "aggiorna warning" -> {
+                    List<String> warning_file = this.wt.LeggiFileElenco(JRivitMain.F_WARNING);
+                    int livello_warning = 0, livello = 0, posizione_riga = 0;
+
+                    for (String string : warning_file) {
+                        String[] warnig_list = string.split("§");
+                        livello = Integer.parseInt(warnig_list[1]);
+                        if (livello > livello_warning) {
+                            livello_warning = livello;
+                        }
+                        warning_file.set(posizione_riga++, string + ", livello -> " + livello);
+                    }
+                    this.mf.set_warning(livello_warning);//Aggiorna l'immagine warning
+                    this.mf.AggiornaWarning(warning_file);//Aggiorna lista descizioni warning
+                }
                 case "orario" -> {
-                                       
+
                     Date orario = now.getTime();
                     //this.dateFormat.setTimeZone(TimeZone.getTimeZone("Europe/London"));
                     this.mf.set_jLabel_B_L(this.dateFormat.format(orario));
@@ -181,9 +206,9 @@ public class JDoWorker extends SwingWorker<String, Object> {
 
     private void drawGrafico() {
 //        this.mf.jLayeredPaneCenter.moveToFront(this.jPanelCanvas);
-        Graphics2D gr = (Graphics2D) this.mf.get_canvasGraph().getGraphics();
+        Graphics2D gr = (Graphics2D) this.mf.getjLayeredPaneCenter().getGraphics();
         gr.drawString("Java Source", 10, 10);
-        int y = this.mf.get_canvasGraph().getHeight();
+        int y = this.mf.getjLayeredPaneCenter().getHeight();
         String[] ychar = this.mf.getCurva().split(",");
         int nPoints;
         nPoints = ychar.length;
@@ -197,11 +222,11 @@ public class JDoWorker extends SwingWorker<String, Object> {
             gr.setStroke(new BasicStroke(3));
             gr.setColor(Color.GREEN);
             gr.drawPolyline(xpoints, ypoints, nPoints);
-            this.mf.get_canvasGraph().repaint();
+            this.mf.getjLayeredPaneCenter().repaint();
             gr.drawString("Java Source", 10, 10);
-
-            this.mf.repaint();
         }
+        this.mf.repaint();
+
     }
 
     void risposta_attesa_tiro_errato() {

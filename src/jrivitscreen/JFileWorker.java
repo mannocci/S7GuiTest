@@ -305,26 +305,14 @@ public class JFileWorker extends Thread {
      * Legge il file con la descrizione delle info di sistema
      */
     private void read_info() {
-        this.mf.AggiornaInfo(LeggiFileElenco(this.f_info));
+        this.jworker.set_operation("aggiorna info");
     }
 
     /**
      * Legge il file con la descrizione dei JFileWorker
      */
     private void read_warning() {
-        List<String> warning_file = this.LeggiFileElenco(this.f_warning);
-        int livello_warning = 0, livello = 0, posizione_riga = 0;
-
-        for (String string : warning_file) {
-            String[] warnig_list = string.split("§");
-            livello = Integer.parseInt(warnig_list[1]);
-            if (livello > livello_warning) {
-                livello_warning = livello;
-            }
-            warning_file.set(posizione_riga++, string + ", livello -> " + livello);
-        }
-        this.mf.set_warning(livello_warning);//Aggiorna l'immagine warning
-        this.mf.AggiornaWarning(warning_file);//Aggiorna lista descizioni warning
+        this.jworker.set_operation("aggiorna warning");
     }
 
     /**

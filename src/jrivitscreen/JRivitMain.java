@@ -20,12 +20,15 @@
  * @versione 1.0 maggio/giugno 2023
  * @ver 1.1 luglio 2023 aggiunto Pannello Calibrazione, 
         corretto sequenze Pannelli pulsanti, invertito pulsante estendi annulla
+ * @ver 1.2 cercare di risolvere la latenza dei due pannelli warning e info
+ * da stop e pausa non rientra in start
  */
 package jrivitscreen;
 
 import java.awt.BasicStroke;
 import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.io.File;
 import java.io.IOException;
@@ -38,6 +41,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -46,6 +50,8 @@ import javax.swing.JScrollPane;
  * @author Luca Mannocci & Fabio Fragapane
  */
 public class JRivitMain extends javax.swing.JFrame {
+
+    
 
     private ImageIcon Img_Exit, Img_Ok, Img_Nulla, Img_Freccia_su,
             Img_Freccia_giu, Img_Warning, Img_Setup, Img_Play,
@@ -117,6 +123,9 @@ public class JRivitMain extends javax.swing.JFrame {
     final static String F_TIRI_OK = "tiri_ok";
     final static String F_TIRI_ERRATI = "tiri_errati";
     final static String F_TIRI_ANNULLATI = "tiri_annullati";
+    final static String F_INFO = "info.txt";
+    final static String F_SENSORI = "sensori";
+    final static String F_WARNING = "warning.txt";
     final static int STATO_AVVIATO = 10;
     final static int STATO_CONCLUSO = 12;
     final static int STATO_PAUSA = 13;
@@ -124,8 +133,9 @@ public class JRivitMain extends javax.swing.JFrame {
     final static int CONTINUA = 1;
     final static int ACCETTA = 2;
     final static int ANNULLA = 3;
-    final static int ESTENDI = 4;
-
+//    final static int ESTENDI = 4;
+    final static int ABORT  = 5;
+    final static int PAUSA = 6;
 //Dopo una sospensione
     /**
      * Creates new form JRivitMain
@@ -218,7 +228,6 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelDialog = new javax.swing.JPanel();
         jLabelDialog = new javax.swing.JLabel();
         jPanelCanvas = new javax.swing.JPanel();
-        canvasGraph = new java.awt.Canvas();
         jPanelCalibrazione = new javax.swing.JPanel();
         jLabelNomeDeviceCal = new javax.swing.JLabel();
         jLabelNomeLavoroCal = new javax.swing.JLabel();
@@ -434,7 +443,6 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelInfo.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         listInfo.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
-        listInfo.setPreferredSize(new java.awt.Dimension(320, 270));
         jPanelInfo.add(listInfo, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 2, 320, 270));
         listInfo.getAccessibleContext().setAccessibleName("Lista_info");
         listInfo.getAccessibleContext().setAccessibleDescription("Informazioni del sistema");
@@ -502,12 +510,6 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelCanvas.setName("canvas"); // NOI18N
         jPanelCanvas.setPreferredSize(new java.awt.Dimension(328, 276));
         jPanelCanvas.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        canvasGraph.setBackground(new java.awt.Color(255, 153, 153));
-        canvasGraph.setMaximumSize(new java.awt.Dimension(250, 250));
-        canvasGraph.setMinimumSize(new java.awt.Dimension(250, 250));
-        jPanelCanvas.add(canvasGraph, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 327, 275));
-
         jLayeredPaneCenter.add(jPanelCanvas, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 328, 276));
 
         jPanelCalibrazione.setBackground(new java.awt.Color(204, 255, 204));
@@ -656,13 +658,13 @@ public class JRivitMain extends javax.swing.JFrame {
                 this.PanCur = "started";
                 File f = new File(JRivitMain.F_CHIEDE_CONFERMA_NO);
                 if (!f.exists()) {
-
                     this.AlertDialogStop = "Annullare il Lavoro ?";
                     this.jLabelDialog.setText(AlertDialogStop);
                     PanelDialog();
                 } else {
                     //passa direttamente ad annullare lavoro
                     gestioneDialogRisposte(STATO_STOP);
+                    this.PanelStart();
                 }
             }
             case "setup" ->
@@ -791,11 +793,18 @@ public class JRivitMain extends javax.swing.JFrame {
 //                PanelStart();
             case "start", "warning", "info", "setup lan", "setup wifi" ->
                 PulsanteGiu();
-            case "started", "canvas" -> {//Pausa del lavoro ?
-                DialogQ = STATO_PAUSA;
-                this.AlertDialogStop = "Pausa ?";
-                this.jLabelDialog.setText(AlertDialogStop);
-                PanelDialog();
+            case "started", "canvas" -> {//Pausa del lavoro 
+                File f = new File(JRivitMain.F_CHIEDE_CONFERMA_NO);
+                if (!f.exists()) {
+                    DialogQ = STATO_PAUSA;
+                    this.AlertDialogStop = "Pausa ?";
+                    this.jLabelDialog.setText(AlertDialogStop);
+                    PanelDialog();
+                } else {
+                    //passa direttamente ad annullare lavoro
+                    gestioneDialogRisposte(STATO_STOP);
+                    this.PanelStart();
+                }
             }
             case "setup" ->
                 PanelSetupWifi();
@@ -823,7 +832,8 @@ public class JRivitMain extends javax.swing.JFrame {
             case "start" -> { //Scelta lavoro
                 PanelStarted();
             }
-
+            case "started" ->
+                this.jLayeredPaneCenter.moveToFront(this.jPanelCanvas);
 //            case "started", "canvas" ->//Estende Tolto
 //            {
 //                if (this.in_errore) {
@@ -963,7 +973,6 @@ public class JRivitMain extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextArea JTextAreaDescrizioneLavoro;
-    private java.awt.Canvas canvasGraph;
     private javax.swing.JButton jButtonPL1;
     private javax.swing.JButton jButtonPL2;
     private javax.swing.JButton jButtonPL3;
@@ -1182,6 +1191,7 @@ public class JRivitMain extends javax.swing.JFrame {
         this.change_buttons(this.Img_Exit, this.Img_Nulla, this.Img_Nulla,
                 this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Nulla);
         this.jLayeredPaneCenter.moveToFront(this.jPanelWarning);
+        this.jPanelInfo.repaint();
     }
 
     /**
@@ -1309,7 +1319,13 @@ public class JRivitMain extends javax.swing.JFrame {
      * @param lista
      */
     public void AggiornaWarning(List<String> lista) {
-        RefreshList(listWarning, lista);
+        List<String> elencoTxt = new ArrayList<>();
+        for (String riga : lista) {
+            String[] lavoroSplit = riga.split("§");
+            this.elencoLavoriArray.add(lavoroSplit);
+            elencoTxt.add(lavoroSplit[0] + " " + lavoroSplit[1] + " " + lavoroSplit[2]);
+        }
+        RefreshList(listWarning, elencoTxt);
     }//End AggiornaInfo
 
     /**
@@ -1327,7 +1343,6 @@ public class JRivitMain extends javax.swing.JFrame {
             lista.add(0, "Tensione ingresso: " + this.v_in.toString() + " V");
             lista.add(0, "Temperatura scheda I/O: " + this.temp_io_board.toString() + " °C");
             lista.add(0, "Temperatura CPU: " + this.temp_rpi.toString() + " °C");
-
             RefreshList(listInfo, lista);
         } catch (Exception e) {
             System.out.printf("errore lettura file info " + e);
@@ -1385,13 +1400,13 @@ public class JRivitMain extends javax.swing.JFrame {
      * @param elenco oggetto del tipo awt.List
      * @param righe oggetto del tipo List
      */
-    private void RefreshList(java.awt.List elenco, List<String> righe) {
+    public void RefreshList(java.awt.List elenco, List<String> righe) {
         elenco.removeAll();
         for (String riga : righe) {
             elenco.add(riga);
         }
         elenco.select(0);
-        this.repaint();
+//        this.repaint();
     }
 
     /**
@@ -1589,38 +1604,36 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     private void gestioneDialogRisposte(int risposta) {
         switch (risposta) {
-            case 1 -> //Continua
+            case CONTINUA -> //Continua
             {
                 esegui("continua");
                 PanelStarted();
             }
-            case 2 -> //Accetta
+            case ACCETTA -> //Accetta
             {
                 esegui("accetta");
                 PanelStarted();
             }
-//            case 3 -> //Estende
+//            case ESTENDE -> //Estende
 //            {
 //                esegui("estendi");
 //                PanelStarted();
 //            }
-            case 3 -> //Annulla
+            case ANNULLA -> //Annulla
             {
                 esegui("annulla");
                 PanelStarted();
             }
-            case 5 -> //Pausa
+            case PAUSA -> //Pausa
             {
                 esegui("pausa");
                 PanelStart();
             }
-            case 0 -> //Abortire il lavoro
+            case ABORT -> //Abortire il lavoro
             {
                 esegui("abort");
                 PanelStart();
             }
-            default ->
-                PanelStarted();
         }
     }
 
@@ -1652,15 +1665,13 @@ public class JRivitMain extends javax.swing.JFrame {
 //        drawGrafico();
     }
 
-    public Canvas get_canvasGraph() {
-        return this.canvasGraph;
+    public JLayeredPane getjLayeredPaneCenter(){
+         return this.jLayeredPaneCenter;
     }
-
     private void drawGrafico() {
-        this.jLayeredPaneCenter.moveToFront(this.jPanelCanvas);
-        Graphics2D gr = (Graphics2D) this.canvasGraph.getGraphics();
-
-        int y = this.canvasGraph.getHeight();
+        Graphics2D gr = (Graphics2D) this.jLayeredPaneCenter.getGraphics();
+        this.jPanelCanvas.paintComponents(gr);
+        int y = this.jPanelCanvas.getHeight();
         String[] ychar = this.Curva.split(",");
         int nPoints;
         nPoints = ychar.length;
@@ -1674,8 +1685,7 @@ public class JRivitMain extends javax.swing.JFrame {
             gr.setStroke(new BasicStroke(3));
             gr.setColor(Color.GREEN);
             gr.drawPolyline(xpoints, ypoints, nPoints);
-//            this.canvasGraph.repaint();
-            this.repaint();
+            this.jPanelCanvas.repaint();
         }
     }
 
@@ -1722,9 +1732,9 @@ public class JRivitMain extends javax.swing.JFrame {
         pannello.setVisible(true);
     }
 
-/**
- * Uscita dal programma
- */
+    /**
+     * Uscita dal programma
+     */
     public void Exit() {
         System.exit(1);
     }
@@ -1796,5 +1806,9 @@ public class JRivitMain extends javax.swing.JFrame {
 
     void set_nr_tiri_annullati(int tiri_annullati) {
         this.tiri_annullati = tiri_annullati;
+    }
+
+    void set_ListInfo(List<String> lista_info) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }
