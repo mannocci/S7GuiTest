@@ -30,7 +30,6 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import static java.lang.Runtime.getRuntime;
 import java.text.DateFormat;
@@ -82,7 +81,6 @@ public class JDoWorker extends SwingWorker<String, Object> {
             now = Calendar.getInstance();
         } catch (IOException ex) {
             Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
-            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
         }
     }
 
@@ -91,20 +89,8 @@ public class JDoWorker extends SwingWorker<String, Object> {
         try {
             switch (this.operation) {
                 case "start" -> {
-                    this.bt.start();
-                    Date orario = now.getTime();
-                    //this.dateFormat.setTimeZone(TimeZone.getTimeZone("Europe/London"));
-                    this.mf.set_jLabel_B_L(this.dateFormat.format(orario));
-                    this.mf.repaint();
-
-//                    String [] Cmd = {"/usr/bin/ps","aux", "|", "grep","JRivitScreen"};
-//                    this.run_system_bash(Cmd);
-//                    if ( this.run_system_result.contains("JRivitScreen")){
-//                        //Sessione già attiva, chiudere il programma
-//                        System.out.print("Processo già attivo \n"+this.run_system_result+"\n");
-//                        this.mf.Exit();
-//                    }
-                    this.wt.start();//Avvio Thread Watch File in Tmp
+                    this.bt.start();//Gestione dei pulsanti
+                    this.wt.start();//Avvio FileWorker
                     this.wt.initValues();
                 }
                 case "stato_stop", "stato_pausa" -> {
@@ -173,6 +159,13 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     String lavoro = this.mf.getLavoroScelto();
                     this.ScriviFile(JRivitMain.F_LAVORO_SCELTO, lavoro);
                     this.ScriviFile(JRivitMain.F_LAVORO_AVVIATO, "");
+                }
+                case "orario" -> {
+                                       
+                    Date orario = now.getTime();
+                    //this.dateFormat.setTimeZone(TimeZone.getTimeZone("Europe/London"));
+                    this.mf.set_jLabel_B_L(this.dateFormat.format(orario));
+                    this.mf.repaint();
                 }
             }
         } catch (NumberFormatException ex) {

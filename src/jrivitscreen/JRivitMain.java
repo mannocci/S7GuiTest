@@ -39,6 +39,7 @@ import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 /**
  *
@@ -198,9 +199,11 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabel_Annullati = new javax.swing.JLabel();
         jLabel_Validi = new javax.swing.JLabel();
         jLabelValidi = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
         jPanelSetup = new javax.swing.JPanel();
         jPanelMain = new javax.swing.JPanel();
         jLabelLogo = new javax.swing.JLabel();
+        jLabelDeviceName = new javax.swing.JLabel();
         jPanelSetupLan = new javax.swing.JPanel();
         listSetupLan = new java.awt.List();
         jPanelSetupWiFi = new javax.swing.JPanel();
@@ -245,7 +248,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelLeft.setPreferredSize(new java.awt.Dimension(70, 286));
         jPanelLeft.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jButtonPL1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/warning.png"))); // NOI18N
+        jButtonPL1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/no_warning.png"))); // NOI18N
         jButtonPL1.setAlignmentX(0.5F);
         jButtonPL1.setMaximumSize(new java.awt.Dimension(65, 65));
         jButtonPL1.setMinimumSize(new java.awt.Dimension(65, 65));
@@ -354,6 +357,9 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelValidi.setOpaque(true);
         jPanelStarted.add(jLabelValidi, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 200, 80, 25));
 
+        jLabel1.setText("jLabel1");
+        jPanelStarted.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 260, 270, -1));
+
         jLayeredPaneCenter.add(jPanelStarted, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 328, 276));
 
         jPanelSetup.setMaximumSize(new java.awt.Dimension(328, 276));
@@ -367,17 +373,28 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelMain.setMinimumSize(new java.awt.Dimension(328, 276));
         jPanelMain.setName("main"); // NOI18N
         jPanelMain.setPreferredSize(new java.awt.Dimension(328, 276));
+        jPanelMain.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabelLogo.setBackground(new java.awt.Color(255, 255, 255));
         jLabelLogo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelLogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/logori2.png"))); // NOI18N
         jLabelLogo.setAlignmentY(0.0F);
+        jLabelLogo.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jLabelLogo.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jLabelLogo.setIconTextGap(0);
         jLabelLogo.setMaximumSize(new java.awt.Dimension(250, 250));
         jLabelLogo.setMinimumSize(new java.awt.Dimension(250, 250));
         jLabelLogo.setPreferredSize(new java.awt.Dimension(250, 250));
-        jPanelMain.add(jLabelLogo);
+        jPanelMain.add(jLabelLogo, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 3, 240, 240));
+        jLabelLogo.getAccessibleContext().setAccessibleName("Pannello principale");
+
+        jLabelDeviceName.setFont(new java.awt.Font("Helvetica Neue", 1, 14)); // NOI18N
+        jLabelDeviceName.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelDeviceName.setText("Device Name");
+        jLabelDeviceName.setPreferredSize(new java.awt.Dimension(310, 25));
+        jPanelMain.add(jLabelDeviceName, new org.netbeans.lib.awtextra.AbsoluteConstraints(8, 250, -1, -1));
+        jLabelDeviceName.getAccessibleContext().setAccessibleName("DeviceName");
+        jLabelDeviceName.getAccessibleContext().setAccessibleDescription("Nome del RivitControl");
 
         jLayeredPaneCenter.add(jPanelMain, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 328, 276));
 
@@ -416,14 +433,11 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelInfo.setPreferredSize(new java.awt.Dimension(328, 276));
         jPanelInfo.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        listInfo.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
-        listInfo.setMaximumSize(new java.awt.Dimension(328, 276));
-        listInfo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                listInfoActionPerformed(evt);
-            }
-        });
+        listInfo.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        listInfo.setPreferredSize(new java.awt.Dimension(320, 270));
         jPanelInfo.add(listInfo, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 2, 320, 270));
+        listInfo.getAccessibleContext().setAccessibleName("Lista_info");
+        listInfo.getAccessibleContext().setAccessibleDescription("Informazioni del sistema");
 
         jLayeredPaneCenter.add(jPanelInfo, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 328, 276));
 
@@ -435,13 +449,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelWarning.setPreferredSize(new java.awt.Dimension(328, 276));
         jPanelWarning.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        listWarning.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
-        listWarning.setMaximumSize(new java.awt.Dimension(320, 270));
-        listWarning.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                listWarningActionPerformed(evt);
-            }
-        });
+        listWarning.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         jPanelWarning.add(listWarning, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 2, 320, 270));
 
         jLayeredPaneCenter.add(jPanelWarning, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 328, 276));
@@ -581,7 +589,6 @@ public class JRivitMain extends javax.swing.JFrame {
 
         jLabel_B_L.setBackground(java.awt.Color.lightGray);
         jLabel_B_L.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel_B_L.setForeground(java.awt.Color.green);
         jLabel_B_L.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel_B_L.setText("00:00");
         jLabel_B_L.setOpaque(true);
@@ -592,14 +599,15 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabel_B_R.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel_B_R.setText("Aria Off");
         jLabel_B_R.setOpaque(true);
-        jPanelBotton.add(jLabel_B_R, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 5, 100, 20));
+        jPanelBotton.add(jLabel_B_R, new org.netbeans.lib.awtextra.AbsoluteConstraints(405, 5, 70, 20));
+        jLabel_B_R.getAccessibleContext().setAccessibleDescription("Indicatore dello stato dell'aria");
 
         jLabel_msg.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         jLabel_msg.setForeground(javax.swing.UIManager.getDefaults().getColor("Actions.Green"));
         jLabel_msg.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel_msg.setText("message");
         jLabel_msg.setAlignmentX(0.2F);
-        jPanelBotton.add(jLabel_msg, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 5, 270, 20));
+        jPanelBotton.add(jLabel_msg, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 5, 300, 20));
 
         getContentPane().add(jPanelBotton, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 290, 480, 30));
 
@@ -836,10 +844,6 @@ public class JRivitMain extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButtonPR3ActionPerformed
 
-    private void listInfoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listInfoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_listInfoActionPerformed
-
     private void listLavoriActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listLavoriActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_listLavoriActionPerformed
@@ -847,18 +851,15 @@ public class JRivitMain extends javax.swing.JFrame {
     private void listSetupWiFiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listSetupWiFiActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_listSetupWiFiActionPerformed
-
-    private void listWarningActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listWarningActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_listWarningActionPerformed
     /**
      * PanelMain Pannello che viene visualizzato all'avvio
      */
     private void PanelMain() {
 //        changePanel(this.jPanelMain); // metodo migliorato per cambio pannello. Da distribuire sostituendo tutte le chiamate a moveToFront (todo)
-        this.jLayeredPaneCenter.moveToFront(this.jPanelMain);
         this.change_buttons(this.Img_Warning, this.Img_Info, this.Img_Setup,
                 this.Img_Play, this.Img_Nulla, this.Img_Nulla);
+        this.jLayeredPaneCenter.moveToFront(this.jPanelMain);
+
     }
 
     /**
@@ -969,9 +970,11 @@ public class JRivitMain extends javax.swing.JFrame {
     private javax.swing.JButton jButtonPR1;
     private javax.swing.JButton jButtonPR2;
     private javax.swing.JButton jButtonPR3;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabelAnnullati;
     private javax.swing.JLabel jLabelAvvisoCalibrazione;
     private javax.swing.JLabel jLabelContatore;
+    private javax.swing.JLabel jLabelDeviceName;
     private javax.swing.JLabel jLabelDialog;
     private javax.swing.JLabel jLabelErrati;
     private javax.swing.JLabel jLabelLogo;
@@ -1037,7 +1040,6 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     public void PanelStart() {
         int selezionato = 0, i = 0;
-        this.jLayeredPaneCenter.moveToFront(this.jPanelStart);
         this.change_buttons(this.Img_Exit, this.Img_Nulla, this.Img_Nulla,
                 this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Ok);
         // Se sessione non contiene 0
@@ -1060,6 +1062,7 @@ public class JRivitMain extends javax.swing.JFrame {
             selezionato = 1;
         }
         this.listLavori.select(selezionato);
+        this.jLayeredPaneCenter.moveToFront(this.jPanelStart);
     }
 
     /**
@@ -1070,7 +1073,7 @@ public class JRivitMain extends javax.swing.JFrame {
      * lavori, ...
      */
     public void PanelStarted() {
-        this.jLayeredPaneCenter.moveToFront(this.jPanelStarted);
+
         this.jPanelStarted.setBackground(Color.white);
         this.change_buttons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
                 this.Img_Stop, this.Img_Pause, this.Img_Nulla);
@@ -1107,7 +1110,8 @@ public class JRivitMain extends javax.swing.JFrame {
             this.jProgressBar.setMaximum(nr_tiri_da_fare);
         }
          */
-        this.repaint();
+        this.jLayeredPaneCenter.moveToFront(this.jPanelStarted);
+//        this.repaint();
         esegui("lavoro_scelto");
     }
 
@@ -1116,7 +1120,7 @@ public class JRivitMain extends javax.swing.JFrame {
     }
 
     public java.awt.List getListInfo() {
-        return listInfo;
+        return this.listInfo;
     }
 
     public java.awt.List getListLavori() {
@@ -1132,7 +1136,7 @@ public class JRivitMain extends javax.swing.JFrame {
     }
 
     public java.awt.List getListWarning() {
-        return listWarning;
+        return this.listWarning;
     }
 
     public JLabel getjLabelNomeDevice() {
@@ -1175,9 +1179,9 @@ public class JRivitMain extends javax.swing.JFrame {
      * Pannello che mostra il contenuto del file /tmp/warning.txt
      */
     private void PanelWarning() {
-        this.jLayeredPaneCenter.moveToFront(this.jPanelWarning);
         this.change_buttons(this.Img_Exit, this.Img_Nulla, this.Img_Nulla,
                 this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Nulla);
+        this.jLayeredPaneCenter.moveToFront(this.jPanelWarning);
     }
 
     /**
@@ -1218,7 +1222,7 @@ public class JRivitMain extends javax.swing.JFrame {
             // rendi visibile l'elemento selezionato
             lista.makeVisible(nrCurItem);
         }//End LIsta not NULL
-
+        repaint();
     }//End PulsanteSu
 
     /**
@@ -1257,34 +1261,34 @@ public class JRivitMain extends javax.swing.JFrame {
             // rendi visibile l'elemento selezionato
             lista.makeVisible(nrCurItem);
         }//End LIsta not NULL
-
+        repaint();
     }//End PulsanteSu
 
     /**
      * Pannello per la configurazione della LAN Legge il file setup_lan.txt
      */
     private void PanelSetupLan() {
-        this.jLayeredPaneCenter.moveToFront(this.jPanelSetupLan);
         this.change_buttons(this.Img_Exit, this.Img_Nulla, this.Img_Nulla,
                 this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Ok);
+        this.jLayeredPaneCenter.moveToFront(this.jPanelSetupLan);
     }
 
     /**
      * Pannello per il setup della WiFi Legge il file setup_wifi.txt
      */
     private void PanelSetupWifi() {
-        this.jLayeredPaneCenter.moveToFront(this.jPanelSetupWiFi);
         this.change_buttons(this.Img_Exit, this.Img_Nulla, this.Img_Nulla,
                 this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Ok);
+        this.jLayeredPaneCenter.moveToFront(this.jPanelSetupWiFi);
     }
 
     /**
      * Pannello che mostra il contenuto del file info.txt
      */
     private void PanelInfo() {
-        this.jLayeredPaneCenter.moveToFront(this.jPanelInfo);
         this.change_buttons(this.Img_Exit, this.Img_Nulla, this.Img_Nulla,
                 this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Nulla);
+        this.jLayeredPaneCenter.moveToFront(this.jPanelInfo);
     }
 
     /**
@@ -1294,9 +1298,9 @@ public class JRivitMain extends javax.swing.JFrame {
      * /tmp/pausa.txt aggiorna il DB (DA FARE)
      */
     private void PanelDialog() {
-        this.jLayeredPaneCenter.moveToFront(this.jPanelDialog);
         this.change_buttons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
                 this.Img_Ok, this.Img_Cancel, this.Img_Nulla);
+        this.jLayeredPaneCenter.moveToFront(this.jPanelDialog);
     }
 
     /**
@@ -1305,7 +1309,6 @@ public class JRivitMain extends javax.swing.JFrame {
      * @param lista
      */
     public void AggiornaWarning(List<String> lista) {
-
         RefreshList(listWarning, lista);
     }//End AggiornaInfo
 
@@ -1444,9 +1447,9 @@ public class JRivitMain extends javax.swing.JFrame {
      * Pannello di Setup l'utente deve scegliere tra setup Lan o WiFi
      */
     private void PanelSetup() {
-        this.jLayeredPaneCenter.moveToFront(this.jPanelSetup);
         this.change_buttons(this.Img_Exit, this.Img_Nulla, this.Img_Nulla,
                 this.Img_Lan, this.Img_WiFi, this.Img_Nulla);
+        this.jLayeredPaneCenter.moveToFront(this.jPanelSetup);
     }
 
     /**
@@ -1529,8 +1532,6 @@ public class JRivitMain extends javax.swing.JFrame {
     public void set_nr_tiri_fatti(int Tiri_fatti) {
         this.nr_tiri = Tiri_fatti;
     }
-
-
 
     /**
      * Metodo AggiornaTiriErrati aggiorna la Label JaLabelErrati
@@ -1630,6 +1631,7 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     public void setNomeDevice(String nd) {
         this.jLabelNomeDevice.setText(nd);
+        this.jLabelDeviceName.setText(nd);
         this.repaint();
     }
 
@@ -1720,7 +1722,6 @@ public class JRivitMain extends javax.swing.JFrame {
         pannello.setVisible(true);
     }
 
-    ;
 /**
  * Uscita dal programma
  */

@@ -50,7 +50,8 @@ import java.util.Scanner;
  */
 public class JFileWorker extends Thread {
 
-    private JRivitMain mf;
+    private final JRivitMain mf;
+    private final JDoWorker jworker;
     private final String pathWatch = "/tmp/CT/";
     private WatchService watcher;
     private Path fileName;
@@ -106,7 +107,7 @@ public class JFileWorker extends Thread {
         "0",
         "uinrd",
         "2"};
-    private final JDoWorker jworker;
+    
 
     public JFileWorker(JRivitMain mf, JDoWorker aThis) throws IOException {
         this.mf = mf;
