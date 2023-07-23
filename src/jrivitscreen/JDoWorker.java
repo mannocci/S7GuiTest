@@ -168,7 +168,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     for (String string : lista_sensori) {
                         lista_info.add(string);
                     }
-                    this.mf.AggiornaInfo(lista_info);
+                    this.mf.setListInfo(lista_info);
                 }
                 case "aggiorna warning" -> {
                     List<String> warning_file = this.wt.LeggiFileElenco(JRivitMain.F_WARNING);
@@ -225,7 +225,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
             this.mf.getjLayeredPaneCenter().repaint();
             gr.drawString("Java Source", 10, 10);
         }
-        this.mf.repaint();
+        this.mf.setCurva(LeggiFile("curva"));
 
     }
 

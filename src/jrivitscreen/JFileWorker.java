@@ -52,7 +52,7 @@ public class JFileWorker extends Thread {
 
     private final JRivitMain mf;
     private final JDoWorker jworker;
-    private final String pathWatch = "/tmp/CT/";
+    private static final String pathWatch = "/tmp/CT/";
     private WatchService watcher;
     private Path fileName;
     private final String f_tiri = "tiri";
@@ -456,6 +456,7 @@ public class JFileWorker extends Thread {
         this.LeggiSessione();
         this.mostra_stato_aria(0);
         this.read_nome_device();
+        CancellaFile(pathWatch+"errore");
         this.mf.set_jLabel_B_L("Main");
         
         this.mf.repaint();
@@ -576,5 +577,18 @@ public class JFileWorker extends Thread {
     private void imposta_chiedi_conferma(boolean si_o_no) {
 
         this.mf.setChiedi_conferma(si_o_no);
+    }
+    /**
+     * cancela un file
+     *
+     * @param NomeFile
+     */
+    public static void CancellaFile(String NomeFile) {
+        File f = new File( pathWatch + NomeFile);
+        if (f.exists()) {
+            if (!f.delete()) {
+                System.out.println("errore eliminando il file " + NomeFile);
+            }
+        }
     }
 }

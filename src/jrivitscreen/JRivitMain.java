@@ -289,6 +289,7 @@ public class JRivitMain extends javax.swing.JFrame {
 
         getContentPane().add(jPanelLeft, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 70, 285));
 
+        jLayeredPaneCenter.setBackground(new java.awt.Color(0, 0, 255));
         jLayeredPaneCenter.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         jLayeredPaneCenter.setMaximumSize(new java.awt.Dimension(329, 277));
         jLayeredPaneCenter.setOpaque(true);
@@ -651,7 +652,7 @@ public class JRivitMain extends javax.swing.JFrame {
             }
             case "start" ->
                 PulsanteSu();
-            case "started", "canvas" -> {//Stop
+            case "started"-> {//Stop
                 //esiste conferma_no come file in /tmp/CT ?
                 // se esiste non chiede conferma della scelta
 //                DialogQ = STATO_STOP;
@@ -668,6 +669,8 @@ public class JRivitMain extends javax.swing.JFrame {
                     this.set_jLabel_B_L("Start");
                 }
             }
+            case "canvas" ->
+                this.drawGrafico();
             case "setup" -> {
                 PanelSetupLan();
                 this.set_jLabel_B_L("Setup Lan");
@@ -868,17 +871,18 @@ public class JRivitMain extends javax.swing.JFrame {
                 PanelStarted();
                 this.set_jLabel_B_L("Started");
             }
-            case "started" ->
-                this.jLayeredPaneCenter.moveToFront(this.jPanelCanvas);
-//            case "started", "canvas" ->//Estende Tolto
-//            {
-//                if (this.in_errore) {
-//                    DialogQ = Estende;
-//                    this.AlertDialogStop = "Estendere ?";
-//                    this.jLabelDialog.setText(AlertDialogStop);
-//                    PanelDialog();
-//                }
-//            }
+            case "started" -> {
+//                PanelDialog();
+//                this.set_jLabel_B_L("Dialog");
+                PanelCavans();
+                this.set_jLabel_B_L("Graph");
+                
+            }
+            case "canvas" -> {
+                PanelStarted();
+                this.set_errore_tiro();
+                this.set_jLabel_B_L("Started");
+            }
 //            case "setup" ->
 //                PanelSetupLan();
 //            case "warning" ->
@@ -1119,8 +1123,12 @@ public class JRivitMain extends javax.swing.JFrame {
      * lavori, ...
      */
     public void PanelStarted() {
+        if (this.in_errore) {
+            this.jPanelStarted.setBackground(Color.red);
+        } else {
+            this.jPanelStarted.setBackground(Color.white);
+        }
 
-        this.jPanelStarted.setBackground(Color.white);
         this.change_buttons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
                 this.Img_Stop, this.Img_Pause, this.Img_Nulla);
         this.setNomeDelDevice(); //Fatto all'avvio dell'AppScreen
@@ -1157,7 +1165,7 @@ public class JRivitMain extends javax.swing.JFrame {
         }
          */
         this.jLayeredPaneCenter.moveToFront(this.jPanelStarted);
-//        this.repaint();
+        this.repaint();
         esegui("lavoro_scelto");
     }
 
@@ -1350,6 +1358,15 @@ public class JRivitMain extends javax.swing.JFrame {
     }
 
     /**
+     * Pannello per disegnare il grafico
+     */
+    private void PanelCavans() {
+        this.change_buttons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
+                this.Img_Ok, this.Img_Nulla, this.Img_Estende);
+        this.jLayeredPaneCenter.moveToFront(this.jPanelCanvas);
+    }
+
+    /**
      * AggiornaWarning carica eventuali Warning dal file warning.txt
      *
      * @param lista
@@ -1365,29 +1382,6 @@ public class JRivitMain extends javax.swing.JFrame {
         RefreshList(this.listWarning, elencoTxt);
 //        this.listWarning.repaint();
 
-    }//End AggiornaInfo
-
-    /**
-     * AggiornaInfo carica eventuali Informazioni dal file info.txt
-     *
-     * @param lista
-     */
-    public void AggiornaInfo(List<String> lista) {
-        this.listInfo.removeAll();
-        // ogni volta che si inserisce un elemento in posizione 0 la lista viene spostata in avanti
-        // quindi i valori saranno visualizzati al contrario rispetto all'ordine di chiamata nel codice java
-        try {
-            lista.add("P. ingresso aria: " + this.pressione_aria_in.toString() + " bar");
-            lista.add("Tensione CPU: " + this.v_rpi.toString() + " V");
-            lista.add("Tensione ingresso: " + this.v_in.toString() + " V");
-            lista.add("Temperatura scheda I/O: " + this.temp_io_board.toString() + " °C");
-            lista.add("Temperatura CPU: " + this.temp_rpi.toString() + " °C");
-            lista.add("-------------------------------------------------------");
-        } catch (Exception e) {
-            System.out.printf("errore lettura file info " + e);
-        }
-        RefreshList(this.listInfo, lista);
-//        this.listInfo.repaint();
     }//End AggiornaInfo
 
     /**
@@ -1702,8 +1696,8 @@ public class JRivitMain extends javax.swing.JFrame {
         this.jLayeredPaneCenter.moveToFront(this.jPanelCanvas);
         this.repaint();
         this.Curva = curva;
-        esegui("curva");
-//        drawGrafico();
+        //esegui("curva");
+        drawGrafico();
     }
 
     public JLayeredPane getjLayeredPaneCenter() {
@@ -1712,8 +1706,13 @@ public class JRivitMain extends javax.swing.JFrame {
 
     private void drawGrafico() {
         Graphics2D gr = (Graphics2D) this.jLayeredPaneCenter.getGraphics();
+         this.getjLayeredPaneCenter().repaint();
         this.jPanelCanvas.paintComponents(gr);
+        paintComponents(gr);
         int y = this.jPanelCanvas.getHeight();
+        if (this.Curva == null) {
+            this.Curva = "10,30,40,55,75,77,75,55,40,35,30,20,10,10";
+        }
         String[] ychar = this.Curva.split(",");
         int nPoints;
         nPoints = ychar.length;
@@ -1727,19 +1726,20 @@ public class JRivitMain extends javax.swing.JFrame {
             gr.setStroke(new BasicStroke(3));
             gr.setColor(Color.GREEN);
             gr.drawPolyline(xpoints, ypoints, nPoints);
-            this.jPanelCanvas.repaint();
+            gr.drawString("Java Source", 10, 10);
+
         }
     }
 
     public void setListInfo(List Info) {
         this.listInfo.removeAll();
         try {
-            listInfo.add("-------------------------------------------------------");
-            listInfo.add("Pressione aria in ingresso: " + this.pressione_aria_in.toString() + " bar");
+            listInfo.add("P. aria in ingresso: " + this.pressione_aria_in.toString() + " bar");
             listInfo.add("Tensione CPU: " + this.v_rpi.toString() + " V");
             listInfo.add("Tensione ingresso: " + this.v_in.toString() + " V");
             listInfo.add("Temperatura scheda I/O: " + this.temp_io_board.toString() + " °C");
             listInfo.add("Temperatura CPU: " + this.temp_rpi.toString() + " °C");
+            listInfo.add("-------------------------------------------------------");
         } catch (Exception e) {
             System.out.printf("errore lettura file info " + e);
         }
