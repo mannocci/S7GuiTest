@@ -43,6 +43,7 @@ public class Static {
     final static String F_CHIEDE_CONFERMA_NO = "chiedi_conferma_no";
     final static String F_IN_PAUSA = "in_pausa";
     final static String F_IN_STOP = "in_stop";
+    final static String F_LAVORI = "lavori.txt";
     final static String F_LAVORO_CONCLUSO = "lavoro_concluso";
     final static String F_LAVORO_AVVIATO = "lavoro_avviato";
     final static String F_TIRI = "tiri";
@@ -55,10 +56,13 @@ public class Static {
     final static String F_NOME_DEVICE = "nome_device";
     final static String F_ARIA = "aria";
     final static String F_ERRORE = "errore";
+    final static String F_CURVA = "curva";
     final static String F_CHIEDI_CONFERMA_NO = "chiedi_conferma_no";
     final static String F_CHIEDI_CONFERMA_STOP = "chiedi_conferma_stop";
     static final String PATH_WATCH = "/tmp/CT/";
     static long ATTESA_SCRITTURA_FILE = 1000L;
+    
+    
     
     public Static() {
         System.out.print("Istanziato variabili static e static final\n");

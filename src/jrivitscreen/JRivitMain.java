@@ -50,7 +50,7 @@ import javax.swing.JScrollPane;
  * @author Luca Mannocci & Fabio Fragapane
  */
 public class JRivitMain extends javax.swing.JFrame {
-
+    
     private ImageIcon Img_Exit, Img_Ok, Img_Nulla, Img_Freccia_su,
             Img_Freccia_giu, Img_Warning, Img_Setup, Img_Play,
             Img_No_Warning, Img_Err_Warning, Img_Med_Warning;
@@ -100,11 +100,11 @@ public class JRivitMain extends javax.swing.JFrame {
     private boolean lavoro_concluso = false;
     private int tiri_annullati;
     private boolean chiedi_conferma_stop;
-
+    
     public boolean isLavoro_concluso() {
         return lavoro_concluso;
     }
-
+    
     public void setLavoro_concluso(boolean lavoro_concluso) {
         this.lavoro_concluso = lavoro_concluso;
     }
@@ -140,7 +140,6 @@ public class JRivitMain extends javax.swing.JFrame {
 //    final static int ACCETTA = 2;
 //    final static int ANNULLA = 3;
 //    final static int ESTENDI = 4;
-
 //Dopo una sospensione
     /**
      * Creates new form JRivitMain
@@ -148,7 +147,7 @@ public class JRivitMain extends javax.swing.JFrame {
     public JRivitMain() {
         initComponents();
         this.AlertDialogStop = "Annullare Tiro ?";
-
+        
         Img_Exit = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/exit.png"));
         Img_Ok = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/ok.png"));
         Img_Nulla = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/nulla.png"));
@@ -169,9 +168,9 @@ public class JRivitMain extends javax.swing.JFrame {
         Img_Lan = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/lan.png"));
         Img_WiFi = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/cell.png"));
         Img_Info = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/info.png"));
-
+        
         elencoLavoriArray = new ArrayList<>();
-
+        
         formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         try (InputStream in = this.getClass().getResourceAsStream("setup.propetiers")) {
             setup = new Properties();
@@ -183,7 +182,7 @@ public class JRivitMain extends javax.swing.JFrame {
         data_release = setup.getProperty("data_versione", "14/12/2022");
         srvKey = setup.getProperty("srvkey", "");
         System.out.println("JRivitScreen ver. " + versione + " release " + data_release);
-
+        
         w_mf = new JDoWorker(this);
         esegui("start");
         this.PanelMain();
@@ -636,9 +635,9 @@ public class JRivitMain extends javax.swing.JFrame {
                 this.Img_Warning = this.Img_Med_Warning;
             case 5, 6, 7, 8, 9 ->
                 this.Img_Warning = this.Img_Err_Warning;
-
+            
         }
-
+        
     }
 
     /**
@@ -689,35 +688,35 @@ public class JRivitMain extends javax.swing.JFrame {
                 switch (Static.STATO) {
                     case Static.ANNULLA -> {
                         this.w_mf.set_operation("stato annulla");
-
+                        
                     }
                     case Static.CONTINUA -> {
                         this.w_mf.set_operation("stato continua");
-
+                        
                     }
                     case Static.ACCETTA -> {
                         this.w_mf.set_operation("stato accetta");
-
+                        
                     }
                     case Static.STATO_STOP -> {
                         this.w_mf.set_operation("stato stop");
                     }
                     case Static.STATO_PAUSA -> {
                         this.w_mf.set_operation("stato pausa");
-
+                        
                     }
                 }
-
+                
                 this.PanelStart();
             }
         }
 
     }//GEN-LAST:event_jButtonPR1ActionPerformed
-
+    
     public void setAlertDialogAnnulla(String AlertDialogAnnulla) {
         this.AlertDialogAnnulla = AlertDialogAnnulla;
     }
-
+    
     public void setAlertDialogStop(String AlertDialogStop) {
         this.AlertDialogStop = AlertDialogStop;
         this.jLabelDialog.setText(AlertDialogStop);
@@ -758,7 +757,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 PanelSetup();
                 this.set_jLabel_B_L("Setup");
             }
-
+            
         }
     }//GEN-LAST:event_jButtonPL1ActionPerformed
     /**
@@ -878,11 +877,9 @@ public class JRivitMain extends javax.swing.JFrame {
                 this.set_jLabel_B_L("Started");
             }
             case "started" -> {
-//                PanelDialog();
-//                this.set_jLabel_B_L("Dialog");
                 PanelCavans();
                 this.set_jLabel_B_L("Graph");
-
+                
             }
             case "canvas" -> {
                 PanelStarted();
@@ -917,7 +914,7 @@ public class JRivitMain extends javax.swing.JFrame {
         this.change_buttons(this.Img_Warning, this.Img_Info, this.Img_Setup,
                 this.Img_Play, this.Img_Nulla, this.Img_Nulla);
         this.jLayeredPaneCenter.moveToFront(this.jPanelMain);
-
+        
     }
 
     /**
@@ -931,14 +928,14 @@ public class JRivitMain extends javax.swing.JFrame {
         } else {
             this.jButtonPL1.setEnabled(true);
         }
-
+        
         this.jButtonPL2.setIcon(I2);
         if (I2.equals(this.Img_Nulla)) {
             this.jButtonPL2.setEnabled(false);
         } else {
             this.jButtonPL2.setEnabled(true);
         }
-
+        
         this.jButtonPL3.setIcon(I3);
         if (I3.equals(this.Img_Nulla)) {
             this.jButtonPL3.setEnabled(false);
@@ -963,7 +960,7 @@ public class JRivitMain extends javax.swing.JFrame {
         } else {
             this.jButtonPR3.setEnabled(true);
         }
-
+        
     }
 
     /**
@@ -1073,19 +1070,19 @@ public class JRivitMain extends javax.swing.JFrame {
     public void ritorno_da_errore() {
         PanelStarted();
     }
-
+    
     void set_nr_lotti_ok(int lotti_ok) {
         this.nr_lotto_corrente = lotti_ok;
     }
-
+    
     public void set_nr_tiri(int Tiri) {
         this.nr_tiri = Tiri;
     }
-
+    
     public void set_nr_tiri_ok(int TiriOk) {
         this.nr_tiri_ok = TiriOk;
     }
-
+    
     void setin_errore(boolean stato_errore) {
         this.in_errore = stato_errore;
     }
@@ -1134,7 +1131,7 @@ public class JRivitMain extends javax.swing.JFrame {
         } else {
             this.jPanelStarted.setBackground(Color.white);
         }
-
+        
         this.change_buttons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
                 this.Img_Stop, this.Img_Pause, this.Img_Nulla);
         this.setNomeDelDevice(); //Fatto all'avvio dell'AppScreen
@@ -1153,11 +1150,17 @@ public class JRivitMain extends javax.swing.JFrame {
         String lavoro = this.listLavori.getSelectedItem();
         int idLavoro = this.listLavori.getSelectedIndex();
         this.lavoroScelto = this.elencoLavoriArray.get(idLavoro)[0];
-        this.jLabelNomeLavoro.setText(lavoro);
+        this.jLabelNomeLavoro.setText(lavoro) ;
         String[] det_nr_lotti = this.elencoLavoriArray.get(idLavoro)[1].split("=");
         String[] det_nr_tiri = this.elencoLavoriArray.get(idLavoro)[2].split("=");
-        nr_lotti_da_fare = Integer.parseInt(det_nr_lotti[1]);
-        nr_tiri_da_fare = Integer.parseInt(det_nr_tiri[1]);
+        try {
+            nr_lotti_da_fare = Integer.parseInt(det_nr_lotti[1]);
+            nr_tiri_da_fare = Integer.parseInt(det_nr_tiri[1]);
+        } catch (NumberFormatException e) {
+            System.out.print("nr_lotti_da_fare null !\n" + e);
+            nr_lotti_da_fare = 1;
+            nr_tiri_da_fare = 1;
+        }
         /*
         this.AggiornaTiriErrati();
         this.AggiornaTiriAnnullati();
@@ -1174,62 +1177,62 @@ public class JRivitMain extends javax.swing.JFrame {
         this.repaint();
         esegui("lavoro_scelto");
     }
-
+    
     public String getLavorodescrizione() {
         return Lavorodescrizione;
     }
-
+    
     public java.awt.List getListInfo() {
         return this.listInfo;
     }
-
+    
     public java.awt.List getListLavori() {
         return listLavori;
     }
-
+    
     public java.awt.List getListSetupLan() {
         return listSetupLan;
     }
-
+    
     public java.awt.List getListSetupWiFi() {
         return listSetupWiFi;
     }
-
+    
     public java.awt.List getListWarning() {
         return this.listWarning;
     }
-
+    
     public JLabel getjLabelNomeDevice() {
         return jLabelNomeDevice;
     }
-
+    
     public JLabel getjLabelNomeLavoro() {
         return jLabelNomeLavoro;
     }
-
+    
     public String getLavoroScelto() {
         return this.lavoroScelto;
     }
-
+    
     public void setLavoroScelto(String lavoroScelto) {
         this.lavoroScelto = lavoroScelto;
     }
-
+    
     public void setjLabelAnnullati(String ta) {
         this.jLabelAnnullati.setText(ta);
         this.repaint();
     }
-
+    
     public void setjLabelContatore(String c) {
         this.jLabelContatore.setText(c);
         this.repaint();
     }
-
+    
     public void setjLabelErrati(String Errati) {
         this.jLabelErrati.setText(Errati);
         this.repaint();
     }
-
+    
     public void setjLabelValidi(String Validi) {
         this.jLabelValidi.setText(Validi);
         this.repaint();
@@ -1419,7 +1422,7 @@ public class JRivitMain extends javax.swing.JFrame {
         this.listLavori.removeAll();
         List<String> elencoTxt = new ArrayList<>();
         for (String riga : lista) {
-            String[] lavoroSplit = riga.split("§");
+            String[] lavoroSplit = riga.split("#");
             this.elencoLavoriArray.add(lavoroSplit);
             elencoTxt.add(lavoroSplit[0] + " " + lavoroSplit[1] + " " + lavoroSplit[2]);
         }
@@ -1531,7 +1534,7 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     public void update_tiri_lotti() {
         this.jLabelValidi.setText("" + nr_tiri_ok);
-
+        
         if (this.nr_tiri_da_fare == -1) {
             //Lavoro senza fine
             this.jPanelStarted.setBackground(Color.GRAY);
@@ -1547,10 +1550,10 @@ public class JRivitMain extends javax.swing.JFrame {
                     this.jPanelStarted.setBackground(Color.WHITE);
                 }
             }
-            this.jLabelContatore.setText(nr_lotto_corrente + "/" + nr_lotti_da_fare
-                    + " - " + nr_tiri_ok + "/" + nr_tiri_da_fare);
-            this.jProgressBar.setMaximum(nr_lotti_da_fare * nr_tiri_da_fare);
-            this.jProgressBar.setValue(nr_tiri_ok + ((nr_lotto_corrente - 1) * nr_tiri_da_fare)); // calcolo dei tiri complessivi per l'avanzamento della barra
+            this.jLabelContatore.setText(this.nr_lotto_corrente + "/" + this.nr_lotti_da_fare
+                    + " - " + this.nr_tiri_ok + "/" + this.nr_tiri_da_fare);
+            this.jProgressBar.setMaximum(this.nr_lotti_da_fare * this.nr_tiri_da_fare);
+            this.jProgressBar.setValue(this.nr_tiri_ok + ((this.nr_lotto_corrente - 1) * this.nr_tiri_da_fare)); // calcolo dei tiri complessivi per l'avanzamento della barra
             this.jProgressBar.setVisible(true);
         }
         this.repaint();
@@ -1580,11 +1583,11 @@ public class JRivitMain extends javax.swing.JFrame {
         this.jLayeredPaneCenter.moveToFront(this.jPanelStarted);
         this.repaint();
     }
-
+    
     void risposta_attesa_tiro_errato() {
         esegui("risposta_attesa_tiro_errato");
     }
-
+    
     public void set_nr_tiri_fatti(int Tiri_fatti) {
         this.nr_tiri = Tiri_fatti;
     }
@@ -1607,7 +1610,7 @@ public class JRivitMain extends javax.swing.JFrame {
     void AggiornaTiriAnnullati() {
         esegui("aggiorna_tiri_annullati");
     }
-
+    
     void update_sensori(String Valori) {
         String[] arrayValori = Valori.split(",");
         try {
@@ -1628,11 +1631,11 @@ public class JRivitMain extends javax.swing.JFrame {
                 this.repaint();
             }
         } catch (NumberFormatException e) {
-            System.out.println("jrivitscreen.JRivitMain.update_sensori() - " + e.getMessage());
+            System.out.println("jrivitscreen.JRivitMain.update_sensori() - \n" + e.getMessage());
         }
-
+        
     }
-
+    
     public void update_soglie_pressione_aria_in(Float SogliaMin, Float SogliaMax) {
         this.sogliaMin = SogliaMin;
         this.sogliaMax = SogliaMax;
@@ -1697,7 +1700,7 @@ public class JRivitMain extends javax.swing.JFrame {
     public String getjLabelValidi() {
         return this.jLabelValidi.getText();
     }
-
+    
     void setCurva(String curva) {
         this.jLayeredPaneCenter.moveToFront(this.jPanelCanvas);
         this.repaint();
@@ -1705,11 +1708,11 @@ public class JRivitMain extends javax.swing.JFrame {
         //esegui("curva");
         drawGrafico();
     }
-
+    
     public JLayeredPane getjLayeredPaneCenter() {
         return this.jLayeredPaneCenter;
     }
-
+    
     private void drawGrafico() {
         Graphics2D gr = (Graphics2D) this.jLayeredPaneCenter.getGraphics();
         this.getjLayeredPaneCenter().repaint();
@@ -1733,10 +1736,10 @@ public class JRivitMain extends javax.swing.JFrame {
             gr.setColor(Color.GREEN);
             gr.drawPolyline(xpoints, ypoints, nPoints);
             gr.drawString("Java Source", 10, 10);
-
+            
         }
     }
-
+    
     public void setListInfo(List Info) {
         this.listInfo.removeAll();
         try {
@@ -1754,7 +1757,7 @@ public class JRivitMain extends javax.swing.JFrame {
         }
         this.listInfo.repaint();
     }
-
+    
     public void setListWarning(List Warning) {
         this.listWarning.removeAll();
         int g = 0;
@@ -1770,26 +1773,26 @@ public class JRivitMain extends javax.swing.JFrame {
         }
         this.set_warning(g);
     }
-
+    
     public void setListLavori(String[] lista_lavori) {
         this.listLavori.removeAll();
         for (String lista_lav : lista_lavori) {
             this.listLavori.add(lista_lav);
         }
     }
-
+    
     public void setListSetupLan(java.awt.List listSetupLan) {
         this.listSetupLan = listSetupLan;
     }
-
+    
     public void setListSetupWiFi(java.awt.List listSetupWiFi) {
         this.listSetupWiFi = listSetupWiFi;
     }
-
+    
     String getCurva() {
         return this.Curva;
     }
-
+    
     private void esegui(String operazione) {
         this.w_mf.set_operation(operazione);
         try {
@@ -1817,15 +1820,15 @@ public class JRivitMain extends javax.swing.JFrame {
     public void Exit() {
         System.exit(1);
     }
-
+    
     public String getInPausa() {
         return inPausa;
     }
-
+    
     public void setInPausa(String inPausa) {
         this.inPausa = inPausa;
     }
-
+    
     void set_nr_lotti_fatti(int lotti_ok) {
         this.nr_lotto_corrente = lotti_ok;
     }
@@ -1882,7 +1885,7 @@ public class JRivitMain extends javax.swing.JFrame {
     public boolean isChiedi_conferma() {
         return this.chiedi_conferma;
     }
-
+    
     void set_nr_tiri_annullati(int tiri_annullati) {
         this.tiri_annullati = tiri_annullati;
     }

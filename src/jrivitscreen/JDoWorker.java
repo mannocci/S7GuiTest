@@ -25,12 +25,8 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import static java.lang.Runtime.getRuntime;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -38,7 +34,6 @@ import javax.swing.SwingWorker;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -153,13 +148,15 @@ public class JDoWorker extends SwingWorker<String, Object> {
                 case "aggiorna_lotti_ok" -> {
                     this.r_main.set_nr_lotti_ok(Integer.parseInt(file_worker.LeggiFileLock(f_lotti_ok)));
                 }
-                case "curva" -> {
+                case Static.F_CURVA-> {
                     drawGrafico();
                 }
                 case "lavoro_scelto" -> {
                     String lavoro = this.r_main.getLavoroScelto();
                     this.file_worker.ScriviFileLock(Static.F_LAVORO_SCELTO, lavoro);
                     this.file_worker.ScriviFileLock(Static.F_LAVORO_AVVIATO, "");
+                    this.file_worker.ScriviFileLock(Static.F_ARIA, "");
+                    //Aggiornare leggendo il DB i campi della ricetta DA FARE
                 }
                 case "aggiorna info" -> {
                     List<String> lista_info = this.file_worker.LeggiFileElencoLock(Static.F_INFO);

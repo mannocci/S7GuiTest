@@ -34,12 +34,14 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import static java.lang.Runtime.getRuntime;
+import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.nio.channels.OverlappingFileLockException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
@@ -58,7 +60,6 @@ public class JFileWorker extends Thread {
 
     private final JRivitMain Rm;
     private final JDoWorker jDo_w;
-    private final Static S;
 
     private WatchService watcher;
     private Path fileName;
@@ -69,8 +70,8 @@ public class JFileWorker extends Thread {
     private final String f_warning = "warning.txt";
     private final String f_setup_lan = "setup_lan.txt";
     private final String f_setup_wifi = "setup_wifi.txt";
-    private final String f_lavori = "lavori.txt";
     private final String f_in_pausa = "in_pausa";
+
     // se il lavoro è in corso contiene "1"
     private final String f_curva = "curva";
     private final String f_sessione = "sessione";
@@ -111,14 +112,14 @@ public class JFileWorker extends Thread {
     public JFileWorker(JRivitMain mf, JDoWorker aThis) throws IOException {
         this.Rm = mf;
         this.jDo_w = aThis;
-        this.S = new Static();
+
         // create gpio controller by file (run bash script before !)     
         try {
             watcher = FileSystems.getDefault().newWatchService();
         } catch (IOException ex) {
             Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
         }
-        Path dir = Paths.get(S.PATH_WATCH);
+        Path dir = Paths.get(Static.PATH_WATCH);
         dir.register(watcher, StandardWatchEventKinds.ENTRY_MODIFY,
                 StandardWatchEventKinds.ENTRY_CREATE,
                 StandardWatchEventKinds.ENTRY_DELETE);
@@ -197,7 +198,7 @@ public class JFileWorker extends Thread {
                             read_setup_lan();
                         case "setup_wifi.txt" ->
                             read_setup_wifi();
-                        case "lavori.txt" ->
+                        case Static.F_LAVORI ->
                             read_lavori();
                         case "lavori_descrizione.txt", "in_pausa" ->
                             read_lavoro_in_pausa();
@@ -286,14 +287,14 @@ public class JFileWorker extends Thread {
      * Legge il file con la descrizione dei lavori
      */
     private void read_lavori() {
-        this.Rm.AggiornaLavori(LeggiFileElenco(this.f_lavori));
+        this.Rm.AggiornaLavori(LeggiFileElencoLock(Static.F_LAVORI));
     }
 
     /**
      * Legge il file con la descrizione delle info di sistema
      */
     private void read_info() {
-        List<String> LeggiFileElencoInfo = this.LeggiFileElenco(this.f_info);
+        List<String> LeggiFileElencoInfo = this.LeggiFileElencoLock(this.f_info);
         this.Rm.setListInfo(LeggiFileElencoInfo);
     }
 
@@ -301,7 +302,7 @@ public class JFileWorker extends Thread {
      * Legge il file con la descrizione dei JFileWorker
      */
     private void read_warning() {
-        List<String> LeggiFileElencoWarning = this.LeggiFileElenco(this.f_warning);
+        List<String> LeggiFileElencoWarning = this.LeggiFileElencoLock(this.f_warning);
         this.Rm.setListWarning(LeggiFileElencoWarning);
 
     }
@@ -336,14 +337,14 @@ public class JFileWorker extends Thread {
      * Legge il file con la descrizione della configurazione della LAN
      */
     private void read_setup_lan() {
-        this.Rm.AggiornaSetupLan(this.LeggiFileElenco(this.f_setup_lan));
+        this.Rm.AggiornaSetupLan(this.LeggiFileElencoLock(this.f_setup_lan));
     }
 
     /**
      * Legge il file con la descrizione della configurazione della WiFi
      */
     private void read_setup_wifi() {
-        this.Rm.AggiornaSetupWiFi(this.LeggiFileElenco(this.f_setup_wifi));
+        this.Rm.AggiornaSetupWiFi(this.LeggiFileElencoLock(this.f_setup_wifi));
     }
 
     /**
@@ -431,7 +432,7 @@ public class JFileWorker extends Thread {
         this.AggiornaSensori();
         this.tiri();
         this.tiri_errati();
-        this.tiri();
+//        this.tiri();
         this.tiri_annullati();
         //this.errore();
         this.read_info();
@@ -482,24 +483,25 @@ public class JFileWorker extends Thread {
      * @return La riga letta del file
      */
     public String LeggiFileLock(String NomeFile) {
-        String stringaLetta = "";
-        RandomAccessFile file = null;
-        FileChannel channel = null;
-        FileLock lock = null;
+        String stringaLetta;
+        RandomAccessFile file;
+        FileChannel channel;
+        FileLock lock;
+        ByteBuffer dsts = null;
 
         try {
-            file = new RandomAccessFile(Static.PATH_WATCH +NomeFile, "r");
+            file = new RandomAccessFile(Static.PATH_WATCH + NomeFile, "r");
             channel = file.getChannel();
-
             try {
-                lock = channel.tryLock();
+                lock = channel.lock(0, Long.MAX_VALUE, true);
             } catch (final OverlappingFileLockException e) {
                 file.close();
                 channel.close();
                 return "-2";
             }
+
             stringaLetta = file.readLine();
-            TimeUnit.HOURS.sleep(1);
+//            TimeUnit.HOURS.sleep(1);
             lock.release();
             file.close();
             channel.close();
@@ -508,9 +510,6 @@ public class JFileWorker extends Thread {
             return "-1";
         } catch (IOException ee) {
             Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ee);
-            return "-1";
-        } catch (InterruptedException eee) {
-            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, eee);
             return "-1";
         }
         return stringaLetta;
@@ -530,11 +529,11 @@ public class JFileWorker extends Thread {
         List<String> ListaRighe = new ArrayList<>();
 
         try {
-            file = new RandomAccessFile(Static.PATH_WATCH +NomeFile, "r");
+            file = new RandomAccessFile(Static.PATH_WATCH + NomeFile, "r");
             channel = file.getChannel();
 
             try {
-                lock = channel.tryLock();
+                lock = channel.lock(0, Long.MAX_VALUE, true);
             } catch (final OverlappingFileLockException e) {
                 file.close();
                 channel.close();
@@ -543,7 +542,7 @@ public class JFileWorker extends Thread {
             while ((stringaLetta = file.readLine()) != null) {
                 ListaRighe.add(stringaLetta);
             }
-            TimeUnit.HOURS.sleep(1);
+//            TimeUnit.HOURS.sleep(1);
             lock.release();
             file.close();
             channel.close();
@@ -553,10 +552,11 @@ public class JFileWorker extends Thread {
         } catch (IOException ee) {
             Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ee);
             return ListaRighe;
-        } catch (InterruptedException eee) {
-            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, eee);
-            return ListaRighe;
         }
+//        } catch (InterruptedException eee) {
+//            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, eee);
+//            return ListaRighe;
+//        }
         return ListaRighe;
     }
 
@@ -604,34 +604,45 @@ public class JFileWorker extends Thread {
         RandomAccessFile file = null;
         FileChannel channel = null;
         FileLock lock = null;
-
-        try {
-            file = new RandomAccessFile(NomeFile, "rw");
-            channel = file.getChannel();
-
-            try {
-                lock = channel.tryLock();
-            } catch (final OverlappingFileLockException e) {
-                file.close();
-                channel.close();
-                return -2;
-            }
-
-            file.writeChars(CosaScrivere);
-            TimeUnit.HOURS.sleep(1);
-            lock.release();
-            file.close();
-            channel.close();
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
-            return -1;
-        } catch (IOException ee) {
-            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ee);
-            return -1;
-        } catch (InterruptedException eee) {
-            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, eee);
-            return -1;
-        }
+        this.ScriviFile(NomeFile, CosaScrivere);
+//        try {
+//            file = new RandomAccessFile(NomeFile, "rw");
+//            channel = file.getChannel();
+//
+//            try {
+//                lock = channel.lock(0, Long.MAX_VALUE, true);
+//            } catch (final OverlappingFileLockException e) {
+//                file.close();
+//                channel.close();
+//                return -2;
+//            }
+//
+//            // Convert text into byte array
+//            byte[] byteData = CosaScrivere.toString().getBytes("UTF-8");
+//
+//            // Create a ByteBuffer using the byte array
+//            ByteBuffer buffer = ByteBuffer.wrap(byteData);
+//
+//            // Write bytes to the file
+//            channel.write(buffer);
+////            file.seek(5);
+////            file.write(CosaScrivere.getBytes());
+////            file.writeChars(CosaScrivere);
+////            TimeUnit.HOURS.sleep(1);
+//            lock.release();
+//            file.close();
+//            channel.close();
+//        } catch (FileNotFoundException ex) {
+//            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
+//            return -1;
+//        } catch (IOException ee) {
+//            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ee);
+//            return -1;
+//        }
+////        catch (InterruptedException eee) {
+////            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, eee);
+////            return -1;
+////        }
         return 0;
     }
 
@@ -651,7 +662,7 @@ public class JFileWorker extends Thread {
     }
 
     private void read_lavoro_scelto() {
-        this.Rm.setLavoroScelto(LeggiFile(S.F_LAVORO_SCELTO));
+        this.Rm.setLavoroScelto(LeggiFile(Static.F_LAVORO_SCELTO));
     }
 
     /**
@@ -659,7 +670,7 @@ public class JFileWorker extends Thread {
      * record CT -> sn
      */
     private void read_nome_device() {
-        this.Rm.setNomeDevice(LeggiFile(S.F_NOME_DEVICE));
+        this.Rm.setNomeDevice(LeggiFile(Static.F_NOME_DEVICE));
     }
 
     private void lotti_ok() {
@@ -679,7 +690,7 @@ public class JFileWorker extends Thread {
      *
      */
     private void abort() {
-        ScriviFileLock(S.F_IN_STOP, "" + S.STATO_STOP);  //  stato di abort
+        ScriviFileLock(Static.F_IN_STOP, "" + Static.STATO_STOP);  //  stato di abort
     }
 
     /**
@@ -688,7 +699,7 @@ public class JFileWorker extends Thread {
      *
      */
     private void pausa() {
-        this.ScriviFileLock(S.F_IN_PAUSA, "" + S.STATO_PAUSA);
+        this.ScriviFileLock(Static.F_IN_PAUSA, "" + Static.STATO_PAUSA);
     }
 
     private void imposta_chiedi_conferma(boolean si_o_no) {
@@ -703,7 +714,7 @@ public class JFileWorker extends Thread {
      */
     public static void CancellaFile(String NomeFile) {
         File f = new File(Static.PATH_WATCH + NomeFile);
-        while (!f.canWrite()) {
+        while (f.canWrite()) {
             try {
                 Thread.sleep(Static.ATTESA_SCRITTURA_FILE);
             } catch (InterruptedException ex) {
