@@ -102,11 +102,11 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     this.r_main.ritorno_da_errore();
                 }
                 case "aggiorna_nome_device" -> {
-                    this.NomeDevice = LeggiFile(this.f_nome_device);
+                    this.NomeDevice = file_worker.LeggiFileLock(this.f_nome_device);
                     this.r_main.setNomeDevice(this.NomeDevice);
                 }
                 case "tiri_errati" -> {
-                    String Tiri = LeggiFile(Static.F_TIRI_ERRATI);
+                    String Tiri = file_worker.LeggiFileLock(Static.F_TIRI_ERRATI);
                     try {
                         this.r_main.set_nr_tiri(Integer.parseInt(Tiri));
                         this.r_main.update_tiri_lotti();
@@ -114,8 +114,8 @@ public class JDoWorker extends SwingWorker<String, Object> {
                         System.out.println("File tiri_ok non numerico\n" + e.getMessage());
                     }
                 }
-                case "tiri" -> {
-                    String Tiri = LeggiFile(Static.F_TIRI);
+                case Static.F_TIRI -> {
+                    String Tiri = file_worker.LeggiFileLock(Static.F_TIRI);
                     try {
                         this.r_main.set_nr_tiri(Integer.parseInt(Tiri));
                         this.r_main.update_tiri_lotti();
@@ -124,7 +124,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     }
                 }
                 case "tiri_ok" -> {
-                    String Tiri = LeggiFile(Static.F_TIRI_OK);
+                    String Tiri = file_worker.LeggiFileLock(Static.F_TIRI_OK);
                     try {
                         this.r_main.set_nr_tiri_ok(Integer.parseInt(Tiri));
                         this.r_main.update_tiri_lotti();
@@ -133,7 +133,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     }
                 }
                 case "tiri_annullati" -> {
-                    String Tiri = LeggiFile(Static.F_TIRI_ANNULLATI);
+                    String Tiri = file_worker.LeggiFileLock(Static.F_TIRI_ANNULLATI);
                     try {
                         this.r_main.set_nr_tiri_annullati(Integer.parseInt(Tiri));
                         this.r_main.update_tiri_lotti();
@@ -145,13 +145,13 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     risposta_attesa_tiro_errato();
                 }
                 case "aggiorna_tiri_errati" -> {
-                    this.r_main.setjLabelErrati("" + LeggiFile(this.f_tiri_errati));
+                    this.r_main.setjLabelErrati("" + file_worker.LeggiFileLock(this.f_tiri_errati));
                 }
                 case "aggiorna_tiri_annullati" -> {
-                    this.r_main.setjLabelAnnullati("" + LeggiFile(this.f_tiri_annullati));
+                    this.r_main.setjLabelAnnullati("" + file_worker.LeggiFileLock(this.f_tiri_annullati));
                 }
                 case "aggiorna_lotti_ok" -> {
-                    this.r_main.set_nr_lotti_ok(Integer.parseInt(LeggiFile(f_lotti_ok)));
+                    this.r_main.set_nr_lotti_ok(Integer.parseInt(file_worker.LeggiFileLock(f_lotti_ok)));
                 }
                 case "curva" -> {
                     drawGrafico();
@@ -162,8 +162,8 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     this.file_worker.ScriviFileLock(Static.F_LAVORO_AVVIATO, "");
                 }
                 case "aggiorna info" -> {
-                    List<String> lista_info = this.file_worker.LeggiFileElenco(Static.F_INFO);
-                    List<String> lista_sensori = this.file_worker.LeggiFileElenco(Static.F_SENSORI);
+                    List<String> lista_info = this.file_worker.LeggiFileElencoLock(Static.F_INFO);
+                    List<String> lista_sensori = this.file_worker.LeggiFileElencoLock(Static.F_SENSORI);
                     lista_info.add("=========================");
                     for (String string : lista_sensori) {
                         lista_info.add(string);
@@ -171,7 +171,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     this.r_main.setListInfo(lista_info);
                 }
                 case "aggiorna warning" -> {
-                    List<String> warning_file = this.file_worker.LeggiFileElenco(Static.F_WARNING);
+                    List<String> warning_file = this.file_worker.LeggiFileElencoLock(Static.F_WARNING);
                     int livello_warning = 0, livello = 0, posizione_riga = 0;
 
                     for (String string : warning_file) {
@@ -229,7 +229,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
             this.r_main.getjLayeredPaneCenter().repaint();
             gr.drawString("Java Source", 10, 10);
         }
-        this.r_main.setCurva(LeggiFile("curva"));
+        this.r_main.setCurva(file_worker.LeggiFileLock("curva"));
 
     }
 
@@ -237,7 +237,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
         // Fabio: la gestione del tiro errato deve essere fatta 
         // da JControl. Quando i file saranno aggiornati da JControl
         // stesso l'interfaccia si adeguerà automaticamente
-        switch (LeggiFile(f_risposta_tiro_errato)) {
+        switch (file_worker.LeggiFileLock(f_risposta_tiro_errato)) {
             case "1" -> //Continua non devo contare il tiro come ok
                 this.r_main.reset_errore_tiro();
             case "4" -> //Annulla
@@ -258,27 +258,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
         }
     }
 
-    /**
-     * LeggiFile Metodo utilizzato da più metodi per lettura del file
-     *
-     * @param NomeFile - Nome del file da leggere
-     * @return String - riga letta
-     */
-    private String LeggiFile(String NomeFile) {
-        String contenutoFile = "";
-        try {
-            File myObj = new File(this.pathWatch + NomeFile);
-            try (Scanner myReader = new Scanner(myObj)) {
-                while (myReader.hasNextLine()) {
-                    contenutoFile += myReader.nextLine();
-                }
-            }
-        } catch (FileNotFoundException e) {
-            System.out.println("File non trovato " + NomeFile);
-            return "Errore lettura file";
-        }
-        return contenutoFile;
-    }//End LeggiFileLavoriDescrizione
+
 
 
     /**
