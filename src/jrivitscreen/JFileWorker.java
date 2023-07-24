@@ -488,7 +488,7 @@ public class JFileWorker extends Thread {
         FileLock lock = null;
 
         try {
-            file = new RandomAccessFile(NomeFile, "r");
+            file = new RandomAccessFile(Static.PATH_WATCH +NomeFile, "r");
             channel = file.getChannel();
 
             try {
@@ -530,7 +530,7 @@ public class JFileWorker extends Thread {
         List<String> ListaRighe = new ArrayList<>();
 
         try {
-            file = new RandomAccessFile(NomeFile, "r");
+            file = new RandomAccessFile(Static.PATH_WATCH +NomeFile, "r");
             channel = file.getChannel();
 
             try {
