@@ -159,6 +159,8 @@ public class JFileWorker extends Thread {
                             errore(true);
                         case "chiedi_conferma_no" ->
                             imposta_chiedi_conferma(true);
+                        case "chiedi_conferma_stop_no" ->
+                            imposta_chiedi_conferma_stop(true);                            
                     }
 
                 }
@@ -590,5 +592,9 @@ public class JFileWorker extends Thread {
                 System.out.println("errore eliminando il file " + NomeFile);
             }
         }
+    }
+
+    private void imposta_chiedi_conferma_stop(boolean si_o_no) {
+        this.mf.setChiedi_conferma_stop(si_o_no);
     }
 }

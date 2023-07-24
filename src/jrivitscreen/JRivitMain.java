@@ -99,6 +99,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private boolean chiedi_conferma = false;
     private boolean lavoro_concluso = false;
     private int tiri_annullati;
+    private boolean chiedi_conferma_stop;
 
     public boolean isLavoro_concluso() {
         return lavoro_concluso;
@@ -652,11 +653,11 @@ public class JRivitMain extends javax.swing.JFrame {
             }
             case "start" ->
                 PulsanteSu();
-            case "started"-> {//Stop
+            case "started" -> {//Stop
                 //esiste conferma_no come file in /tmp/CT ?
                 // se esiste non chiede conferma della scelta
 //                DialogQ = STATO_STOP;
-                if (this.isChiedi_conferma()) {
+                if (this.isChiedi_conferma_stop()) {
                     this.AlertDialogStop = "Annullare il Lavoro ?";
                     this.jLabelDialog.setText(AlertDialogStop);
                     PanelDialog();
@@ -829,7 +830,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 PulsanteGiu();
             case "started", "canvas" -> {//Pausa del lavoro 
                 this.set_stato(STATO_STOP);
-                if (this.isChiedi_conferma()) {
+                if (this.isChiedi_conferma_stop()) {
 //                    DialogQ = STATO_PAUSA;
                     this.AlertDialogStop = "Pausa ?";
                     this.jLabelDialog.setText(AlertDialogStop);
@@ -876,7 +877,7 @@ public class JRivitMain extends javax.swing.JFrame {
 //                this.set_jLabel_B_L("Dialog");
                 PanelCavans();
                 this.set_jLabel_B_L("Graph");
-                
+
             }
             case "canvas" -> {
                 PanelStarted();
@@ -1706,7 +1707,7 @@ public class JRivitMain extends javax.swing.JFrame {
 
     private void drawGrafico() {
         Graphics2D gr = (Graphics2D) this.jLayeredPaneCenter.getGraphics();
-         this.getjLayeredPaneCenter().repaint();
+        this.getjLayeredPaneCenter().repaint();
         this.jPanelCanvas.paintComponents(gr);
         paintComponents(gr);
         int y = this.jPanelCanvas.getHeight();
@@ -1907,5 +1908,19 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     private void set_stato(int stato) {
         STATO = stato;
+    }
+/**
+ * Per la conferma di richiesta per lo STOP o PAUSA
+ * @param si_o_no 
+ */
+    void setChiedi_conferma_stop(boolean si_o_no) {
+        this.chiedi_conferma_stop = si_o_no;
+    }
+/**
+ * 
+ * @return si o no conferma alla scelta STOP o PAUSA
+ */    
+    boolean isChiedi_conferma_stop(){
+        return this.chiedi_conferma_stop;
     }
 }
