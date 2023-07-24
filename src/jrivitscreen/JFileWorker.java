@@ -32,7 +32,11 @@ import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.io.RandomAccessFile;
 import static java.lang.Runtime.getRuntime;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
+import java.nio.channels.OverlappingFileLockException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -43,6 +47,7 @@ import java.nio.file.WatchService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 /**
  *
@@ -50,11 +55,11 @@ import java.util.Scanner;
  */
 public class JFileWorker extends Thread {
 // Classi
+
     private final JRivitMain mf;
     private final JDoWorker jworker;
     private final Static S;
-    
-    
+
     private WatchService watcher;
     private Path fileName;
     private final String f_tiri = "tiri";
@@ -156,7 +161,7 @@ public class JFileWorker extends Thread {
                         case Static.F_CHIEDI_CONFERMA_NO ->
                             imposta_chiedi_conferma(true);
                         case Static.F_CHIEDI_CONFERMA_STOP ->
-                            imposta_chiedi_conferma_stop(true);                            
+                            imposta_chiedi_conferma_stop(true);
                     }
 
                 }
@@ -169,7 +174,7 @@ public class JFileWorker extends Thread {
                         case Static.F_CHIEDI_CONFERMA_NO ->
                             imposta_chiedi_conferma(false);
                         case Static.F_CHIEDI_CONFERMA_STOP ->
-                            imposta_chiedi_conferma_stop(false);  
+                            imposta_chiedi_conferma_stop(false);
                     }
                 }
                 if (kind == StandardWatchEventKinds.ENTRY_MODIFY) {
@@ -314,7 +319,7 @@ public class JFileWorker extends Thread {
     private void read_warning() {
         List<String> LeggiFileElencoWarning = this.LeggiFileElenco(this.f_warning);
         this.mf.setListWarning(LeggiFileElencoWarning);
-        
+
     }
 
     /**
@@ -365,7 +370,7 @@ public class JFileWorker extends Thread {
         try {
             this.jworker.doInBackground();
         } catch (Exception ex) {
-         Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -456,9 +461,9 @@ public class JFileWorker extends Thread {
         this.LeggiSessione();
         this.mostra_stato_aria(0);
         this.read_nome_device();
-        CancellaFile(Static.PATH_WATCH+"errore");
+        CancellaFile(Static.PATH_WATCH + "errore");
         this.mf.set_jLabel_B_L("Main");
-        
+
         this.mf.repaint();
     }
 
@@ -518,6 +523,49 @@ public class JFileWorker extends Thread {
         }
     }
 
+    /**
+     * Metodo per la scrittura di file che possono essere scritti anche da altri
+     * in concorrenza
+     *
+     * @param NomeFile
+     * @param CosaScrivere
+     * @return
+     */
+    public int ScriviFileLock(String NomeFile, String CosaScrivere) {
+        RandomAccessFile file = null;
+        FileChannel channel = null;
+        FileLock lock = null;
+
+        try {
+            file = new RandomAccessFile(NomeFile, "rw");
+            channel = file.getChannel();
+
+            try {
+                lock = channel.tryLock();
+            } catch (final OverlappingFileLockException e) {
+                file.close();
+                channel.close();
+                return -2;
+            }
+
+            file.writeChars(CosaScrivere);
+            TimeUnit.HOURS.sleep(1);
+            lock.release();
+            file.close();
+            channel.close();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
+            return -1;
+        } catch (IOException ee) {
+            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ee);
+            return -1;
+        } catch (InterruptedException eee) {
+            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, eee);
+            return -1;
+        }
+        return 0;
+    }
+
     private void LeggiAriaInMinMax() {
         try {
             float min, max;
@@ -538,8 +586,8 @@ public class JFileWorker extends Thread {
     }
 
     /**
-     * legge dal file nome_device il nome del ControlRiv SN
-     * registrato nel record CT -> sn
+     * legge dal file nome_device il nome del ControlRiv SN registrato nel
+     * record CT -> sn
      */
     private void read_nome_device() {
         this.mf.setNomeDevice(LeggiFile(S.F_NOME_DEVICE));
@@ -578,13 +626,14 @@ public class JFileWorker extends Thread {
 
         this.mf.setChiedi_conferma(si_o_no);
     }
+
     /**
      * cancela un file
      *
      * @param NomeFile
      */
     public static void CancellaFile(String NomeFile) {
-        File f = new File( Static.PATH_WATCH + NomeFile);
+        File f = new File(Static.PATH_WATCH + NomeFile);
         if (f.exists()) {
             if (!f.delete()) {
                 System.out.println("errore eliminando il file " + NomeFile);
