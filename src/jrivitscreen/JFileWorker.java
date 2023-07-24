@@ -56,8 +56,8 @@ import java.util.concurrent.TimeUnit;
 public class JFileWorker extends Thread {
 // Classi
 
-    private final JRivitMain mf;
-    private final JDoWorker jworker;
+    private final JRivitMain Rm;
+    private final JDoWorker jDo_w;
     private final Static S;
 
     private WatchService watcher;
@@ -109,8 +109,8 @@ public class JFileWorker extends Thread {
         "2"};
 
     public JFileWorker(JRivitMain mf, JDoWorker aThis) throws IOException {
-        this.mf = mf;
-        this.jworker = aThis;
+        this.Rm = mf;
+        this.jDo_w = aThis;
         this.S = new Static();
         // create gpio controller by file (run bash script before !)     
         try {
@@ -132,7 +132,7 @@ public class JFileWorker extends Thread {
     }
 
     private void send_p(String sp) {
-        this.mf.pulsante_hw(sp);
+        this.Rm.pulsante_hw(sp);
     }
 
     @Override
@@ -202,7 +202,7 @@ public class JFileWorker extends Thread {
                         case "lavori_descrizione.txt", "in_pausa" ->
                             read_lavoro_in_pausa();
                         case "killScreen" ->
-                            this.mf.Exit();
+                            this.Rm.Exit();
                         case "abort" ->
                             abort();
                         case "pausa" ->
@@ -224,45 +224,29 @@ public class JFileWorker extends Thread {
         }
     }
 
-//    private void read_pulsane_premuto(String nomeFile) {
-//        String data = "";
-//        try {
-//            File myObj = new File("/tmp/gpio/" + nomeFile);
-//            Scanner myReader = new Scanner(myObj);
-//            while (myReader.hasNextLine()) {
-//                data = myReader.nextLine();
-//                //System.out.println(data);
-//            }
-//            myReader.close();
-//        } catch (FileNotFoundException e) {
-//            System.out.println("File non trovato " + NomeFile);
-//            e.printStackTrace();
-//        }
-//
-//        if (!data.isEmpty() && data.contentEquals("0")) {
-//            //System.out.printf("il pulsante %s è stato premuto\n", fileName);
-//            this.send_p(nomeFile);
-//        }
-//    }
+    /**
+     * Metodo per
+     */
     private void tiri() {
-        this.jworker.set_operation("tiri");
+        this.jDo_w.set_operation(Static.F_TIRI);
         try {
-            this.jworker.doInBackground();
+            this.jDo_w.doInBackground();
         } catch (Exception ex) {
             Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
         }
-        try {
-            this.mf.set_nr_tiri(Integer.parseInt(LeggiFile(f_tiri)));
-            this.mf.update_tiri_lotti();
-        } catch (NumberFormatException e) {
-            System.out.println("File tiri_ok non numerico\n" + e.getMessage());
-        }
+        // Viene fatto nella classe JDoWorker
+//        try {
+//            this.Rm.set_nr_tiri(Integer.parseInt(this.LeggiFile(Static.F_TIRI)));
+//            this.Rm.update_tiri_lotti();
+//        } catch (NumberFormatException e) {
+//            System.out.println("File tiri_ok non numerico\n" + e.getMessage());
+//        }
     }
 
     private void tiri_ok() {
         try {
-            this.mf.set_nr_tiri_ok(Integer.parseInt(LeggiFile(f_tiri_ok)));
-            this.mf.update_tiri_lotti();
+            this.Rm.set_nr_tiri_ok(Integer.parseInt(LeggiFile(f_tiri_ok)));
+            this.Rm.update_tiri_lotti();
         } catch (NumberFormatException e) {
             System.out.println("File tiri_ok non numerico\n" + e.getMessage());
         }
@@ -277,7 +261,7 @@ public class JFileWorker extends Thread {
             run_system_bash(this.bash_cmd_rosso);
             run_system_bash(this.bash_cmd_verde);
             run_system_bash(this.bash_cmd_aria);
-            this.mf.aria_chiusa();
+            this.Rm.aria_chiusa();
 
         } else { //Aria aperta
             bash_cmd_aria[4] = this.open;
@@ -286,7 +270,7 @@ public class JFileWorker extends Thread {
             run_system_bash(bash_cmd_rosso);
             run_system_bash(bash_cmd_verde);
             run_system_bash(bash_cmd_aria);
-            this.mf.aria_aperta();
+            this.Rm.aria_aperta();
 
         }
     }
@@ -295,14 +279,14 @@ public class JFileWorker extends Thread {
      * Errore_tiro legge nr tiri errati e li passa al RivitMain
      */
     private void tiri_errati() {
-        this.mf.AggiornaTiriErrati();
+        this.Rm.AggiornaTiriErrati();
     }
 
     /**
      * Legge il file con la descrizione dei lavori
      */
     private void read_lavori() {
-        this.mf.AggiornaLavori(LeggiFileElenco(this.f_lavori));
+        this.Rm.AggiornaLavori(LeggiFileElenco(this.f_lavori));
     }
 
     /**
@@ -310,7 +294,7 @@ public class JFileWorker extends Thread {
      */
     private void read_info() {
         List<String> LeggiFileElencoInfo = this.LeggiFileElenco(this.f_info);
-        this.mf.setListInfo(LeggiFileElencoInfo);
+        this.Rm.setListInfo(LeggiFileElencoInfo);
     }
 
     /**
@@ -318,7 +302,7 @@ public class JFileWorker extends Thread {
      */
     private void read_warning() {
         List<String> LeggiFileElencoWarning = this.LeggiFileElenco(this.f_warning);
-        this.mf.setListWarning(LeggiFileElencoWarning);
+        this.Rm.setListWarning(LeggiFileElencoWarning);
 
     }
 
@@ -352,23 +336,23 @@ public class JFileWorker extends Thread {
      * Legge il file con la descrizione della configurazione della LAN
      */
     private void read_setup_lan() {
-        this.mf.AggiornaSetupLan(this.LeggiFileElenco(this.f_setup_lan));
+        this.Rm.AggiornaSetupLan(this.LeggiFileElenco(this.f_setup_lan));
     }
 
     /**
      * Legge il file con la descrizione della configurazione della WiFi
      */
     private void read_setup_wifi() {
-        this.mf.AggiornaSetupWiFi(this.LeggiFileElenco(this.f_setup_wifi));
+        this.Rm.AggiornaSetupWiFi(this.LeggiFileElenco(this.f_setup_wifi));
     }
 
     /**
      * Aggiona il contatore titi annullati
      */
     private void tiri_annullati() {
-        this.jworker.set_operation("tiri_annullati");
+        this.jDo_w.set_operation("tiri_annullati");
         try {
-            this.jworker.doInBackground();
+            this.jDo_w.doInBackground();
         } catch (Exception ex) {
             Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -389,12 +373,12 @@ public class JFileWorker extends Thread {
             run_system_bash(this.bash_cmd_verde);
             run_system_bash(this.bash_cmd_aria);
 //            mostra_curva();
-            this.mf.setin_errore(true);
-            this.mf.set_errore_tiro();
+            this.Rm.setin_errore(true);
+            this.Rm.set_errore_tiro();
         } else {
-            this.mf.setin_errore(false);
+            this.Rm.setin_errore(false);
         }
-        this.mf.setin_errore(si_o_no);
+        this.Rm.setin_errore(si_o_no);
     }
 
     /**
@@ -404,7 +388,7 @@ public class JFileWorker extends Thread {
 
         String line = this.LeggiFile(this.f_sensori);
         if (!line.equals("")) {
-            this.mf.update_sensori(line);
+            this.Rm.update_sensori(line);
         }
     }
 
@@ -462,9 +446,9 @@ public class JFileWorker extends Thread {
         this.mostra_stato_aria(0);
         this.read_nome_device();
         CancellaFile(Static.PATH_WATCH + "errore");
-        this.mf.set_jLabel_B_L("Main");
+        this.Rm.set_jLabel_B_L("Main");
 
-        this.mf.repaint();
+        this.Rm.repaint();
     }
 
     /**
@@ -492,17 +476,102 @@ public class JFileWorker extends Thread {
     }//End LeggiFile
 
     /**
+     * Metodo che utilizza il controllo del Lock per leggere una riga dal file
+     *
+     * @param NomeFile
+     * @return La riga letta del file
+     */
+    public String LeggiFileLock(String NomeFile) {
+        String stringaLetta = "";
+        RandomAccessFile file = null;
+        FileChannel channel = null;
+        FileLock lock = null;
+
+        try {
+            file = new RandomAccessFile(NomeFile, "r");
+            channel = file.getChannel();
+
+            try {
+                lock = channel.tryLock();
+            } catch (final OverlappingFileLockException e) {
+                file.close();
+                channel.close();
+                return "-2";
+            }
+            stringaLetta = file.readLine();
+            TimeUnit.HOURS.sleep(1);
+            lock.release();
+            file.close();
+            channel.close();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
+            return "-1";
+        } catch (IOException ee) {
+            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ee);
+            return "-1";
+        } catch (InterruptedException eee) {
+            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, eee);
+            return "-1";
+        }
+        return stringaLetta;
+    }
+
+    /**
+     * Metodo che utilizza il controllo del Lock per leggere una riga dal file
+     *
+     * @param NomeFile
+     * @return La riga letta del file
+     */
+    public List<String> LeggiFileElencoLock(String NomeFile) {
+        String stringaLetta;
+        RandomAccessFile file;
+        FileChannel channel;
+        FileLock lock;
+        List<String> ListaRighe = new ArrayList<>();
+
+        try {
+            file = new RandomAccessFile(NomeFile, "r");
+            channel = file.getChannel();
+
+            try {
+                lock = channel.tryLock();
+            } catch (final OverlappingFileLockException e) {
+                file.close();
+                channel.close();
+                return ListaRighe;
+            }
+            while ((stringaLetta = file.readLine()) != null) {
+                ListaRighe.add(stringaLetta);
+            }
+            TimeUnit.HOURS.sleep(1);
+            lock.release();
+            file.close();
+            channel.close();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
+            return ListaRighe;
+        } catch (IOException ee) {
+            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ee);
+            return ListaRighe;
+        } catch (InterruptedException eee) {
+            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, eee);
+            return ListaRighe;
+        }
+        return ListaRighe;
+    }
+
+    /**
      * LeggiFileLavoroInPausa /tmp/CT/inpausa
      */
     private void read_lavoro_in_pausa() {
-        this.mf.setInPausa(LeggiFile(this.f_in_pausa));
+        this.Rm.setInPausa(LeggiFile(this.f_in_pausa));
     }
 
     /**
      * LeggiSessione
      */
     private void LeggiSessione() {
-        this.mf.AggiornaSessione(LeggiFile(this.f_sessione));
+        this.Rm.AggiornaSessione(LeggiFile(this.f_sessione));
     }//End LeggiFileLavoriDescrizione
 
     /**
@@ -571,18 +640,18 @@ public class JFileWorker extends Thread {
             float min, max;
             min = Float.parseFloat(LeggiFile(f_soglia_pressione_aria_in_min));
             max = Float.parseFloat(LeggiFile(f_soglia_pressione_aria_in_max));
-            this.mf.update_soglie_pressione_aria_in(min, max);
+            this.Rm.update_soglie_pressione_aria_in(min, max);
         } catch (NumberFormatException e) {
             System.out.println("Contenuto dei file pressione_in non numerico !\n" + e.getMessage());
         }
     }
 
     private void mostra_curva() {
-        this.mf.setCurva(LeggiFile(this.f_curva));
+        this.Rm.setCurva(LeggiFile(this.f_curva));
     }
 
     private void read_lavoro_scelto() {
-        this.mf.setLavoroScelto(LeggiFile(S.F_LAVORO_SCELTO));
+        this.Rm.setLavoroScelto(LeggiFile(S.F_LAVORO_SCELTO));
     }
 
     /**
@@ -590,13 +659,13 @@ public class JFileWorker extends Thread {
      * record CT -> sn
      */
     private void read_nome_device() {
-        this.mf.setNomeDevice(LeggiFile(S.F_NOME_DEVICE));
+        this.Rm.setNomeDevice(LeggiFile(S.F_NOME_DEVICE));
     }
 
     private void lotti_ok() {
         try {
-            this.mf.set_nr_lotti_ok(Integer.parseInt(LeggiFile(this.f_lotti_ok)));
-            this.mf.update_tiri_lotti();    // aggiorna la visualizzazione
+            this.Rm.set_nr_lotti_ok(Integer.parseInt(LeggiFile(this.f_lotti_ok)));
+            this.Rm.update_tiri_lotti();    // aggiorna la visualizzazione
         } catch (NumberFormatException e) {
             System.out.println("Contenuto del file lotti_ok non numerico !\n" + e.getMessage());
         }
@@ -610,7 +679,7 @@ public class JFileWorker extends Thread {
      *
      */
     private void abort() {
-        ScriviFile(S.F_IN_STOP, "" + S.STATO_STOP);  //  stato di abort
+        ScriviFileLock(S.F_IN_STOP, "" + S.STATO_STOP);  //  stato di abort
     }
 
     /**
@@ -619,12 +688,12 @@ public class JFileWorker extends Thread {
      *
      */
     private void pausa() {
-        this.ScriviFile(S.F_IN_PAUSA, "" + S.STATO_PAUSA);
+        this.ScriviFileLock(S.F_IN_PAUSA, "" + S.STATO_PAUSA);
     }
 
     private void imposta_chiedi_conferma(boolean si_o_no) {
 
-        this.mf.setChiedi_conferma(si_o_no);
+        this.Rm.setChiedi_conferma(si_o_no);
     }
 
     /**
@@ -634,6 +703,13 @@ public class JFileWorker extends Thread {
      */
     public static void CancellaFile(String NomeFile) {
         File f = new File(Static.PATH_WATCH + NomeFile);
+        while (!f.canWrite()) {
+            try {
+                Thread.sleep(Static.ATTESA_SCRITTURA_FILE);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
         if (f.exists()) {
             if (!f.delete()) {
                 System.out.println("errore eliminando il file " + NomeFile);
@@ -642,6 +718,6 @@ public class JFileWorker extends Thread {
     }
 
     private void imposta_chiedi_conferma_stop(boolean si_o_no) {
-        this.mf.setChiedi_conferma_stop(si_o_no);
+        this.Rm.setChiedi_conferma_stop(si_o_no);
     }
 }
