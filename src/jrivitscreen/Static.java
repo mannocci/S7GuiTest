@@ -13,6 +13,8 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * Classe che contiene la variabili statiche in comune con i sorgenti.
+ * La classe va aggionata anche nel progetto JRivitControl
  */
 package jrivitscreen;
 
@@ -56,13 +58,14 @@ public class Static {
     final static String F_CHIEDI_CONFERMA_NO = "chiedi_conferma_no";
     final static String F_CHIEDI_CONFERMA_STOP = "chiedi_conferma_stop";
     static final String PATH_WATCH = "/tmp/CT/";
+    static long ATTESA_SCRITTURA_FILE = 1000L;
     
     public Static() {
         System.out.print("Istanziato variabili static e static final\n");
     }
     
     
-    public static int getF_STATO() {
+    public static int get_STATO() {
         return STATO;
     }
 
