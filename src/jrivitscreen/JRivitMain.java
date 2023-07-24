@@ -108,32 +108,37 @@ public class JRivitMain extends javax.swing.JFrame {
     public void setLavoro_concluso(boolean lavoro_concluso) {
         this.lavoro_concluso = lavoro_concluso;
     }
+//
+//    public final static String F_STATO = "stato";
+//
+//    final static String F_LAVORO_SCELTO = "lavoro_scelto";
+//    final static String F_RISPOSTA_TIRO_ERRATO = "risposta_tiro_errato";
+//    final static String F_CHIEDE_CONFERMA_NO = "chiedi_conferma_no";
+//    final static String F_IN_PAUSA = "in_pausa";
+//    final static String F_IN_STOP = "in_stop";
+//    final static String F_LAVORO_CONCLUSO = "lavoro_concluso";
+//    final static String F_LAVORO_AVVIATO = "lavoro_avviato";
+//    final static String F_TIRI = "tiri";
+//    final static String F_TIRI_OK = "tiri_ok";
+//    final static String F_TIRI_ERRATI = "tiri_errati";
+//    final static String F_TIRI_ANNULLATI = "tiri_annullati";
+//    final static String F_INFO = "info.txt";
+//    final static String F_SENSORI = "sensori";
+//    final static String F_WARNING = "warning.txt";
+//    final static String F_NOME_DEVICE = "nome_device";
+//    final static String F_ARIA = "aria";
+//    final static String F_ERRORE = "errore";
+//    final static String F_CHIEDI_CONFERMA_NO = "chiedi_conferma_no";
+//    final static String F_CHIEDI_CONFERMA_STOP = "chiedi_conferma_stop";
 
-    public final static String F_STATO = "stato";
-
-    final static String F_LAVORO_SCELTO = "lavoro_scelto";
-    final static String F_RISPOSTA_TIRO_ERRATO = "risposta_tiro_errato";
-    final static String F_CHIEDE_CONFERMA_NO = "chiedi_conferma_no";
-    final static String F_IN_PAUSA = "in_pausa";
-    final static String F_IN_STOP = "in_stop";
-    final static String F_LAVORO_CONCLUSO = "lavoro_concluso";
-    final static String F_LAVORO_AVVIATO = "lavoro_avviato";
-    final static String F_TIRI = "tiri";
-    final static String F_TIRI_OK = "tiri_ok";
-    final static String F_TIRI_ERRATI = "tiri_errati";
-    final static String F_TIRI_ANNULLATI = "tiri_annullati";
-    final static String F_INFO = "info.txt";
-    final static String F_SENSORI = "sensori";
-    final static String F_WARNING = "warning.txt";
-    final static String F_NOME_DEVICE = "nome_device";
-    static int STATO = 0;
-    final static int STATO_AVVIATO = 10;
-    final static int STATO_CONCLUSO = 12;
-    final static int STATO_PAUSA = 13;
-    final static int STATO_STOP = 14;
-    final static int CONTINUA = 1;
-    final static int ACCETTA = 2;
-    final static int ANNULLA = 3;
+//    static int STATO = 0;
+//    final static int STATO_AVVIATO = 10;
+//    final static int STATO_CONCLUSO = 12;
+//    final static int STATO_PAUSA = 13;
+//    final static int STATO_STOP = 14;
+//    final static int CONTINUA = 1;
+//    final static int ACCETTA = 2;
+//    final static int ANNULLA = 3;
 //    final static int ESTENDI = 4;
 
 //Dopo una sospensione
@@ -681,23 +686,23 @@ public class JRivitMain extends javax.swing.JFrame {
             case "dialog" -> {
                 //Pulsante Sì alla domanda ? Annulla ? Abort ?
                 //passa direttamente ad annullare lavoro
-                switch (STATO) {
-                    case ANNULLA -> {
+                switch (Static.STATO) {
+                    case Static.ANNULLA -> {
                         this.w_mf.set_operation("stato annulla");
 
                     }
-                    case CONTINUA -> {
+                    case Static.CONTINUA -> {
                         this.w_mf.set_operation("stato continua");
 
                     }
-                    case ACCETTA -> {
+                    case Static.ACCETTA -> {
                         this.w_mf.set_operation("stato accetta");
 
                     }
-                    case STATO_STOP -> {
+                    case Static.STATO_STOP -> {
                         this.w_mf.set_operation("stato stop");
                     }
-                    case STATO_PAUSA -> {
+                    case Static.STATO_PAUSA -> {
                         this.w_mf.set_operation("stato pausa");
 
                     }
@@ -737,7 +742,7 @@ public class JRivitMain extends javax.swing.JFrame {
             }
             case "started", "canvas" ->//Continua
             {
-                this.set_stato(CONTINUA);
+                this.set_stato(Static.CONTINUA);
                 if (isChiedi_conferma()) {
                     this.AlertDialogStop = "Continua ?";
                     this.jLabelDialog.setText(AlertDialogStop);
@@ -771,7 +776,7 @@ public class JRivitMain extends javax.swing.JFrame {
             }
             case "started", "canvas" ->//Accetta il tiro
             {
-                this.set_stato(ACCETTA);
+                this.set_stato(Static.ACCETTA);
                 if (this.isChiedi_conferma()) {
                     this.AlertDialogStop = "Accetta ?";
                     this.jLabelDialog.setText(AlertDialogStop);
@@ -805,7 +810,7 @@ public class JRivitMain extends javax.swing.JFrame {
 //          case "start" 
             //Per ora nulla
             case "started", "canvas" -> {//Annullare il tiro
-                this.set_stato(ANNULLA);
+                this.set_stato(Static.ANNULLA);
                 if (this.isChiedi_conferma()) {
                     this.AlertDialogStop = "Annulla ?";
                     this.jLabelDialog.setText(AlertDialogAnnulla);
@@ -829,7 +834,7 @@ public class JRivitMain extends javax.swing.JFrame {
             case "start", "warning", "info", "setup lan", "setup wifi" ->
                 PulsanteGiu();
             case "started", "canvas" -> {//Pausa del lavoro 
-                this.set_stato(STATO_STOP);
+                this.set_stato(Static.STATO_STOP);
                 if (this.isChiedi_conferma_stop()) {
 //                    DialogQ = STATO_PAUSA;
                     this.AlertDialogStop = "Pausa ?";
@@ -1888,7 +1893,7 @@ public class JRivitMain extends javax.swing.JFrame {
      * @return
      */
     private boolean isRichiestaStop() {
-        return (STATO == STATO_STOP) ? true : false;
+        return (Static.STATO == Static.STATO_STOP) ? true : false;
     }
 
     /**
@@ -1897,7 +1902,7 @@ public class JRivitMain extends javax.swing.JFrame {
      * @return
      */
     private boolean isRichiestaPausa() {
-        return (STATO == STATO_PAUSA) ? true : false;
+        return (Static.STATO == Static.STATO_PAUSA) ? true : false;
     }
 
     /**
@@ -1907,20 +1912,23 @@ public class JRivitMain extends javax.swing.JFrame {
      * @param stato
      */
     private void set_stato(int stato) {
-        STATO = stato;
+        Static.STATO = stato;
     }
-/**
- * Per la conferma di richiesta per lo STOP o PAUSA
- * @param si_o_no 
- */
+
+    /**
+     * Per la conferma di richiesta per lo STOP o PAUSA
+     *
+     * @param si_o_no
+     */
     void setChiedi_conferma_stop(boolean si_o_no) {
         this.chiedi_conferma_stop = si_o_no;
     }
-/**
- * 
- * @return si o no conferma alla scelta STOP o PAUSA
- */    
-    boolean isChiedi_conferma_stop(){
+
+    /**
+     *
+     * @return si o no conferma alla scelta STOP o PAUSA
+     */
+    boolean isChiedi_conferma_stop() {
         return this.chiedi_conferma_stop;
     }
 }

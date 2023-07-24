@@ -49,16 +49,16 @@ import java.util.Scanner;
  * @author lucamannocci
  */
 public class JFileWorker extends Thread {
-
+// Classi
     private final JRivitMain mf;
     private final JDoWorker jworker;
-    private static final String pathWatch = "/tmp/CT/";
+    private final Static S;
+    
+    
     private WatchService watcher;
     private Path fileName;
     private final String f_tiri = "tiri";
     private final String f_tiri_ok = "tiri_ok";
-    private final String f_tiri_errati = "tiri_errati";
-    private final String f_tiri_annullati = "tiri_annullati";
     private final String f_lotti_ok = "lotti_ok";
     private final String f_info = "info.txt";
     private final String f_warning = "warning.txt";
@@ -67,21 +67,16 @@ public class JFileWorker extends Thread {
     private final String f_lavori = "lavori.txt";
     private final String f_in_pausa = "in_pausa";
     // se il lavoro è in corso contiene "1"
-    private final String f_aria = "aria";
-    private final String f_curva_pronta = "curva_pronta";
     private final String f_curva = "curva";
-    private final String f_errore = "errore";
-    private final String f_risposta_tiro_errato = "risposta_tiro_errato";
     private final String f_sessione = "sessione";
     private final String f_sensori = "sensori";
-    private final String f_pressione_aria_in = "pressione_aria_in";
     private final String f_soglia_pressione_aria_in_min = "soglia_pressione_aria_in_min";
     private final String f_soglia_pressione_aria_in_max = "soglia_pressione_aria_in_max";
     String open = "255";
     String close = "0";
     String hw_aria = "4";
     String hw_led_rosso = "1", hw_led_giallo = "2", hw_led_verde = "3";
-    String Megaind_Program = "/home/adminsb/src/megaind-rpi/megaind";
+    String Megaind_Program = "/home/adminsb/bin/megaind";
     private String[] bash_cmd_rosso = {//Comanda led rosso
         this.Megaind_Program,
         "0",
@@ -111,13 +106,14 @@ public class JFileWorker extends Thread {
     public JFileWorker(JRivitMain mf, JDoWorker aThis) throws IOException {
         this.mf = mf;
         this.jworker = aThis;
+        this.S = new Static();
         // create gpio controller by file (run bash script before !)     
         try {
             watcher = FileSystems.getDefault().newWatchService();
         } catch (IOException ex) {
             Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
         }
-        Path dir = Paths.get(this.pathWatch);
+        Path dir = Paths.get(S.PATH_WATCH);
         dir.register(watcher, StandardWatchEventKinds.ENTRY_MODIFY,
                 StandardWatchEventKinds.ENTRY_CREATE,
                 StandardWatchEventKinds.ENTRY_DELETE);
@@ -153,25 +149,27 @@ public class JFileWorker extends Thread {
                 //System.out.println(kind.name() + ": " + fileName);
                 if (kind == StandardWatchEventKinds.ENTRY_CREATE) {
                     switch (fileName.toString()) {
-                        case "aria" ->
+                        case Static.F_ARIA ->
                             mostra_stato_aria(1);
-                        case "errore" ->
+                        case Static.F_ERRORE ->
                             errore(true);
-                        case "chiedi_conferma_no" ->
+                        case Static.F_CHIEDI_CONFERMA_NO ->
                             imposta_chiedi_conferma(true);
-                        case "chiedi_conferma_stop_no" ->
+                        case Static.F_CHIEDI_CONFERMA_STOP ->
                             imposta_chiedi_conferma_stop(true);                            
                     }
 
                 }
                 if (kind == StandardWatchEventKinds.ENTRY_DELETE) {
                     switch (fileName.toString()) {
-                        case "aria" ->
+                        case Static.F_ARIA ->
                             mostra_stato_aria(0);
-                        case "errore" ->
+                        case Static.F_ERRORE ->
                             errore(false);
-                        case "chiedi_conferma_no" ->
+                        case Static.F_CHIEDI_CONFERMA_NO ->
                             imposta_chiedi_conferma(false);
+                        case Static.F_CHIEDI_CONFERMA_STOP ->
+                            imposta_chiedi_conferma_stop(false);  
                     }
                 }
                 if (kind == StandardWatchEventKinds.ENTRY_MODIFY) {
@@ -329,7 +327,7 @@ public class JFileWorker extends Thread {
         List<String> ListaRighe = new ArrayList<>();
         try {
 
-            File myObj = new File(this.pathWatch + NomeFile);
+            File myObj = new File(Static.PATH_WATCH + NomeFile);
             if (myObj.exists()) {
                 try (Scanner myReader = new Scanner(myObj)) {
                     while (myReader.hasNextLine()) {
@@ -367,7 +365,7 @@ public class JFileWorker extends Thread {
         try {
             this.jworker.doInBackground();
         } catch (Exception ex) {
-            Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
+         Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -458,7 +456,7 @@ public class JFileWorker extends Thread {
         this.LeggiSessione();
         this.mostra_stato_aria(0);
         this.read_nome_device();
-        CancellaFile(pathWatch+"errore");
+        CancellaFile(Static.PATH_WATCH+"errore");
         this.mf.set_jLabel_B_L("Main");
         
         this.mf.repaint();
@@ -473,7 +471,7 @@ public class JFileWorker extends Thread {
     private String LeggiFile(String NomeFile) {
         String contenutoFile = "";
         try {
-            File myObj = new File(this.pathWatch + NomeFile);
+            File myObj = new File(Static.PATH_WATCH + NomeFile);
             if (myObj.exists()) {
                 try (Scanner myReader = new Scanner(myObj)) {
                     while (myReader.hasNextLine()) {
@@ -510,13 +508,13 @@ public class JFileWorker extends Thread {
      */
     public void ScriviFile(String NomeFile, String CosaScrivere) {
         try {
-            FileWriter fw = new FileWriter(this.pathWatch + NomeFile);
+            FileWriter fw = new FileWriter(Static.PATH_WATCH + NomeFile);
             PrintWriter pw = new PrintWriter(fw);
             pw.print(CosaScrivere);
             pw.flush();
             pw.close();
         } catch (IOException ex) {
-            Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -536,7 +534,7 @@ public class JFileWorker extends Thread {
     }
 
     private void read_lavoro_scelto() {
-        this.mf.setLavoroScelto(LeggiFile(JRivitMain.F_LAVORO_SCELTO));
+        this.mf.setLavoroScelto(LeggiFile(S.F_LAVORO_SCELTO));
     }
 
     /**
@@ -544,7 +542,7 @@ public class JFileWorker extends Thread {
      * registrato nel record CT -> sn
      */
     private void read_nome_device() {
-        this.mf.setNomeDevice(LeggiFile(JRivitMain.F_NOME_DEVICE));
+        this.mf.setNomeDevice(LeggiFile(S.F_NOME_DEVICE));
     }
 
     private void lotti_ok() {
@@ -564,7 +562,7 @@ public class JFileWorker extends Thread {
      *
      */
     private void abort() {
-        ScriviFile(JRivitMain.F_IN_STOP, "" + JRivitMain.STATO_STOP);  //  stato di abort
+        ScriviFile(S.F_IN_STOP, "" + S.STATO_STOP);  //  stato di abort
     }
 
     /**
@@ -573,7 +571,7 @@ public class JFileWorker extends Thread {
      *
      */
     private void pausa() {
-        this.ScriviFile(JRivitMain.F_IN_PAUSA, "" + JRivitMain.STATO_PAUSA);
+        this.ScriviFile(S.F_IN_PAUSA, "" + S.STATO_PAUSA);
     }
 
     private void imposta_chiedi_conferma(boolean si_o_no) {
@@ -586,7 +584,7 @@ public class JFileWorker extends Thread {
      * @param NomeFile
      */
     public static void CancellaFile(String NomeFile) {
-        File f = new File( pathWatch + NomeFile);
+        File f = new File( Static.PATH_WATCH + NomeFile);
         if (f.exists()) {
             if (!f.delete()) {
                 System.out.println("errore eliminando il file " + NomeFile);
