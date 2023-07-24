@@ -229,25 +229,17 @@ public class JFileWorker extends Thread {
      * Metodo per
      */
     private void tiri() {
-        this.jDo_w.set_operation(Static.F_TIRI);
+        String Tiri = LeggiFileLock(Static.F_TIRI);
         try {
-            this.jDo_w.doInBackground();
-        } catch (Exception ex) {
-            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
+            this.Rm.set_nr_tiri(Integer.parseInt(Tiri));
+        } catch (NumberFormatException e) {
+            System.out.println("File tiri_ok non numerico\n" + e.getMessage());
         }
-        // Viene fatto nella classe JDoWorker
-//        try {
-//            this.Rm.set_nr_tiri(Integer.parseInt(this.LeggiFile(Static.F_TIRI)));
-//            this.Rm.update_tiri_lotti();
-//        } catch (NumberFormatException e) {
-//            System.out.println("File tiri_ok non numerico\n" + e.getMessage());
-//        }
     }
 
     private void tiri_ok() {
         try {
-            this.Rm.set_nr_tiri_ok(Integer.parseInt(LeggiFile(f_tiri_ok)));
-            this.Rm.update_tiri_lotti();
+            this.Rm.set_nr_tiri_ok(Integer.parseInt(LeggiFileLock(Static.F_TIRI_OK)));
         } catch (NumberFormatException e) {
             System.out.println("File tiri_ok non numerico\n" + e.getMessage());
         }
@@ -255,7 +247,7 @@ public class JFileWorker extends Thread {
 
     private void mostra_stato_aria(int stato) {
 
-        if (stato == 0) {//Aria chiusa
+        if (stato == Static.ARIA_CHIUSA) {//Aria chiusa
             bash_cmd_aria[4] = this.close;
             bash_cmd_verde[4] = this.close;
             bash_cmd_rosso[4] = this.open;
@@ -280,7 +272,12 @@ public class JFileWorker extends Thread {
      * Errore_tiro legge nr tiri errati e li passa al RivitMain
      */
     private void tiri_errati() {
-        this.Rm.AggiornaTiriErrati();
+        String Tiri = LeggiFileLock(Static.F_TIRI_ERRATI);
+        try {
+            this.Rm.set_nr_tiri(Integer.parseInt(Tiri));
+        } catch (NumberFormatException e) {
+            System.out.println("File tiri_errati non numerico\n" + e.getMessage());
+        }
     }
 
     /**
@@ -294,7 +291,10 @@ public class JFileWorker extends Thread {
      * Legge il file con la descrizione delle info di sistema
      */
     private void read_info() {
-        List<String> LeggiFileElencoInfo = this.LeggiFileElencoLock(this.f_info);
+        List<String> LeggiFileElencoInfo = this.LeggiFileElencoLock(Static.F_INFO);
+        if (LeggiFileElencoInfo.isEmpty()) {
+            LeggiFileElencoInfo.add("Manca file Info");
+        }
         this.Rm.setListInfo(LeggiFileElencoInfo);
     }
 
@@ -302,7 +302,10 @@ public class JFileWorker extends Thread {
      * Legge il file con la descrizione dei JFileWorker
      */
     private void read_warning() {
-        List<String> LeggiFileElencoWarning = this.LeggiFileElencoLock(this.f_warning);
+        List<String> LeggiFileElencoWarning = this.LeggiFileElencoLock(Static.F_WARNING);
+        if (LeggiFileElencoWarning.isEmpty()) {
+            LeggiFileElencoWarning.add("Manca file Warning");
+        }
         this.Rm.setListWarning(LeggiFileElencoWarning);
 
     }
@@ -334,14 +337,16 @@ public class JFileWorker extends Thread {
     //End LeggiFileList
 
     /**
-     * Legge il file con la descrizione della configurazione della LAN
+     * Legge il file con la descrizione della configurazione della LAN DA FARE
+     * Leggere il DB è meglio
      */
     private void read_setup_lan() {
         this.Rm.AggiornaSetupLan(this.LeggiFileElencoLock(this.f_setup_lan));
     }
 
     /**
-     * Legge il file con la descrizione della configurazione della WiFi
+     * Legge il file con la descrizione della configurazione della WiFi Come
+     * sopra forse è meglio leggere il DB
      */
     private void read_setup_wifi() {
         this.Rm.AggiornaSetupWiFi(this.LeggiFileElencoLock(this.f_setup_wifi));
@@ -351,11 +356,11 @@ public class JFileWorker extends Thread {
      * Aggiona il contatore titi annullati
      */
     private void tiri_annullati() {
-        this.jDo_w.set_operation("tiri_annullati");
+        String Tiri = LeggiFileLock(Static.F_TIRI_ANNULLATI);
         try {
-            this.jDo_w.doInBackground();
-        } catch (Exception ex) {
-            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
+            this.Rm.set_nr_tiri_annullati(Integer.parseInt(Tiri));
+        } catch (NumberFormatException e) {
+            System.out.println("File tiri_ok non numerico\n" + e.getMessage());
         }
     }
 
@@ -386,11 +391,8 @@ public class JFileWorker extends Thread {
      * PressioneAria viene letta ogni secondo
      */
     private void AggiornaSensori() {
-
-        String line = this.LeggiFile(this.f_sensori);
-        if (!line.equals("")) {
-            this.Rm.update_sensori(line);
-        }
+        String line = this.LeggiFileLock(Static.F_SENSORI);
+        this.Rm.update_sensori(line);
     }
 
     /**
@@ -426,29 +428,28 @@ public class JFileWorker extends Thread {
     }
 
     /**
-     * inizializza i valori in base al contenuto dei file
+     * inizializza i valori in base al contenuto dei file Sono necessari: -
+     * lavori.txt; letto sul DB tabella "lavori", 4 campi: nome, lotti, pezzi,
+     * descrizione
+     *
      */
     public void initValues() {
-        this.AggiornaSensori();
-        this.tiri();
-        this.tiri_errati();
-//        this.tiri();
-        this.tiri_annullati();
-        //this.errore();
-        this.read_info();
-        this.read_warning();
-        this.read_setup_lan();
-        this.read_setup_wifi();
-        this.read_lavori();
-        this.read_lavoro_scelto();
-        this.read_lavoro_in_pausa();
-        //this.LeggiAriaInMinMax();
-        this.LeggiSessione();
-        this.mostra_stato_aria(0);
-        this.read_nome_device();
-        CancellaFile(Static.PATH_WATCH + "errore");
-        this.Rm.set_jLabel_B_L("Main");
+        this.AggiornaSensori();// Occorre che vi sia il batch avviato
+        this.legge_tutti_i_file_tiri();
 
+        this.read_info();// Se non esite il file imposta a stringa info
+        this.read_warning();// Se non esiste il file imposta a sringa warning
+        this.read_setup_lan();// Se non esiste il file imposta a DHCP
+        this.read_setup_wifi();// Se non esiste il file imposta a DHCP
+        this.read_lavori();//Se non essite il file imposta il default
+        this.read_lavoro_scelto();//Se non essite il file imposta a 0
+        this.read_lavoro_in_pausa();//Se non essite il file imposta non in pausa
+        //this.LeggiAriaInMinMax(); // Letto dal DB
+        this.LeggiSessione();// Se non essite il file imposta il file a "0"
+        this.mostra_stato_aria(Static.ARIA_CHIUSA);//Se non esiste il file imposta a "0"
+        this.read_nome_device();//Se non esiste il file imposta a CT-0000-00
+//        CancellaFile(Static.PATH_WATCH + "errore"); // Dovrebbe farlo COntrol
+        this.Rm.set_jLabel_B_L("Main");
         this.Rm.repaint();
     }
 
@@ -497,7 +498,7 @@ public class JFileWorker extends Thread {
             } catch (final OverlappingFileLockException e) {
                 file.close();
                 channel.close();
-                return "-2";
+                return "Errore";
             }
 
             stringaLetta = file.readLine();
@@ -507,10 +508,10 @@ public class JFileWorker extends Thread {
             channel.close();
         } catch (FileNotFoundException ex) {
             Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
-            return "-1";
+            return "Errore";
         } catch (IOException ee) {
             Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ee);
-            return "-1";
+            return "Errore";
         }
         return stringaLetta;
     }
@@ -564,14 +565,14 @@ public class JFileWorker extends Thread {
      * LeggiFileLavoroInPausa /tmp/CT/inpausa
      */
     private void read_lavoro_in_pausa() {
-        this.Rm.setInPausa(LeggiFile(this.f_in_pausa));
+        this.Rm.setInPausa(LeggiFileLock(Static.F_IN_PAUSA));
     }
 
     /**
      * LeggiSessione
      */
     private void LeggiSessione() {
-        this.Rm.AggiornaSessione(LeggiFile(this.f_sessione));
+        this.Rm.AggiornaSessione(LeggiFileLock(Static.F_SESSIONE));
     }//End LeggiFileLavoriDescrizione
 
     /**
@@ -604,53 +605,54 @@ public class JFileWorker extends Thread {
         RandomAccessFile file = null;
         FileChannel channel = null;
         FileLock lock = null;
-        this.ScriviFile(NomeFile, CosaScrivere);
-//        try {
-//            file = new RandomAccessFile(NomeFile, "rw");
-//            channel = file.getChannel();
-//
-//            try {
-//                lock = channel.lock(0, Long.MAX_VALUE, true);
-//            } catch (final OverlappingFileLockException e) {
-//                file.close();
-//                channel.close();
-//                return -2;
-//            }
-//
-//            // Convert text into byte array
-//            byte[] byteData = CosaScrivere.toString().getBytes("UTF-8");
-//
-//            // Create a ByteBuffer using the byte array
-//            ByteBuffer buffer = ByteBuffer.wrap(byteData);
-//
-//            // Write bytes to the file
-//            channel.write(buffer);
-////            file.seek(5);
-////            file.write(CosaScrivere.getBytes());
-////            file.writeChars(CosaScrivere);
-////            TimeUnit.HOURS.sleep(1);
-//            lock.release();
-//            file.close();
-//            channel.close();
-//        } catch (FileNotFoundException ex) {
-//            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
-//            return -1;
-//        } catch (IOException ee) {
-//            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ee);
+        //this.ScriviFile(NomeFile, CosaScrivere);
+        try {
+            file = new RandomAccessFile(NomeFile, "rw");
+            channel = file.getChannel();
+
+            try {
+                lock = channel.lock(0, Long.MAX_VALUE, true);
+            } catch (final OverlappingFileLockException e) {
+                file.close();
+                channel.close();
+                return -2;
+            }
+
+            // Convert text into byte array
+            byte[] byteData = CosaScrivere.getBytes("UTF-8");
+
+            // Create a ByteBuffer using the byte array
+            ByteBuffer buffer = ByteBuffer.wrap(byteData);
+
+            // Write bytes to the file
+            channel.write(buffer);
+//            file.seek(5);
+//            file.write(CosaScrivere.getBytes());
+//            file.writeChars(CosaScrivere);
+//            TimeUnit.HOURS.sleep(1);
+            file.close();
+            lock.release();
+
+            channel.close();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
+            return -1;
+        } catch (IOException ee) {
+            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ee);
+            return -1;
+        }
+//        catch (InterruptedException eee) {
+//            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, eee);
 //            return -1;
 //        }
-////        catch (InterruptedException eee) {
-////            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, eee);
-////            return -1;
-////        }
         return 0;
     }
 
     private void LeggiAriaInMinMax() {
         try {
             float min, max;
-            min = Float.parseFloat(LeggiFile(f_soglia_pressione_aria_in_min));
-            max = Float.parseFloat(LeggiFile(f_soglia_pressione_aria_in_max));
+            min = Float.parseFloat(LeggiFileLock(f_soglia_pressione_aria_in_min));
+            max = Float.parseFloat(LeggiFileLock(f_soglia_pressione_aria_in_max));
             this.Rm.update_soglie_pressione_aria_in(min, max);
         } catch (NumberFormatException e) {
             System.out.println("Contenuto dei file pressione_in non numerico !\n" + e.getMessage());
@@ -658,11 +660,11 @@ public class JFileWorker extends Thread {
     }
 
     private void mostra_curva() {
-        this.Rm.setCurva(LeggiFile(this.f_curva));
+        this.Rm.setCurva(LeggiFileLock(Static.F_CURVA));
     }
 
     private void read_lavoro_scelto() {
-        this.Rm.setLavoroScelto(LeggiFile(Static.F_LAVORO_SCELTO));
+        this.Rm.setLavoroScelto(LeggiFileLock(Static.F_LAVORO_SCELTO));
     }
 
     /**
@@ -670,12 +672,12 @@ public class JFileWorker extends Thread {
      * record CT -> sn
      */
     private void read_nome_device() {
-        this.Rm.setNomeDevice(LeggiFile(Static.F_NOME_DEVICE));
+        this.Rm.setNomeDevice(LeggiFileLock(Static.F_NOME_DEVICE));
     }
 
     private void lotti_ok() {
         try {
-            this.Rm.set_nr_lotti_ok(Integer.parseInt(LeggiFile(this.f_lotti_ok)));
+            this.Rm.set_nr_lotti_ok(Integer.parseInt(LeggiFileLock(Static.F_LOTTI_OK)));
             this.Rm.update_tiri_lotti();    // aggiorna la visualizzazione
         } catch (NumberFormatException e) {
             System.out.println("Contenuto del file lotti_ok non numerico !\n" + e.getMessage());
@@ -730,5 +732,18 @@ public class JFileWorker extends Thread {
 
     private void imposta_chiedi_conferma_stop(boolean si_o_no) {
         this.Rm.setChiedi_conferma_stop(si_o_no);
+    }
+
+    /**
+     * Metodo unico per leggere tutti i file correlati ai tiri altrimenti ci
+     * possono essere degli errori di file non esistenti che possono provurare
+     * dei calcoli errati
+     */
+    private void legge_tutti_i_file_tiri() {
+        this.tiri();// se non esiste il file (creato da Control, imposta a 0
+        this.tiri_errati();//se non esiste il file (creato da Control, imposta a 0
+        this.tiri_ok();//se non esiste il file (creato da Control, imposta a 0
+        this.tiri_annullati();//se non esiste il file (creato da Control, imposta a 0
+        this.Rm.update_tiri_lotti();
     }
 }

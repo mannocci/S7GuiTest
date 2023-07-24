@@ -100,53 +100,9 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     this.NomeDevice = file_worker.LeggiFileLock(this.f_nome_device);
                     this.r_main.setNomeDevice(this.NomeDevice);
                 }
-                case "tiri_errati" -> {
-                    String Tiri = file_worker.LeggiFileLock(Static.F_TIRI_ERRATI);
-                    try {
-                        this.r_main.set_nr_tiri(Integer.parseInt(Tiri));
-                        this.r_main.update_tiri_lotti();
-                    } catch (NumberFormatException e) {
-                        System.out.println("File tiri_ok non numerico\n" + e.getMessage());
-                    }
-                }
-                case Static.F_TIRI -> {
-                    String Tiri = file_worker.LeggiFileLock(Static.F_TIRI);
-                    try {
-                        this.r_main.set_nr_tiri(Integer.parseInt(Tiri));
-                        this.r_main.update_tiri_lotti();
-                    } catch (NumberFormatException e) {
-                        System.out.println("File tiri_ok non numerico\n" + e.getMessage());
-                    }
-                }
-                case "tiri_ok" -> {
-                    String Tiri = file_worker.LeggiFileLock(Static.F_TIRI_OK);
-                    try {
-                        this.r_main.set_nr_tiri_ok(Integer.parseInt(Tiri));
-                        this.r_main.update_tiri_lotti();
-                    } catch (NumberFormatException e) {
-                        System.out.println("File tiri_ok non numerico\n" + e.getMessage());
-                    }
-                }
-                case "tiri_annullati" -> {
-                    String Tiri = file_worker.LeggiFileLock(Static.F_TIRI_ANNULLATI);
-                    try {
-                        this.r_main.set_nr_tiri_annullati(Integer.parseInt(Tiri));
-                        this.r_main.update_tiri_lotti();
-                    } catch (NumberFormatException e) {
-                        System.out.println("File tiri_ok non numerico\n" + e.getMessage());
-                    }
-                }
+
                 case "risposta_attesa_tiro_errato" -> {
                     risposta_attesa_tiro_errato();
-                }
-                case "aggiorna_tiri_errati" -> {
-                    this.r_main.setjLabelErrati("" + file_worker.LeggiFileLock(this.f_tiri_errati));
-                }
-                case "aggiorna_tiri_annullati" -> {
-                    this.r_main.setjLabelAnnullati("" + file_worker.LeggiFileLock(this.f_tiri_annullati));
-                }
-                case "aggiorna_lotti_ok" -> {
-                    this.r_main.set_nr_lotti_ok(Integer.parseInt(file_worker.LeggiFileLock(f_lotti_ok)));
                 }
                 case Static.F_CURVA-> {
                     drawGrafico();

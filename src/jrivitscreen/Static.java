@@ -35,6 +35,7 @@ public class Static {
     final static int CONTINUA = 1;
     final static int ACCETTA = 2;
     final static int ANNULLA = 3;
+    final static int ARIA_CHIUSA = 0;
     
     // Nomi dei file
     final static String F_STATO = "stato";
@@ -59,8 +60,11 @@ public class Static {
     final static String F_CURVA = "curva";
     final static String F_CHIEDI_CONFERMA_NO = "chiedi_conferma_no";
     final static String F_CHIEDI_CONFERMA_STOP = "chiedi_conferma_stop";
+    final static String F_LOTTI_OK = "lotti_ok";
+    final static String F_SESSIONE = "sessione";
     static final String PATH_WATCH = "/tmp/CT/";
     static long ATTESA_SCRITTURA_FILE = 1000L;
+    
     
     
     
