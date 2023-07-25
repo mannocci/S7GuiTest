@@ -18,6 +18,8 @@
  */
 package jrivitscreen;
 
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
 /**
  * classe che contiene le variabili static final per i programmi
  * come i nomi dei file o di stati del sistema numerici
@@ -64,7 +66,6 @@ public class Static {
     final static String F_SESSIONE = "sessione";
     static final String PATH_WATCH = "/tmp/CT/";
     static long ATTESA_SCRITTURA_FILE = 1000L;
-    
     
     
     

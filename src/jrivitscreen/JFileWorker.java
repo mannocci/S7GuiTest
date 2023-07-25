@@ -22,13 +22,14 @@
 package jrivitscreen;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
-
+//import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -38,7 +39,9 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.nio.channels.OverlappingFileLockException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -78,6 +81,9 @@ public class JFileWorker extends Thread {
     private final String f_sensori = "sensori";
     private final String f_soglia_pressione_aria_in_min = "soglia_pressione_aria_in_min";
     private final String f_soglia_pressione_aria_in_max = "soglia_pressione_aria_in_max";
+    private static FileChannel fc;
+    private static RandomAccessFile randomAccessFile;
+
     String open = "255";
     String close = "0";
     String hw_aria = "4";
@@ -112,7 +118,6 @@ public class JFileWorker extends Thread {
     public JFileWorker(JRivitMain mf, JDoWorker aThis) throws IOException {
         this.Rm = mf;
         this.jDo_w = aThis;
-
         // create gpio controller by file (run bash script before !)     
         try {
             watcher = FileSystems.getDefault().newWatchService();
@@ -311,32 +316,6 @@ public class JFileWorker extends Thread {
     }
 
     /**
-     * LeggiFileElenco, legge il file e aggiorna una List awt
-     *
-     * @param NomeFile - Nome file da leggere come elenco
-     * @return List<String>
-     */
-    public List<String> LeggiFileElenco(String NomeFile) {
-        List<String> ListaRighe = new ArrayList<>();
-        try {
-
-            File myObj = new File(Static.PATH_WATCH + NomeFile);
-            if (myObj.exists()) {
-                try (Scanner myReader = new Scanner(myObj)) {
-                    while (myReader.hasNextLine()) {
-                        ListaRighe.add(myReader.nextLine());
-                    }
-                }
-            }
-        } catch (FileNotFoundException e) {
-            System.out.println("File non trovato " + NomeFile);
-            return ListaRighe;
-        }
-        return ListaRighe;
-    }
-    //End LeggiFileList
-
-    /**
      * Legge il file con la descrizione della configurazione della LAN DA FARE
      * Leggere il DB è meglio
      */
@@ -454,64 +433,42 @@ public class JFileWorker extends Thread {
     }
 
     /**
-     * LeggiFile Metodo utilizzato da più metodi per lettura del file
-     *
-     * @param NomeFile - Nome del file da leggere
-     * @return String - riga letta
-     */
-    private String LeggiFile(String NomeFile) {
-        String contenutoFile = "";
-        try {
-            File myObj = new File(Static.PATH_WATCH + NomeFile);
-            if (myObj.exists()) {
-                try (Scanner myReader = new Scanner(myObj)) {
-                    while (myReader.hasNextLine()) {
-                        contenutoFile += myReader.nextLine();
-                    }
-                }
-            }
-        } catch (FileNotFoundException e) {
-            System.out.println("File non trovato " + NomeFile);
-            return "Errore lettura file";
-        }
-        return contenutoFile;
-    }//End LeggiFile
-
-    /**
      * Metodo che utilizza il controllo del Lock per leggere una riga dal file
      *
      * @param NomeFile
      * @return La riga letta del file
      */
     public String LeggiFileLock(String NomeFile) {
-        String stringaLetta;
-        RandomAccessFile file;
-        FileChannel channel;
+        String stringaLetta = "";
         FileLock lock;
-        ByteBuffer dsts = null;
-
+        int bufferSize = 1024;
+        ByteArrayOutputStream out;
+        File inputFile = new File(Static.PATH_WATCH + NomeFile);
+        if (!inputFile.exists()) {
+            System.out.println("Il File " + inputFile.getAbsolutePath()
+                    + " non esiste\n");
+            return "";
+        }
         try {
-            file = new RandomAccessFile(Static.PATH_WATCH + NomeFile, "r");
-            channel = file.getChannel();
-            try {
-                lock = channel.lock(0, Long.MAX_VALUE, true);
-            } catch (final OverlappingFileLockException e) {
-                file.close();
-                channel.close();
-                return "Errore";
+            var channel = FileChannel.open(Paths.get(Static.PATH_WATCH + NomeFile),
+                    StandardOpenOption.READ);
+            do {
+                lock = channel.tryLock(0, Long.MAX_VALUE, true);
+            } while (lock != null);
+            if (bufferSize > channel.size()) {
+                bufferSize = (int) channel.size();
             }
-
-            stringaLetta = file.readLine();
-//            TimeUnit.HOURS.sleep(1);
+            ByteBuffer buff = ByteBuffer.allocate(bufferSize);
+            int noOfBytesRead = channel.read(buff);
+            if (noOfBytesRead > 0) {
+                stringaLetta = new String(buff.array(), StandardCharsets.UTF_8);
+            } else {
+                stringaLetta = "";
+            }
             lock.release();
-            file.close();
             channel.close();
-        } catch (FileNotFoundException ex) {
+        } catch (IOException ex) {
             Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
-            return "Errore";
-        } catch (IOException ee) {
-            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ee);
-            return "Errore";
         }
         return stringaLetta;
     }
@@ -523,41 +480,54 @@ public class JFileWorker extends Thread {
      * @return La riga letta del file
      */
     public List<String> LeggiFileElencoLock(String NomeFile) {
-        String stringaLetta;
-        RandomAccessFile file;
-        FileChannel channel;
-        FileLock lock;
-        List<String> ListaRighe = new ArrayList<>();
-
-        try {
-            file = new RandomAccessFile(Static.PATH_WATCH + NomeFile, "r");
-            channel = file.getChannel();
-
-            try {
-                lock = channel.lock(0, Long.MAX_VALUE, true);
-            } catch (final OverlappingFileLockException e) {
-                file.close();
-                channel.close();
-                return ListaRighe;
-            }
-            while ((stringaLetta = file.readLine()) != null) {
-                ListaRighe.add(stringaLetta);
-            }
-//            TimeUnit.HOURS.sleep(1);
-            lock.release();
-            file.close();
-            channel.close();
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
-            return ListaRighe;
-        } catch (IOException ee) {
-            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ee);
+        List<String> ListaRighe = null;
+        String[] righeLette;
+        int quanto_attendere = 0;
+        FileLock lock = null;
+        int bufferSize = 1024;
+        ByteArrayOutputStream out;
+        String stringaLetta = "";
+        fc = null;
+        File inputFile = new File(Static.PATH_WATCH + NomeFile);
+        if (!inputFile.exists()) {
+            System.out.println("Il File " + inputFile.getAbsolutePath()
+                    + " non esiste\n");
             return ListaRighe;
         }
-//        } catch (InterruptedException eee) {
-//            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, eee);
-//            return ListaRighe;
-//        }
+        try {
+            fc = FileChannel.open(Paths.get(Static.PATH_WATCH + NomeFile),
+                    StandardOpenOption.READ);
+            do {
+                lock = fc.tryLock(0, Long.MAX_VALUE, true);
+            } while (lock != null);
+//            if (bufferSize > channel.size()) {
+//                bufferSize = (int) channel.size();
+//            }
+//            ByteBuffer buff = ByteBuffer.allocate(bufferSize);
+//            int noOfBytesRead = channel.read(buff);
+//            if (noOfBytesRead > 0) {
+//                stringaLetta = new String(buff.array(), StandardCharsets.UTF_8);
+//            } else {
+//                stringaLetta = "";
+//            }
+
+        } catch (IOException ex) {
+            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {
+//            righeLette = stringaLetta.split("\n");
+            ListaRighe = Files.readAllLines(Paths.get(Static.PATH_WATCH + NomeFile), StandardCharsets.UTF_8);
+        } catch (IOException ex) {
+            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            System.out.println(Thread.currentThread().getName() + ": " + "Letto File elenco");
+            try {
+                lock.release();
+                fc.close();
+            } catch (IOException ex) {
+                Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
         return ListaRighe;
     }
 
@@ -581,17 +551,17 @@ public class JFileWorker extends Thread {
      * @param NomeFile
      * @param CosaScrivere String testo da scrivere nel file
      */
-    public void ScriviFile(String NomeFile, String CosaScrivere) {
-        try {
-            FileWriter fw = new FileWriter(Static.PATH_WATCH + NomeFile);
-            PrintWriter pw = new PrintWriter(fw);
-            pw.print(CosaScrivere);
-            pw.flush();
-            pw.close();
-        } catch (IOException ex) {
-            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
+//    public void ScriviFile(String NomeFile, String CosaScrivere) {
+//        try {
+//            FileWriter fw = new FileWriter(Static.PATH_WATCH + NomeFile);
+//            PrintWriter pw = new PrintWriter(fw);
+//            pw.print(CosaScrivere);
+//            pw.flush();
+//            pw.close();
+//        } catch (IOException ex) {
+//            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//    }
 
     /**
      * Metodo per la scrittura di file che possono essere scritti anche da altri
@@ -602,49 +572,33 @@ public class JFileWorker extends Thread {
      * @return
      */
     public int ScriviFileLock(String NomeFile, String CosaScrivere) {
-        RandomAccessFile file = null;
-        FileChannel channel = null;
         FileLock lock = null;
-        //this.ScriviFile(NomeFile, CosaScrivere);
+        ByteBuffer buffer;
         try {
-            file = new RandomAccessFile(NomeFile, "rw");
-            channel = file.getChannel();
-
-            try {
-                lock = channel.lock(0, Long.MAX_VALUE, true);
-            } catch (final OverlappingFileLockException e) {
-                file.close();
-                channel.close();
-                return -2;
+            fc = FileChannel.open(Paths.get(Static.PATH_WATCH + NomeFile),
+                    StandardOpenOption.WRITE, StandardOpenOption.CREATE);
+            do {
+                lock = fc.tryLock(0, Long.MAX_VALUE, true);
+            } while (lock != null);
+            buffer = ByteBuffer.wrap(CosaScrivere.getBytes());
+            buffer.put(CosaScrivere.toString().getBytes());
+            buffer.flip();
+            while (buffer.hasRemaining()) {
+                fc.write(buffer);
             }
-
-            // Convert text into byte array
-            byte[] byteData = CosaScrivere.getBytes("UTF-8");
-
-            // Create a ByteBuffer using the byte array
-            ByteBuffer buffer = ByteBuffer.wrap(byteData);
-
-            // Write bytes to the file
-            channel.write(buffer);
-//            file.seek(5);
-//            file.write(CosaScrivere.getBytes());
-//            file.writeChars(CosaScrivere);
-//            TimeUnit.HOURS.sleep(1);
-            file.close();
-            lock.release();
-
-            channel.close();
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException e) {
+            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, e);
             return -1;
-        } catch (IOException ee) {
-            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ee);
-            return -1;
+
+        } finally {
+            try {
+                lock.close();
+                fc.close();
+            } catch (IOException ex) {
+                Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
+                return -1;
+            }
         }
-//        catch (InterruptedException eee) {
-//            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, eee);
-//            return -1;
-//        }
         return 0;
     }
 
