@@ -102,6 +102,22 @@ public class JRivitMain extends javax.swing.JFrame {
     private boolean chiedi_conferma_stop;
     private List<String> elencoDesLavoro;
 
+    public List<String[]> getElencoLavoriArray() {
+        return elencoLavoriArray;
+    }
+
+    public void setElencoLavoriArray(List<String[]> elencoLavoriArray) {
+        this.elencoLavoriArray = elencoLavoriArray;
+    }
+
+    public List<String> getElencoDesLavoro() {
+        return elencoDesLavoro;
+    }
+
+    public void setElencoDesLavoro(List<String> elencoDesLavoro) {
+        this.elencoDesLavoro = elencoDesLavoro;
+    }
+
     public boolean isLavoro_concluso() {
         return lavoro_concluso;
     }
@@ -1219,8 +1235,8 @@ public class JRivitMain extends javax.swing.JFrame {
     }
 
     public void setLavoroScelto(String lavoroScelto) {
-        if(lavoroScelto.contains("Errore")){
-            lavoroScelto="0";
+        if (lavoroScelto.contains("Errore")) {
+            lavoroScelto = "0";
         }
         this.lavoroScelto = lavoroScelto;
     }
@@ -1390,15 +1406,8 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     public void AggiornaWarning(List<String> lista) {
         this.listWarning.removeAll();
-        List<String> elencoTxt = new ArrayList<>();
-        for (String riga : lista) {
-            String[] lavoroSplit = riga.split("§");
-            this.elencoLavoriArray.add(lavoroSplit);
-            elencoTxt.add(lavoroSplit[0] + " " + lavoroSplit[1] + " " + lavoroSplit[2]);
-        }
-        RefreshList(this.listWarning, elencoTxt);
-//        this.listWarning.repaint();
-
+        RefreshList(this.listWarning, lista);
+        this.listWarning.repaint();
     }//End AggiornaInfo
 
     /**
@@ -1428,7 +1437,10 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     public void AggiornaLavori(List<String> lista) {
         this.listLavori.removeAll();
-        if(lista.isEmpty()){
+        if (lista.isEmpty()) {
+            lista.add("Lavoro senza limiti§Lotti=-1§Pezzi=-1§Lavoro predefinito senza limiti");
+        }
+        if (lista.contains("Errore")) {
             lista.add("Lavoro senza limiti§Lotti=-1§Pezzi=-1§Lavoro predefinito senza limiti");
         }
         List<String> elencoTxt = new ArrayList<>();
@@ -1441,7 +1453,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 this.elencoDesLavoro.add(lavoroSplit[3]);
             }
         }
-        RefreshList(listLavori, elencoTxt);
+        RefreshList(listLavori, lista);
     }//End AggiornaLavori
 
     /**
@@ -1450,7 +1462,7 @@ public class JRivitMain extends javax.swing.JFrame {
      * @param sessione
      */
     public void AggiornaSessione(String sessione) {
-        if(sessione.contains("Errore")){
+        if (sessione.contains("Errore")) {
             sessione = "0";
         }
         this.sessione = sessione;
@@ -1551,7 +1563,7 @@ public class JRivitMain extends javax.swing.JFrame {
      * visualizza i dati aggiornati
      */
     public void update_tiri_lotti() {
-        
+
         this.jLabelValidi.setText("" + nr_tiri_ok);
 
         if (this.nr_tiri_da_fare == -1) {
@@ -1611,8 +1623,6 @@ public class JRivitMain extends javax.swing.JFrame {
         this.nr_tiri = Tiri_fatti;
     }
 
-
-
     /**
      * metodo AggiornaTiriAnnullati aggiorna la Label centrale alla base del
      * panel
@@ -1652,11 +1662,13 @@ public class JRivitMain extends javax.swing.JFrame {
             }
         }//end Else
     }
+
     /**
-     * Aggiorna valori della soglia min e max dell'ingresso della'aria
-     * va letto dal DB tabella CT
+     * Aggiorna valori della soglia min e max dell'ingresso della'aria va letto
+     * dal DB tabella CT
+     *
      * @param SogliaMin
-     * @param SogliaMax 
+     * @param SogliaMax
      */
     public void update_soglie_pressione_aria_in(Float SogliaMin, Float SogliaMax) {
         this.sogliaMin = SogliaMin;
@@ -1709,7 +1721,7 @@ public class JRivitMain extends javax.swing.JFrame {
      * @param nd Nome del device letto dal file nome_device.txt
      */
     public void setNomeDevice(String nd) {
-        if(nd.contains("Errore")){
+        if (nd.contains("Errore")) {
             nd = "CT-0000-00";
         }
         this.jLabelNomeDevice.setText(nd);
@@ -1766,6 +1778,10 @@ public class JRivitMain extends javax.swing.JFrame {
     }
 
     public void setListInfo(List Info) {
+        if(this.pressione_aria_in == null){
+            listInfo.add("Errore lettura file Info");
+            return;
+        }
         this.listInfo.removeAll();
         try {
             listInfo.add("P. aria in ingresso: " + this.pressione_aria_in.toString() + " bar");
@@ -1851,7 +1867,7 @@ public class JRivitMain extends javax.swing.JFrame {
     }
 
     public void setInPausa(String inPausa) {
-        if(inPausa.contains("Errore")){
+        if (inPausa.contains("Errore")) {
             inPausa = "0";
         }
         this.inPausa = inPausa;
