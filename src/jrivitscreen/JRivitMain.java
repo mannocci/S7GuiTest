@@ -895,6 +895,8 @@ public class JRivitMain extends javax.swing.JFrame {
             case "start" -> {
                 try {
                     //Scelta lavoro
+                    this.lavoroScelto = this.listLavori.getSelectedItem().substring(0
+                            ,(this.listLavori.getSelectedItem().indexOf("Lotti")-1));
                     this.esegui("scegli_e_avvia");
 //                    this.esegui("lavoro_scelto");
 //                    this.esegui("start");

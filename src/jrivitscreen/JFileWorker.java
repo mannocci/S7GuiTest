@@ -24,11 +24,15 @@ package jrivitscreen;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 //import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import static java.lang.Runtime.getRuntime;
 import java.nio.ByteBuffer;
@@ -46,6 +50,7 @@ import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 /**
  *
@@ -168,7 +173,7 @@ public class JFileWorker extends Thread {
                         case Static.F_IN_STOP ->
                             aggiornaStop();
                         case "killScreen" ->
-                            this.Rm.exit(); 
+                            this.Rm.exit();
                         case "risposta_tiro_errato_continua" -> {
                             this.Rm.setin_errore(false);
                             this.Rm.aggiornaDaErroreTiro();
@@ -352,7 +357,7 @@ public class JFileWorker extends Thread {
 
     /**
      * Metodo che imposta la variabile booleana <in_errore> di JRivitMain
-     * 
+     *
      *
      * @param si_o_no
      */
@@ -433,111 +438,6 @@ public class JFileWorker extends Thread {
     }
 
     /**
-     * Metodo che utilizza il controllo del Lock per leggere una riga dal file
-     *
-     * @param NomeFile
-     * @return La riga letta del file
-     */
-    public String LeggiFileLock(String NomeFile) {
-        String stringaLetta = "";
-        FileLock lock;
-        int bufferSize = 1024;
-        ByteArrayOutputStream out;
-        File inputFile = new File(Static.PATH_WATCH + NomeFile);
-        if (!inputFile.exists()) {
-            System.out.println("Il File " + inputFile.getAbsolutePath()
-                    + " non esiste\n");
-            stringaLetta = "errore lettura File " + NomeFile;
-            return stringaLetta;
-        }
-        try {
-            var channel = FileChannel.open(Paths.get(Static.PATH_WATCH + NomeFile),
-                    StandardOpenOption.READ);
-//            do {
-//                lock = channel.tryLock(0, Long.MAX_VALUE, true);
-//            } while (lock != null);
-            if (bufferSize > channel.size()) {
-                bufferSize = (int) channel.size();
-            }
-            ByteBuffer buff = ByteBuffer.allocate(bufferSize);
-            int noOfBytesRead = channel.read(buff);
-            if (noOfBytesRead > 0) {
-                stringaLetta = new String(buff.array(), StandardCharsets.UTF_8);
-            } else {
-                stringaLetta = "errore lettura File " + NomeFile;
-            }
-//            lock.release();
-            channel.close();
-        } catch (IOException ex) {
-            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
-            stringaLetta = "errore lettura File " + NomeFile;
-        }
-        return stringaLetta;
-    }
-
-    /**
-     * Metodo che utilizza il controllo del Lock per leggere una riga dal file
-     *
-     * @param NomeFile
-     * @return La riga letta del file
-     */
-    public List<String> LeggiFileElencoLock(String NomeFile) {
-        List<String> ListaRighe = new ArrayList<>();
-        String[] righeLette;
-        int quanto_attendere = 0;
-        FileLock lock = null;
-        int bufferSize = 1024;
-        ByteArrayOutputStream out;
-        String stringaLetta = "";
-        fc = null;
-        try {
-            File inputFile = new File(Static.PATH_WATCH + NomeFile);
-            if (!inputFile.exists()) {
-                System.out.println("Il File " + inputFile.getAbsolutePath()
-                        + " non esiste\n");
-                ListaRighe.add("errore lettura File " + NomeFile);
-                return ListaRighe;
-            }
-
-            fc = FileChannel.open(Paths.get(Static.PATH_WATCH + NomeFile),
-                    StandardOpenOption.READ);
-//            do {
-//                lock = fc.tryLock(0, Long.MAX_VALUE, true);
-//            } while (lock != null);
-//            if (bufferSize > channel.size()) {
-//                bufferSize = (int) channel.size();
-//            }
-//            ByteBuffer buff = ByteBuffer.allocate(bufferSize);
-//            int noOfBytesRead = channel.read(buff);
-//            if (noOfBytesRead > 0) {
-//                stringaLetta = new String(buff.array(), StandardCharsets.UTF_8);
-//            } else {
-//                stringaLetta = "";
-//            }
-
-        } catch (IOException ex) {
-            ListaRighe.add("errore lettura File " + NomeFile);
-            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        try {
-//            righeLette = stringaLetta.split("\n");
-            ListaRighe = Files.readAllLines(Paths.get(Static.PATH_WATCH + NomeFile), StandardCharsets.UTF_8);
-        } catch (IOException ex) {
-            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
-            ListaRighe.add("errore lettura File " + NomeFile);
-        } finally {
-            //System.out.println(Thread.currentThread().getName() + ": " + "Letto File elenco");
-            try {
-//                lock.release();
-                fc.close();
-            } catch (IOException ex) {
-                Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        return ListaRighe;
-    }
-
-    /**
      * LeggiFileLavoroInPausa /tmp/CT/inpausa
      */
     private void readLavoroInPausa() {
@@ -569,43 +469,131 @@ public class JFileWorker extends Thread {
 //        }
 //    }
     /**
-     * Metodo per la scrittura di file che possono essere scritti anche da altri
-     * in concorrenza
-     *
-     * @param NomeFile
-     * @param CosaScrivere
+     * Metodo per fare il lock del file "alla vecchia" ;-)
+     * se non essite<nomFile>.lock lo scrive blocccando così il file
      * @return
      */
-    public int ScriviFileLock(String NomeFile, String CosaScrivere) {
-//        FileLock lock = null;
-        ByteBuffer buffer;
-        try {
-            fc = FileChannel.open(Paths.get(Static.PATH_WATCH + NomeFile),
-                    StandardOpenOption.WRITE, StandardOpenOption.CREATE);
-//            do {
-//                lock = fc.tryLock(0, Long.MAX_VALUE, true);
-//            } while (lock != null);
-            buffer = ByteBuffer.wrap(CosaScrivere.getBytes());
-            buffer.put(CosaScrivere.getBytes());
-            buffer.flip();
-            while (buffer.hasRemaining()) {
-                fc.write(buffer);
+    public static boolean LockFile(String NomeFile) {
+        File inputFile = new File(Static.PATH_WATCH + NomeFile + ".lok");
+        if (inputFile.exists()) {
+            while (inputFile.exists()) {//Attesa che si liberi il file
+                try {
+                    Thread.sleep(150);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
+                    return false;
+                }
             }
-            System.out.println("Scritto file "+NomeFile+"\ncontenente \""+CosaScrivere+"\"");
-        } catch (IOException e) {
-            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, e);
-            return -1;
-
-        } finally {
             try {
-//                lock.close();
-                fc.close();
+                FileWriter fw = new FileWriter(Static.PATH_WATCH + NomeFile + ".lok");
+                try (PrintWriter pw = new PrintWriter(fw)) {
+                    pw.print("1");
+                    pw.flush();
+                }
             } catch (IOException ex) {
                 Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
-                return -1;
             }
         }
+        return true;
+    }
+
+    /**
+     * Libera il lock cancellando <nomeFile>.lock
+     *
+     * @param NomeFile
+     */
+    public void unlockFile(String NomeFile) {
+        CancellaFile(NomeFile + ".lok");
+    }
+
+    /**
+     * scrive in un file
+     *
+     * @param NomeFile
+     * @param Testo String testo da scrivere nel file
+     */
+    public int ScriviFileLock(String NomeFile, String Testo) {
+        boolean lock = LockFile(NomeFile);
+        if (lock) {
+            try {
+                FileWriter fw = new FileWriter(Static.PATH_WATCH + NomeFile);
+                try (PrintWriter pw = new PrintWriter(fw)) {
+                    pw.print(Testo);
+                    pw.flush();
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
+                CancellaFile(NomeFile + ".lok");
+                return -1;
+            }
+            CancellaFile(NomeFile + ".lok");
+        }
         return 0;
+    }
+
+    /**
+     * Metodo che utilizza il controllo del Lock per leggere una riga dal file
+     *
+     * @param NomeFile
+     * @return La riga letta del file
+     */
+    public List<String> LeggiFileElencoLock(String NomeFile) {
+        List<String> ListaRighe = new ArrayList<>();
+        boolean lock;
+        try {
+            File inputFile = new File(Static.PATH_WATCH + NomeFile);
+            if (!inputFile.exists()) {
+                System.out.println("Il File " + inputFile.getAbsolutePath()
+                        + " non esiste\n");
+                ListaRighe.add("errore lettura File " + NomeFile);
+                return ListaRighe;
+            }
+            lock = LockFile(NomeFile);
+            if (lock) {
+                ListaRighe = Files.readAllLines(Paths.get(Static.PATH_WATCH + NomeFile), StandardCharsets.UTF_8);
+                CancellaFile(NomeFile + ".lok");
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
+            CancellaFile(NomeFile + ".lok");
+            return ListaRighe;
+        }
+        return ListaRighe;
+    }
+
+    /**
+     * Metodo che utilizza il controllo del Lock per leggere una riga dal file
+     *
+     * @param NomeFile
+     * @return La riga letta del file
+     */
+    public String LeggiFileLock(String NomeFile) {
+        String contenutoFile = "";
+        Scanner myReader;
+        boolean lock;
+        try {
+            File inputFile = new File(Static.PATH_WATCH + NomeFile);
+            if (!inputFile.exists()) {
+                System.out.println("Il File " + inputFile.getAbsolutePath()
+                        + " non esiste\n");
+                contenutoFile = "errore lettura File " + NomeFile;
+                return contenutoFile;
+            }
+            lock = LockFile(NomeFile);
+            if (lock) {
+                FileReader fr = new FileReader(Static.PATH_WATCH + NomeFile);
+                myReader = new Scanner(fr);
+                while (myReader.hasNextLine()) {
+                    contenutoFile += myReader.nextLine();
+                }
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
+            CancellaFile(NomeFile + ".lok");
+            return "";
+        }
+        CancellaFile(NomeFile + ".lok");
+        return contenutoFile;
     }
 
     private void LeggiAriaInMinMax() {
