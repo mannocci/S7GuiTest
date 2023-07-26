@@ -27,17 +27,16 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  */
 public class Static {
     
-    //Variabile aggiornata
-    static int STATO = 0;
     //Variabili final (non modificabili)
-    final static int STATO_AVVIATO = 10;
-    final static int STATO_CONCLUSO = 12;
-    final static int STATO_PAUSA = 13;
-    final static int STATO_STOP = 14;
-    final static int CONTINUA = 1;
-    final static int ACCETTA = 2;
-    final static int ANNULLA = 3;
-    final static int ARIA_CHIUSA = 0;
+    final static String STATO_AVVIATO = "10";
+    final static String STATO_CONCLUSO = "12";
+    final static String STATO_PAUSA = "13";
+    final static String STATO_STOP = "14";
+    final static String CONTINUA = "1";
+    final static String ACCETTA = "2";
+    final static String ANNULLA = "3";
+    final static String ARIA_CHIUSA = "0";
+    final static String ARIA_APERTA = "1";    
     
     // Nomi dei file
     final static String F_STATO = "stato";
@@ -49,13 +48,15 @@ public class Static {
     final static String F_LAVORI = "lavori.txt";
     final static String F_LAVORO_CONCLUSO = "lavoro_concluso";
     final static String F_LAVORO_AVVIATO = "lavoro_avviato";
-    final static String F_TIRI = "tiri";
+    final static String F_TIRI_NEL_LOTTO = "tiri_nel_lotto";
     final static String F_TIRI_OK = "tiri_ok";
     final static String F_TIRI_ERRATI = "tiri_errati";
     final static String F_TIRI_ANNULLATI = "tiri_annullati";
     final static String F_INFO = "info.txt";
     final static String F_SENSORI = "sensori";
     final static String F_WARNING = "warning.txt";
+    final static String F_SETUP_LAN = "setup_lan.txt";
+    final static String F_SETUP_WIFI = "setup_wifi.txt";
     final static String F_NOME_DEVICE = "nome_device";
     final static String F_ARIA = "aria";
     final static String F_ERRORE = "errore";
@@ -68,17 +69,8 @@ public class Static {
     static long ATTESA_SCRITTURA_FILE = 1000L;
     
     
-    
     public Static() {
         System.out.print("Istanziato variabili static e static final\n");
     }
-    
-    
-    public static int get_STATO() {
-        return STATO;
-    }
 
-    public static void set_STATO(int STATO) {
-        Static.STATO = STATO;
-    }
 }

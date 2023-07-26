@@ -43,7 +43,7 @@ import java.util.logging.Logger;
  */
 public class JDoWorker extends SwingWorker<String, Object> {
 
-    JRivitMain r_main;
+    JRivitMain Rm;
     JFileWorker file_worker;
     ButtonThread bt;
     private String operation = "";
@@ -70,9 +70,9 @@ public class JDoWorker extends SwingWorker<String, Object> {
 
     JDoWorker(JRivitMain mf) {
         try {
-            this.r_main = mf;
-            this.file_worker = new JFileWorker(this.r_main, this);
-            this.bt = new ButtonThread(this.r_main);
+            this.Rm = mf;
+            this.file_worker = new JFileWorker(this.Rm, this);
+            this.bt = new ButtonThread(this.Rm);
             dateFormat = new SimpleDateFormat("HH:mm");
             now = Calendar.getInstance();
         } catch (IOException ex) {
@@ -84,36 +84,56 @@ public class JDoWorker extends SwingWorker<String, Object> {
     protected String doInBackground() throws Exception {
         try {
             switch (this.operation) {
-                case "start" -> {
+                
+                case "init" -> {
                     this.bt.start();//Gestione dei pulsanti
                     this.file_worker.start();//Avvio FileWorker
                     this.file_worker.initValues();
                 }
-                case "stato_stop", "stato_pausa" -> {
-                    this.r_main.PanelStart();
-                }
-                case "continua", "accetta", "annulla" -> {
 
-                    this.r_main.ritorno_da_errore();
+                case "stop" -> {
+                    file_worker.ScriviFileLock(Static.F_STATO, Static.STATO_STOP);
                 }
+
+                case "pausa" -> {
+                    file_worker.ScriviFileLock(Static.F_STATO, Static.STATO_PAUSA);
+                }
+
+                case "start" -> {
+                    file_worker.ScriviFileLock(Static.F_STATO, Static.STATO_AVVIATO);
+                }
+
+                case "continua", "accetta", "annulla" -> {
+                    file_worker.ScriviFileLock(Static.F_RISPOSTA_TIRO_ERRATO + "_" + this.operation, this.operation);
+                }
+
                 case "aggiorna_nome_device" -> {
                     this.NomeDevice = file_worker.LeggiFileLock(this.f_nome_device);
-                    this.r_main.setNomeDevice(this.NomeDevice);
+                    this.Rm.setNomeDevice(this.NomeDevice);
                 }
 
                 case "risposta_attesa_tiro_errato" -> {
                     risposta_attesa_tiro_errato();
                 }
-                case Static.F_CURVA-> {
+                
+                case Static.F_CURVA -> {
                     drawGrafico();
                 }
+                
                 case "lavoro_scelto" -> {
-                    String lavoro = this.r_main.getLavoroScelto();
+                    String lavoro = this.Rm.getLavoroScelto();
                     this.file_worker.ScriviFileLock(Static.F_LAVORO_SCELTO, lavoro);
-                    this.file_worker.ScriviFileLock(Static.F_LAVORO_AVVIATO, "");
-                    this.file_worker.ScriviFileLock(Static.F_ARIA, "");
-                    //Aggiornare leggendo il DB i campi della ricetta DA FARE
+                    this.Rm.setin_errore(false);
+                    //Aggiornare leggendo il DB i campi della ricetta DA FARE IN Control !!
                 }
+
+                case "scegli_e_avvia" -> {
+                    String lavoro = this.Rm.getLavoroScelto();
+                    this.file_worker.ScriviFileLock(Static.F_LAVORO_SCELTO, lavoro);
+                    this.Rm.setin_errore(false);
+                    file_worker.ScriviFileLock(Static.F_STATO, Static.STATO_AVVIATO);
+                }
+                
                 case "aggiorna info" -> {
                     List<String> lista_info = this.file_worker.LeggiFileElencoLock(Static.F_INFO);
                     List<String> lista_sensori = this.file_worker.LeggiFileElencoLock(Static.F_SENSORI);
@@ -121,8 +141,9 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     for (String string : lista_sensori) {
                         lista_info.add(string);
                     }
-                    this.r_main.setListInfo(lista_info);
+                    this.Rm.setListInfo(lista_info);
                 }
+                
                 case "aggiorna warning" -> {
                     List<String> warning_file = this.file_worker.LeggiFileElencoLock(Static.F_WARNING);
                     int livello_warning = 0, livello = 0, posizione_riga = 0;
@@ -135,24 +156,25 @@ public class JDoWorker extends SwingWorker<String, Object> {
                         }
                         warning_file.set(posizione_riga++, string + ", livello -> " + livello);
                     }
-                    this.r_main.set_warning(livello_warning);//Aggiorna l'immagine warning
-                    this.r_main.AggiornaWarning(warning_file);//Aggiorna lista descizioni warning
+                    this.Rm.set_warning(livello_warning);//Aggiorna l'immagine warning
+                    this.Rm.AggiornaWarning(warning_file);//Aggiorna lista descizioni warning
                 }
+                
                 case "orario" -> {
 
                     Date orario = now.getTime();
                     //this.dateFormat.setTimeZone(TimeZone.getTimeZone("Europe/London"));
-                    this.r_main.set_jLabel_B_L(this.dateFormat.format(orario));
-                    this.r_main.repaint();
+                    this.Rm.set_jLabel_B_L(this.dateFormat.format(orario));
+                    this.Rm.repaint();
                 }
+                
                 case "grafico" -> {
                     this.drawGrafico();
                 }
-                        
             }
         } catch (NumberFormatException ex) {
             Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
-            throw new UnsupportedOperationException("Errore " + ex.getMessage()); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+            throw new UnsupportedOperationException("Errore conversione numerica " + this.operation); 
         }
         return "ok";
     }
@@ -162,11 +184,11 @@ public class JDoWorker extends SwingWorker<String, Object> {
     }
 
     private void drawGrafico() {
-//        this.r_main.jLayeredPaneCenter.moveToFront(this.jPanelCanvas);
-        Graphics2D gr = (Graphics2D) this.r_main.getjLayeredPaneCenter().getGraphics();
+//        this.Rm.jLayeredPaneCenter.moveToFront(this.jPanelCanvas);
+        Graphics2D gr = (Graphics2D) this.Rm.getjLayeredPaneCenter().getGraphics();
         gr.drawString("Java Source", 10, 10);
-        int y = this.r_main.getjLayeredPaneCenter().getHeight();
-        String[] ychar = this.r_main.getCurva().split(",");
+        int y = this.Rm.getjLayeredPaneCenter().getHeight();
+        String[] ychar = this.Rm.getCurva().split(",");
         int nPoints;
         nPoints = ychar.length;
         int[] ypoints = new int[nPoints];
@@ -179,10 +201,10 @@ public class JDoWorker extends SwingWorker<String, Object> {
             gr.setStroke(new BasicStroke(3));
             gr.setColor(Color.GREEN);
             gr.drawPolyline(xpoints, ypoints, nPoints);
-            this.r_main.getjLayeredPaneCenter().repaint();
+            this.Rm.getjLayeredPaneCenter().repaint();
             gr.drawString("Java Source", 10, 10);
         }
-        this.r_main.setCurva(file_worker.LeggiFileLock("curva"));
+        this.Rm.setCurva(file_worker.LeggiFileLock("curva"));
 
     }
 
@@ -192,16 +214,16 @@ public class JDoWorker extends SwingWorker<String, Object> {
         // stesso l'interfaccia si adeguerà automaticamente
         switch (file_worker.LeggiFileLock(f_risposta_tiro_errato)) {
             case "1" -> //Continua non devo contare il tiro come ok
-                this.r_main.reset_errore_tiro();
+                this.Rm.aggiornaDaErroreTiro();
             case "4" -> //Annulla
-                this.r_main.setAlertDialogStop("Annullare il Tiro ?");
+                this.Rm.setAlertDialogStop("Annullare il Tiro ?");
             case "2" -> // Estendi
             {
                 // Estendi
-                this.r_main.reset_errore_tiro();
-                int t = Integer.parseInt(this.r_main.getjLabelValidi());
+                this.Rm.aggiornaDaErroreTiro();
+                int t = Integer.parseInt(this.Rm.getjLabelValidi());
                 t++;
-                this.r_main.setjLabelValidi("" + t);
+                this.Rm.setjLabelValidi("" + t);
             }
             case "3" -> // Accetta, come se fosse stato un tiro ok
             {
@@ -210,9 +232,6 @@ public class JDoWorker extends SwingWorker<String, Object> {
 
         }
     }
-
-
-
 
     /**
      *
