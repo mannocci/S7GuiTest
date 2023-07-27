@@ -99,6 +99,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private int tiri_annullati;
     private boolean chiedi_conferma_stop;
     private List<String> elencoDesLavoro;
+    private int w_level;
 
     public List<String[]> getElencoLavoriArray() {
         return elencoLavoriArray;
@@ -305,7 +306,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelNomeDevice.setText("Nome Device");
         jPanelStarted.add(jLabelNomeDevice, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 8, 315, 30));
 
-        jLabelNomeLavoro.setFont(new java.awt.Font("DejaVu Sans Condensed", 1, 18)); // NOI18N
+        jLabelNomeLavoro.setFont(new java.awt.Font("DejaVu Sans Condensed", 1, 24)); // NOI18N
         jLabelNomeLavoro.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelNomeLavoro.setText("Nome Lavoro");
         jPanelStarted.add(jLabelNomeLavoro, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 45, 315, 30));
@@ -614,6 +615,7 @@ public class JRivitMain extends javax.swing.JFrame {
      * @param w_level livello di warning
      */
     public void set_warning(int w_level) {
+        this.w_level = w_level;
         switch (w_level) {
             case 0 ->
                 this.Img_Warning = this.Img_No_Warning;
@@ -895,8 +897,8 @@ public class JRivitMain extends javax.swing.JFrame {
             case "start" -> {
                 try {
                     //Scelta lavoro
-                    this.lavoroScelto = this.listLavori.getSelectedItem().substring(0
-                            ,(this.listLavori.getSelectedItem().indexOf("Lotti")-1));
+                    this.lavoroScelto = this.listLavori.getSelectedItem().substring(0,
+                             (this.listLavori.getSelectedItem().indexOf("Lotti") - 1));
                     this.esegui("scegli_e_avvia");
 //                    this.esegui("lavoro_scelto");
 //                    this.esegui("start");
@@ -1168,7 +1170,7 @@ public class JRivitMain extends javax.swing.JFrame {
         String lavoro = this.listLavori.getSelectedItem();
         int idLavoro = this.listLavori.getSelectedIndex();
         this.lavoroScelto = this.elencoLavoriArray.get(idLavoro)[0];
-        this.jLabelNomeLavoro.setText(lavoro);
+        this.jLabelNomeLavoro.setText(this.lavoroScelto);
         String[] det_nr_lotti = this.elencoLavoriArray.get(idLavoro)[1].split("=");
         String[] det_nr_tiri = this.elencoLavoriArray.get(idLavoro)[2].split("=");
         try {
@@ -1795,22 +1797,21 @@ public class JRivitMain extends javax.swing.JFrame {
     public void setListWarning(List Warning) {
         this.listWarning.removeAll();
         int g = 0;
-        int g_tmp = 0;
         String[] s;
         try {
             for (int c = 0; c < Warning.size(); c++) {
                 s = Warning.get(c).toString().split("§");
-                g_tmp = Integer.parseInt(s[1]);
                 this.listWarning.add(s[0]);
-                if (g_tmp > g) {
-                    g = g_tmp;
+                if (s.length > 1) {
+                    g = Integer.parseInt(s[1]);
+                    if (g >= this.w_level) {
+                        this.set_warning(g);
+                    }
                 }
             }
         } catch (NumberFormatException e) {
             System.out.print("Errore setListWarning");
         }
-
-        this.set_warning(g);
     }
 
     public void setListLavori(String[] lista_lavori) {

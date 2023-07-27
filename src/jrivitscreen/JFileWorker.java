@@ -22,9 +22,7 @@
 package jrivitscreen;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.logging.Level;
@@ -35,15 +33,12 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import static java.lang.Runtime.getRuntime;
-import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-import java.nio.channels.FileLock;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
@@ -174,10 +169,6 @@ public class JFileWorker extends Thread {
                             aggiornaStop();
                         case "killScreen" ->
                             this.Rm.exit();
-                        case "risposta_tiro_errato_continua" -> {
-                            this.Rm.setin_errore(false);
-                            this.Rm.aggiornaDaErroreTiro();
-                        }
                     }
 
                 }
@@ -191,6 +182,12 @@ public class JFileWorker extends Thread {
                             impostaChiediConferma(false);
                         case Static.F_CHIEDI_CONFERMA_STOP ->
                             impostaChiediConfermaStop(false);
+                        case Static.F_RISPOSTA_TIRO_ERRATO_CONTINUA,
+                                Static.F_RISPOSTA_TIRO_ERRATO_ACCETTA,
+                                Static.F_RISPOSTA_TIRO_ERRATO_ANNULLA -> {
+                            this.Rm.setin_errore(false);
+                            this.Rm.aggiornaDaErroreTiro();
+                        }
 
                     }
                 }
@@ -287,7 +284,6 @@ public class JFileWorker extends Thread {
     private void tiriErrati() {
         String Tiri = LeggiFileLock(Static.F_TIRI_ERRATI).replace("\n", "");
         try {
-            this.Rm.set_nr_tiri(Integer.parseInt(Tiri));
             this.Rm.setjLabelErrati("" + Tiri);
             this.Rm.update_tiri_lotti();
         } catch (NumberFormatException e) {
