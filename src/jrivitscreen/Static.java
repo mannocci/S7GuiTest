@@ -21,12 +21,13 @@ package jrivitscreen;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
- * classe che contiene le variabili static final per i programmi
- * come i nomi dei file o di stati del sistema numerici
+ * classe che contiene le variabili static final per i programmi come i nomi dei
+ * file o di stati del sistema numerici
+ *
  * @author luca
  */
 public class Static {
-    
+
     //Variabili final (non modificabili)
     final static String STATO_AVVIATO = "10";
     final static String STATO_CONCLUSO = "12";
@@ -36,10 +37,11 @@ public class Static {
     final static String ACCETTA = "2";
     final static String ANNULLA = "3";
     final static String ARIA_CHIUSA = "0";
-    final static String ARIA_APERTA = "1";    
-    
+    final static String ARIA_APERTA = "1";
+
     // Nomi dei file
     final static String F_STATO = "stato";
+    final static String F_AGGIORNATO_STATO = "aggiornato_stato";
     final static String F_LAVORO_SCELTO = "lavoro_scelto";
     final static String F_RISPOSTA_TIRO_ERRATO = "risposta_tiro_errato";
     final static String F_RISPOSTA_TIRO_ERRATO_CONTINUA = "risposta_tiro_errato_continua";
@@ -49,6 +51,7 @@ public class Static {
     final static String F_IN_PAUSA = "in_pausa";
     final static String F_IN_STOP = "in_stop";
     final static String F_LAVORI = "lavori.txt";
+    final static String F_AGGIORNATO_LAVORI = "aggiornato_lavori";
     final static String F_LAVORO_CONCLUSO = "lavoro_concluso";
     final static String F_LAVORO_AVVIATO = "lavoro_avviato";
     final static String F_TIRI_NEL_LOTTO = "tiri_nel_lotto";
@@ -70,8 +73,7 @@ public class Static {
     final static String F_SESSIONE = "sessione";
     static final String PATH_WATCH = "/tmp/CT/";
     static long ATTESA_SCRITTURA_FILE = 1000L;
-    
-    
+
     public Static() {
         System.out.print("Istanziato variabili static e static final\n");
     }

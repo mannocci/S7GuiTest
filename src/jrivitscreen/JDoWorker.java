@@ -93,14 +93,17 @@ public class JDoWorker extends SwingWorker<String, Object> {
 
                 case "stop" -> {
                     file_worker.ScriviFileLock(Static.F_STATO, Static.STATO_STOP);
+                    file_worker.ScriviFileLock(Static.F_AGGIORNATO_STATO, Static.STATO_STOP);
                 }
 
                 case "pausa" -> {
                     file_worker.ScriviFileLock(Static.F_STATO, Static.STATO_PAUSA);
+                    file_worker.ScriviFileLock(Static.F_AGGIORNATO_STATO, Static.STATO_STOP);
                 }
 
                 case "start" -> {
                     file_worker.ScriviFileLock(Static.F_STATO, Static.STATO_AVVIATO);
+                    file_worker.ScriviFileLock(Static.F_AGGIORNATO_STATO, Static.STATO_STOP);
                 }
 
                 case "continua", "accetta", "annulla" -> {
@@ -120,18 +123,19 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     drawGrafico();
                 }
                 
-                case "lavoro_scelto" -> {
-                    String lavoro = this.Rm.getLavoroScelto();
-                    this.file_worker.ScriviFileLock(Static.F_LAVORO_SCELTO, lavoro);
-                    this.Rm.setin_errore(false);
-                    //Aggiornare leggendo il DB i campi della ricetta DA FARE IN Control !!
-                }
+//                case "lavoro_scelto" -> {
+//                    String lavoro = this.Rm.getLavoroScelto();
+//                    this.file_worker.ScriviFileLock(Static.F_LAVORO_SCELTO, lavoro);
+//                    this.Rm.setin_errore(false);
+//                    //Aggiornare leggendo il DB i campi della ricetta DA FARE IN Control !!
+//                }
 
                 case "scegli_e_avvia" -> {
                     String lavoro = this.Rm.getLavoroScelto();
                     this.file_worker.ScriviFileLock(Static.F_LAVORO_SCELTO, lavoro);
                     this.Rm.setin_errore(false);
                     file_worker.ScriviFileLock(Static.F_STATO, Static.STATO_AVVIATO);
+                    file_worker.ScriviFileLock(Static.F_AGGIORNATO_STATO, Static.STATO_AVVIATO);
                 }
                 
                 case "aggiorna info" -> {
