@@ -671,7 +671,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 } else {
                     try {
                         //passa direttamente ad annullare lavoro
-                        esegui("stato stop");
+                        esegui("stop");
 //                    gestioneDialogRisposte(STATO_STOP);
                         this.PanelStart();
                         this.set_jLabel_B_L("Start");

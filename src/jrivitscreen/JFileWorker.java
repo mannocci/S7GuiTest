@@ -39,7 +39,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardWatchEventKinds;
+import static java.nio.file.StandardWatchEventKinds.*;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
@@ -118,9 +118,8 @@ public class JFileWorker extends Thread {
             Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
         }
         Path dir = Paths.get(Static.PATH_WATCH);
-        dir.register(watcher, StandardWatchEventKinds.ENTRY_MODIFY,
-                StandardWatchEventKinds.ENTRY_CREATE,
-                StandardWatchEventKinds.ENTRY_DELETE);
+        dir.register(watcher, ENTRY_MODIFY,ENTRY_CREATE,
+                ENTRY_DELETE);
         try {
             Thread.sleep(2000);//Attesa 2" per allocazione Classi
         } catch (InterruptedException ex) {
@@ -151,7 +150,7 @@ public class JFileWorker extends Thread {
                 WatchEvent<Path> ev = (WatchEvent<Path>) event;
                 fileName = ev.context();
                 //System.out.println(kind.name() + ": " + fileName);
-                if (kind == StandardWatchEventKinds.ENTRY_CREATE) {
+                if (kind == ENTRY_CREATE) {
                     switch (fileName.toString()) {
                         case Static.F_ARIA ->
                             mostraStatoAria(Static.ARIA_APERTA);
@@ -172,7 +171,7 @@ public class JFileWorker extends Thread {
                     }
 
                 }
-                if (kind == StandardWatchEventKinds.ENTRY_DELETE) {
+                if (kind == ENTRY_DELETE) {
                     switch (fileName.toString()) {
                         case Static.F_ARIA ->
                             mostraStatoAria(Static.ARIA_CHIUSA);
@@ -191,7 +190,7 @@ public class JFileWorker extends Thread {
 
                     }
                 }
-                if (kind == StandardWatchEventKinds.ENTRY_MODIFY) {
+                if (kind == ENTRY_MODIFY) {
                     switch (fileName.toString()) {
                         case Static.F_TIRI_NEL_LOTTO ->
                             tiri();
