@@ -47,22 +47,11 @@ public class JDoWorker extends SwingWorker<String, Object> {
     JFileWorker file_worker;
     ButtonThread bt;
     private String operation = "";
-    private int tiriAnnullati = 0;
-    private int tiriOK = 0;
-    private final String pathWatch = "/tmp/CT/";
     private DateFormat dateFormat;
     private Calendar now;
-    private final String f_tiri = "tiri";
-    private final String f_tiri_ok = "tiri_ok";
-    private final String f_tiri_errati = "tiri_errati";
-    private final String f_tiri_annullati = "tiri_annullati";
-    private final String f_lotti_ok = "lotti_ok";
-    private final String f_errore = "errore";
     // se il lavoro è in corso contiene "1"
     private final String f_risposta_tiro_errato = "risposta_tiro_errato";
     private final String f_nome_device = "nome_device";
-    private final String f_aria = "aria";
-    private final String f_sensori = "sensori";
     private String NomeDevice;
     private int tiriErrati;
     private long Pid;
