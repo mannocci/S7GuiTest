@@ -62,7 +62,6 @@ public class JFileWorker extends Thread {
     private final String f_tiri = "tiri";
     private final String f_tiri_ok = "tiri_ok";
     private final String f_lotti_ok = "lotti_ok";
-    private final String f_info = "info.txt";
     private final String f_warning = "warning.txt";
     private final String f_setup_lan = "setup_lan.txt";
     private final String f_setup_wifi = "setup_wifi.txt";
@@ -118,7 +117,7 @@ public class JFileWorker extends Thread {
             Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
         }
         Path dir = Paths.get(Static.PATH_WATCH);
-        dir.register(watcher, ENTRY_MODIFY,ENTRY_CREATE,
+        dir.register(watcher, ENTRY_MODIFY, ENTRY_CREATE,
                 ENTRY_DELETE);
         try {
             Thread.sleep(2000);//Attesa 2" per allocazione Classi
@@ -154,6 +153,8 @@ public class JFileWorker extends Thread {
                     switch (fileName.toString()) {
                         case Static.F_ARIA ->
                             mostraStatoAria(Static.ARIA_APERTA);
+                        case Static.F_CONTATORI_AGGIORNATI ->
+                            aggiornaContatori();
                         case Static.F_ERRORE ->
                             errore(true);
                         case Static.F_CHIEDI_CONFERMA_NO ->
@@ -181,27 +182,16 @@ public class JFileWorker extends Thread {
                             impostaChiediConferma(false);
                         case Static.F_CHIEDI_CONFERMA_STOP ->
                             impostaChiediConfermaStop(false);
-                        case Static.F_RISPOSTA_TIRO_ERRATO_CONTINUA,
-                                Static.F_RISPOSTA_TIRO_ERRATO_ACCETTA,
+                        case Static.F_RISPOSTA_TIRO_ERRATO_CONTINUA, 
+                                Static.F_RISPOSTA_TIRO_ERRATO_ACCETTA, 
                                 Static.F_RISPOSTA_TIRO_ERRATO_ANNULLA -> {
-                            this.Rm.setin_errore(false);
+                            this.Rm.setInErrore(false);
                             this.Rm.aggiornaDaErroreTiro();
                         }
-
                     }
                 }
                 if (kind == ENTRY_MODIFY) {
                     switch (fileName.toString()) {
-                        case Static.F_TIRI_NEL_LOTTO ->
-                            tiri();
-                        case Static.F_TIRI_OK ->
-                            tiriOk();
-                        case Static.F_TIRI_ERRATI ->
-                            tiriErrati();
-                        case Static.F_TIRI_ANNULLATI ->
-                            tiriAnnullati();
-                        case Static.F_LOTTI_OK ->
-                            lottiOk();
                         case Static.F_SENSORI, Static.F_INFO ->
                             readInfo();
                         case Static.F_WARNING ->
@@ -230,29 +220,6 @@ public class JFileWorker extends Thread {
         }
     }
 
-    /**
-     * Metodo per
-     */
-    private void tiri() {
-        String Tiri = LeggiFileLock(Static.F_TIRI_NEL_LOTTO).replace("\n", "");
-        try {
-            this.Rm.set_nr_tiri(Integer.parseInt(Tiri));
-            this.Rm.update_tiri_lotti();
-        } catch (NumberFormatException e) {
-            System.out.println("File tiri_ok non numerico\n" + e.getMessage());
-        }
-    }
-
-    private void tiriOk() {
-        String Tiri = LeggiFileLock(Static.F_TIRI_OK).replace("\n", "");
-        try {
-            this.Rm.set_nr_tiri_ok(Integer.parseInt(Tiri));
-            this.Rm.setjLabelValidi("" + Tiri);
-            this.Rm.update_tiri_lotti();
-        } catch (NumberFormatException e) {
-            System.out.println("File tiri_ok non numerico\n" + e.getMessage());
-        }
-    }
 
     private void mostraStatoAria(String stato) {
 
@@ -274,19 +241,6 @@ public class JFileWorker extends Thread {
             run_system_bash(bash_cmd_aria);
             this.Rm.aria_aperta();
 
-        }
-    }
-
-    /**
-     * Errore_tiro legge nr tiri errati e li passa al RivitMain
-     */
-    private void tiriErrati() {
-        String Tiri = LeggiFileLock(Static.F_TIRI_ERRATI).replace("\n", "");
-        try {
-            this.Rm.setjLabelErrati("" + Tiri);
-            this.Rm.update_tiri_lotti();
-        } catch (NumberFormatException e) {
-            System.out.println("File tiri_errati non numerico\n" + e.getMessage());
         }
     }
 
@@ -337,20 +291,6 @@ public class JFileWorker extends Thread {
     }
 
     /**
-     * Aggiona il contatore titi annullati
-     */
-    private void tiriAnnullati() {
-        String Tiri = LeggiFileLock(Static.F_TIRI_ANNULLATI).replace("\n", "");
-        try {
-            this.Rm.set_nr_tiri_annullati(Integer.parseInt(Tiri));
-            this.Rm.setjLabelAnnullati("" + Tiri);
-            this.Rm.update_tiri_lotti();
-        } catch (NumberFormatException e) {
-            System.out.println("File tiri_ok non numerico\n" + e.getMessage());
-        }
-    }
-
-    /**
      * Metodo che imposta la variabile booleana <in_errore> di JRivitMain
      *
      *
@@ -361,9 +301,9 @@ public class JFileWorker extends Thread {
 //            mostra_curva();
             this.Rm.set_errore_tiro();
         } else {
-            this.Rm.setin_errore(false);
+            this.Rm.setInErrore(false);
         }
-        this.Rm.setin_errore(si_o_no);
+        this.Rm.setInErrore(si_o_no);
     }
 
     /**
@@ -414,7 +354,7 @@ public class JFileWorker extends Thread {
      */
     public void initValues() {
         this.aggiornaSensori();// Occorre che vi sia il batch avviato
-        this.legge_tutti_i_file_tiri();
+        this.aggiornaContatori();
         this.readLavori();//Se non essite il file imposta il default
         this.readInfo();// Se non esite il file imposta a stringa info
         this.readWarning();// Se non esiste il file imposta a sringa warning
@@ -427,7 +367,7 @@ public class JFileWorker extends Thread {
         this.LeggiSessione();// Se non essite il file imposta il file a "0"
         this.mostraStatoAria(Static.ARIA_CHIUSA);//Se non esiste il file imposta a "0"
         this.readNomeDevice();//Se non esiste il file imposta a CT-0000-00
-        CancellaFile(Static.PATH_WATCH + "errore"); // Dovrebbe farlo COntrol
+        cancellaFileLock(Static.PATH_WATCH + "errore"); // Dovrebbe farlo COntrol
         this.Rm.set_jLabel_B_L("Main");
         this.Rm.repaint();
     }
@@ -464,8 +404,9 @@ public class JFileWorker extends Thread {
 //        }
 //    }
     /**
-     * Metodo per fare il lock del file "alla vecchia" ;-)
-     * se non essite<nomFile>.lock lo scrive blocccando così il file
+     * Metodo per fare il lock del file "alla vecchia" ;-) se non
+     * essite<nomFile>.lock lo scrive blocccando così il file
+     *
      * @return
      */
     public static boolean LockFile(String NomeFile) {
@@ -498,7 +439,7 @@ public class JFileWorker extends Thread {
      * @param NomeFile
      */
     public void unlockFile(String NomeFile) {
-        CancellaFile(NomeFile + ".lok");
+        cancellaFileLock(NomeFile + ".lok");
     }
 
     /**
@@ -507,7 +448,8 @@ public class JFileWorker extends Thread {
      * @param NomeFile
      * @param Testo String testo da scrivere nel file
      */
-    public int ScriviFileLock(String NomeFile, String Testo) {
+    public static int ScriviFileLock(String NomeFile, String Testo) {
+        cancellaFile(NomeFile);
         boolean lock = LockFile(NomeFile);
         if (lock) {
             try {
@@ -518,10 +460,10 @@ public class JFileWorker extends Thread {
                 }
             } catch (IOException ex) {
                 Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
-                CancellaFile(NomeFile + ".lok");
+                cancellaFileLock(NomeFile + ".lok");
                 return -1;
             }
-            CancellaFile(NomeFile + ".lok");
+            cancellaFileLock(NomeFile + ".lok");
         }
         return 0;
     }
@@ -532,7 +474,7 @@ public class JFileWorker extends Thread {
      * @param NomeFile
      * @return La riga letta del file
      */
-    public List<String> LeggiFileElencoLock(String NomeFile) {
+    public static List<String> LeggiFileElencoLock(String NomeFile) {
         List<String> ListaRighe = new ArrayList<>();
         boolean lock;
         try {
@@ -546,11 +488,11 @@ public class JFileWorker extends Thread {
             lock = LockFile(NomeFile);
             if (lock) {
                 ListaRighe = Files.readAllLines(Paths.get(Static.PATH_WATCH + NomeFile), StandardCharsets.UTF_8);
-                CancellaFile(NomeFile + ".lok");
+                cancellaFileLock(NomeFile + ".lok");
             }
         } catch (IOException ex) {
             Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
-            CancellaFile(NomeFile + ".lok");
+            cancellaFileLock(NomeFile + ".lok");
             return ListaRighe;
         }
         return ListaRighe;
@@ -562,7 +504,7 @@ public class JFileWorker extends Thread {
      * @param NomeFile
      * @return La riga letta del file
      */
-    public String LeggiFileLock(String NomeFile) {
+    public static String LeggiFileLock(String NomeFile) {
         String contenutoFile = "";
         Scanner myReader;
         boolean lock;
@@ -584,10 +526,10 @@ public class JFileWorker extends Thread {
             }
         } catch (IOException ex) {
             Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
-            CancellaFile(NomeFile + ".lok");
+            cancellaFileLock(NomeFile + ".lok");
             return "";
         }
-        CancellaFile(NomeFile + ".lok");
+        cancellaFileLock(NomeFile + ".lok");
         return contenutoFile;
     }
 
@@ -656,11 +598,11 @@ public class JFileWorker extends Thread {
     }
 
     /**
-     * cancela un file
+     * cancella un file
      *
      * @param NomeFile
      */
-    public static void CancellaFile(String NomeFile) {
+    public static void cancellaFileLock(String NomeFile) {
         File f = new File(Static.PATH_WATCH + NomeFile);
         while (f.canWrite()) {
             try {
@@ -676,22 +618,40 @@ public class JFileWorker extends Thread {
         }
     }
 
+    /**
+     * cancella un file
+     *
+     * @param NomeFile
+     */
+    public static void cancellaFile(String NomeFile) {
+        File f = new File(Static.PATH_WATCH + NomeFile);
+        if (f.exists()) {
+            if (!f.delete()) {
+                System.out.println("errore eliminando il file " + NomeFile);
+            }
+        }
+    }
+
     private void impostaChiediConfermaStop(boolean si_o_no) {
         this.Rm.setChiedi_conferma_stop(si_o_no);
     }
 
-    /**
-     * Metodo unico per leggere tutti i file correlati ai tiri altrimenti ci
-     * possono essere degli errori di file non esistenti che possono provurare
-     * dei calcoli errati
-     */
-    private void legge_tutti_i_file_tiri() {
-        this.tiri();// se non esiste il file (creato da Control, imposta a 0
-        this.lottiOk();//Se non esiste imposta 1
-        this.tiriErrati();//se non esiste il file (creato da Control, imposta a 0
-        this.tiriOk();//se non esiste il file (creato da Control, imposta a 0
+    private void aggiornaContatori() {
+        String testo = LeggiFileLock(Static.F_CONTATORI);
+        String [] contatori = testo.split(",");
+        try {
+            this.Rm.setLotto(Integer.parseInt(contatori[0]));
+            this.Rm.setTiriNelLotto(Integer.parseInt(contatori[1]));
+            this.Rm.setTiriValidi(Integer.parseInt(contatori[2]));
+            this.Rm.setTiriAnnullati(Integer.parseInt(contatori[3]));
+            this.Rm.setTiriErrati(Integer.parseInt(contatori[4]));
+            this.Rm.setTiriTotali(Integer.parseInt(contatori[5]));
 
-        this.tiriAnnullati();//se non esiste il file (creato da Control, imposta a 0
-        this.Rm.update_tiri_lotti();
+            // aggiorna la visualizzazione dei contatori nel pannello
+            this.Rm.aggiornaContatori();
+            cancellaFile(Static.F_CONTATORI_AGGIORNATI);
+        } catch (NumberFormatException e) {
+            System.out.println("File contatori contiene valori non numerici\n" + e.getMessage());
+        }
     }
 }

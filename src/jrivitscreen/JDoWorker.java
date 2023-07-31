@@ -92,26 +92,26 @@ public class JDoWorker extends SwingWorker<String, Object> {
                 }
 
                 case "stop" -> {
-                    file_worker.ScriviFileLock(Static.F_STATO, Static.STATO_STOP);
-                    file_worker.ScriviFileLock(Static.F_AGGIORNATO_STATO, Static.STATO_STOP);
+                    JFileWorker.ScriviFileLock(Static.F_STATO, Static.STATO_STOP);
+                    JFileWorker.ScriviFileLock(Static.F_AGGIORNATO_STATO, Static.STATO_STOP);
                 }
 
                 case "pausa" -> {
-                    file_worker.ScriviFileLock(Static.F_STATO, Static.STATO_PAUSA);
-                    file_worker.ScriviFileLock(Static.F_AGGIORNATO_STATO, Static.STATO_STOP);
+                    JFileWorker.ScriviFileLock(Static.F_STATO, Static.STATO_PAUSA);
+                    JFileWorker.ScriviFileLock(Static.F_AGGIORNATO_STATO, Static.STATO_STOP);
                 }
 
                 case "start" -> {
-                    file_worker.ScriviFileLock(Static.F_STATO, Static.STATO_AVVIATO);
-                    file_worker.ScriviFileLock(Static.F_AGGIORNATO_STATO, Static.STATO_STOP);
+                    JFileWorker.ScriviFileLock(Static.F_STATO, Static.STATO_AVVIATO);
+                    JFileWorker.ScriviFileLock(Static.F_AGGIORNATO_STATO, Static.STATO_STOP);
                 }
 
                 case "continua", "accetta", "annulla" -> {
-                    file_worker.ScriviFileLock(Static.F_RISPOSTA_TIRO_ERRATO + "_" + this.operation, this.operation);
+                    JFileWorker.ScriviFileLock(Static.F_RISPOSTA_TIRO_ERRATO + "_" + this.operation, this.operation);
                 }
 
                 case "aggiorna_nome_device" -> {
-                    this.NomeDevice = file_worker.LeggiFileLock(this.f_nome_device);
+                    this.NomeDevice = JFileWorker.LeggiFileLock(this.f_nome_device);
                     this.Rm.setNomeDevice(this.NomeDevice);
                 }
 
@@ -125,22 +125,24 @@ public class JDoWorker extends SwingWorker<String, Object> {
                 
 //                case "lavoro_scelto" -> {
 //                    String lavoro = this.Rm.getLavoroScelto();
-//                    this.file_worker.ScriviFileLock(Static.F_LAVORO_SCELTO, lavoro);
-//                    this.Rm.setin_errore(false);
+//                    JFileWorker.ScriviFileLock(Static.F_LAVORO_SCELTO, lavoro);
+//                    this.Rm.setInErrore(false);
 //                    //Aggiornare leggendo il DB i campi della ricetta DA FARE IN Control !!
 //                }
 
                 case "scegli_e_avvia" -> {
                     String lavoro = this.Rm.getLavoroScelto();
-                    this.file_worker.ScriviFileLock(Static.F_LAVORO_SCELTO, lavoro);
-                    this.Rm.setin_errore(false);
-                    file_worker.ScriviFileLock(Static.F_STATO, Static.STATO_AVVIATO);
-                    file_worker.ScriviFileLock(Static.F_AGGIORNATO_STATO, Static.STATO_AVVIATO);
+                    JFileWorker.cancellaFile(Static.F_LAVORO_SCELTO);
+                    JFileWorker.ScriviFileLock(Static.F_LAVORO_SCELTO, lavoro);
+                    this.Rm.setInErrore(false);
+                    JFileWorker.ScriviFileLock(Static.F_STATO, Static.STATO_AVVIATO);
+                    JFileWorker.ScriviFileLock(Static.F_AGGIORNATO_STATO, Static.STATO_AVVIATO);
+                    this.Rm.PanelStarted();
                 }
                 
                 case "aggiorna info" -> {
-                    List<String> lista_info = this.file_worker.LeggiFileElencoLock(Static.F_INFO);
-                    List<String> lista_sensori = this.file_worker.LeggiFileElencoLock(Static.F_SENSORI);
+                    List<String> lista_info = JFileWorker.LeggiFileElencoLock(Static.F_INFO);
+                    List<String> lista_sensori = JFileWorker.LeggiFileElencoLock(Static.F_SENSORI);
                     lista_info.add("=========================");
                     for (String string : lista_sensori) {
                         lista_info.add(string);
@@ -149,7 +151,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
                 }
                 
                 case "aggiorna warning" -> {
-                    List<String> warning_file = this.file_worker.LeggiFileElencoLock(Static.F_WARNING);
+                    List<String> warning_file = JFileWorker.LeggiFileElencoLock(Static.F_WARNING);
                     int livello_warning = 0, livello = 0, posizione_riga = 0;
 
                     for (String string : warning_file) {
@@ -208,7 +210,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
             this.Rm.getjLayeredPaneCenter().repaint();
             gr.drawString("Java Source", 10, 10);
         }
-        this.Rm.setCurva(file_worker.LeggiFileLock("curva"));
+        this.Rm.setCurva(JFileWorker.LeggiFileLock("curva"));
 
     }
 
@@ -216,7 +218,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
         // Fabio: la gestione del tiro errato deve essere fatta 
         // da JControl. Quando i file saranno aggiornati da JControl
         // stesso l'interfaccia si adeguerà automaticamente
-        switch (file_worker.LeggiFileLock(f_risposta_tiro_errato)) {
+        switch (JFileWorker.LeggiFileLock(f_risposta_tiro_errato)) {
             case "1" -> //Continua non devo contare il tiro come ok
                 this.Rm.aggiornaDaErroreTiro();
             case "4" -> //Annulla

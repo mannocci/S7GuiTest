@@ -67,12 +67,16 @@ public class JRivitMain extends javax.swing.JFrame {
     private String AlertDialogStop;
     private String Lavorodescrizione;
     private ImageIcon Img_Info;
-    private int nr_lotti_da_fare;
-    private int nr_tiri_da_fare;
-    private int nr_lotto_corrente;
-    private int nr_tiri_ok;
-    private int nr_tiri;
-    private int nr_tiri_annullati;
+    
+    private int tiriTotali;
+    private int lotto;
+    private int tiriNelLotto;
+    private int tiriValidi;
+    private int tiriAnnullati;
+    private int tiriErrati;
+    private int nrLottiDaFare;
+    private int nrTiriDaFare;
+    
     private Float sogliaMin = 7.0f;
     private Float sogliaMax = 10.0f;
     private String sessione;
@@ -92,11 +96,10 @@ public class JRivitMain extends javax.swing.JFrame {
     private Float v_rpi;
     private Float pressione_aria_in;
     private String PanCur;
-    private boolean in_errore = false;
+    private boolean inErrore = false;
     private boolean in_pausa = false;
     private boolean chiedi_conferma = false;
     private boolean lavoro_concluso = false;
-    private int tiri_annullati;
     private boolean chiedi_conferma_stop;
     private List<String> elencoDesLavoro;
     private int w_level;
@@ -268,7 +271,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 jButtonPL2ActionPerformed(evt);
             }
         });
-        jPanelLeft.add(jButtonPL2, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 110, -1, -1));
+        jPanelLeft.add(jButtonPL2, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 104, -1, -1));
 
         jButtonPL3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/setup.png"))); // NOI18N
         jButtonPL3.setAlignmentX(0.5F);
@@ -557,7 +560,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 jButtonPR2ActionPerformed(evt);
             }
         });
-        jPanelRight.add(jButtonPR2, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 110, -1, -1));
+        jPanelRight.add(jButtonPR2, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 104, -1, -1));
 
         jButtonPR3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/nulla.png"))); // NOI18N
         jButtonPR3.setMaximumSize(new java.awt.Dimension(67, 67));
@@ -874,9 +877,9 @@ public class JRivitMain extends javax.swing.JFrame {
             }
             case "dialog" -> {//Scelta no alla domanda ritornare al pannello started
                 PanelStarted();
-                if (this.in_errore) {
+                if (this.inErrore) {
                     set_errore_tiro();
-                    this.in_errore = false;
+                    this.inErrore = false;
                 }
                 this.set_jLabel_B_L("Started");
             }
@@ -900,8 +903,6 @@ public class JRivitMain extends javax.swing.JFrame {
                     this.lavoroScelto = this.listLavori.getSelectedItem().substring(0,
                              (this.listLavori.getSelectedItem().indexOf("Lotti") - 1));
                     this.esegui("scegli_e_avvia");
-//                    this.esegui("lavoro_scelto");
-//                    this.esegui("start");
 //                    this.jPanelStarted.setBackground(Color.WHITE);
                     PanelStarted();
                     this.set_jLabel_B_L("Started");
@@ -1012,7 +1013,7 @@ public class JRivitMain extends javax.swing.JFrame {
      *
      */
     public void set_errore_tiro() {
-        this.in_errore = true;
+        this.inErrore = true;
         this.jPanelStarted.setBackground(Color.red);
         this.change_buttons(this.Img_Continua, this.Img_Ok, this.Img_Annulla,
                 this.Img_Stop, this.Img_Pause, this.Img_Estende);
@@ -1102,19 +1103,19 @@ public class JRivitMain extends javax.swing.JFrame {
     }
 
     void set_nr_lotti_ok(int lotti_ok) {
-        this.nr_lotto_corrente = lotti_ok;
+        this.lotto = lotti_ok;
     }
 
-    public void set_nr_tiri(int Tiri) {
-        this.nr_tiri = Tiri;
+    public void setTiriNelLotto(int Tiri) {
+        this.tiriNelLotto = Tiri;
     }
 
     public void set_nr_tiri_ok(int TiriOk) {
-        this.nr_tiri_ok = TiriOk;
+        this.tiriValidi = TiriOk;
     }
 
-    void setin_errore(boolean stato_errore) {
-        this.in_errore = stato_errore;
+    void setInErrore(boolean statoErrore) {
+        this.inErrore = statoErrore;
     }
 
     /**
@@ -1159,7 +1160,7 @@ public class JRivitMain extends javax.swing.JFrame {
      * lavori, ...
      */
     public void PanelStarted() {
-        if (this.in_errore) {
+        if (this.inErrore) {
             this.jPanelStarted.setBackground(Color.red);
         } else {
             this.jPanelStarted.setBackground(Color.white);
@@ -1174,26 +1175,15 @@ public class JRivitMain extends javax.swing.JFrame {
         String[] det_nr_lotti = this.elencoLavoriArray.get(idLavoro)[1].split("=");
         String[] det_nr_tiri = this.elencoLavoriArray.get(idLavoro)[2].split("=");
         try {
-            nr_lotti_da_fare = Integer.parseInt(det_nr_lotti[1]);
-            nr_tiri_da_fare = Integer.parseInt(det_nr_tiri[1]);
+            nrLottiDaFare = Integer.parseInt(det_nr_lotti[1]);
+            nrTiriDaFare = Integer.parseInt(det_nr_tiri[1]);
         } catch (NumberFormatException e) {
             System.out.print("nr_lotti_da_fare null !\n" + e);
-            nr_lotti_da_fare = 1;
-            nr_tiri_da_fare = 1;
+            nrLottiDaFare = 1;
+            nrTiriDaFare = 1;
         }
-        /*
-        this.AggiornaTiriErrati();
-        this.AggiornaTiriAnnullati();
-        this.AggiornaTiri();
-        this.jLabelContatore.setText(nr_lotti_fatti + "/" + nr_lotti_da_fare
-                + " - " + nr_tiri_fatti + "/" + nr_tiri_da_fare);
-        if (nr_lotti_da_fare != 0) {
-            this.jProgressBar.setMaximum(nr_tiri_da_fare * nr_lotti_da_fare);
-        } else {
-            this.jProgressBar.setMaximum(nr_tiri_da_fare);
-        }
-         */
-        this.update_tiri_lotti();
+        this.azzeraContatori();
+        this.aggiornaContatori();
         this.jLayeredPaneCenter.moveToFront(this.jPanelStarted);
 
         this.repaint();
@@ -1563,34 +1553,36 @@ public class JRivitMain extends javax.swing.JFrame {
     /**
      * visualizza i dati aggiornati
      */
-    public void update_tiri_lotti() {
+    public void aggiornaContatori() {
 
-        this.jLabelValidi.setText("" + nr_tiri_ok);
+        this.jLabelValidi.setText("" + tiriValidi);
+        this.jLabelAnnullati.setText("" + tiriAnnullati);
+        this.jLabelErrati.setText("" + tiriErrati);
 
-        if (this.nr_tiri_da_fare == -1) {
+        if (this.nrTiriDaFare == -1) {
             //Lavoro senza fine
             this.jPanelStarted.setBackground(Color.GRAY);
             this.jProgressBar.setVisible(false);
             this.jLabelNomeLavoro.setText("Lavoro senza limiti");
-            this.jLabelContatore.setText("" + nr_tiri_ok);
+            this.jLabelContatore.setText("" + tiriValidi);
         } else {
-            if (this.nr_lotto_corrente > this.nr_lotti_da_fare) {
+            if (this.lotto == this.nrLottiDaFare && this.tiriNelLotto == this.nrTiriDaFare) {
                 // E' Finito il lavoro !
                 this.jPanelStarted.setBackground(Color.BLUE);
             } else {
-                if (!this.in_errore) {
+                if (!this.inErrore) {
                     this.jPanelStarted.setBackground(Color.WHITE);
                 }
             }
-            this.jLabelContatore.setText(this.nr_lotto_corrente + "/" + this.nr_lotti_da_fare
-                    + " - " + this.nr_tiri + "/" + this.nr_tiri_da_fare);
+            this.jLabelContatore.setText(this.lotto + "/" + this.nrLottiDaFare
+                    + " - " + this.tiriNelLotto + "/" + this.nrTiriDaFare);
 
             // Imposto la dimensione della barra percentuale (da spostare in fase di scelta lavoro)
-            this.jProgressBar.setMaximum(this.nr_lotti_da_fare * this.nr_tiri_da_fare);
+            this.jProgressBar.setMaximum(this.nrLottiDaFare * this.nrTiriDaFare);
             this.jProgressBar.setVisible(true);
 
             // calcolo dei tiri complessivi per l'avanzamento della barra
-            this.jProgressBar.setValue(this.nr_tiri + ((this.nr_lotto_corrente - 1) * this.nr_tiri_da_fare));
+            this.jProgressBar.setValue(this.tiriNelLotto + ((this.lotto - 1) * this.nrTiriDaFare));
         }
         this.repaint();
     }
@@ -1615,7 +1607,7 @@ public class JRivitMain extends javax.swing.JFrame {
     }
 
     public void set_nr_tiri_fatti(int Tiri_fatti) {
-        this.nr_tiri = Tiri_fatti;
+        this.tiriNelLotto = Tiri_fatti;
     }
 
     /**
@@ -1879,7 +1871,7 @@ public class JRivitMain extends javax.swing.JFrame {
     }
 
     void set_nr_lotti_fatti(int lotti_ok) {
-        this.nr_lotto_corrente = lotti_ok;
+        this.lotto = lotti_ok;
     }
 
     /**
@@ -1936,7 +1928,6 @@ public class JRivitMain extends javax.swing.JFrame {
     }
 
     void set_nr_tiri_annullati(int tiri_annullati) {
-        this.tiri_annullati = tiri_annullati;
     }
 
     /**
@@ -1964,5 +1955,52 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     boolean isChiedi_conferma_stop() {
         return this.chiedi_conferma_stop;
+    }
+
+    public int getLotto() {
+        return lotto;
+    }
+
+    public void setLotto(int lotto) {
+        this.lotto = lotto;
+    }
+
+    int getTiriTotali() {
+        return this.tiriTotali;
+    }
+
+    void setTiriTotali(int nTiri) {
+        this.tiriTotali = nTiri;
+    }
+
+    public int getTiriValidi() {
+        return tiriValidi;
+    }
+
+    public void setTiriValidi(int tiriValidi) {
+        this.tiriValidi = tiriValidi;
+    }
+
+    public int getTiriAnnullati() {
+        return tiriAnnullati;
+    }
+
+    public void setTiriAnnullati(int tiriAnnullati) {
+        this.tiriAnnullati = tiriAnnullati;
+    }
+
+    public int getTiriErrati() {
+        return tiriErrati;
+    }
+
+    public void setTiriErrati(int tiriErrati) {
+        this.tiriErrati = tiriErrati;
+    }
+
+    private void azzeraContatori() {
+        this.lotto = 1;
+        this.tiriNelLotto = 0;
+        this.tiriAnnullati = 0;
+        this.tiriErrati = 0;
     }
 }

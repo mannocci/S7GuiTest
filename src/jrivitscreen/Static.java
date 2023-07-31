@@ -54,6 +54,8 @@ public class Static {
     final static String F_AGGIORNATO_LAVORI = "aggiornato_lavori";
     final static String F_LAVORO_CONCLUSO = "lavoro_concluso";
     final static String F_LAVORO_AVVIATO = "lavoro_avviato";
+    final static String F_CONTATORI_AGGIORNATI = "contatori_aggiornati";
+    final static String F_CONTATORI = "contatori";
     final static String F_TIRI_NEL_LOTTO = "tiri_nel_lotto";
     final static String F_TIRI_OK = "tiri_ok";
     final static String F_TIRI_ERRATI = "tiri_errati";
