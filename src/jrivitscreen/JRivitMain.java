@@ -1551,7 +1551,7 @@ public class JRivitMain extends javax.swing.JFrame {
     }
 
     /**
-     * visualizza i dati aggiornati
+     * visualizza i dati aggiornati dei contatori
      */
     public void aggiornaContatori() {
 

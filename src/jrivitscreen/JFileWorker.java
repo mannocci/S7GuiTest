@@ -220,25 +220,30 @@ public class JFileWorker extends Thread {
         }
     }
 
-
+/**
+ * Un conto è lo stato dell'aria, ma l'azione di chiusura e apertura 
+ * deve essere fatta da control. I led da chi li facciamo comandare ?
+ * Da control vedi Class JTask
+ * @param stato 
+ */
     private void mostraStatoAria(String stato) {
 
         if (stato == Static.ARIA_CHIUSA) {//Aria chiusa
-            bash_cmd_aria[4] = this.close;
-            bash_cmd_verde[4] = this.close;
-            bash_cmd_rosso[4] = this.open;
-            run_system_bash(this.bash_cmd_rosso);
-            run_system_bash(this.bash_cmd_verde);
-            run_system_bash(this.bash_cmd_aria);
+            //bash_cmd_aria[4] = this.close;
+//            bash_cmd_verde[4] = this.close;
+//            bash_cmd_rosso[4] = this.open;
+//            run_system_bash(this.bash_cmd_rosso);
+//            run_system_bash(this.bash_cmd_verde);
+            //run_system_bash(this.bash_cmd_aria); viene fatto da Control
             this.Rm.aria_chiusa();
 
         } else { //Aria aperta
-            bash_cmd_aria[4] = this.open;
-            bash_cmd_verde[4] = this.open;
-            bash_cmd_rosso[4] = this.close;
-            run_system_bash(bash_cmd_rosso);
-            run_system_bash(bash_cmd_verde);
-            run_system_bash(bash_cmd_aria);
+            //bash_cmd_aria[4] = this.open;
+//            bash_cmd_verde[4] = this.open;
+//            bash_cmd_rosso[4] = this.close;
+//            run_system_bash(bash_cmd_rosso);
+//            run_system_bash(bash_cmd_verde);
+            //run_system_bash(bash_cmd_aria);  viene fatto da Control
             this.Rm.aria_aperta();
 
         }
@@ -314,38 +319,7 @@ public class JFileWorker extends Thread {
         this.Rm.update_sensori(line);
     }
 
-    /**
-     *
-     * @param cmd String [] comando shell da avviare
-     * @return
-     */
-    public Process run_system_bash(String[] cmd) {
-        Process exec = null;
-        try {
-            exec = getRuntime().exec(cmd);
-            //printResults(exec);
-            //return exec.exitValue();
-        } catch (IOException ex) {
-            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return exec;
-    }
-
-    /**
-     * printResult - utilizzato per visualizzare l'out put del metodo
-     * run_system_bash
-     *
-     * @param process
-     * @throws IOException
-     */
-    private static void printResults(Process process) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        String line;
-        while ((line = reader.readLine()) != null) {
-            System.out.println(line);
-        }
-    }
-
+    
     /**
      * inizializza i valori in base al contenuto dei file Sono necessari: -
      * lavori.txt; letto sul DB tabella "lavori", 4 campi: nome, lotti, pezzi,
