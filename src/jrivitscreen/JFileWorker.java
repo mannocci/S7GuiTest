@@ -21,7 +21,6 @@
  */
 package jrivitscreen;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -29,10 +28,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 //import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.RandomAccessFile;
-import static java.lang.Runtime.getRuntime;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
@@ -55,61 +52,22 @@ public class JFileWorker extends Thread {
 // Classi
 
     private final JRivitMain Rm;
-    private final JDoWorker jDo_w;
 
     private WatchService watcher;
     private Path fileName;
-    private final String f_tiri = "tiri";
-    private final String f_tiri_ok = "tiri_ok";
-    private final String f_lotti_ok = "lotti_ok";
-    private final String f_warning = "warning.txt";
+
     private final String f_setup_lan = "setup_lan.txt";
     private final String f_setup_wifi = "setup_wifi.txt";
-    private final String f_in_pausa = "in_pausa";
 
     // se il lavoro è in corso contiene "1"
-    private final String f_curva = "curva";
-    private final String f_sessione = "sessione";
-    private final String f_sensori = "sensori";
+
     private final String f_soglia_pressione_aria_in_min = "soglia_pressione_aria_in_min";
     private final String f_soglia_pressione_aria_in_max = "soglia_pressione_aria_in_max";
-    private static FileChannel fc;
-    private static RandomAccessFile randomAccessFile;
 
-    String open = "255";
-    String close = "0";
-    String hw_aria = "4";
-    String hw_led_rosso = "1", hw_led_giallo = "2", hw_led_verde = "3";
-    String Megaind_Program = "/home/adminsb/bin/megaind";
-    private String[] bash_cmd_rosso = {//Comanda led rosso
-        this.Megaind_Program,
-        "0",
-        "dodwr",
-        this.hw_led_rosso, this.close};
-    private String[] bash_cmd_giallo = {//Comanda led giallo
-        this.Megaind_Program,
-        "0",
-        "dodwr",
-        this.hw_led_giallo, this.close};
-    private String[] bash_cmd_verde = {//Comanda led verde
-        this.Megaind_Program,
-        "0",
-        "dodwr",
-        this.hw_led_verde, this.close};
-    private String[] bash_cmd_aria = {// Comanda l'aria
-        this.Megaind_Program,
-        "0",
-        "dodwr",
-        "4", "0"};
-    private String[] bash_cmd_pressione_aria = {// Pressione l'aria
-        this.Megaind_Program,
-        "0",
-        "uinrd",
-        "2"};
 
-    public JFileWorker(JRivitMain mf, JDoWorker aThis) throws IOException {
+
+    public JFileWorker(JRivitMain mf) throws IOException {
         this.Rm = mf;
-        this.jDo_w = aThis;
         // create gpio controller by file (run bash script before !)     
         try {
             watcher = FileSystems.getDefault().newWatchService();

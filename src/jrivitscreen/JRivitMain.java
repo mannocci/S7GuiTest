@@ -103,6 +103,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private boolean chiedi_conferma_stop;
     private List<String> elencoDesLavoro;
     private int w_level;
+    private JFileWorker fileWorker = null;
 
     public List<String[]> getElencoLavoriArray() {
         return elencoLavoriArray;
@@ -174,7 +175,13 @@ public class JRivitMain extends javax.swing.JFrame {
 
         this.chiedi_conferma_stop = true;
         this.chiedi_conferma = false;
-        doWorker = new JDoWorker(this);
+        
+        try {
+            fileWorker= new JFileWorker(this);
+        } catch (IOException ex) {
+            Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        doWorker = new JDoWorker(this,fileWorker);
         esegui("init");
         this.PanelMain();
     }
@@ -204,6 +211,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabel_Annullati = new javax.swing.JLabel();
         jLabel_Validi = new javax.swing.JLabel();
         jLabelValidi = new javax.swing.JLabel();
+        jLabelDesContatore = new javax.swing.JLabel();
         jPanelSetup = new javax.swing.JPanel();
         jPanelMain = new javax.swing.JPanel();
         jLabelLogo = new javax.swing.JLabel();
@@ -302,7 +310,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelContatore.setFont(new java.awt.Font("SansSerif", 0, 36)); // NOI18N
         jLabelContatore.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelContatore.setText("0/0");
-        jPanelStarted.add(jLabelContatore, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 90, 315, 30));
+        jPanelStarted.add(jLabelContatore, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 80, 315, 30));
 
         jLabelNomeDevice.setFont(new java.awt.Font("DejaVu Sans Condensed", 1, 18)); // NOI18N
         jLabelNomeDevice.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -319,7 +327,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jProgressBar.setMaximumSize(new java.awt.Dimension(245, 40));
         jProgressBar.setMinimumSize(new java.awt.Dimension(245, 40));
         jProgressBar.setStringPainted(true);
-        jPanelStarted.add(jProgressBar, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 140, 315, 40));
+        jPanelStarted.add(jProgressBar, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 153, 315, 40));
 
         jLabelErrati.setBackground(java.awt.Color.red);
         jLabelErrati.setFont(new java.awt.Font("SansSerif", 0, 24)); // NOI18N
@@ -360,6 +368,12 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelValidi.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jLabelValidi.setOpaque(true);
         jPanelStarted.add(jLabelValidi, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 200, 80, 25));
+
+        jLabelDesContatore.setFont(new java.awt.Font("SansSerif", 0, 36)); // NOI18N
+        jLabelDesContatore.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelDesContatore.setText("Lotti  -  Pezzi");
+        jLabelDesContatore.setToolTipText("");
+        jPanelStarted.add(jLabelDesContatore, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 117, 315, 30));
 
         jLayeredPaneCenter.add(jPanelStarted, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 328, 276));
 
@@ -902,8 +916,8 @@ public class JRivitMain extends javax.swing.JFrame {
                     //Scelta lavoro
                     this.lavoroScelto = this.listLavori.getSelectedItem().substring(0,
                              (this.listLavori.getSelectedItem().indexOf("Lotti") - 1));
+                    setLavoro_concluso(false);
                     this.esegui("scegli_e_avvia");
-//                    this.jPanelStarted.setBackground(Color.WHITE);
                     PanelStarted();
                     this.set_jLabel_B_L("Started");
                 } catch (Exception ex) {
@@ -1058,6 +1072,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private javax.swing.JLabel jLabelAnnullati;
     private javax.swing.JLabel jLabelAvvisoCalibrazione;
     private javax.swing.JLabel jLabelContatore;
+    private javax.swing.JLabel jLabelDesContatore;
     private javax.swing.JLabel jLabelDeviceName;
     private javax.swing.JLabel jLabelDialog;
     private javax.swing.JLabel jLabelErrati;
@@ -1569,6 +1584,7 @@ public class JRivitMain extends javax.swing.JFrame {
             if (this.lotto == this.nrLottiDaFare && this.tiriNelLotto == this.nrTiriDaFare) {
                 // E' Finito il lavoro !
                 this.jPanelStarted.setBackground(Color.BLUE);
+                setLavoro_concluso(true);
             } else {
                 if (!this.inErrore) {
                     this.jPanelStarted.setBackground(Color.WHITE);

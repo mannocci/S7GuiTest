@@ -57,16 +57,12 @@ public class JDoWorker extends SwingWorker<String, Object> {
     private long Pid;
     private String run_system_result;
 
-    JDoWorker(JRivitMain mf) {
-        try {
-            this.Rm = mf;
-            this.file_worker = new JFileWorker(this.Rm, this);
-            this.bt = new ButtonThread(this.Rm);
-            dateFormat = new SimpleDateFormat("HH:mm");
-            now = Calendar.getInstance();
-        } catch (IOException ex) {
-            Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    JDoWorker(JRivitMain mf, JFileWorker fw) {
+        this.Rm = mf;
+        this.file_worker =fw;
+        this.bt = new ButtonThread(this.Rm);
+        dateFormat = new SimpleDateFormat("HH:mm");
+        now = Calendar.getInstance();
     }
 
     @Override
