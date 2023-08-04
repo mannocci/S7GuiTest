@@ -59,7 +59,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
 
     JDoWorker(JRivitMain mf, JFileWorker fw) {
         this.Rm = mf;
-        this.file_worker =fw;
+        this.file_worker = fw;
         this.bt = new ButtonThread(this.Rm);
         dateFormat = new SimpleDateFormat("HH:mm");
         now = Calendar.getInstance();
@@ -69,7 +69,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
     protected String doInBackground() throws Exception {
         try {
             switch (this.operation) {
-                
+
                 case "init" -> {
                     this.bt.start();//Gestione dei pulsanti
                     this.file_worker.start();//Avvio FileWorker
@@ -100,27 +100,40 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     this.Rm.setNomeDevice(this.NomeDevice);
                 }
                 case "aggiorna_nm_list" -> {
-                    String [] cmd = {"/home/adminsb/bin/nm_list_con.sh"};
-                    List list_nm_con;
+                    String[] cmd = {"/home/adminsb/bin/nm_list_con.sh"};
                     run_system_bash(cmd);
-                     list_nm_con = JFileWorker.LeggiFileElencoLock(Static.F_LISTA_NM_CON);
-                    this.Rm.setListNmCon(list_nm_con);
+                }
+                case "on_of_nm_device" -> {
+                    String nomeDevice = this.Rm.getListSetupNM().getItem(this.Rm.getListSetupNM().getSelectedIndex());
+                    String device;
+                    if (nomeDevice.contains(" OFF")) {
+                        device = nomeDevice.substring(0, nomeDevice.indexOf(" OFF"));
+                    } else {
+                        device = nomeDevice.substring(0, nomeDevice.indexOf(" ON"));
+                    }
+
+                    String[] cmd = {"/home/adminsb/bin/start_stop_NM.sh", device};
+                    run_system_bash(cmd);
+                    //Dopo aver avviato o spento una con. deve aggiornare il file
+                    cmd[0] = "/home/adminsb/bin/nm_list_con.sh";
+                    run_system_bash(cmd);
+                    this.Rm.set_jLabel_B_L("CON..");
+
                 }
                 case "risposta_attesa_tiro_errato" -> {
                     risposta_attesa_tiro_errato();
                 }
-                
+
                 case Static.F_CURVA -> {
                     drawGrafico();
                 }
-                
+
 //                case "lavoro_scelto" -> {
 //                    String lavoro = this.Rm.getLavoroScelto();
 //                    JFileWorker.ScriviFileLock(Static.F_LAVORO_SCELTO, lavoro);
 //                    this.Rm.setInErrore(false);
 //                    //Aggiornare leggendo il DB i campi della ricetta DA FARE IN Control !!
 //                }
-
                 case "scegli_e_avvia" -> {
                     String lavoro = this.Rm.getLavoroScelto();
                     JFileWorker.cancellaFile(Static.F_LAVORO_SCELTO);
@@ -130,7 +143,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     JFileWorker.ScriviFileLock(Static.F_AGGIORNATO_STATO, Static.STATO_AVVIATO);
                     this.Rm.PanelStarted();
                 }
-                
+
                 case "aggiorna info" -> {
                     List<String> lista_info = JFileWorker.LeggiFileElencoLock(Static.F_INFO);
                     List<String> lista_sensori = JFileWorker.LeggiFileElencoLock(Static.F_SENSORI);
@@ -140,7 +153,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     }
                     this.Rm.setListInfo(lista_info);
                 }
-                
+
                 case "aggiorna warning" -> {
                     List<String> warning_file = JFileWorker.LeggiFileElencoLock(Static.F_WARNING);
                     int livello_warning = 0, livello = 0, posizione_riga = 0;
@@ -156,7 +169,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     this.Rm.set_warning(livello_warning);//Aggiorna l'immagine warning
                     this.Rm.AggiornaWarning(warning_file);//Aggiorna lista descizioni warning
                 }
-                
+
                 case "orario" -> {
 
                     Date orario = now.getTime();
@@ -164,14 +177,14 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     this.Rm.set_jLabel_B_L(this.dateFormat.format(orario));
                     this.Rm.repaint();
                 }
-                
+
                 case "grafico" -> {
                     this.drawGrafico();
                 }
             }
         } catch (NumberFormatException ex) {
             Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
-            throw new UnsupportedOperationException("Errore conversione numerica " + this.operation); 
+            throw new UnsupportedOperationException("Errore conversione numerica " + this.operation);
         }
         return "ok";
     }

@@ -162,6 +162,8 @@ public class JFileWorker extends Thread {
                             readLavori();
                         case Static.F_NOME_DEVICE ->
                             readNomeDevice();
+                        case Static.F_LISTA_NM_CON ->
+                            readListaNMdevice();
                     }
                     try {
                         Thread.sleep(2);
@@ -585,5 +587,10 @@ public class JFileWorker extends Thread {
         } catch (NumberFormatException e) {
             System.out.println("File contatori contiene valori non numerici\n" + e.getMessage());
         }
+    }
+
+    private void readListaNMdevice() {
+        List<String> list_nm_con = LeggiFileElencoLock(Static.F_LISTA_NM_CON);
+        this.Rm.setListNmCon(list_nm_con);
     }
 }

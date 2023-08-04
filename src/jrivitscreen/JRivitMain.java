@@ -711,11 +711,8 @@ public class JRivitMain extends javax.swing.JFrame {
             }
             case "canvas" ->
                 this.drawGrafico();
-            case "setup" -> {
-                PanelSetupLan();
-                this.set_jLabel_B_L("Setup Lan");
-            }
-            case "warning", "info", "setup lan", "setup wifi" ->
+
+            case "warning", "info", "setup lan", "setup wifi", "setup" ->
                 PulsanteSu();
             case "dialog" -> {
                 try {
@@ -830,6 +827,10 @@ public class JRivitMain extends javax.swing.JFrame {
             }
             case "setup lan", "setup wifi" ->
                 PulsanteSu();
+            case "setup" -> {
+                PanelSetupLan();
+                this.set_jLabel_B_L("Setup Lan");
+            }
             case "dialog" -> {
                 if (this.PanCur.contains("started")) {
                     PanelStarted();
@@ -848,10 +849,13 @@ public class JRivitMain extends javax.swing.JFrame {
         // Qual'è il nome del pannello in primo piano ?
         switch (this.jLayeredPaneCenter.getComponent(0).getName()) {
             case "main" -> {
-                PanelSetup();
                 this.jLabel_B_L.setText("Setup");
+                esegui("aggiorna_nm_list");
+                PanelSetup();
             }
-//          case "start" 
+            case "setup" -> {
+                PulsanteSu();
+            }
             //Per ora nulla
             case "started", "canvas" -> {//Annullare il tiro
                 this.setStato(Static.ANNULLA);
@@ -898,8 +902,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 }
             }
             case "setup" -> {
-                PanelSetupWifi();
-                this.set_jLabel_B_L("Setup Wifi");
+                PulsanteGiu();
             }
             case "dialog" -> {//Scelta no alla domanda ritornare al pannello started
                 PanelStarted();
@@ -946,8 +949,11 @@ public class JRivitMain extends javax.swing.JFrame {
                 this.set_errore_tiro();
                 this.set_jLabel_B_L("Started");
             }
-//            case "setup" ->
-//                PanelSetupLan();
+            case "setup" -> {
+                esegui("on_of_nm_device");
+                this.set_jLabel_B_L("CON..");
+                //PanelSetup();
+            }
 //            case "warning" ->
 //                PulsanteSu();
 //            case "info" ->
@@ -1242,6 +1248,10 @@ public class JRivitMain extends javax.swing.JFrame {
         return this.listWarning;
     }
 
+    public java.awt.List getListSetupNM() {
+        return this.listSetupNM;
+    }
+
     public JLabel getjLabelNomeDevice() {
         return jLabelNomeDevice;
     }
@@ -1297,6 +1307,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private void PulsanteSu() {
         int nrItem, nrCurItem;
         java.awt.List lista = null;
+        boolean isSetup = false;
         // Qual'è il nome del pannello in primo piano ?
         switch (this.jLayeredPaneCenter.getComponent(0).getName()) {
             case "start" -> {
@@ -1315,6 +1326,10 @@ public class JRivitMain extends javax.swing.JFrame {
                 lista = this.listInfo;
             case "warning" ->
                 lista = this.listWarning;
+            case "setup" -> {
+                lista = this.listSetupNM;
+                isSetup = true;
+            }
         }//EndSwitch
         if (lista != null) {
             nrItem = lista.getItemCount();
@@ -1327,6 +1342,9 @@ public class JRivitMain extends javax.swing.JFrame {
             lista.select(nrCurItem);
             // rendi visibile l'elemento selezionato
             lista.makeVisible(nrCurItem);
+            if (isSetup) {
+                this.jButtonPR3.setIcon(this.setIconSetup());//aggiorna il tipo di Icona per il pulsante
+            }
         }//End LIsta not NULL
         repaint();
     }//End PulsanteSu
@@ -1336,6 +1354,7 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     private void PulsanteGiu() {
         java.awt.List lista = null;
+        boolean isSetup = false;
         // Qual'è il nome del pannello in primo piano ?
         switch (this.jLayeredPaneCenter.getComponent(0).getName()) {
             case "start" -> {
@@ -1355,6 +1374,10 @@ public class JRivitMain extends javax.swing.JFrame {
                 lista = this.listInfo;
             case "warning" ->
                 lista = this.listWarning;
+            case "setup" -> {
+                lista = this.listSetupNM;
+                isSetup = true;
+            }
         }//EndSwitch
         if (lista != null) {
             int nrItem = lista.getItemCount();
@@ -1367,6 +1390,9 @@ public class JRivitMain extends javax.swing.JFrame {
             lista.select(nrCurItem);
             // rendi visibile l'elemento selezionato
             lista.makeVisible(nrCurItem);
+            if (isSetup) {
+                this.jButtonPR3.setIcon(this.setIconSetup());//aggiorna il tipo di Icona per il pulsante
+            }
         }//End LIsta not NULL
         repaint();
     }//End PulsanteSu
@@ -1556,20 +1582,34 @@ public class JRivitMain extends javax.swing.JFrame {
      * Pannello di Setup l'utente deve scegliere tra setup Lan o WiFi
      */
     private void PanelSetup() {
-        esegui("aggiorna_nm_list");
-        int selezionato = this.listSetupNM.getSelectedIndex();
-        if( selezionato == -1){
-            selezionato = 1;
-        }
-        if (this.listSetupNM.getItem(selezionato).contentEquals("OFF")) {
-            this.change_buttons(this.Img_Exit, this.Img_Nulla, this.Img_Nulla,
-                    this.Img_Lan, this.Img_WiFi, this.Img_Ok);
-        } else {
-            this.change_buttons(this.Img_Exit, this.Img_Nulla, this.Img_Nulla,
-                    this.Img_Lan, this.Img_WiFi, this.Img_Stop);
-        }
-
+        this.change_buttons(this.Img_Exit, this.Img_Lan, this.Img_WiFi,
+                this.Img_Freccia_su, this.Img_Freccia_giu, setIconSetup());
         this.jLayeredPaneCenter.moveToFront(this.jPanelSetup);
+    }
+
+    /**
+     * Dipende dalla stringa se contiene o meno OFF / ON
+     *
+     * @return il tipo di icona Play o Stop
+     */
+    public ImageIcon setIconSetup() {
+        ImageIcon img_play_stop = this.Img_Play;
+        int i = this.listSetupNM.getSelectedIndex();
+        if (i == -1) {
+            i = 0;
+            this.listSetupNM.select(i);
+            this.listSetupNM.makeVisible(i);
+        }
+        try {
+            if (this.listSetupNM.getItemCount() > 0) {
+                if (this.listSetupNM.getSelectedItem().contains("ON")) {
+                    img_play_stop = this.Img_Stop;
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Errore index NM_con " + i);
+        }
+        return img_play_stop;
     }
 
     /**
@@ -1804,17 +1844,19 @@ public class JRivitMain extends javax.swing.JFrame {
 
         }
     }
-    public void setListNmCon(List list_nm_con){
+
+    public void setListNmCon(List list_nm_con) {
         this.listSetupNM.removeAll();
         for (int c = 0; c < list_nm_con.size(); c++) {
             this.listSetupNM.add(list_nm_con.get(c).toString());
         }
         this.listSetupNM.repaint();
     }
-/**
- * 
- * @param Info  la lista passata per aggiornare il campo
- */
+
+    /**
+     *
+     * @param Info la lista passata per aggiornare il campo
+     */
     public void setListInfo(List Info) {
         if (this.pressione_aria_in == null) {
             listInfo.add("Errore lettura file Info");
