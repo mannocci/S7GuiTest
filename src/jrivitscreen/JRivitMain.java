@@ -67,7 +67,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private String AlertDialogStop;
     private String Lavorodescrizione;
     private ImageIcon Img_Info;
-    
+
     private int tiriTotali;
     private int lotto;
     private int tiriNelLotto;
@@ -76,7 +76,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private int tiriErrati;
     private int nrLottiDaFare;
     private int nrTiriDaFare;
-    
+
     private Float sogliaMin = 7.0f;
     private Float sogliaMax = 10.0f;
     private String sessione;
@@ -175,13 +175,13 @@ public class JRivitMain extends javax.swing.JFrame {
 
         this.chiedi_conferma_stop = true;
         this.chiedi_conferma = false;
-        
+
         try {
-            fileWorker= new JFileWorker(this);
+            fileWorker = new JFileWorker(this);
         } catch (IOException ex) {
             Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
         }
-        doWorker = new JDoWorker(this,fileWorker);
+        doWorker = new JDoWorker(this, fileWorker);
         esegui("init");
         this.PanelMain();
     }
@@ -211,8 +211,10 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabel_Annullati = new javax.swing.JLabel();
         jLabel_Validi = new javax.swing.JLabel();
         jLabelValidi = new javax.swing.JLabel();
-        jLabelDesContatore = new javax.swing.JLabel();
+        jLabelDesContatorePezzi = new javax.swing.JLabel();
+        jLabelDesContatoreLotti = new javax.swing.JLabel();
         jPanelSetup = new javax.swing.JPanel();
+        listSetupNM = new java.awt.List();
         jPanelMain = new javax.swing.JPanel();
         jLabelLogo = new javax.swing.JLabel();
         jLabelDeviceName = new javax.swing.JLabel();
@@ -310,7 +312,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelContatore.setFont(new java.awt.Font("SansSerif", 0, 36)); // NOI18N
         jLabelContatore.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelContatore.setText("0/0");
-        jPanelStarted.add(jLabelContatore, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 80, 315, 30));
+        jPanelStarted.add(jLabelContatore, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 120, 315, 30));
 
         jLabelNomeDevice.setFont(new java.awt.Font("DejaVu Sans Condensed", 1, 18)); // NOI18N
         jLabelNomeDevice.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -369,11 +371,17 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelValidi.setOpaque(true);
         jPanelStarted.add(jLabelValidi, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 200, 80, 25));
 
-        jLabelDesContatore.setFont(new java.awt.Font("SansSerif", 0, 36)); // NOI18N
-        jLabelDesContatore.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabelDesContatore.setText("Lotti  -  Pezzi");
-        jLabelDesContatore.setToolTipText("");
-        jPanelStarted.add(jLabelDesContatore, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 117, 315, 30));
+        jLabelDesContatorePezzi.setFont(new java.awt.Font("SansSerif", 0, 24)); // NOI18N
+        jLabelDesContatorePezzi.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelDesContatorePezzi.setText("Pezzi");
+        jLabelDesContatorePezzi.setToolTipText("");
+        jPanelStarted.add(jLabelDesContatorePezzi, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 80, 155, 30));
+
+        jLabelDesContatoreLotti.setFont(new java.awt.Font("SansSerif", 0, 24)); // NOI18N
+        jLabelDesContatoreLotti.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelDesContatoreLotti.setText("Lotti");
+        jLabelDesContatoreLotti.setToolTipText("");
+        jPanelStarted.add(jLabelDesContatoreLotti, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 80, 155, 30));
 
         jLayeredPaneCenter.add(jPanelStarted, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 328, 276));
 
@@ -381,6 +389,10 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelSetup.setMinimumSize(new java.awt.Dimension(328, 276));
         jPanelSetup.setName("setup"); // NOI18N
         jPanelSetup.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        listSetupNM.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
+        jPanelSetup.add(listSetupNM, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 2, 320, 270));
+
         jLayeredPaneCenter.add(jPanelSetup, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 328, 276));
 
         jPanelMain.setBackground(new java.awt.Color(255, 255, 255));
@@ -915,7 +927,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 try {
                     //Scelta lavoro
                     this.lavoroScelto = this.listLavori.getSelectedItem().substring(0,
-                             (this.listLavori.getSelectedItem().indexOf("Lotti") - 1));
+                            (this.listLavori.getSelectedItem().indexOf("Lotti") - 1));
                     setLavoro_concluso(false);
                     this.esegui("scegli_e_avvia");
                     PanelStarted();
@@ -1072,7 +1084,8 @@ public class JRivitMain extends javax.swing.JFrame {
     private javax.swing.JLabel jLabelAnnullati;
     private javax.swing.JLabel jLabelAvvisoCalibrazione;
     private javax.swing.JLabel jLabelContatore;
-    private javax.swing.JLabel jLabelDesContatore;
+    private javax.swing.JLabel jLabelDesContatoreLotti;
+    private javax.swing.JLabel jLabelDesContatorePezzi;
     private javax.swing.JLabel jLabelDeviceName;
     private javax.swing.JLabel jLabelDialog;
     private javax.swing.JLabel jLabelErrati;
@@ -1107,6 +1120,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private java.awt.List listInfo;
     private java.awt.List listLavori;
     private java.awt.List listSetupLan;
+    private java.awt.List listSetupNM;
     private java.awt.List listSetupWiFi;
     private java.awt.List listWarning;
     // End of variables declaration//GEN-END:variables
@@ -1542,8 +1556,19 @@ public class JRivitMain extends javax.swing.JFrame {
      * Pannello di Setup l'utente deve scegliere tra setup Lan o WiFi
      */
     private void PanelSetup() {
-        this.change_buttons(this.Img_Exit, this.Img_Nulla, this.Img_Nulla,
-                this.Img_Lan, this.Img_WiFi, this.Img_Nulla);
+        esegui("aggiorna_nm_list");
+        int selezionato = this.listSetupNM.getSelectedIndex();
+        if( selezionato == -1){
+            selezionato = 1;
+        }
+        if (this.listSetupNM.getItem(selezionato).contentEquals("OFF")) {
+            this.change_buttons(this.Img_Exit, this.Img_Nulla, this.Img_Nulla,
+                    this.Img_Lan, this.Img_WiFi, this.Img_Ok);
+        } else {
+            this.change_buttons(this.Img_Exit, this.Img_Nulla, this.Img_Nulla,
+                    this.Img_Lan, this.Img_WiFi, this.Img_Stop);
+        }
+
         this.jLayeredPaneCenter.moveToFront(this.jPanelSetup);
     }
 
@@ -1779,7 +1804,17 @@ public class JRivitMain extends javax.swing.JFrame {
 
         }
     }
-
+    public void setListNmCon(List list_nm_con){
+        this.listSetupNM.removeAll();
+        for (int c = 0; c < list_nm_con.size(); c++) {
+            this.listSetupNM.add(list_nm_con.get(c).toString());
+        }
+        this.listSetupNM.repaint();
+    }
+/**
+ * 
+ * @param Info  la lista passata per aggiornare il campo
+ */
     public void setListInfo(List Info) {
         if (this.pressione_aria_in == null) {
             listInfo.add("Errore lettura file Info");

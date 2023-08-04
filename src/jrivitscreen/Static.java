@@ -73,8 +73,10 @@ public class Static {
     final static String F_CHIEDI_CONFERMA_STOP = "chiedi_conferma_stop";
     final static String F_LOTTI_OK = "lotti_ok";
     final static String F_SESSIONE = "sessione";
+    final static String F_LISTA_NM_CON = "lista_nm_con";
     static final String PATH_WATCH = "/tmp/CT/";
     static long ATTESA_SCRITTURA_FILE = 1000L;
+    
 
     public Static() {
         System.out.print("Istanziato variabili static e static final\n");

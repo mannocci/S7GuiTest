@@ -99,7 +99,13 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     this.NomeDevice = JFileWorker.LeggiFileLock(this.f_nome_device);
                     this.Rm.setNomeDevice(this.NomeDevice);
                 }
-
+                case "aggiorna_nm_list" -> {
+                    String [] cmd = {"/home/adminsb/bin/nm_list_con.sh"};
+                    List list_nm_con;
+                    run_system_bash(cmd);
+                     list_nm_con = JFileWorker.LeggiFileElencoLock(Static.F_LISTA_NM_CON);
+                    this.Rm.setListNmCon(list_nm_con);
+                }
                 case "risposta_attesa_tiro_errato" -> {
                     risposta_attesa_tiro_errato();
                 }
