@@ -1,6 +1,6 @@
 srvkey=AAAASSSDDDD
-data_versione=17/06/2023
-versione=1.0
+data_versione=05/08/2023
+versione=1.0a
 ip_db="127.0.0.1"
 pathWatch=/tmp/CT/
 db=jdbc:mariadb://localhost:3306

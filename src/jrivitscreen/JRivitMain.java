@@ -201,7 +201,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jButtonPL3 = new javax.swing.JButton();
         jLayeredPaneCenter = new javax.swing.JLayeredPane();
         jPanelStarted = new javax.swing.JPanel();
-        jLabelContatore = new javax.swing.JLabel();
+        jLabelContatoreLotti = new javax.swing.JLabel();
         jLabelNomeDevice = new javax.swing.JLabel();
         jLabelNomeLavoro = new javax.swing.JLabel();
         jProgressBar = new javax.swing.JProgressBar();
@@ -213,6 +213,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelValidi = new javax.swing.JLabel();
         jLabelDesContatorePezzi = new javax.swing.JLabel();
         jLabelDesContatoreLotti = new javax.swing.JLabel();
+        jLabelContatorePezzi = new javax.swing.JLabel();
         jPanelSetup = new javax.swing.JPanel();
         listSetupNM = new java.awt.List();
         jPanelMain = new javax.swing.JPanel();
@@ -309,27 +310,27 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelStarted.setPreferredSize(new java.awt.Dimension(338, 238));
         jPanelStarted.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabelContatore.setFont(new java.awt.Font("SansSerif", 0, 36)); // NOI18N
-        jLabelContatore.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabelContatore.setText("0/0");
-        jPanelStarted.add(jLabelContatore, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 120, 315, 30));
+        jLabelContatoreLotti.setFont(new java.awt.Font("SansSerif", 0, 36)); // NOI18N
+        jLabelContatoreLotti.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelContatoreLotti.setText("0/0");
+        jPanelStarted.add(jLabelContatoreLotti, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 138, 160, 30));
 
-        jLabelNomeDevice.setFont(new java.awt.Font("DejaVu Sans Condensed", 1, 18)); // NOI18N
+        jLabelNomeDevice.setFont(new java.awt.Font("DejaVu Sans Condensed", 1, 20)); // NOI18N
         jLabelNomeDevice.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelNomeDevice.setText("Nome Device");
-        jPanelStarted.add(jLabelNomeDevice, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 8, 315, 30));
+        jPanelStarted.add(jLabelNomeDevice, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 10, 316, 30));
 
         jLabelNomeLavoro.setFont(new java.awt.Font("DejaVu Sans Condensed", 1, 24)); // NOI18N
         jLabelNomeLavoro.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelNomeLavoro.setText("Nome Lavoro");
-        jPanelStarted.add(jLabelNomeLavoro, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 45, 315, 30));
+        jPanelStarted.add(jLabelNomeLavoro, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 65, 316, 30));
 
         jProgressBar.setFont(new java.awt.Font("Liberation Sans", 1, 14)); // NOI18N
         jProgressBar.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jProgressBar.setMaximumSize(new java.awt.Dimension(245, 40));
         jProgressBar.setMinimumSize(new java.awt.Dimension(245, 40));
         jProgressBar.setStringPainted(true);
-        jPanelStarted.add(jProgressBar, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 153, 315, 40));
+        jPanelStarted.add(jProgressBar, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 173, 316, 40));
 
         jLabelErrati.setBackground(java.awt.Color.red);
         jLabelErrati.setFont(new java.awt.Font("SansSerif", 0, 24)); // NOI18N
@@ -338,7 +339,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelErrati.setText("0");
         jLabelErrati.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jLabelErrati.setOpaque(true);
-        jPanelStarted.add(jLabelErrati, new org.netbeans.lib.awtextra.AbsoluteConstraints(235, 200, 80, 25));
+        jPanelStarted.add(jLabelErrati, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 220, 90, 25));
 
         jLabelAnnullati.setBackground(new java.awt.Color(255, 204, 204));
         jLabelAnnullati.setFont(new java.awt.Font("SansSerif", 0, 24)); // NOI18N
@@ -346,22 +347,22 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelAnnullati.setText("0");
         jLabelAnnullati.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jLabelAnnullati.setOpaque(true);
-        jPanelStarted.add(jLabelAnnullati, new org.netbeans.lib.awtextra.AbsoluteConstraints(125, 200, 80, 25));
+        jPanelStarted.add(jLabelAnnullati, new org.netbeans.lib.awtextra.AbsoluteConstraints(118, 220, 90, 25));
 
         jLabel_Errati.setFont(new java.awt.Font("Liberation Sans", 1, 15)); // NOI18N
         jLabel_Errati.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel_Errati.setText("Errati");
-        jPanelStarted.add(jLabel_Errati, new org.netbeans.lib.awtextra.AbsoluteConstraints(255, 235, -1, -1));
+        jPanelStarted.add(jLabel_Errati, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 255, 90, -1));
 
         jLabel_Annullati.setFont(new java.awt.Font("Liberation Sans", 1, 15)); // NOI18N
         jLabel_Annullati.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel_Annullati.setText("Annullati");
-        jPanelStarted.add(jLabel_Annullati, new org.netbeans.lib.awtextra.AbsoluteConstraints(135, 235, -1, -1));
+        jPanelStarted.add(jLabel_Annullati, new org.netbeans.lib.awtextra.AbsoluteConstraints(118, 255, 90, -1));
 
         jLabel_Validi.setFont(new java.awt.Font("Liberation Sans", 1, 15)); // NOI18N
         jLabel_Validi.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel_Validi.setText("Validi");
-        jPanelStarted.add(jLabel_Validi, new org.netbeans.lib.awtextra.AbsoluteConstraints(35, 235, -1, -1));
+        jPanelStarted.add(jLabel_Validi, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 255, 90, -1));
 
         jLabelValidi.setBackground(java.awt.Color.green);
         jLabelValidi.setFont(new java.awt.Font("SansSerif", 0, 24)); // NOI18N
@@ -369,19 +370,24 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelValidi.setText("0");
         jLabelValidi.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jLabelValidi.setOpaque(true);
-        jPanelStarted.add(jLabelValidi, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 200, 80, 25));
+        jPanelStarted.add(jLabelValidi, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 220, 90, 25));
 
         jLabelDesContatorePezzi.setFont(new java.awt.Font("SansSerif", 0, 24)); // NOI18N
         jLabelDesContatorePezzi.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelDesContatorePezzi.setText("Pezzi");
         jLabelDesContatorePezzi.setToolTipText("");
-        jPanelStarted.add(jLabelDesContatorePezzi, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 80, 155, 30));
+        jPanelStarted.add(jLabelDesContatorePezzi, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 100, 160, 30));
 
         jLabelDesContatoreLotti.setFont(new java.awt.Font("SansSerif", 0, 24)); // NOI18N
         jLabelDesContatoreLotti.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelDesContatoreLotti.setText("Lotti");
         jLabelDesContatoreLotti.setToolTipText("");
-        jPanelStarted.add(jLabelDesContatoreLotti, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 80, 155, 30));
+        jPanelStarted.add(jLabelDesContatoreLotti, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 100, 160, 30));
+
+        jLabelContatorePezzi.setFont(new java.awt.Font("SansSerif", 0, 36)); // NOI18N
+        jLabelContatorePezzi.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelContatorePezzi.setText("0/0");
+        jPanelStarted.add(jLabelContatorePezzi, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 138, 160, 30));
 
         jLayeredPaneCenter.add(jPanelStarted, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 328, 276));
 
@@ -406,16 +412,15 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelLogo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelLogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/logori2.png"))); // NOI18N
         jLabelLogo.setAlignmentY(0.0F);
-        jLabelLogo.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jLabelLogo.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jLabelLogo.setIconTextGap(0);
         jLabelLogo.setMaximumSize(new java.awt.Dimension(250, 250));
         jLabelLogo.setMinimumSize(new java.awt.Dimension(250, 250));
         jLabelLogo.setPreferredSize(new java.awt.Dimension(250, 250));
-        jPanelMain.add(jLabelLogo, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 3, 240, 240));
+        jPanelMain.add(jLabelLogo, new org.netbeans.lib.awtextra.AbsoluteConstraints(42, 3, 240, 240));
         jLabelLogo.getAccessibleContext().setAccessibleName("Pannello principale");
 
-        jLabelDeviceName.setFont(new java.awt.Font("Helvetica Neue", 1, 14)); // NOI18N
+        jLabelDeviceName.setFont(new java.awt.Font("Helvetica Neue", 0, 20)); // NOI18N
         jLabelDeviceName.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelDeviceName.setText("Device Name");
         jLabelDeviceName.setPreferredSize(new java.awt.Dimension(310, 25));
@@ -491,6 +496,11 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelStart.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         listLavori.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        listLavori.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                listLavoriMouseClicked(evt);
+            }
+        });
         listLavori.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 listLavoriActionPerformed(evt);
@@ -927,17 +937,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 this.exit();
 //                per ora uso il pulsante per chiudere;
             case "start" -> {
-                try {
-                    //Scelta lavoro
-                    this.lavoroScelto = this.listLavori.getSelectedItem().substring(0,
-                            (this.listLavori.getSelectedItem().indexOf("Lotti") - 1));
-                    setLavoro_concluso(false);
-                    this.esegui("scegli_e_avvia");
-                    PanelStarted();
-                    this.set_jLabel_B_L("Started");
-                } catch (Exception ex) {
-                    Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                avviaLavoro();
             }
             case "started" -> {
                 PanelCavans();
@@ -972,13 +972,21 @@ public class JRivitMain extends javax.swing.JFrame {
     private void listSetupWiFiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listSetupWiFiActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_listSetupWiFiActionPerformed
+
+    private void listLavoriMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listLavoriMouseClicked
+        this.JTextAreaDescrizioneLavoro.setText(
+                this.elencoDesLavoro.get(this.listLavori.getSelectedIndex()));
+        if (evt.getClickCount() == 2) { // doppio click -> avvio lavoro
+            avviaLavoro();
+        }
+    }//GEN-LAST:event_listLavoriMouseClicked
     /**
      * PanelMain Pannello che viene visualizzato all'avvio
      */
     private void PanelMain() {
 //        changePanel(this.jPanelMain); // metodo migliorato per cambio pannello. Da distribuire sostituendo tutte le chiamate a moveToFront (todo)
         this.change_buttons(this.Img_Warning, this.Img_Info, this.Img_Setup,
-                this.Img_Play, this.Img_Nulla, this.Img_Nulla);
+                this.Img_Play, this.Img_Nulla, this.Img_Exit);
         this.jLayeredPaneCenter.moveToFront(this.jPanelMain);
 
     }
@@ -1089,7 +1097,8 @@ public class JRivitMain extends javax.swing.JFrame {
     private javax.swing.JButton jButtonPR3;
     private javax.swing.JLabel jLabelAnnullati;
     private javax.swing.JLabel jLabelAvvisoCalibrazione;
-    private javax.swing.JLabel jLabelContatore;
+    private javax.swing.JLabel jLabelContatoreLotti;
+    private javax.swing.JLabel jLabelContatorePezzi;
     private javax.swing.JLabel jLabelDesContatoreLotti;
     private javax.swing.JLabel jLabelDesContatorePezzi;
     private javax.swing.JLabel jLabelDeviceName;
@@ -1276,8 +1285,8 @@ public class JRivitMain extends javax.swing.JFrame {
         this.repaint();
     }
 
-    public void setjLabelContatore(String c) {
-        this.jLabelContatore.setText(c);
+    public void setjLabelContatoreLotti(String c) {
+        this.jLabelContatoreLotti.setText(c);
         this.repaint();
     }
 
@@ -1309,14 +1318,10 @@ public class JRivitMain extends javax.swing.JFrame {
         java.awt.List lista = null;
         boolean isSetup = false;
         // Qual'è il nome del pannello in primo piano ?
+        String panelName = this.jLayeredPaneCenter.getComponent(0).getName();
         switch (this.jLayeredPaneCenter.getComponent(0).getName()) {
             case "start" -> {
                 lista = this.listLavori;
-                int selezionato = this.listLavori.getSelectedIndex();
-                if (selezionato == -1) {
-                    selezionato = 1;
-                    this.listLavori.select(selezionato);
-                }
             }
             case "setup wifi" ->
                 lista = this.listSetupWiFi;
@@ -1334,6 +1339,9 @@ public class JRivitMain extends javax.swing.JFrame {
         if (lista != null) {
             nrItem = lista.getItemCount();
             nrCurItem = lista.getSelectedIndex();
+            if (nrCurItem == -1) { // nessun elemento selezionato
+                nrCurItem = 0;
+            }
             if (nrCurItem > 0) {
                 nrCurItem--;
             } else {
@@ -1342,9 +1350,14 @@ public class JRivitMain extends javax.swing.JFrame {
             lista.select(nrCurItem);
             // rendi visibile l'elemento selezionato
             lista.makeVisible(nrCurItem);
+            if (panelName.equals("start")) {
+                this.JTextAreaDescrizioneLavoro.setText(
+                        this.elencoDesLavoro.get(nrCurItem));
+            }
             if (isSetup) {
                 this.jButtonPR3.setIcon(this.setIconSetup());//aggiorna il tipo di Icona per il pulsante
             }
+
         }//End LIsta not NULL
         repaint();
     }//End PulsanteSu
@@ -1356,15 +1369,10 @@ public class JRivitMain extends javax.swing.JFrame {
         java.awt.List lista = null;
         boolean isSetup = false;
         // Qual'è il nome del pannello in primo piano ?
-        switch (this.jLayeredPaneCenter.getComponent(0).getName()) {
+        String panelName = this.jLayeredPaneCenter.getComponent(0).getName();
+        switch (panelName) {
             case "start" -> {
                 lista = this.listLavori;
-                int selezionato = this.listLavori.getSelectedIndex();
-                if (selezionato == -1) {
-                    selezionato = 1;
-                    this.listLavori.select(selezionato);
-                    this.JTextAreaDescrizioneLavoro.setText(this.elencoDesLavoro.get(selezionato));
-                }
             }
             case "setup wifi" ->
                 lista = this.listSetupWiFi;
@@ -1382,6 +1390,9 @@ public class JRivitMain extends javax.swing.JFrame {
         if (lista != null) {
             int nrItem = lista.getItemCount();
             int nrCurItem = lista.getSelectedIndex();
+            if (nrCurItem == -1) { // nessun elemento selezionato
+                nrCurItem = 0;
+            }
             if (nrCurItem < nrItem - 1) {
                 nrCurItem++;
             } else {
@@ -1390,6 +1401,10 @@ public class JRivitMain extends javax.swing.JFrame {
             lista.select(nrCurItem);
             // rendi visibile l'elemento selezionato
             lista.makeVisible(nrCurItem);
+            if (panelName.equals("start")) {
+                this.JTextAreaDescrizioneLavoro.setText(
+                        this.elencoDesLavoro.get(nrCurItem));
+            }
             if (isSetup) {
                 this.jButtonPR3.setIcon(this.setIconSetup());//aggiorna il tipo di Icona per il pulsante
             }
@@ -1494,9 +1509,15 @@ public class JRivitMain extends javax.swing.JFrame {
         for (String riga : lista) {
             String[] lavoroSplit = riga.split("§");
             this.elencoLavoriArray.add(lavoroSplit);
-            elencoTxt.add(lavoroSplit[0] + " " + lavoroSplit[1] + " " + lavoroSplit[2]);
+            if (lavoroSplit[1].contains("=-1")) { // Lavoro senza limiti -> visualizzo solo il nome
+                elencoTxt.add(lavoroSplit[0]);
+            } else {
+                elencoTxt.add(lavoroSplit[0] + " " + lavoroSplit[1] + " " + lavoroSplit[2]);
+            }
             if (lavoroSplit.length >= 3) {
                 this.elencoDesLavoro.add(lavoroSplit[3]);
+            } else {    // Nessuna descrizione trovata
+                this.elencoDesLavoro.add("");
             }
         }
         RefreshList(listLavori, elencoTxt);
@@ -1640,12 +1661,16 @@ public class JRivitMain extends javax.swing.JFrame {
         this.jLabelErrati.setText("" + tiriErrati);
 
         if (this.nrTiriDaFare == -1) {
+            this.jLabelDesContatoreLotti.setVisible(false);
+            this.jLabelContatoreLotti.setVisible(false);
             //Lavoro senza fine
-            this.jPanelStarted.setBackground(Color.GRAY);
+            this.jPanelStarted.setBackground(Color.LIGHT_GRAY);
             this.jProgressBar.setVisible(false);
             this.jLabelNomeLavoro.setText("Lavoro senza limiti");
-            this.jLabelContatore.setText("" + tiriValidi);
+            this.jLabelContatorePezzi.setText("" + tiriValidi);
         } else {
+            this.jLabelDesContatoreLotti.setVisible(true);
+            this.jLabelContatoreLotti.setVisible(true);
             if (this.lotto == this.nrLottiDaFare && this.tiriNelLotto == this.nrTiriDaFare) {
                 // E' Finito il lavoro !
                 this.jPanelStarted.setBackground(Color.BLUE);
@@ -1655,8 +1680,8 @@ public class JRivitMain extends javax.swing.JFrame {
                     this.jPanelStarted.setBackground(Color.WHITE);
                 }
             }
-            this.jLabelContatore.setText(this.lotto + "/" + this.nrLottiDaFare
-                    + " - " + this.tiriNelLotto + "/" + this.nrTiriDaFare);
+            this.jLabelContatoreLotti.setText(this.lotto + "/" + this.nrLottiDaFare);
+            this.jLabelContatorePezzi.setText(this.tiriNelLotto + "/" + this.nrTiriDaFare);
 
             // Imposto la dimensione della barra percentuale (da spostare in fase di scelta lavoro)
             this.jProgressBar.setMaximum(this.nrLottiDaFare * this.nrTiriDaFare);
@@ -1793,7 +1818,7 @@ public class JRivitMain extends javax.swing.JFrame {
             nd = "CT-0000-00";
         }
         this.jLabelNomeDevice.setText(nd);
-        this.jLabelDeviceName.setText(nd);
+        this.jLabelDeviceName.setText(nd + " ver. " + versione + " rel. " + data_release);
         this.repaint();
     }
 
@@ -1949,7 +1974,7 @@ public class JRivitMain extends javax.swing.JFrame {
      * Uscita dal programma
      */
     public void exit() {
-        System.exit(1);
+        System.exit(0);
     }
 
     public String getInPausa() {
@@ -2095,5 +2120,23 @@ public class JRivitMain extends javax.swing.JFrame {
         this.tiriNelLotto = 0;
         this.tiriAnnullati = 0;
         this.tiriErrati = 0;
+    }
+
+    private void avviaLavoro() {
+        try {
+            //Scelta lavoro
+            if (this.listLavori.getSelectedItem().contains("=")) {
+                this.lavoroScelto = this.listLavori.getSelectedItem().substring(0,
+                        (this.listLavori.getSelectedItem().indexOf("Lotti") - 1));
+            } else {
+                this.lavoroScelto = this.listLavori.getSelectedItem();
+            }
+            setLavoro_concluso(false);
+            this.esegui("scegli_e_avvia");
+            PanelStarted();
+            this.set_jLabel_B_L("Started");
+        } catch (Exception ex) {
+            Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }
