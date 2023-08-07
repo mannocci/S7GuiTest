@@ -143,6 +143,9 @@
         </Property>
         <Property name="opaque" type="boolean" value="true"/>
       </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
+      </AuxValues>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
           <AbsoluteConstraints x="75" y="2" width="329" height="277"/>
@@ -801,31 +804,6 @@
               </Constraints>
             </Component>
           </SubComponents>
-        </Container>
-        <Container class="javax.swing.JPanel" name="jPanelCanvas">
-          <Properties>
-            <Property name="alignmentX" type="float" value="0.0"/>
-            <Property name="alignmentY" type="float" value="0.0"/>
-            <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[328, 276]"/>
-            </Property>
-            <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[328, 276]"/>
-            </Property>
-            <Property name="name" type="java.lang.String" value="canvas" noResource="true"/>
-            <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[328, 276]"/>
-            </Property>
-          </Properties>
-          <Constraints>
-            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="1" y="1" width="328" height="276"/>
-            </Constraint>
-          </Constraints>
-
-          <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
-            <Property name="useNullLayout" type="boolean" value="false"/>
-          </Layout>
         </Container>
         <Container class="javax.swing.JPanel" name="jPanelCalibrazione">
           <Properties>

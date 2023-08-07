@@ -29,8 +29,6 @@ import java.util.logging.Logger;
 //import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.RandomAccessFile;
-import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -127,6 +125,8 @@ public class JFileWorker extends Thread {
                             aggiornaStop();
                         case "killScreen" ->
                             this.Rm.exit();
+                        case Static.F_FATTO_FILE_CURVA ->
+                            gestisciCurva();
                     }
 
                 }
@@ -478,7 +478,7 @@ public class JFileWorker extends Thread {
         }
     }
 
-    private void mostra_curva() {
+    private void leggiCurva() {
         this.Rm.setCurva(LeggiFileLock(Static.F_CURVA));
     }
 
@@ -592,5 +592,11 @@ public class JFileWorker extends Thread {
     private void readListaNMdevice() {
         List<String> list_nm_con = LeggiFileElencoLock(Static.F_LISTA_NM_CON);
         this.Rm.setListNmCon(list_nm_con);
+    }
+
+    private void gestisciCurva() {
+        leggiCurva();
+        this.Rm.PanelCanvas();
+        this.Rm.mostraCurva();
     }
 }

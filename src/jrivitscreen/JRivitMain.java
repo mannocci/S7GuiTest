@@ -104,6 +104,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private List<String> elencoDesLavoro;
     private int w_level;
     private JFileWorker fileWorker = null;
+    public JGrafico g;
 
     public List<String[]> getElencoLavoriArray() {
         return elencoLavoriArray;
@@ -136,6 +137,17 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     public JRivitMain() {
         initComponents();
+        g = new JGrafico();
+        g.setBackground(new java.awt.Color(255, 255, 255));
+        g.setAlignmentX(0.0F);
+        g.setAlignmentY(0.0F);
+        g.setMaximumSize(new java.awt.Dimension(328, 276));
+        g.setMinimumSize(new java.awt.Dimension(328, 276));
+        g.setName("canvas"); 
+        g.setPreferredSize(new java.awt.Dimension(328, 276));
+        g.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        this.jLayeredPaneCenter.add(g, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 328, 276));
+
         this.AlertDialogStop = "Annullare Tiro ?";
 
         Img_Exit = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/exit.png"));
@@ -232,7 +244,6 @@ public class JRivitMain extends javax.swing.JFrame {
         JTextAreaDescrizioneLavoro = new javax.swing.JTextArea();
         jPanelDialog = new javax.swing.JPanel();
         jLabelDialog = new javax.swing.JLabel();
-        jPanelCanvas = new javax.swing.JPanel();
         jPanelCalibrazione = new javax.swing.JPanel();
         jLabelNomeDeviceCal = new javax.swing.JLabel();
         jLabelNomeLavoroCal = new javax.swing.JLabel();
@@ -533,15 +544,6 @@ public class JRivitMain extends javax.swing.JFrame {
 
         jLayeredPaneCenter.add(jPanelDialog, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 328, 276));
 
-        jPanelCanvas.setAlignmentX(0.0F);
-        jPanelCanvas.setAlignmentY(0.0F);
-        jPanelCanvas.setMaximumSize(new java.awt.Dimension(328, 276));
-        jPanelCanvas.setMinimumSize(new java.awt.Dimension(328, 276));
-        jPanelCanvas.setName("canvas"); // NOI18N
-        jPanelCanvas.setPreferredSize(new java.awt.Dimension(328, 276));
-        jPanelCanvas.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-        jLayeredPaneCenter.add(jPanelCanvas, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 328, 276));
-
         jPanelCalibrazione.setBackground(new java.awt.Color(204, 255, 204));
         jPanelCalibrazione.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jPanelCalibrazione.setMaximumSize(new java.awt.Dimension(245, 234));
@@ -720,7 +722,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 }
             }
             case "canvas" ->
-                this.drawGrafico();
+                esegui("grafico");
 
             case "warning", "info", "setup lan", "setup wifi", "setup" ->
                 PulsanteSu();
@@ -932,7 +934,8 @@ public class JRivitMain extends javax.swing.JFrame {
     private void jButtonPR3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPR3ActionPerformed
         // Pulsante R3
         // Qual'è il nome del pannello in primo piano ?
-        switch (this.jLayeredPaneCenter.getComponent(0).getName()) {
+        String panelName = this.jLayeredPaneCenter.getComponent(0).getName();
+        switch (panelName) {
             case "main" ->
                 this.exit();
 //                per ora uso il pulsante per chiudere;
@@ -940,13 +943,16 @@ public class JRivitMain extends javax.swing.JFrame {
                 avviaLavoro();
             }
             case "started" -> {
-                PanelCavans();
-                this.set_jLabel_B_L("Graph");
+                this.jLayeredPaneCenter.moveToFront(g);
+                g.setInPrimoPiano(true);
+                this.set_jLabel_B_L("g");
+                esegui("grafico");
+                this.repaint();
 
             }
             case "canvas" -> {
+                g.setInPrimoPiano(false);
                 PanelStarted();
-                this.set_errore_tiro();
                 this.set_jLabel_B_L("Started");
             }
             case "setup" -> {
@@ -1057,7 +1063,8 @@ public class JRivitMain extends javax.swing.JFrame {
         this.jPanelStarted.setBackground(Color.red);
         this.change_buttons(this.Img_Continua, this.Img_Ok, this.Img_Annulla,
                 this.Img_Stop, this.Img_Pause, this.Img_Estende);
-        this.repaint();
+        this.jLayeredPaneCenter.moveToFront(this.jPanelStarted);
+//        this.repaint();
     }
 
     /**
@@ -1116,10 +1123,9 @@ public class JRivitMain extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel_Errati;
     private javax.swing.JLabel jLabel_Validi;
     private javax.swing.JLabel jLabel_msg;
-    private javax.swing.JLayeredPane jLayeredPaneCenter;
+    public javax.swing.JLayeredPane jLayeredPaneCenter;
     private javax.swing.JPanel jPanelBotton;
     private javax.swing.JPanel jPanelCalibrazione;
-    private javax.swing.JPanel jPanelCanvas;
     private javax.swing.JPanel jPanelDialog;
     private javax.swing.JPanel jPanelInfo;
     private javax.swing.JPanel jPanelLeft;
@@ -1211,7 +1217,7 @@ public class JRivitMain extends javax.swing.JFrame {
         }
 
         this.change_buttons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
-                this.Img_Stop, this.Img_Pause, this.Img_Nulla);
+                this.Img_Stop, this.Img_Pause, this.Img_Setup);
         String lavoro = this.listLavori.getSelectedItem();
         int idLavoro = this.listLavori.getSelectedIndex();
         this.lavoroScelto = this.elencoLavoriArray.get(idLavoro)[0];
@@ -1454,10 +1460,10 @@ public class JRivitMain extends javax.swing.JFrame {
     /**
      * Pannello per disegnare il grafico
      */
-    private void PanelCavans() {
+    public void PanelCanvas() {
         this.change_buttons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
                 this.Img_Ok, this.Img_Nulla, this.Img_Estende);
-        this.jLayeredPaneCenter.moveToFront(this.jPanelCanvas);
+        this.jLayeredPaneCenter.moveToFront(this.g);
     }
 
     /**
@@ -1748,7 +1754,6 @@ public class JRivitMain extends javax.swing.JFrame {
                         this.jLabel_msg.setForeground(java.awt.Color.green);
                         this.jLabel_msg.setText("P. aria OK: " + pressione_aria_in + " Bar");
                     }
-                    this.repaint();
                 }
             } catch (NumberFormatException e) {
                 System.out.println("jrivitscreen.JRivitMain.update_sensori() - \n" + e.getMessage());
@@ -1831,43 +1836,18 @@ public class JRivitMain extends javax.swing.JFrame {
         return this.jLabelValidi.getText();
     }
 
-    void setCurva(String curva) {
-        this.jLayeredPaneCenter.moveToFront(this.jPanelCanvas);
+    void setCurva(String Curva) {
+        this.Curva = Curva;
+    }
+
+    void mostraCurva() {
+        this.jLayeredPaneCenter.moveToFront(this.g);
         this.repaint();
-        this.Curva = curva;
         //esegui("curva");
-        drawGrafico();
     }
 
     public JLayeredPane getjLayeredPaneCenter() {
         return this.jLayeredPaneCenter;
-    }
-
-    private void drawGrafico() {
-        Graphics2D gr = (Graphics2D) this.jLayeredPaneCenter.getGraphics();
-        this.getjLayeredPaneCenter().repaint();
-        this.jPanelCanvas.paintComponents(gr);
-        paintComponents(gr);
-        int y = this.jPanelCanvas.getHeight();
-        if (this.Curva == null) {
-            this.Curva = "10,30,40,55,75,77,75,55,40,35,30,20,10,10";
-        }
-        String[] ychar = this.Curva.split(",");
-        int nPoints;
-        nPoints = ychar.length;
-        int[] ypoints = new int[nPoints];
-        if (nPoints > 0) {
-            int[] xpoints = new int[nPoints];
-            for (int i = 0; i < nPoints; i++) {
-                xpoints[i] = i * 2;
-                ypoints[i] = y - Integer.parseInt(ychar[i]) / 6;
-            }
-            gr.setStroke(new BasicStroke(3));
-            gr.setColor(Color.GREEN);
-            gr.drawPolyline(xpoints, ypoints, nPoints);
-            gr.drawString("Java Source", 10, 10);
-
-        }
     }
 
     public void setListNmCon(List list_nm_con) {

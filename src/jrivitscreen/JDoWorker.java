@@ -124,10 +124,6 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     risposta_attesa_tiro_errato();
                 }
 
-                case Static.F_CURVA -> {
-                    drawGrafico();
-                }
-
 //                case "lavoro_scelto" -> {
 //                    String lavoro = this.Rm.getLavoroScelto();
 //                    JFileWorker.ScriviFileLock(Static.F_LAVORO_SCELTO, lavoro);
@@ -179,7 +175,11 @@ public class JDoWorker extends SwingWorker<String, Object> {
                 }
 
                 case "grafico" -> {
-                    this.drawGrafico();
+                    
+                    this.Rm.g.setCurva(this.Rm.getCurva());
+                    this.Rm.repaint();
+
+                    //this.drawGrafico();
                 }
             }
         } catch (NumberFormatException ex) {
@@ -193,30 +193,6 @@ public class JDoWorker extends SwingWorker<String, Object> {
         this.operation = operation;
     }
 
-    private void drawGrafico() {
-//        this.Rm.jLayeredPaneCenter.moveToFront(this.jPanelCanvas);
-        Graphics2D gr = (Graphics2D) this.Rm.getjLayeredPaneCenter().getGraphics();
-        gr.drawString("Java Source", 10, 10);
-        int y = this.Rm.getjLayeredPaneCenter().getHeight();
-        String[] ychar = this.Rm.getCurva().split(",");
-        int nPoints;
-        nPoints = ychar.length;
-        int[] ypoints = new int[nPoints];
-        if (nPoints > 0) {
-            int[] xpoints = new int[nPoints];
-            for (int i = 0; i < nPoints; i++) {
-                xpoints[i] = i * 2;
-                ypoints[i] = y - Integer.parseInt(ychar[i]) / 6;
-            }
-            gr.setStroke(new BasicStroke(3));
-            gr.setColor(Color.GREEN);
-            gr.drawPolyline(xpoints, ypoints, nPoints);
-            this.Rm.getjLayeredPaneCenter().repaint();
-            gr.drawString("Java Source", 10, 10);
-        }
-        this.Rm.setCurva(JFileWorker.LeggiFileLock("curva"));
-
-    }
 
     void risposta_attesa_tiro_errato() {
         // Fabio: la gestione del tiro errato deve essere fatta 

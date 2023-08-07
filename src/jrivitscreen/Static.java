@@ -69,6 +69,7 @@ public class Static {
     final static String F_ARIA = "aria";
     final static String F_ERRORE = "errore";
     final static String F_CURVA = "curva";
+    final static String F_FATTO_FILE_CURVA = "fatto_file_curva";
     final static String F_CHIEDI_CONFERMA_NO = "chiedi_conferma_no";
     final static String F_CHIEDI_CONFERMA_STOP = "chiedi_conferma_stop";
     final static String F_LOTTI_OK = "lotti_ok";
