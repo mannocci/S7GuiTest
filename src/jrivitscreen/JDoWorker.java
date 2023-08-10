@@ -74,6 +74,8 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     this.bt.start();//Gestione dei pulsanti
                     this.file_worker.start();//Avvio FileWorker
                     this.file_worker.initValues();
+                    this.update_status_lan();
+                    this.update_status_wifi();
                 }
 
                 case "stop" -> {
@@ -102,6 +104,12 @@ public class JDoWorker extends SwingWorker<String, Object> {
                 case "aggiorna_nm_list" -> {
                     String[] cmd = {"/home/adminsb/bin/nm_list_con.sh"};
                     run_system_bash(cmd);
+                }
+                case "aggiorna_stato_wifi" -> {
+                    this.update_status_wifi();
+                }
+                case "aggiorna_stato_lan" -> {
+                    this.update_status_lan();
                 }
                 case "on_of_nm_device" -> {
                     String nomeDevice = this.Rm.getListSetupNM().getItem(this.Rm.getListSetupNM().getSelectedIndex());
@@ -175,7 +183,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
                 }
 
                 case "grafico" -> {
-                    
+
                     this.Rm.g.setCurva(this.Rm.getCurva());
                     this.Rm.repaint();
 
@@ -193,6 +201,23 @@ public class JDoWorker extends SwingWorker<String, Object> {
         this.operation = operation;
     }
 
+    /**
+     * Aggiorna lo stato del device ETH0
+     */
+    void update_status_lan() {
+        String[] cmd = {"/home/adminsb/bin/status_lan.sh"};
+        run_system_bash(cmd);
+
+    }
+
+    /**
+     * Aggiorna lo stato della Wifi. Elenca Access point
+     */
+    void update_status_wifi() {
+        String[] cmd = {"/home/adminsb/bin/status_wifi.sh"};
+        run_system_bash(cmd);
+
+    }
 
     void risposta_attesa_tiro_errato() {
         // Fabio: la gestione del tiro errato deve essere fatta 

@@ -58,11 +58,8 @@ public class JFileWorker extends Thread {
     private final String f_setup_wifi = "setup_wifi.txt";
 
     // se il lavoro è in corso contiene "1"
-
     private final String f_soglia_pressione_aria_in_min = "soglia_pressione_aria_in_min";
     private final String f_soglia_pressione_aria_in_max = "soglia_pressione_aria_in_max";
-
-
 
     public JFileWorker(JRivitMain mf) throws IOException {
         this.Rm = mf;
@@ -127,6 +124,14 @@ public class JFileWorker extends Thread {
                             this.Rm.exit();
                         case Static.F_FATTO_FILE_CURVA ->
                             gestisciCurva();
+                        case Static.F_STATUS_LAN -> {
+                            readSetupLan();
+                        }
+                        case Static.F_STATUS_WIFI -> {
+                            readSetupWifi();
+                        }
+                        case Static.F_LISTA_NM_CON ->
+                            readListaNMdevice();
                     }
 
                 }
@@ -140,9 +145,7 @@ public class JFileWorker extends Thread {
                             impostaChiediConferma(false);
                         case Static.F_CHIEDI_CONFERMA_STOP ->
                             impostaChiediConfermaStop(false);
-                        case Static.F_RISPOSTA_TIRO_ERRATO_CONTINUA, 
-                                Static.F_RISPOSTA_TIRO_ERRATO_ACCETTA, 
-                                Static.F_RISPOSTA_TIRO_ERRATO_ANNULLA -> {
+                        case Static.F_RISPOSTA_TIRO_ERRATO_CONTINUA, Static.F_RISPOSTA_TIRO_ERRATO_ACCETTA, Static.F_RISPOSTA_TIRO_ERRATO_ANNULLA -> {
                             this.Rm.setInErrore(false);
                             this.Rm.aggiornaDaErroreTiro();
                         }
@@ -154,16 +157,11 @@ public class JFileWorker extends Thread {
                             readInfo();
                         case Static.F_WARNING ->
                             readWarning();
-                        case Static.F_SETUP_LAN ->
-                            readSetupLan();
-                        case Static.F_SETUP_WIFI ->
-                            readSetupWifi();
                         case Static.F_LAVORI ->
                             readLavori();
                         case Static.F_NOME_DEVICE ->
                             readNomeDevice();
-                        case Static.F_LISTA_NM_CON ->
-                            readListaNMdevice();
+
                     }
                     try {
                         Thread.sleep(2);
@@ -180,12 +178,13 @@ public class JFileWorker extends Thread {
         }
     }
 
-/**
- * Un conto è lo stato dell'aria, ma l'azione di chiusura e apertura 
- * deve essere fatta da control. I led da chi li facciamo comandare ?
- * Da control vedi Class JTask
- * @param stato 
- */
+    /**
+     * Un conto è lo stato dell'aria, ma l'azione di chiusura e apertura deve
+     * essere fatta da control. I led da chi li facciamo comandare ? Da control
+     * vedi Class JTask
+     *
+     * @param stato
+     */
     private void mostraStatoAria(String stato) {
 
         if (stato == Static.ARIA_CHIUSA) {//Aria chiusa
@@ -244,7 +243,7 @@ public class JFileWorker extends Thread {
      * Leggere il DB è meglio
      */
     private void readSetupLan() {
-        this.Rm.AggiornaSetupLan(this.LeggiFileElencoLock(this.f_setup_lan));
+        this.Rm.AggiornaSetupLan(this.LeggiFileElencoLock(Static.F_STATUS_LAN));
     }
 
     /**
@@ -252,7 +251,7 @@ public class JFileWorker extends Thread {
      * sopra forse è meglio leggere il DB
      */
     private void readSetupWifi() {
-        this.Rm.AggiornaSetupWiFi(this.LeggiFileElencoLock(this.f_setup_wifi));
+        this.Rm.AggiornaSetupWiFi(this.LeggiFileElencoLock(Static.F_STATUS_WIFI));
     }
 
     /**
@@ -279,7 +278,6 @@ public class JFileWorker extends Thread {
         this.Rm.update_sensori(line);
     }
 
-    
     /**
      * inizializza i valori in base al contenuto dei file Sono necessari: -
      * lavori.txt; letto sul DB tabella "lavori", 4 campi: nome, lotti, pezzi,
@@ -292,16 +290,13 @@ public class JFileWorker extends Thread {
         this.readLavori();//Se non essite il file imposta il default
         this.readInfo();// Se non esite il file imposta a stringa info
         this.readWarning();// Se non esiste il file imposta a sringa warning
-        this.readSetupLan();// Se non esiste il file imposta a DHCP
-        this.readSetupWifi();// Se non esiste il file imposta a DHCP
-
         this.read_lavoro_scelto();//Se non esite il file imposta a 0
         this.readLavoroInPausa();//Se non esite il file imposta non in pausa
         //this.LeggiAriaInMinMax(); // Letto dal DB
-        this.LeggiSessione();// Se non essite il file imposta il file a "0"
+        //this.LeggiSessione();// Se non essite il file imposta il file a "0"
         this.mostraStatoAria(Static.ARIA_CHIUSA);//Se non esiste il file imposta a "0"
         this.readNomeDevice();//Se non esiste il file imposta a CT-0000-00
-        cancellaFileLock(Static.PATH_WATCH + "errore"); // Dovrebbe farlo COntrol
+//        cancellaFileLock(Static.PATH_WATCH + "errore"); // Dovrebbe farlo COntrol
         this.Rm.set_jLabel_B_L("Main");
         this.Rm.repaint();
     }
@@ -383,7 +378,7 @@ public class JFileWorker extends Thread {
      * @param Testo String testo da scrivere nel file
      */
     public static int ScriviFileLock(String NomeFile, String Testo) {
-        cancellaFile(NomeFile);
+        //cancellaFile(NomeFile);
         boolean lock = LockFile(NomeFile);
         if (lock) {
             try {
@@ -572,7 +567,7 @@ public class JFileWorker extends Thread {
 
     private void aggiornaContatori() {
         String testo = LeggiFileLock(Static.F_CONTATORI);
-        String [] contatori = testo.split(",");
+        String[] contatori = testo.split(",");
         try {
             this.Rm.setLotto(Integer.parseInt(contatori[0]));
             this.Rm.setTiriNelLotto(Integer.parseInt(contatori[1]));

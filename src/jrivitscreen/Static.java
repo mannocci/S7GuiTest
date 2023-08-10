@@ -63,8 +63,9 @@ public class Static {
     final static String F_INFO = "info.txt";
     final static String F_SENSORI = "sensori";
     final static String F_WARNING = "warning.txt";
-    final static String F_SETUP_LAN = "setup_lan.txt";
-    final static String F_SETUP_WIFI = "setup_wifi.txt";
+    final static String F_STATUS_LAN = "status_lan";
+    final static String F_STATUS_WIFI = "status_wifi";
+    
     final static String F_NOME_DEVICE = "nome_device";
     final static String F_ARIA = "aria";
     final static String F_ERRORE = "errore";
