@@ -51,7 +51,7 @@ public class JRivitMain extends javax.swing.JFrame {
 
     private ImageIcon Img_Exit, Img_Ok, Img_Nulla, Img_Freccia_su,
             Img_Freccia_giu, Img_Warning, Img_Setup, Img_Play,
-            Img_No_Warning, Img_Err_Warning, Img_Med_Warning;
+            Img_No_Warning, Img_Err_Warning, Img_Med_Warning, Img_Grafico;
     private JDoWorker doWorker;
     private ImageIcon Img_Continua;
     private ImageIcon Img_Estende;
@@ -170,7 +170,7 @@ public class JRivitMain extends javax.swing.JFrame {
         Img_Lan = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/lan.png"));
         Img_WiFi = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/cell.png"));
         Img_Info = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/info.png"));
-
+        Img_Grafico = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/grafico.png"));
         elencoLavoriArray = new ArrayList<>();
 
         formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -945,7 +945,7 @@ public class JRivitMain extends javax.swing.JFrame {
             case "started" -> {
                 this.jLayeredPaneCenter.moveToFront(g);
                 g.setInPrimoPiano(true);
-                this.set_jLabel_B_L("g");
+                this.set_jLabel_B_L("grafico");
                 esegui("grafico");
                 this.repaint();
 
@@ -1217,7 +1217,7 @@ public class JRivitMain extends javax.swing.JFrame {
         }
 
         this.change_buttons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
-                this.Img_Stop, this.Img_Pause, this.Img_Setup);
+                this.Img_Stop, this.Img_Pause, this.Img_Grafico);
         String lavoro = this.listLavori.getSelectedItem();
         int idLavoro = this.listLavori.getSelectedIndex();
         this.lavoroScelto = this.elencoLavoriArray.get(idLavoro)[0];
