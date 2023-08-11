@@ -70,13 +70,8 @@ public class JDoWorker extends SwingWorker<String, Object> {
         try {
             switch (this.operation) {
 
-                case "init" -> {
-                    this.bt.start();//Gestione dei pulsanti
-                    this.file_worker.start();//Avvio FileWorker
-                    this.file_worker.initValues();
-                    this.update_status_lan();
-                    this.update_status_wifi();
-                }
+                case "init" ->
+                    this.init();
 
                 case "stop" -> {
                     JFileWorker.ScriviFileLock(Static.F_STATO, Static.STATO_STOP);
@@ -101,78 +96,29 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     this.NomeDevice = JFileWorker.LeggiFileLock(this.f_nome_device);
                     this.Rm.setNomeDevice(this.NomeDevice);
                 }
-                case "aggiorna_nm_list" -> {
-                    String[] cmd = {"/home/adminsb/bin/nm_list_con.sh"};
-                    run_system_bash(cmd);
-                }
-                case "aggiorna_stato_wifi" -> {
+                case "aggiorna_nm_list" ->
+                    this.update_status_nm();
+
+                case "aggiorna_stato_wifi" ->
                     this.update_status_wifi();
-                }
-                case "aggiorna_stato_lan" -> {
+
+                case "aggiorna_stato_lan" ->
                     this.update_status_lan();
-                }
-                case "on_of_nm_device" -> {
-                    String nomeDevice = this.Rm.getListSetupNM().getItem(this.Rm.getListSetupNM().getSelectedIndex());
-                    String device;
-                    if (nomeDevice.contains(" OFF")) {
-                        device = nomeDevice.substring(0, nomeDevice.indexOf(" OFF"));
-                    } else {
-                        device = nomeDevice.substring(0, nomeDevice.indexOf(" ON"));
-                    }
 
-                    String[] cmd = {"/home/adminsb/bin/start_stop_NM.sh", device};
-                    run_system_bash(cmd);
-                    //Dopo aver avviato o spento una con. deve aggiornare il file
-                    cmd[0] = "/home/adminsb/bin/nm_list_con.sh";
-                    run_system_bash(cmd);
-                    this.Rm.set_jLabel_B_L("CON..");
+                case "on_of_nm_device" ->
+                    this.on_of_nm_device();
 
-                }
-                case "risposta_attesa_tiro_errato" -> {
+                case "risposta_attesa_tiro_errato" ->
                     risposta_attesa_tiro_errato();
-                }
 
-//                case "lavoro_scelto" -> {
-//                    String lavoro = this.Rm.getLavoroScelto();
-//                    JFileWorker.ScriviFileLock(Static.F_LAVORO_SCELTO, lavoro);
-//                    this.Rm.setInErrore(false);
-//                    //Aggiornare leggendo il DB i campi della ricetta DA FARE IN Control !!
-//                }
-                case "scegli_e_avvia" -> {
-                    String lavoro = this.Rm.getLavoroScelto();
-                    JFileWorker.cancellaFile(Static.F_LAVORO_SCELTO);
-                    JFileWorker.ScriviFileLock(Static.F_LAVORO_SCELTO, lavoro);
-                    this.Rm.setInErrore(false);
-                    JFileWorker.ScriviFileLock(Static.F_STATO, Static.STATO_AVVIATO);
-                    JFileWorker.ScriviFileLock(Static.F_AGGIORNATO_STATO, Static.STATO_AVVIATO);
-                    this.Rm.PanelStarted();
-                }
+                case "scegli_e_avvia" ->
+                    this.scegli_e_avvia();
 
-                case "aggiorna info" -> {
-                    List<String> lista_info = JFileWorker.LeggiFileElencoLock(Static.F_INFO);
-                    List<String> lista_sensori = JFileWorker.LeggiFileElencoLock(Static.F_SENSORI);
-                    lista_info.add("=========================");
-                    for (String string : lista_sensori) {
-                        lista_info.add(string);
-                    }
-                    this.Rm.setListInfo(lista_info);
-                }
+                case "aggiorna info" ->
+                    this.update_info();
 
-                case "aggiorna warning" -> {
-                    List<String> warning_file = JFileWorker.LeggiFileElencoLock(Static.F_WARNING);
-                    int livello_warning = 0, livello = 0, posizione_riga = 0;
-
-                    for (String string : warning_file) {
-                        String[] warnig_list = string.split("§");
-                        livello = Integer.parseInt(warnig_list[1]);
-                        if (livello > livello_warning) {
-                            livello_warning = livello;
-                        }
-                        warning_file.set(posizione_riga++, string + ", livello -> " + livello);
-                    }
-                    this.Rm.set_warning(livello_warning);//Aggiorna l'immagine warning
-                    this.Rm.AggiornaWarning(warning_file);//Aggiorna lista descizioni warning
-                }
+                case "aggiorna warning" ->
+                    this.update_warning();
 
                 case "orario" -> {
 
@@ -202,6 +148,52 @@ public class JDoWorker extends SwingWorker<String, Object> {
     }
 
     /**
+     * inizializza diversi stati per prevenire la scheda bianca
+     * Avvia l'istanza della classe FileWorker 
+     */
+    void init() {
+        this.bt.start();//Gestione dei pulsanti
+        this.file_worker.start();//Avvio FileWorker
+        this.file_worker.initValues();
+        this.update_status_lan();
+        this.update_status_wifi();
+        this.update_status_nm();
+    }
+
+    /**
+     * Imposta lavoro scelto elo avvia
+     */
+    void scegli_e_avvia() {
+        String lavoro = this.Rm.getLavoroScelto();
+        JFileWorker.cancellaFile(Static.F_LAVORO_SCELTO);
+        JFileWorker.ScriviFileLock(Static.F_LAVORO_SCELTO, lavoro);
+        this.Rm.setInErrore(false);
+        JFileWorker.ScriviFileLock(Static.F_STATO, Static.STATO_AVVIATO);
+        JFileWorker.ScriviFileLock(Static.F_AGGIORNATO_STATO, Static.STATO_AVVIATO);
+        this.Rm.PanelStarted();
+    }
+
+    /**
+     * Attiva o disattiva di device di rete
+     */
+    void on_of_nm_device() {
+        String nomeDevice = this.Rm.getListSetupNM().getItem(this.Rm.getListSetupNM().getSelectedIndex());
+        String device;
+        if (nomeDevice.contains(" OFF")) {
+            device = nomeDevice.substring(0, nomeDevice.indexOf(" OFF"));
+        } else {
+            device = nomeDevice.substring(0, nomeDevice.indexOf(" ON"));
+        }
+
+        String[] cmd = {"/home/adminsb/bin/start_stop_NM.sh", device};
+        run_system_bash(cmd);
+        //Dopo aver avviato o spento una con. deve aggiornare il file
+        cmd[0] = "/home/adminsb/bin/nm_list_con.sh";
+        run_system_bash(cmd);
+        this.Rm.set_jLabel_B_L("CON..");
+    }
+
+    /**
      * Aggiorna lo stato del device ETH0
      */
     void update_status_lan() {
@@ -217,6 +209,47 @@ public class JDoWorker extends SwingWorker<String, Object> {
         String[] cmd = {"/home/adminsb/bin/status_wifi.sh"};
         run_system_bash(cmd);
 
+    }
+
+    /**
+     * Aggiorna la lista dei device per la connesione di rete
+     */
+    void update_status_nm() {
+        String[] cmd = {"/home/adminsb/bin/nm_list_con.sh"};
+        run_system_bash(cmd);
+
+    }
+
+    /**
+     * Aggiorna la lista che contiene le informazioni del sistema
+     */
+    void update_info() {
+        List<String> lista_info = JFileWorker.LeggiFileElencoLock(Static.F_INFO);
+        List<String> lista_sensori = JFileWorker.LeggiFileElencoLock(Static.F_SENSORI);
+        lista_info.add("=========================");
+        for (String string : lista_sensori) {
+            lista_info.add(string);
+        }
+        this.Rm.setListInfo(lista_info);
+    }
+
+    /**
+     * Aggiorna le segnalazioni di Warning
+     */
+    void update_warning() {
+        List<String> warning_file = JFileWorker.LeggiFileElencoLock(Static.F_WARNING);
+        int livello_warning = 0, livello = 0, posizione_riga = 0;
+
+        for (String string : warning_file) {
+            String[] warnig_list = string.split("§");
+            livello = Integer.parseInt(warnig_list[1]);
+            if (livello > livello_warning) {
+                livello_warning = livello;
+            }
+            warning_file.set(posizione_riga++, string + ", livello -> " + livello);
+        }
+        this.Rm.set_warning(livello_warning);//Aggiorna l'immagine warning
+        this.Rm.AggiornaWarning(warning_file);//Aggiorna lista descizioni warning    
     }
 
     void risposta_attesa_tiro_errato() {
