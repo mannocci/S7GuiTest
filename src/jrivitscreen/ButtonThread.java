@@ -41,7 +41,7 @@ public class ButtonThread extends Thread {
 
     public ButtonThread(JRivitMain mf) {
         this.mf = mf;
-        System.out.println("Push button Thread");
+        Static.debug("Push button Thread started", 3);
 
         // create gpio controller
         final GpioController gpio = GpioFactory.getInstance();
@@ -62,7 +62,7 @@ public class ButtonThread extends Thread {
                 // display pin state on console
                 String NomePulsante = event.getPin().getName().substring(0, 3);
                 read_pulsane_premuto(NomePulsante, "" + event.getState());
-                //System.out.println(" Premuto: " + NomePulsante+ " = " + event.getState());
+                Static.debug(" Premuto: " + NomePulsante+ " = " + event.getState(), 3);
             }
 
         }, pulsanti);
@@ -70,7 +70,7 @@ public class ButtonThread extends Thread {
     }
 
     private void send_p(String sp) {
-        this.mf.pulsante_hw(sp);
+        this.mf.pulsanteHw(sp);
     }
 
     @Override

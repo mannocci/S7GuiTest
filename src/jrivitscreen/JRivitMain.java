@@ -100,7 +100,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private boolean inErrore = false;
     private boolean in_pausa = false;
     private boolean chiedi_conferma = false;
-    private boolean lavoro_concluso = false;
+    private boolean lavoroConcluso = false;
     private boolean chiedi_conferma_stop;
     private List<String> elencoDesLavoro;
     private int w_level;
@@ -123,12 +123,12 @@ public class JRivitMain extends javax.swing.JFrame {
         this.elencoDesLavoro = elencoDesLavoro;
     }
 
-    public boolean isLavoro_concluso() {
-        return lavoro_concluso;
+    public boolean isLavoroConcluso() {
+        return lavoroConcluso;
     }
 
-    public void setLavoro_concluso(boolean lavoro_concluso) {
-        this.lavoro_concluso = lavoro_concluso;
+    public void setLavoroConcluso(boolean lavoroConcluso) {
+        this.lavoroConcluso = lavoroConcluso;
     }
 //
 
@@ -712,7 +712,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 // se esiste non chiede conferma della scelta
 //                DialogQ = STATO_STOP;
                 stato = Static.STATO_STOP;
-                if (this.isChiedi_conferma_stop()) {
+                if (this.isChiediConfermaStop()) {
                     this.AlertDialogStop = "Annullare il Lavoro ?";
                     this.jLabelDialog.setText(AlertDialogStop);
                     PanelDialog();
@@ -792,7 +792,7 @@ public class JRivitMain extends javax.swing.JFrame {
             case "started", "canvas" ->//Continua
             {
                 this.setStato(Static.CONTINUA);
-                if (isChiedi_conferma()) {
+                if (isChiediConferma()) {
                     this.AlertDialogStop = "Continua ?";
                     this.jLabelDialog.setText(AlertDialogStop);
                     PanelDialog();
@@ -832,7 +832,7 @@ public class JRivitMain extends javax.swing.JFrame {
             case "started", "canvas" ->//Accetta il tiro
             {
                 this.setStato(Static.ACCETTA);
-                if (this.isChiedi_conferma()) {
+                if (this.isChiediConferma()) {
                     this.AlertDialogStop = "Accetta ?";
                     this.jLabelDialog.setText(AlertDialogStop);
                     PanelDialog();
@@ -884,7 +884,7 @@ public class JRivitMain extends javax.swing.JFrame {
             //Per ora nulla
             case "started", "canvas" -> {//Annullare il tiro
                 this.setStato(Static.ANNULLA);
-                if (this.isChiedi_conferma()) {
+                if (this.isChiediConferma()) {
                     this.AlertDialogStop = "Annulla ?";
                     this.jLabelDialog.setText(AlertDialogAnnulla);
                     PanelDialog();
@@ -914,7 +914,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 PulsanteGiu();
             case "started", "canvas" -> {//Pausa del lavoro 
                 this.setStato(Static.STATO_PAUSA);
-                if (this.isChiedi_conferma_stop()) {
+                if (this.isChiediConfermaStop()) {
 //                    DialogQ = STATO_PAUSA;
                     this.AlertDialogStop = "Pausa ?";
                     this.jLabelDialog.setText(AlertDialogStop);
@@ -1000,7 +1000,7 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     private void PanelMain() {
 //        changePanel(this.jPanelMain); // metodo migliorato per cambio pannello. Da distribuire sostituendo tutte le chiamate a moveToFront (todo)
-        this.change_buttons(this.Img_Warning, this.Img_Info, this.Img_Setup,
+        this.changeButtons(this.Img_Warning, this.Img_Info, this.Img_Setup,
                 this.Img_Play, this.Img_Nulla, this.Img_Exit);
         this.jLayeredPaneCenter.moveToFront(this.jPanelMain);
 
@@ -1009,7 +1009,7 @@ public class JRivitMain extends javax.swing.JFrame {
     /**
      * Setup dei pulsanti
      */
-    private void change_buttons(ImageIcon I1, ImageIcon I2, ImageIcon I3,
+    private void changeButtons(ImageIcon I1, ImageIcon I2, ImageIcon I3,
             ImageIcon I4, ImageIcon I5, ImageIcon I6) {
         this.jButtonPL1.setIcon(I1);
         if (I1.equals(this.Img_Nulla)) {
@@ -1070,7 +1070,7 @@ public class JRivitMain extends javax.swing.JFrame {
     public void set_errore_tiro() {
         this.inErrore = true;
         this.jPanelStarted.setBackground(Color.red);
-        this.change_buttons(this.Img_Continua, this.Img_Ok, this.Img_Annulla,
+        this.changeButtons(this.Img_Continua, this.Img_Ok, this.Img_Annulla,
                 this.Img_Stop, this.Img_Pause, this.Img_Estende);
         this.jLayeredPaneCenter.moveToFront(this.jPanelStarted);
 //        this.repaint();
@@ -1159,7 +1159,7 @@ public class JRivitMain extends javax.swing.JFrame {
     /**
      * Viene chiamato dopo la gestione dell'errore
      */
-    public void ritorno_da_errore() {
+    public void ritornoDaErrore() {
         PanelStarted();
     }
 
@@ -1185,7 +1185,7 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     public void PanelStart() {
         int selezionato = 0, i = 0;
-        this.change_buttons(this.Img_Exit, this.Img_Nulla, this.Img_Nulla,
+        this.changeButtons(this.Img_Exit, this.Img_Nulla, this.Img_Nulla,
                 this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Ok);
         // Se sessione non contiene 0
         // vuole dire che da una pausa si vuole riprendere un lavoro
@@ -1227,7 +1227,7 @@ public class JRivitMain extends javax.swing.JFrame {
             this.jPanelStarted.setBackground(Color.white);
         }
 
-        this.change_buttons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
+        this.changeButtons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
                 this.Img_Stop, this.Img_Pause, this.Img_Grafico);
         String lavoro = this.listLavori.getSelectedItem();
         int idLavoro = this.listLavori.getSelectedIndex();
@@ -1321,7 +1321,7 @@ public class JRivitMain extends javax.swing.JFrame {
      * Pannello che mostra il contenuto del file /tmp/warning.txt
      */
     private void PanelWarning() {
-        this.change_buttons(this.Img_Exit, this.Img_Nulla, this.Img_Nulla,
+        this.changeButtons(this.Img_Exit, this.Img_Nulla, this.Img_Nulla,
                 this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Nulla);
         this.jLayeredPaneCenter.moveToFront(this.jPanelWarning);
     }
@@ -1459,7 +1459,7 @@ public class JRivitMain extends javax.swing.JFrame {
      * Pannello per la configurazione della LAN Legge il file setup_lan.txt
      */
     private void PanelSetupLan() {
-        this.change_buttons(this.Img_Exit, this.Img_Freccia_sx, this.Img_Freccia_dx,
+        this.changeButtons(this.Img_Exit, this.Img_Freccia_sx, this.Img_Freccia_dx,
                 this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Ok);
         this.jLayeredPaneCenter.moveToFront(this.jPanelSetupLan);
     }
@@ -1468,7 +1468,7 @@ public class JRivitMain extends javax.swing.JFrame {
      * Pannello per il setup della WiFi Legge il file setup_wifi.txt
      */
     private void PanelSetupWifi() {
-        this.change_buttons(this.Img_Exit, this.Img_Freccia_sx, this.Img_Freccia_dx,
+        this.changeButtons(this.Img_Exit, this.Img_Freccia_sx, this.Img_Freccia_dx,
                 this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Ok);
         this.jLayeredPaneCenter.moveToFront(this.jPanelSetupWiFi);
     }
@@ -1477,7 +1477,7 @@ public class JRivitMain extends javax.swing.JFrame {
      * Pannello che mostra il contenuto del file info.txt
      */
     private void PanelInfo() {
-        this.change_buttons(this.Img_Exit, this.Img_Nulla, this.Img_Nulla,
+        this.changeButtons(this.Img_Exit, this.Img_Nulla, this.Img_Nulla,
                 this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Nulla);
         this.jLayeredPaneCenter.moveToFront(this.jPanelInfo);
     }
@@ -1489,7 +1489,7 @@ public class JRivitMain extends javax.swing.JFrame {
      * /tmp/pausa.txt aggiorna il DB (DA FARE)
      */
     private void PanelDialog() {
-        this.change_buttons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
+        this.changeButtons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
                 this.Img_Ok, this.Img_Cancel, this.Img_Nulla);
         this.jLayeredPaneCenter.moveToFront(this.jPanelDialog);
     }
@@ -1498,56 +1498,56 @@ public class JRivitMain extends javax.swing.JFrame {
      * Pannello per disegnare il grafico
      */
     public void PanelCanvas() {
-        this.change_buttons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
+        this.changeButtons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
                 this.Img_Ok, this.Img_Nulla, this.Img_Estende);
         this.jLayeredPaneCenter.moveToFront(this.g);
     }
 
     /**
-     * AggiornaWarning carica eventuali Warning dal file warning.txt
+     * aggiornaWarning carica eventuali Warning dal file warning.txt
      *
      * @param lista
      */
-    public void AggiornaWarning(List<String> lista) {
+    public void aggiornaWarning(List<String> lista) {
         this.listWarning.removeAll();
         RefreshList(this.listWarning, lista);
         this.listWarning.repaint();
     }//End AggiornaInfo
 
     /**
-     * AggiornaSetupLan carica eventuali Informazioni dal file
+     * aggiornaSetupLan carica eventuali Informazioni dal file
      * /tmp/setup_lan.txt
      *
      * @param lista
      */
-    public void AggiornaSetupLan(List<String> lista) {
+    public void aggiornaSetupLan(List<String> lista) {
         this.jTextAreaLan.setText("");
         for (String string : lista) {
             this.jTextAreaLan.append(string + "\n");
-            System.out.println(string + "\n");
+            Static.debug(string, 3);
         }
-    }//End AggiornaSetupLan
+    }//End aggiornaSetupLan
 
     /**
-     * AggiornaSetupWiFi carica eventuali Informazioni dal file /tmp/status_wifi
+     * aggiornaSetupWiFi carica eventuali Informazioni dal file /tmp/status_wifi
      *
      * @param lista
      */
-    public void AggiornaSetupWiFi(List<String> lista) {
+    public void aggiornaSetupWiFi(List<String> lista) {
         this.jTextAreaWifi.setText("");
         for (String string : lista) {
             this.jTextAreaWifi.append(string + "\n");
-            System.out.println(string + "\n");
+            Static.debug(string, 3);
         }
 
-    }//End AggiornaSetupWiFi
+    }//End aggiornaSetupWiFi
 
     /**
-     * AggiornaLavori
+     * aggiornaLavori
      *
      * @param lista
      */
-    public void AggiornaLavori(List<String> lista) {
+    public void aggiornaLavori(List<String> lista) {
         this.listLavori.removeAll();
         if (lista.isEmpty()) {
             lista.add("Lavoro senza limiti§Lotti=-1§Pezzi=-1§Lavoro predefinito senza limiti");
@@ -1572,14 +1572,14 @@ public class JRivitMain extends javax.swing.JFrame {
             }
         }
         RefreshList(listLavori, elencoTxt);
-    }//End AggiornaLavori
+    }//End aggiornaLavori
 
     /**
-     * AggiornaSessione
+     * aggiornaSessione
      *
      * @param sessione
      */
-    public void AggiornaSessione(String sessione) {
+    public void aggiornaSessione(String sessione) {
         if (sessione.contains("Errore")) {
             sessione = "0";
         }
@@ -1606,7 +1606,7 @@ public class JRivitMain extends javax.swing.JFrame {
      *
      * @param p String nome pulsante
      */
-    public void pulsante_hw(String p) {
+    public void pulsanteHw(String p) {
         switch (p) {
             case "PL1" -> {
                 if (this.jButtonPL1.isEnabled()) {
@@ -1654,7 +1654,7 @@ public class JRivitMain extends javax.swing.JFrame {
      * Pannello di Setup l'utente deve scegliere tra setup Lan o WiFi
      */
     private void PanelSetup() {
-        this.change_buttons(this.Img_Exit, this.Img_Lan, this.Img_WiFi,
+        this.changeButtons(this.Img_Exit, this.Img_Lan, this.Img_WiFi,
                 this.Img_Freccia_su, this.Img_Freccia_giu, setIconSetup());
         this.jLayeredPaneCenter.moveToFront(this.jPanelSetup);
     }
@@ -1679,24 +1679,24 @@ public class JRivitMain extends javax.swing.JFrame {
                 }
             }
         } catch (Exception e) {
-            System.out.println("Errore index NM_con " + i);
+            Static.debug("Errore index NM_con " + i, 2);
         }
         return img_play_stop;
     }
 
     /**
-     * aria_chiusa chiamato da WorkerThread imposta l'interfaccia
+     * ariaChiusa chiamato da WorkerThread imposta l'interfaccia
      */
-    public void aria_chiusa() {
+    public void ariaChiusa() {
         this.jLabel_B_R.setText("Aria OFF");
         this.jLabel_B_R.setBackground(Color.red);
         this.repaint();
     }
 
     /**
-     * aria_aperta chiamato da WorkerThread imposta l'interfaccia
+     * ariaAperta chiamato da WorkerThread imposta l'interfaccia
      */
-    public void aria_aperta() {
+    public void ariaAperta() {
         this.jLabel_B_R.setText("Aria ON");
         this.jLabel_B_R.setBackground(Color.green);
         this.repaint();
@@ -1725,7 +1725,7 @@ public class JRivitMain extends javax.swing.JFrame {
             if (this.lotto == this.nrLottiDaFare && this.tiriNelLotto == this.nrTiriDaFare) {
                 // E' Finito il lavoro !
                 this.jPanelStarted.setBackground(Color.BLUE);
-                setLavoro_concluso(true);
+                setLavoroConcluso(true);
             } else {
                 if (!this.inErrore) {
                     this.jPanelStarted.setBackground(Color.WHITE);
@@ -1758,23 +1758,13 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     public void aggiornaDaErroreTiro() {
         this.jPanelStarted.setBackground(Color.WHITE);
-        this.change_buttons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
+        this.changeButtons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
                 this.Img_Stop, this.Img_Pause, this.Img_Nulla);
         this.repaint();
     }
 
     public void set_nr_tiri_fatti(int Tiri_fatti) {
         this.tiriNelLotto = Tiri_fatti;
-    }
-
-    /**
-     * metodo AggiornaTiriAnnullati aggiorna la Label centrale alla base del
-     * panel
-     *
-     * @param Annullati
-     */
-    void AggiornaTiriAnnullati() {
-        this.esegui("aggiorna_tiri_annullati");
     }
 
     void update_sensori(String Valori) {
@@ -1801,7 +1791,7 @@ public class JRivitMain extends javax.swing.JFrame {
                     }
                 }
             } catch (NumberFormatException e) {
-                System.out.println("jrivitscreen.JRivitMain.update_sensori() - \n" + e.getMessage());
+                    Static.debug("jrivitscreen.JRivitMain.update_sensori() - \n" + e.getMessage(), 2);
             }
         }//end Else
     }
@@ -1994,7 +1984,7 @@ public class JRivitMain extends javax.swing.JFrame {
             this.doWorker.doInBackground();
         } catch (Exception ex) {
             Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
-            System.out.println("Errore eseguendo l'operazione " + operazione + " in background");
+            Static.debug("Errore eseguendo l'operazione " + operazione + " in background", 2);
         }
     }
 
@@ -2004,24 +1994,25 @@ public class JRivitMain extends javax.swing.JFrame {
     public void exit() {
         System.exit(0);
     }
-/**
- * 
- * @return se è in Pausa è true
- */
+
+    /**
+     *
+     * @return se è in Pausa è true
+     */
     public String getInPausa() {
         return inPausa;
     }
-/**
- * 
- * @param inPausa 
- */
+
+    /**
+     *
+     * @param inPausa
+     */
     public void setInPausa(String inPausa) {
         if (inPausa.contains("Errore")) {
             inPausa = "0";
         }
         this.inPausa = inPausa;
     }
-
 
     /**
      * dalla operazione Abort o Pause Panel Started passa il lavoro che
@@ -2045,7 +2036,7 @@ public class JRivitMain extends javax.swing.JFrame {
      *
      * @return se è stato impostato lo stato in pausa
      */
-    public boolean isIn_pausa() {
+    public boolean isInPausa() {
         return in_pausa;
     }
 
@@ -2072,7 +2063,7 @@ public class JRivitMain extends javax.swing.JFrame {
      *
      * @return se devo chiedere o meno la conferma per Continua, annulla accetta
      */
-    public boolean isChiedi_conferma() {
+    public boolean isChiediConferma() {
         return this.chiedi_conferma;
     }
 
@@ -2102,7 +2093,7 @@ public class JRivitMain extends javax.swing.JFrame {
      *
      * @return si o no conferma alla scelta STOP o PAUSA
      */
-    boolean isChiedi_conferma_stop() {
+    boolean isChiediConfermaStop() {
         return this.chiedi_conferma_stop;
     }
 
@@ -2162,7 +2153,7 @@ public class JRivitMain extends javax.swing.JFrame {
             } else {
                 this.lavoroScelto = this.listLavori.getSelectedItem();
             }
-            setLavoro_concluso(false);
+            setLavoroConcluso(false);
             this.esegui("scegli_e_avvia");
             PanelStarted();
             this.set_jLabel_B_L("Started");

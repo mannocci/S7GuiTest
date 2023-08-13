@@ -78,6 +78,21 @@ public class Static {
     final static String F_LISTA_NM_CON = "lista_nm_con";
     static final String PATH_WATCH = "/tmp/CT/";
     static long ATTESA_SCRITTURA_FILE = 1000L;
+    // da utilizzare per impostare il livello di debug
+    // 0:debug disattivato 1:errore 2:warning 3:info 4:verbose
+    final private static int DEBUGLEVEL = 2;  
+                                                
+
+    /**
+     * Visualizza informazioni di debug.
+     * @param string stringa da visualizzare
+     * @param livello livello di debug (1:errore 2:warning 3:info 4:verbose)
+     */
+    static void debug(String string, int livello) {
+        if (livello <= Static.DEBUGLEVEL) {
+            System.out.println(string);
+        }
+    }
     
 
     public Static() {

@@ -249,7 +249,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
             warning_file.set(posizione_riga++, string + ", livello -> " + livello);
         }
         this.Rm.set_warning(livello_warning);//Aggiorna l'immagine warning
-        this.Rm.AggiornaWarning(warning_file);//Aggiorna lista descizioni warning    
+        this.Rm.aggiornaWarning(warning_file);//Aggiorna lista descizioni warning    
     }
 
     void risposta_attesa_tiro_errato() {

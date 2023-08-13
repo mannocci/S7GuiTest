@@ -77,12 +77,11 @@ public class JFileWorker extends Thread {
         } catch (InterruptedException ex) {
             Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        System.out.println("Watch Service Modify file registered for dir: " + dir.getFileName());
+            Static.debug("Watch Service Modify file registered for dir: " + dir.getFileName(), 3);
     }
 
     private void send_p(String sp) {
-        this.Rm.pulsante_hw(sp);
+        this.Rm.pulsanteHw(sp);
     }
 
     @Override
@@ -101,7 +100,7 @@ public class JFileWorker extends Thread {
                 @SuppressWarnings("unchecked")
                 WatchEvent<Path> ev = (WatchEvent<Path>) event;
                 fileName = ev.context();
-                //System.out.println(kind.name() + ": " + fileName);
+                Static.debug(kind.name() + ": " + fileName, 3);
                 if (kind == ENTRY_CREATE) {
                     switch (fileName.toString()) {
                         case Static.F_ARIA ->
@@ -194,7 +193,7 @@ public class JFileWorker extends Thread {
 //            run_system_bash(this.bash_cmd_rosso);
 //            run_system_bash(this.bash_cmd_verde);
             //run_system_bash(this.bash_cmd_aria); viene fatto da Control
-            this.Rm.aria_chiusa();
+            this.Rm.ariaChiusa();
 
         } else { //Aria aperta
             //bash_cmd_aria[4] = this.open;
@@ -203,7 +202,7 @@ public class JFileWorker extends Thread {
 //            run_system_bash(bash_cmd_rosso);
 //            run_system_bash(bash_cmd_verde);
             //run_system_bash(bash_cmd_aria);  viene fatto da Control
-            this.Rm.aria_aperta();
+            this.Rm.ariaAperta();
 
         }
     }
@@ -212,7 +211,7 @@ public class JFileWorker extends Thread {
      * Legge il file con la descrizione dei lavori
      */
     private void readLavori() {
-        this.Rm.AggiornaLavori(LeggiFileElencoLock(Static.F_LAVORI));
+        this.Rm.aggiornaLavori(LeggiFileElencoLock(Static.F_LAVORI));
     }
 
     /**
@@ -243,7 +242,7 @@ public class JFileWorker extends Thread {
      * Leggere il DB è meglio
      */
     private void readSetupLan() {
-        this.Rm.AggiornaSetupLan(this.LeggiFileElencoLock(Static.F_STATUS_LAN));
+        this.Rm.aggiornaSetupLan(this.LeggiFileElencoLock(Static.F_STATUS_LAN));
     }
 
     /**
@@ -251,7 +250,7 @@ public class JFileWorker extends Thread {
      * sopra forse è meglio leggere il DB
      */
     private void readSetupWifi() {
-        this.Rm.AggiornaSetupWiFi(this.LeggiFileElencoLock(Static.F_STATUS_WIFI));
+        this.Rm.aggiornaSetupWiFi(this.LeggiFileElencoLock(Static.F_STATUS_WIFI));
     }
 
     /**
@@ -312,7 +311,7 @@ public class JFileWorker extends Thread {
      * LeggiSessione
      */
     private void LeggiSessione() {
-        this.Rm.AggiornaSessione(LeggiFileLock(Static.F_SESSIONE));
+        this.Rm.aggiornaSessione(LeggiFileLock(Static.F_SESSIONE));
     }//End LeggiFileLavoriDescrizione
 
     /**
@@ -409,8 +408,8 @@ public class JFileWorker extends Thread {
         try {
             File inputFile = new File(Static.PATH_WATCH + NomeFile);
             if (!inputFile.exists()) {
-                System.out.println("Il File " + inputFile.getAbsolutePath()
-                        + " non esiste\n");
+                Static.debug("Il File " + inputFile.getAbsolutePath()
+                        + " non esiste\n", 2);
                 ListaRighe.add("errore lettura File " + NomeFile);
                 return ListaRighe;
             }
@@ -440,8 +439,8 @@ public class JFileWorker extends Thread {
         try {
             File inputFile = new File(Static.PATH_WATCH + NomeFile);
             if (!inputFile.exists()) {
-                System.out.println("Il File " + inputFile.getAbsolutePath()
-                        + " non esiste\n");
+                Static.debug("Il File " + inputFile.getAbsolutePath()
+                        + " non esiste\n", 2);
                 contenutoFile = "errore lettura File " + NomeFile;
                 return contenutoFile;
             }
@@ -469,7 +468,7 @@ public class JFileWorker extends Thread {
             max = Float.parseFloat(LeggiFileLock(f_soglia_pressione_aria_in_max));
             this.Rm.update_soglie_pressione_aria_in(min, max);
         } catch (NumberFormatException e) {
-            System.out.println("Contenuto dei file pressione_in non numerico !\n" + e.getMessage());
+            Static.debug("Contenuto dei file pressione_in non numerico !\n" + e.getMessage(), 2);
         }
     }
 
@@ -497,7 +496,7 @@ public class JFileWorker extends Thread {
             }
             this.Rm.set_nr_lotti_ok(lottiok);
         } catch (NumberFormatException e) {
-            System.out.println("Contenuto del file lotti_ok non numerico !\n" + e.getMessage());
+            Static.debug("Contenuto del file lotti_ok non numerico !\n" + e.getMessage(), 2);
         }
     }
 
@@ -542,7 +541,7 @@ public class JFileWorker extends Thread {
         }
         if (f.exists()) {
             if (!f.delete()) {
-                System.out.println("errore eliminando il file " + NomeFile);
+                Static.debug("errore eliminando il file " + NomeFile, 2);
             }
         }
     }
@@ -556,7 +555,7 @@ public class JFileWorker extends Thread {
         File f = new File(Static.PATH_WATCH + NomeFile);
         if (f.exists()) {
             if (!f.delete()) {
-                System.out.println("errore eliminando il file " + NomeFile);
+                Static.debug("errore eliminando il file " + NomeFile, 2);
             }
         }
     }
@@ -580,7 +579,7 @@ public class JFileWorker extends Thread {
             this.Rm.aggiornaContatori();
             cancellaFile(Static.F_CONTATORI_AGGIORNATI);
         } catch (NumberFormatException e) {
-            System.out.println("File contatori contiene valori non numerici\n" + e.getMessage());
+            Static.debug("File contatori contiene valori non numerici\n" + e.getMessage(), 2);
         }
     }
 
