@@ -166,6 +166,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
     void scegli_e_avvia() {
         String lavoro = this.Rm.getLavoroScelto();
         JFileWorker.cancellaFile(Static.F_LAVORO_SCELTO);
+        JFileWorker.cancellaFile(Static.F_AGGIORNATO_STATO);
         JFileWorker.ScriviFileLock(Static.F_LAVORO_SCELTO, lavoro);
         this.Rm.setInErrore(false);
         JFileWorker.ScriviFileLock(Static.F_STATO, Static.STATO_AVVIATO);
