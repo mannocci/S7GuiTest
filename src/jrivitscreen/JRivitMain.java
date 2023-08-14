@@ -1688,18 +1688,18 @@ public class JRivitMain extends javax.swing.JFrame {
      * ariaChiusa chiamato da WorkerThread imposta l'interfaccia
      */
     public void ariaChiusa() {
-        this.jLabel_B_R.setText("Aria OFF");
         this.jLabel_B_R.setBackground(Color.red);
-        this.repaint();
+        this.jLabel_B_R.setText("Aria OFF");
+//        this.repaint();
     }
 
     /**
      * ariaAperta chiamato da WorkerThread imposta l'interfaccia
      */
     public void ariaAperta() {
-        this.jLabel_B_R.setText("Aria ON");
         this.jLabel_B_R.setBackground(Color.green);
-        this.repaint();
+        this.jLabel_B_R.setText("Aria ON");
+//        this.repaint();
     }
 
     /**

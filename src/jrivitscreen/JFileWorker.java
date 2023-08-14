@@ -77,7 +77,7 @@ public class JFileWorker extends Thread {
         } catch (InterruptedException ex) {
             Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
         }
-            Static.debug("Watch Service Modify file registered for dir: " + dir.getFileName(), 3);
+        Static.debug("Watch Service Modify file registered for dir: " + dir.getFileName(), 3);
     }
 
     private void send_p(String sp) {
@@ -92,7 +92,8 @@ public class JFileWorker extends Thread {
             try {
                 key = watcher.take();
             } catch (InterruptedException ex) {
-                return;
+                Static.debug("Errore avviando l'ascoltatore dei file", 2);
+                continue;
             }
             for (WatchEvent<?> event : key.pollEvents()) {
                 WatchEvent.Kind<?> kind = event.kind();
@@ -104,7 +105,7 @@ public class JFileWorker extends Thread {
                 if (kind == ENTRY_CREATE) {
                     switch (fileName.toString()) {
                         case Static.F_ARIA ->
-                            mostraStatoAria(Static.ARIA_APERTA);
+                            this.Rm.ariaAperta();
                         case Static.F_CONTATORI_AGGIORNATI ->
                             aggiornaContatori();
                         case Static.F_ERRORE ->
@@ -137,7 +138,7 @@ public class JFileWorker extends Thread {
                 if (kind == ENTRY_DELETE) {
                     switch (fileName.toString()) {
                         case Static.F_ARIA ->
-                            mostraStatoAria(Static.ARIA_CHIUSA);
+                            this.Rm.ariaChiusa();
                         case Static.F_ERRORE ->
                             errore(false);
                         case Static.F_CHIEDI_CONFERMA_NO ->
@@ -186,24 +187,10 @@ public class JFileWorker extends Thread {
      */
     private void mostraStatoAria(String stato) {
 
-        if (stato == Static.ARIA_CHIUSA) {//Aria chiusa
-            //bash_cmd_aria[4] = this.close;
-//            bash_cmd_verde[4] = this.close;
-//            bash_cmd_rosso[4] = this.open;
-//            run_system_bash(this.bash_cmd_rosso);
-//            run_system_bash(this.bash_cmd_verde);
-            //run_system_bash(this.bash_cmd_aria); viene fatto da Control
+        if (stato.equals(Static.ARIA_CHIUSA)) {//Aria chiusa
             this.Rm.ariaChiusa();
-
         } else { //Aria aperta
-            //bash_cmd_aria[4] = this.open;
-//            bash_cmd_verde[4] = this.open;
-//            bash_cmd_rosso[4] = this.close;
-//            run_system_bash(bash_cmd_rosso);
-//            run_system_bash(bash_cmd_verde);
-            //run_system_bash(bash_cmd_aria);  viene fatto da Control
             this.Rm.ariaAperta();
-
         }
     }
 
@@ -293,7 +280,8 @@ public class JFileWorker extends Thread {
         this.readLavoroInPausa();//Se non esite il file imposta non in pausa
         //this.LeggiAriaInMinMax(); // Letto dal DB
         //this.LeggiSessione();// Se non essite il file imposta il file a "0"
-        this.mostraStatoAria(Static.ARIA_CHIUSA);//Se non esiste il file imposta a "0"
+//        this.mostraStatoAria(Static.ARIA_CHIUSA);//Se non esiste il file imposta a "0"
+        this.Rm.ariaChiusa();
         this.readNomeDevice();//Se non esiste il file imposta a CT-0000-00
 //        cancellaFileLock(Static.PATH_WATCH + "errore"); // Dovrebbe farlo COntrol
         this.Rm.set_jLabel_B_L("Main");
