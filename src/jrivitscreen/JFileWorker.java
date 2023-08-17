@@ -54,8 +54,6 @@ public class JFileWorker extends Thread {
     private WatchService watcher;
     private Path fileName;
 
-    private final String f_setup_lan = "setup_lan.txt";
-    private final String f_setup_wifi = "setup_wifi.txt";
 
     // se il lavoro è in corso contiene "1"
     private final String f_soglia_pressione_aria_in_min = "soglia_pressione_aria_in_min";
@@ -77,7 +75,7 @@ public class JFileWorker extends Thread {
         } catch (InterruptedException ex) {
             Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
         }
-        Static.debug("Watch Service Modify file registered for dir: " + dir.getFileName(), 3);
+        Static.debug("Watch Service Modify file registered for dir: " + dir.toString(), 3);
     }
 
     private void send_p(String sp) {
@@ -101,7 +99,7 @@ public class JFileWorker extends Thread {
                 @SuppressWarnings("unchecked")
                 WatchEvent<Path> ev = (WatchEvent<Path>) event;
                 fileName = ev.context();
-                Static.debug(kind.name() + ": " + fileName, 3);
+                Static.debug(kind.name() + ": " + fileName, 4);
                 if (kind == ENTRY_CREATE) {
                     switch (fileName.toString()) {
                         case Static.F_ARIA ->
