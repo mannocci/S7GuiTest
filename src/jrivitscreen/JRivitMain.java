@@ -25,9 +25,12 @@
  */
 package jrivitscreen;
 
+import java.awt.AWTException;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Robot;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -108,6 +111,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private int w_level;
     private JFileWorker fileWorker = null;
     public JGrafico g;
+    private Robot robot = null;
 
     public List<String[]> getElencoLavoriArray() {
         return elencoLavoriArray;
@@ -178,7 +182,11 @@ public class JRivitMain extends javax.swing.JFrame {
         Img_Info = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/info.png"));
         Img_Grafico = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/grafico.png"));
         elencoLavoriArray = new ArrayList<>();
-
+        try {
+            robot = new Robot();
+        } catch (AWTException ex) {
+            Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
+        }
         formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         try (InputStream in = this.getClass().getResourceAsStream("setup.propetiers")) {
             setup = new Properties();
@@ -1453,9 +1461,22 @@ public class JRivitMain extends javax.swing.JFrame {
                 jsp = this.jScrollPaneLan;
         }//EndSwitch
         if (jsp != null) {
-            jsp.getHorizontalScrollBar().getBlockIncrement(sx_dx);
+            jsp.getHorizontalScrollBar().grabFocus();
         }//End LJScrollPanel
-        repaint();
+        switch (sx_dx) {
+            case -1 -> {
+                robot.keyPress(KeyEvent.VK_LEFT);
+                robot.keyRelease(KeyEvent.VK_LEFT);
+            }
+            default -> {
+                robot.keyPress(KeyEvent.VK_RIGHT);
+                robot.keyRelease(KeyEvent.VK_RIGHT);
+            }
+
+        }
+
+
+        //repaint();
     }//End PulsanteSx
 
     /**
