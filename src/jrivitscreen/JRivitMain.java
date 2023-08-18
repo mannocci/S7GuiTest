@@ -250,6 +250,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelMain = new javax.swing.JPanel();
         jLabelLogo = new javax.swing.JLabel();
         jLabelDeviceName = new javax.swing.JLabel();
+        jLabelVersione = new javax.swing.JLabel();
         jPanelSetupLan = new javax.swing.JPanel();
         jScrollPaneLan = new javax.swing.JScrollPane();
         jTextAreaLan = new javax.swing.JTextArea();
@@ -277,6 +278,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabel_B_L = new javax.swing.JLabel();
         jLabel_B_R = new javax.swing.JLabel();
         jLabel_msg = new javax.swing.JLabel();
+        jLabelWarning = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(480, 320));
@@ -449,7 +451,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelLogo.setMaximumSize(new java.awt.Dimension(250, 250));
         jLabelLogo.setMinimumSize(new java.awt.Dimension(250, 250));
         jLabelLogo.setPreferredSize(new java.awt.Dimension(250, 250));
-        jPanelMain.add(jLabelLogo, new org.netbeans.lib.awtextra.AbsoluteConstraints(42, 3, 240, 240));
+        jPanelMain.add(jLabelLogo, new org.netbeans.lib.awtextra.AbsoluteConstraints(42, 23, 230, 220));
         jLabelLogo.getAccessibleContext().setAccessibleName("Pannello principale");
 
         jLabelDeviceName.setFont(new java.awt.Font("Ubuntu Light", 3, 18)); // NOI18N
@@ -461,6 +463,16 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelMain.add(jLabelDeviceName, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 242, -1, -1));
         jLabelDeviceName.getAccessibleContext().setAccessibleName("DeviceName");
         jLabelDeviceName.getAccessibleContext().setAccessibleDescription("Nome del RivitControl");
+
+        jLabelVersione.setFont(new java.awt.Font("Ubuntu Light", 1, 14)); // NOI18N
+        jLabelVersione.setForeground(java.awt.Color.blue);
+        jLabelVersione.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelVersione.setText("Ver.");
+        jLabelVersione.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        jLabelVersione.setMaximumSize(new java.awt.Dimension(320, 30));
+        jLabelVersione.setMinimumSize(new java.awt.Dimension(320, 30));
+        jLabelVersione.setPreferredSize(new java.awt.Dimension(322, 32));
+        jPanelMain.add(jLabelVersione, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 0, -1, -1));
 
         jLayeredPaneCenter.add(jPanelMain, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 328, 276));
 
@@ -664,7 +676,13 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabel_msg.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel_msg.setText("message");
         jLabel_msg.setAlignmentX(0.2F);
-        jPanelBotton.add(jLabel_msg, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 5, 300, 20));
+        jPanelBotton.add(jLabel_msg, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 5, 280, 20));
+
+        jLabelWarning.setForeground(java.awt.Color.lightGray);
+        jLabelWarning.setText("W");
+        jLabelWarning.setPreferredSize(new java.awt.Dimension(15, 20));
+        jPanelBotton.add(jLabelWarning, new org.netbeans.lib.awtextra.AbsoluteConstraints(382, 5, -1, -1));
+        jLabelWarning.getAccessibleContext().setAccessibleName("jLabelWarning");
 
         getContentPane().add(jPanelBotton, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 290, 480, 30));
 
@@ -1137,6 +1155,8 @@ public class JRivitMain extends javax.swing.JFrame {
     private javax.swing.JLabel jLabelNomeLavoro;
     private javax.swing.JLabel jLabelNomeLavoroCal;
     private javax.swing.JLabel jLabelValidi;
+    private javax.swing.JLabel jLabelVersione;
+    private javax.swing.JLabel jLabelWarning;
     private javax.swing.JLabel jLabel_Annullati;
     private javax.swing.JLabel jLabel_B_L;
     private javax.swing.JLabel jLabel_B_R;
@@ -1527,16 +1547,32 @@ public class JRivitMain extends javax.swing.JFrame {
         this.jLayeredPaneCenter.moveToFront(this.g);
     }
 
+    public int getW_level() {
+        return w_level;
+    }
+
+    public void setW_level(int w_level) {
+        this.w_level = w_level;
+    }
+
+    public JLabel getjLabelWarning() {
+        return jLabelWarning;
+    }
+
     /**
      * aggiornaWarning carica eventuali Warning dal file warning.txt
      *
      * @param lista
      */
+    public void setjLabelWarning(JLabel jLabelWarning) {
+        this.jLabelWarning = jLabelWarning;
+    }
+
     public void aggiornaWarning(List<String> lista) {
         this.listWarning.removeAll();
         RefreshList(this.listWarning, lista);
         this.listWarning.repaint();
-    }//End AggiornaInfo
+    } //End AggiornaInfo
 
     /**
      * aggiornaSetupLan carica eventuali Informazioni dal file
@@ -1713,7 +1749,7 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     public void ariaChiusa() {
         this.jLabel_B_R.setBackground(Color.red);
-        this.jLabel_B_R.setText("Aria OFF");
+        this.jLabel_B_R.setText("Air OFF");
 //        this.repaint();
     }
 
@@ -1722,7 +1758,7 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     public void ariaAperta() {
         this.jLabel_B_R.setBackground(Color.green);
-        this.jLabel_B_R.setText("Aria ON");
+        this.jLabel_B_R.setText("Air ON");
 //        this.repaint();
     }
 
@@ -1793,9 +1829,17 @@ public class JRivitMain extends javax.swing.JFrame {
 
     void update_sensori(String Valori) {
         String[] arrayValori;
+        switch(this.w_level){
+            case 0 ->
+                this.jLabelWarning.setForeground(Color.LIGHT_GRAY);
+            case 1234 ->
+                this.jLabelWarning.setForeground(Color.YELLOW);
+            case 56789->
+                this.jLabelWarning.setForeground(Color.RED);                
+        }
         if (Valori.equals("")) {
             this.jLabel_msg.setForeground(java.awt.Color.CYAN);
-            this.jLabel_msg.setText("File P. non aggiornato !");
+            this.jLabel_msg.setText("Air pressure not updated !");
         } else {
             arrayValori = Valori.split(",");
             try {
@@ -1808,10 +1852,10 @@ public class JRivitMain extends javax.swing.JFrame {
                 if (!(this.pressione_aria_in == null)) {
                     if (pressione_aria_in <= this.sogliaMin) {
                         this.jLabel_msg.setForeground(java.awt.Color.red);
-                        this.jLabel_msg.setText("P. aria Err.: " + pressione_aria_in + " Bar");
+                        this.jLabel_msg.setText("Inc. Air !" + pressione_aria_in + " Bar");
                     } else {
                         this.jLabel_msg.setForeground(java.awt.Color.green);
-                        this.jLabel_msg.setText("P. aria OK: " + pressione_aria_in + " Bar");
+                        this.jLabel_msg.setText("Inc. Air OK " + pressione_aria_in + " Bar");
                     }
                 }
             } catch (NumberFormatException e) {
@@ -1882,7 +1926,8 @@ public class JRivitMain extends javax.swing.JFrame {
             nd = "CT-0000-00";
         }
         this.jLabelNomeDevice.setText(nd);
-        this.jLabelDeviceName.setText(nd + " ver. " + versione + " rel. " + data_release);
+        this.jLabelDeviceName.setText(nd);
+        this.jLabelVersione.setText("ver. "+versione + " rel. " + data_release);
         this.repaint();
     }
 

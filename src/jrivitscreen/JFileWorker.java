@@ -21,6 +21,7 @@
  */
 package jrivitscreen;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -223,7 +224,22 @@ public class JFileWorker extends Thread {
         if (panelName.equals("main")) {
             this.Rm.getjButtonPL1().setIcon(this.Rm.getImageWarning());
         }
-
+        switch(this.Rm.getW_level()){
+            case 0 ->{
+                this.Rm.getjLabelWarning().setForeground(Color.LIGHT_GRAY);
+                this.Rm.getjLabelWarning().setText("W");
+            }
+            case 1,2,3,4 ->{
+                this.Rm.getjLabelWarning().setForeground(Color.YELLOW);
+                this.Rm.getjLabelWarning().setText("W");
+            }
+            case 5,6,7,8,9->{
+                this.Rm.getjLabelWarning().setForeground(Color.RED); 
+                this.Rm.getjLabelWarning().setText("W");
+            }
+        }
+        
+        this.Rm.getjLabelWarning().repaint();
         this.Rm.repaint();
     }
 
