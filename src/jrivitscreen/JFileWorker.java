@@ -284,7 +284,13 @@ public class JFileWorker extends Thread {
         //this.LeggiAriaInMinMax(); // Letto dal DB
         //this.LeggiSessione();// Se non essite il file imposta il file a "0"
 //        this.mostraStatoAria(Static.ARIA_CHIUSA);//Se non esiste il file imposta a "0"
-        this.Rm.ariaChiusa();
+        String rigaFile = LeggiFileLock(Static.F_ARIA);
+        if(rigaFile.contains("errore")){
+            this.Rm.ariaChiusa();
+        }else{
+            this.Rm.ariaAperta();
+        }
+        
         this.readNomeDevice();//Se non esiste il file imposta a CT-0000-00
 //        cancellaFileLock(Static.PATH_WATCH + "errore"); // Dovrebbe farlo COntrol
         this.Rm.set_jLabel_B_L("Main");
@@ -432,7 +438,7 @@ public class JFileWorker extends Thread {
             if (!inputFile.exists()) {
                 Static.debug("Il File " + inputFile.getAbsolutePath()
                         + " non esiste\n", 2);
-                contenutoFile = "errore lettura File " + NomeFile;
+                contenutoFile = "errore " + NomeFile;
                 return contenutoFile;
             }
             lock = LockFile(NomeFile);

@@ -155,9 +155,6 @@ public class JDoWorker extends SwingWorker<String, Object> {
         this.bt.start();//Gestione dei pulsanti
         this.file_worker.start();//Avvio FileWorker
         this.file_worker.initValues();
-//        this.update_status_lan();
-//        this.update_status_wifi();
-//        this.update_status_nm();
     }
 
     /**
