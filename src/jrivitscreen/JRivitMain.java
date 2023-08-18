@@ -670,7 +670,7 @@ public class JRivitMain extends javax.swing.JFrame {
      *
      */
     public void set_warning() {
-     
+
         switch (this.w_level) {
             case 0 ->
                 this.Img_Warning = this.Img_No_Warning;
@@ -1794,7 +1794,7 @@ public class JRivitMain extends javax.swing.JFrame {
                     }
                 }
             } catch (NumberFormatException e) {
-                    Static.debug("jrivitscreen.JRivitMain.update_sensori() - \n" + e.getMessage(), 2);
+                Static.debug("jrivitscreen.JRivitMain.update_sensori() - \n" + e.getMessage(), 2);
             }
         }//end Else
     }
@@ -1873,9 +1873,11 @@ public class JRivitMain extends javax.swing.JFrame {
     public String getjLabelValidi() {
         return this.jLabelValidi.getText();
     }
-    public  ImageIcon getImageWarning() {
+
+    public ImageIcon getImageWarning() {
         return this.Img_Warning;
     }
+
     void setCurva(String Curva) {
         this.Curva = Curva;
     }
@@ -1912,11 +1914,11 @@ public class JRivitMain extends javax.swing.JFrame {
      * @param Info la lista passata per aggiornare il campo Info
      */
     public void setListInfo(List Info) {
-        if (this.pressione_aria_in == null) {
-            listInfo.add("Errore lettura file Info");
-            return;
-        }
+
         this.listInfo.removeAll();
+        if (this.pressione_aria_in == null) {
+            listInfo.add("Pressione aria Null");
+        }
         try {
             listInfo.add("P. aria in ingresso: " + this.pressione_aria_in.toString() + " bar");
             listInfo.add("Tensione CPU: " + this.v_rpi.toString() + " V");
@@ -1940,8 +1942,8 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     public void setListWarning(List Warning) {
         this.listWarning.removeAll();
-        int nrLivelloWarning=0;
-        this.w_level=0;
+        int nrLivelloWarning = 0;
+        this.w_level = 0;
         String[] s;
         try {
             for (int c = 0; c < Warning.size(); c++) {
@@ -1950,7 +1952,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 if (s.length > 1) {
                     nrLivelloWarning = Integer.parseInt(s[1]);
                     if (nrLivelloWarning > this.w_level) {
-                        this.w_level = nrLivelloWarning ;
+                        this.w_level = nrLivelloWarning;
                     }
                 }
             }
@@ -2169,10 +2171,13 @@ public class JRivitMain extends javax.swing.JFrame {
             Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-/**
- * Server per fare il refresh dell'icona che cambia colore in base al livello di Warning
- * @return 
- */
+
+    /**
+     * Server per fare il refresh dell'icona che cambia colore in base al
+     * livello di Warning
+     *
+     * @return
+     */
     JButton getjButtonPL1() {
         return this.jButtonPL1;
     }
