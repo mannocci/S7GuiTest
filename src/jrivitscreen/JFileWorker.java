@@ -41,6 +41,8 @@ import java.nio.file.WatchService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
+import javax.swing.JLayeredPane;
 
 /**
  *
@@ -54,7 +56,7 @@ public class JFileWorker extends Thread {
     private WatchService watcher;
     private Path fileName;
     private WatchKey key;
-
+    private String fileExtension = ".lok";
     // se il lavoro è in corso contiene "1"
     private final String f_soglia_pressione_aria_in_min = "soglia_pressione_aria_in_min";
     private final String f_soglia_pressione_aria_in_max = "soglia_pressione_aria_in_max";
@@ -73,24 +75,23 @@ public class JFileWorker extends Thread {
         Static.debug("Watch Service Modify file registered for dir: " + dir.toString(), 3);
     }
 
-
     @Override
     public void run() {
         try {
             while (null != (key = watcher.take())) {
 
-                try {
-                    key = watcher.take();
-                } catch (InterruptedException ex) {
-                    Static.debug("Errore avviando l'ascoltatore dei file", 2);
-                    continue;
-                }
                 for (WatchEvent<?> event : key.pollEvents()) {
                     WatchEvent.Kind<?> kind = event.kind();
+                    if (kind == OVERFLOW) {
+                        //Salta evento Overflow
+                        continue;
+                    }
+                    fileName = (Path) event.context();
 
-                    @SuppressWarnings("unchecked")
-                    WatchEvent<Path> ev = (WatchEvent<Path>) event;
-                    fileName = ev.context();
+                    if (fileName.toString().endsWith(fileExtension)) {
+                        continue; // se è un file di tipo lok salta all'evento successivo
+                    }
+
                     Static.debug(kind.name() + ": " + fileName, 4);
                     if (kind == ENTRY_CREATE) {
                         switch (fileName.toString()) {
@@ -158,12 +159,18 @@ public class JFileWorker extends Thread {
 
                     }
                 }
-                key.reset();
+                //attesa per evitare segnalazioni ripetute
+                TimeUnit.SECONDS.sleep(1);
+
+                if (!key.reset()) {
+                    //Problema non riesce il sistema a controllare il path indicato
+                    Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, " Errore Key.reset is null");
+                    break;
+                }
 
             }
-        } catch (InterruptedException ex) {
+        } catch (InterruptedException | RuntimeException ex) {
             Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
-
         }
     }
 
@@ -205,12 +212,19 @@ public class JFileWorker extends Thread {
      * Legge il file con la descrizione dei JFileWorker
      */
     private void readWarning() {
-        List<String> LeggiFileElencoWarning = this.LeggiFileElencoLock(Static.F_WARNING);
-        if (LeggiFileElencoWarning.isEmpty()) {
-            LeggiFileElencoWarning.add("Manca file Warning");
+//        lavoro che deve essere fatto da JDoWorker
+        List<String> warning_file = this.LeggiFileElencoLock(Static.F_WARNING);
+        if (warning_file.isEmpty()) {
+            warning_file.add("Manca file Warning o file vuoto");
         }
-        this.Rm.setListWarning(LeggiFileElencoWarning);
+        this.Rm.setListWarning(warning_file);
+        JLayeredPane JLp = this.Rm.getjLayeredPaneCenter();
+        String panelName = JLp.getComponent(0).getName();
+        if (panelName.equals("main")) {
+            this.Rm.getjButtonPL1().setIcon(this.Rm.getImageWarning());
+        }
 
+        this.Rm.repaint();
     }
 
     /**

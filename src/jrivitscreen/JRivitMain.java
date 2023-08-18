@@ -34,9 +34,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
@@ -199,6 +201,11 @@ public class JRivitMain extends javax.swing.JFrame {
         }
         doWorker = new JDoWorker(this, fileWorker);
         this.esegui("init");
+//        try {
+//            TimeUnit.SECONDS.sleep(2);//Attesa della fine del metodo init di JDoWorker
+//        } catch (InterruptedException ex) {
+//            Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
+//        }
         this.PanelMain();
     }
 
@@ -661,11 +668,10 @@ public class JRivitMain extends javax.swing.JFrame {
      * campi: il primo è la descrizione, il secondo il livello di gravità della
      * segnalazione separati dal simbolo §
      *
-     * @param w_level livello di warning
      */
-    public void set_warning(int w_level) {
-        this.w_level = w_level;
-        switch (w_level) {
+    public void set_warning() {
+     
+        switch (this.w_level) {
             case 0 ->
                 this.Img_Warning = this.Img_No_Warning;
             case 1, 2, 3, 4 ->
@@ -674,7 +680,6 @@ public class JRivitMain extends javax.swing.JFrame {
                 this.Img_Warning = this.Img_Err_Warning;
 
         }
-
     }
 
     /**
@@ -999,11 +1004,9 @@ public class JRivitMain extends javax.swing.JFrame {
      * PanelMain Pannello che viene visualizzato all'avvio
      */
     private void PanelMain() {
-//        changePanel(this.jPanelMain); // metodo migliorato per cambio pannello. Da distribuire sostituendo tutte le chiamate a moveToFront (todo)
         this.changeButtons(this.Img_Warning, this.Img_Info, this.Img_Setup,
                 this.Img_Play, this.Img_Nulla, this.Img_Exit);
         this.jLayeredPaneCenter.moveToFront(this.jPanelMain);
-
     }
 
     /**
@@ -1870,7 +1873,9 @@ public class JRivitMain extends javax.swing.JFrame {
     public String getjLabelValidi() {
         return this.jLabelValidi.getText();
     }
-
+    public  ImageIcon getImageWarning() {
+        return this.Img_Warning;
+    }
     void setCurva(String Curva) {
         this.Curva = Curva;
     }
@@ -1935,22 +1940,25 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     public void setListWarning(List Warning) {
         this.listWarning.removeAll();
-        int g = 0;
+        int nrLivelloWarning=0;
+        this.w_level=0;
         String[] s;
         try {
             for (int c = 0; c < Warning.size(); c++) {
                 s = Warning.get(c).toString().split("§");
                 this.listWarning.add(s[0]);
                 if (s.length > 1) {
-                    g = Integer.parseInt(s[1]);
-                    if (g >= this.w_level) {
-                        this.set_warning(g);
+                    nrLivelloWarning = Integer.parseInt(s[1]);
+                    if (nrLivelloWarning > this.w_level) {
+                        this.w_level = nrLivelloWarning ;
                     }
                 }
             }
         } catch (NumberFormatException e) {
             System.out.print("Errore setListWarning");
         }
+        this.set_warning();
+        this.listWarning.repaint();
     }
 
     /**
@@ -2160,5 +2168,12 @@ public class JRivitMain extends javax.swing.JFrame {
         } catch (Exception ex) {
             Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+/**
+ * Server per fare il refresh dell'icona che cambia colore in base al livello di Warning
+ * @return 
+ */
+    JButton getjButtonPL1() {
+        return this.jButtonPL1;
     }
 }

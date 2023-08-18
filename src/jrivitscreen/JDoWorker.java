@@ -36,6 +36,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.Icon;
+import javax.swing.JLayeredPane;
 
 /**
  *
@@ -117,8 +119,6 @@ public class JDoWorker extends SwingWorker<String, Object> {
                 case "aggiorna info" ->
                     this.update_info();
 
-                case "aggiorna warning" ->
-                    this.update_warning();
 
                 case "orario" -> {
 
@@ -155,9 +155,9 @@ public class JDoWorker extends SwingWorker<String, Object> {
         this.bt.start();//Gestione dei pulsanti
         this.file_worker.start();//Avvio FileWorker
         this.file_worker.initValues();
-        this.update_status_lan();
-        this.update_status_wifi();
-        this.update_status_nm();
+//        this.update_status_lan();
+//        this.update_status_wifi();
+//        this.update_status_nm();
     }
 
     /**
@@ -200,7 +200,6 @@ public class JDoWorker extends SwingWorker<String, Object> {
     void update_status_lan() {
         String[] cmd = {"/home/adminsb/bin/status_lan.sh"};
         run_system_bash(cmd);
-
     }
 
     /**
@@ -234,24 +233,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
         this.Rm.setListInfo(lista_info);
     }
 
-    /**
-     * Aggiorna le segnalazioni di Warning
-     */
-    void update_warning() {
-        List<String> warning_file = JFileWorker.LeggiFileElencoLock(Static.F_WARNING);
-        int livello_warning = 0, livello = 0, posizione_riga = 0;
 
-        for (String string : warning_file) {
-            String[] warnig_list = string.split("§");
-            livello = Integer.parseInt(warnig_list[1]);
-            if (livello > livello_warning) {
-                livello_warning = livello;
-            }
-            warning_file.set(posizione_riga++, string + ", livello -> " + livello);
-        }
-        this.Rm.set_warning(livello_warning);//Aggiorna l'immagine warning
-        this.Rm.aggiornaWarning(warning_file);//Aggiorna lista descizioni warning    
-    }
 
     void risposta_attesa_tiro_errato() {
         // Fabio: la gestione del tiro errato deve essere fatta 
@@ -310,4 +292,6 @@ public class JDoWorker extends SwingWorker<String, Object> {
         }
         return line;
     }
+
+
 }
