@@ -53,7 +53,7 @@ public class JFileWorker extends Thread {
 
     private WatchService watcher;
     private Path fileName;
-
+    private WatchKey key;
 
     // se il lavoro è in corso contiene "1"
     private final String f_soglia_pressione_aria_in_min = "soglia_pressione_aria_in_min";
@@ -70,109 +70,100 @@ public class JFileWorker extends Thread {
         Path dir = Paths.get(Static.PATH_WATCH);
         dir.register(watcher, ENTRY_MODIFY, ENTRY_CREATE,
                 ENTRY_DELETE);
-        try {
-            Thread.sleep(2000);//Attesa 2" per allocazione Classi
-        } catch (InterruptedException ex) {
-            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
-        }
         Static.debug("Watch Service Modify file registered for dir: " + dir.toString(), 3);
     }
 
-    private void send_p(String sp) {
-        this.Rm.pulsanteHw(sp);
-    }
 
     @Override
     public void run() {
+        try {
+            while (null != (key = watcher.take())) {
 
-        while (true) {
-            WatchKey key;
-            try {
-                key = watcher.take();
-            } catch (InterruptedException ex) {
-                Static.debug("Errore avviando l'ascoltatore dei file", 2);
-                continue;
-            }
-            for (WatchEvent<?> event : key.pollEvents()) {
-                WatchEvent.Kind<?> kind = event.kind();
-
-                @SuppressWarnings("unchecked")
-                WatchEvent<Path> ev = (WatchEvent<Path>) event;
-                fileName = ev.context();
-                Static.debug(kind.name() + ": " + fileName, 4);
-                if (kind == ENTRY_CREATE) {
-                    switch (fileName.toString()) {
-                        case Static.F_ARIA ->
-                            this.Rm.ariaAperta();
-                        case Static.F_CONTATORI_AGGIORNATI ->
-                            aggiornaContatori();
-                        case Static.F_ERRORE ->
-                            errore(true);
-                        case Static.F_CHIEDI_CONFERMA_NO ->
-                            impostaChiediConferma(true);
-                        case Static.F_CHIEDI_CONFERMA_STOP ->
-                            impostaChiediConfermaStop(true);
-                        case Static.F_IN_PAUSA -> {
-                            readLavoroInPausa();
-                            aggiornaPausa();
-                        }
-                        case Static.F_IN_STOP ->
-                            aggiornaStop();
-                        case "killScreen" ->
-                            this.Rm.exit();
-                        case Static.F_FATTO_FILE_CURVA ->
-                            gestisciCurva();
-                        case Static.F_STATUS_LAN -> {
-                            readSetupLan();
-                        }
-                        case Static.F_STATUS_WIFI -> {
-                            readSetupWifi();
-                        }
-                        case Static.F_LISTA_NM_CON ->
-                            readListaNMdevice();
-                    }
-
+                try {
+                    key = watcher.take();
+                } catch (InterruptedException ex) {
+                    Static.debug("Errore avviando l'ascoltatore dei file", 2);
+                    continue;
                 }
-                if (kind == ENTRY_DELETE) {
-                    switch (fileName.toString()) {
-                        case Static.F_ARIA ->
-                            this.Rm.ariaChiusa();
-                        case Static.F_ERRORE ->
-                            errore(false);
-                        case Static.F_CHIEDI_CONFERMA_NO ->
-                            impostaChiediConferma(false);
-                        case Static.F_CHIEDI_CONFERMA_STOP ->
-                            impostaChiediConfermaStop(false);
-                        case Static.F_RISPOSTA_TIRO_ERRATO_CONTINUA, Static.F_RISPOSTA_TIRO_ERRATO_ACCETTA, Static.F_RISPOSTA_TIRO_ERRATO_ANNULLA -> {
-                            this.Rm.setInErrore(false);
-                            this.Rm.aggiornaDaErroreTiro();
+                for (WatchEvent<?> event : key.pollEvents()) {
+                    WatchEvent.Kind<?> kind = event.kind();
+
+                    @SuppressWarnings("unchecked")
+                    WatchEvent<Path> ev = (WatchEvent<Path>) event;
+                    fileName = ev.context();
+                    Static.debug(kind.name() + ": " + fileName, 4);
+                    if (kind == ENTRY_CREATE) {
+                        switch (fileName.toString()) {
+                            case Static.F_ARIA ->
+                                this.Rm.ariaAperta();
+                            case Static.F_CONTATORI_AGGIORNATI ->
+                                aggiornaContatori();
+                            case Static.F_ERRORE ->
+                                errore(true);
+                            case Static.F_CHIEDI_CONFERMA_NO ->
+                                impostaChiediConferma(true);
+                            case Static.F_CHIEDI_CONFERMA_STOP ->
+                                impostaChiediConfermaStop(true);
+                            case Static.F_IN_PAUSA -> {
+                                readLavoroInPausa();
+                                aggiornaPausa();
+                            }
+                            case Static.F_IN_STOP ->
+                                aggiornaStop();
+                            case "killScreen" ->
+                                this.Rm.exit();
+                            case Static.F_FATTO_FILE_CURVA ->
+                                gestisciCurva();
+                            case Static.F_STATUS_LAN -> {
+                                readSetupLan();
+                            }
+                            case Static.F_STATUS_WIFI -> {
+                                readSetupWifi();
+                            }
+                            case Static.F_LISTA_NM_CON ->
+                                readListaNMdevice();
                         }
-                    }
-                }
-                if (kind == ENTRY_MODIFY) {
-                    switch (fileName.toString()) {
-                        case Static.F_SENSORI, Static.F_INFO ->
-                            readInfo();
-                        case Static.F_WARNING ->
-                            readWarning();
-                        case Static.F_LAVORI ->
-                            readLavori();
-                        case Static.F_NOME_DEVICE ->
-                            readNomeDevice();
 
                     }
-                    try {
-                        Thread.sleep(2);
-                        aggiornaSensori();
-                    } catch (InterruptedException ex) {
-                        System.out.printf("Error: " + ex);
+                    if (kind == ENTRY_DELETE) {
+                        switch (fileName.toString()) {
+                            case Static.F_ARIA ->
+                                this.Rm.ariaChiusa();
+                            case Static.F_ERRORE ->
+                                errore(false);
+                            case Static.F_CHIEDI_CONFERMA_NO ->
+                                impostaChiediConferma(false);
+                            case Static.F_CHIEDI_CONFERMA_STOP ->
+                                impostaChiediConfermaStop(false);
+                            case Static.F_RISPOSTA_TIRO_ERRATO_CONTINUA, Static.F_RISPOSTA_TIRO_ERRATO_ACCETTA, Static.F_RISPOSTA_TIRO_ERRATO_ANNULLA -> {
+                                this.Rm.setInErrore(false);
+                                this.Rm.aggiornaDaErroreTiro();
+                            }
+                        }
+                    }
+                    if (kind == ENTRY_MODIFY) {
+                        switch (fileName.toString()) {
+                            case Static.F_SENSORI, Static.F_INFO ->
+                                readInfo();
+                            case Static.F_WARNING ->
+                                readWarning();
+                            case Static.F_LAVORI ->
+                                readLavori();
+                            case Static.F_NOME_DEVICE ->
+                                readNomeDevice();
+                            case Static.F_LISTA_NM_CON ->
+                                readListaNMdevice();
+
+                        }
+
                     }
                 }
+                key.reset();
+
             }
-            boolean valid = key.reset();
-            if (!valid) {
-                break;
-            }
+        } catch (InterruptedException ex) {
+            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
+
         }
     }
 
