@@ -26,26 +26,22 @@
 package jrivitscreen;
 
 import java.awt.AWTException;
-import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Graphics2D;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 /**
@@ -84,8 +80,8 @@ public class JRivitMain extends javax.swing.JFrame {
     private int nrLottiDaFare;
     private int nrTiriDaFare;
 
-    private Float sogliaMin = 7.0f;
-    private Float sogliaMax = 10.0f;
+    private Float sogliaMin = 5.5f;
+    private Float sogliaMax = 7.0f;
     private String sessione;
     private String Curva;
 //    private int DialogQ = 100;
@@ -667,21 +663,22 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelBotton.add(jLabel_B_L, new org.netbeans.lib.awtextra.AbsoluteConstraints(3, 5, 70, 20));
 
         jLabel_B_R.setBackground(java.awt.Color.lightGray);
-        jLabel_B_R.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel_B_R.setFont(new java.awt.Font("DejaVu Sans", 1, 14)); // NOI18N
         jLabel_B_R.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel_B_R.setText("Aria Off");
         jLabel_B_R.setOpaque(true);
         jPanelBotton.add(jLabel_B_R, new org.netbeans.lib.awtextra.AbsoluteConstraints(405, 5, 70, 20));
         jLabel_B_R.getAccessibleContext().setAccessibleDescription("Indicatore dello stato dell'aria");
 
-        jLabel_msg.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
+        jLabel_msg.setFont(new java.awt.Font("DejaVu Sans", 1, 14)); // NOI18N
         jLabel_msg.setForeground(javax.swing.UIManager.getDefaults().getColor("Actions.Green"));
         jLabel_msg.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel_msg.setText("message");
         jLabel_msg.setAlignmentX(0.2F);
-        jPanelBotton.add(jLabel_msg, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 5, 280, 20));
+        jLabel_msg.setOpaque(true);
+        jPanelBotton.add(jLabel_msg, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 5, 280, 20));
 
-        jLabelWarning.setFont(new java.awt.Font("Helvetica Neue", 1, 13)); // NOI18N
+        jLabelWarning.setFont(new java.awt.Font("DejaVu Sans", 1, 13)); // NOI18N
         jLabelWarning.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelWarning.setText("OK");
         jLabelWarning.setOpaque(true);
@@ -691,7 +688,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 jLabelWarningMouseClicked(evt);
             }
         });
-        jPanelBotton.add(jLabelWarning, new org.netbeans.lib.awtextra.AbsoluteConstraints(365, 5, 30, -1));
+        jPanelBotton.add(jLabelWarning, new org.netbeans.lib.awtextra.AbsoluteConstraints(367, 5, 30, -1));
         jLabelWarning.getAccessibleContext().setAccessibleName("jLabelWarning");
 
         getContentPane().add(jPanelBotton, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 290, 480, 30));
@@ -1882,12 +1879,19 @@ public class JRivitMain extends javax.swing.JFrame {
                 // il valore di pressione letto dal sensore deve essere raddoppiato
                 this.pressione_aria_in = Float.parseFloat(arrayValori[4]) * 2;
                 if (!(this.pressione_aria_in == null)) {
+                    DecimalFormat df = new DecimalFormat("0.0");// solo una cifra decimale
                     if (pressione_aria_in <= this.sogliaMin) {
-                        this.jLabel_msg.setForeground(java.awt.Color.red);
-                        this.jLabel_msg.setText("Inc. Air !" + pressione_aria_in + " Bar");
+                        this.jLabel_msg.setBackground(java.awt.Color.RED);
+                        this.jLabel_msg.setForeground(java.awt.Color.WHITE);
+                        this.jLabel_msg.setText("INC. AIR TOO LOW: " + df.format(pressione_aria_in) + " Bar");
+                    } else if (pressione_aria_in > this.sogliaMax) {
+                        this.jLabel_msg.setBackground(java.awt.Color.YELLOW);
+                        this.jLabel_msg.setForeground(java.awt.Color.BLACK);
+                        this.jLabel_msg.setText("INC. AIR TOO HIGH: " + df.format(pressione_aria_in) + " Bar");
                     } else {
-                        this.jLabel_msg.setForeground(java.awt.Color.green);
-                        this.jLabel_msg.setText("Inc. Air OK " + pressione_aria_in + " Bar");
+                        this.jLabel_msg.setBackground(java.awt.Color.GREEN);
+                        this.jLabel_msg.setForeground(java.awt.Color.BLACK);
+                        this.jLabel_msg.setText("INC. AIR OK: " + df.format(pressione_aria_in) + " Bar");
                     }
                 }
             } catch (NumberFormatException e) {
@@ -1900,12 +1904,12 @@ public class JRivitMain extends javax.swing.JFrame {
      * Aggiorna valori della soglia min e max dell'ingresso della'aria va letto
      * dal DB tabella CT
      *
-     * @param SogliaMin
-     * @param SogliaMax
+     * @param sogliaMin
+     * @param sogliaMax
      */
-    public void update_soglie_pressione_aria_in(Float SogliaMin, Float SogliaMax) {
-        this.sogliaMin = SogliaMin;
-        this.sogliaMax = SogliaMax;
+    public void updateSogliePressioneAriaIn(Float sogliaMin, Float sogliaMax) {
+        this.sogliaMin = sogliaMin;
+        this.sogliaMax = sogliaMax;
     }
 
     /**

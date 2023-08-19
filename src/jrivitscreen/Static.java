@@ -54,6 +54,10 @@ public class Static {
     final static String F_AGGIORNATO_LAVORI = "aggiornato_lavori";
     final static String F_LAVORO_CONCLUSO = "lavoro_concluso";
     final static String F_LAVORO_AVVIATO = "lavoro_avviato";
+    final static String F_PRESSIONE_ARIA_IN_MIN = "pressione_aria_in_min";
+    final static String F_PRESSIONE_ARIA_IN_MAX = "pressione_aria_in_max";
+
+    final static String F_SENSORI_AGGIORNATI = "aggiornato_sensori";
     final static String F_CONTATORI_AGGIORNATI = "contatori_aggiornati";
     final static String F_CONTATORI = "contatori";
     final static String F_TIRI_NEL_LOTTO = "tiri_nel_lotto";
@@ -65,7 +69,7 @@ public class Static {
     final static String F_WARNING = "warning.txt";
     final static String F_STATUS_LAN = "status_lan";
     final static String F_STATUS_WIFI = "status_wifi";
-    
+
     final static String F_NOME_DEVICE = "nome_device";
     final static String F_ARIA = "aria";
     final static String F_ERRORE = "errore";
@@ -80,11 +84,11 @@ public class Static {
     static long ATTESA_SCRITTURA_FILE = 1000L;
     // da utilizzare per impostare il livello di debug
     // 0:debug disattivato 1:errore 2:warning 3:info 4:verbose
-    final private static int DEBUGLEVEL = 3;  
-                                                
+    final private static int DEBUGLEVEL = 3;
 
     /**
      * Visualizza informazioni di debug.
+     *
      * @param string stringa da visualizzare
      * @param livello livello di debug (1:errore 2:warning 3:info 4:verbose)
      */
@@ -93,7 +97,6 @@ public class Static {
             System.out.println(string);
         }
     }
-    
 
     public Static() {
         System.out.print("Istanziato variabili static e static final\n");

@@ -100,6 +100,8 @@ public class JFileWorker extends Thread {
                                 this.Rm.ariaAperta();
                             case Static.F_CONTATORI_AGGIORNATI ->
                                 aggiornaContatori();
+                            case Static.F_SENSORI_AGGIORNATI ->
+                                aggiornaSensori();
                             case Static.F_ERRORE ->
                                 errore(true);
                             case Static.F_CHIEDI_CONFERMA_NO ->
@@ -145,7 +147,7 @@ public class JFileWorker extends Thread {
                     }
                     if (kind == ENTRY_MODIFY) {
                         switch (fileName.toString()) {
-                            case Static.F_SENSORI, Static.F_INFO ->
+                            case Static.F_INFO ->
                                 readInfo();
                             case Static.F_WARNING ->
                                 readWarning();
@@ -292,6 +294,7 @@ public class JFileWorker extends Thread {
      *
      */
     public void initValues() {
+        this.leggiAriaInMinMax();   // Valori scritti nei files da Control
         this.aggiornaSensori();// Occorre che vi sia il batch avviato
         this.aggiornaContatori();
         this.readLavori();//Se non essite il file imposta il default
@@ -476,12 +479,12 @@ public class JFileWorker extends Thread {
         return contenutoFile;
     }
 
-    private void LeggiAriaInMinMax() {
+    private void leggiAriaInMinMax() {
         try {
             float min, max;
-            min = Float.parseFloat(LeggiFileLock(f_soglia_pressione_aria_in_min));
-            max = Float.parseFloat(LeggiFileLock(f_soglia_pressione_aria_in_max));
-            this.Rm.update_soglie_pressione_aria_in(min, max);
+            min = Float.parseFloat(LeggiFileLock(Static.F_PRESSIONE_ARIA_IN_MIN));
+            max = Float.parseFloat(LeggiFileLock(Static.F_PRESSIONE_ARIA_IN_MAX));
+            this.Rm.updateSogliePressioneAriaIn(min, max);
         } catch (NumberFormatException e) {
             Static.debug("Contenuto dei file pressione_in non numerico !\n" + e.getMessage(), 2);
         }
