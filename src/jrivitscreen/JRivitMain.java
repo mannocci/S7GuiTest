@@ -28,6 +28,7 @@ package jrivitscreen;
 import java.awt.AWTException;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
@@ -112,6 +113,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private JFileWorker fileWorker = null;
     public JGrafico g;
     private Robot robot = null;
+    private String pannelloPrecedente;
 
     public List<String[]> getElencoLavoriArray() {
         return elencoLavoriArray;
@@ -199,6 +201,7 @@ public class JRivitMain extends javax.swing.JFrame {
         srvKey = setup.getProperty("srvkey", "");
         System.out.println("JRivitScreen ver. " + versione + " release " + data_release);
 
+        this.pannelloPrecedente = "main";   // Server per gestire il ritorno dal pannello di warning
         this.chiedi_conferma_stop = true;
         this.chiedi_conferma = false;
 
@@ -678,10 +681,17 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabel_msg.setAlignmentX(0.2F);
         jPanelBotton.add(jLabel_msg, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 5, 280, 20));
 
-        jLabelWarning.setForeground(java.awt.Color.lightGray);
-        jLabelWarning.setText("W");
+        jLabelWarning.setFont(new java.awt.Font("Helvetica Neue", 1, 13)); // NOI18N
+        jLabelWarning.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelWarning.setText("OK");
+        jLabelWarning.setOpaque(true);
         jLabelWarning.setPreferredSize(new java.awt.Dimension(15, 20));
-        jPanelBotton.add(jLabelWarning, new org.netbeans.lib.awtextra.AbsoluteConstraints(382, 5, -1, -1));
+        jLabelWarning.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabelWarningMouseClicked(evt);
+            }
+        });
+        jPanelBotton.add(jLabelWarning, new org.netbeans.lib.awtextra.AbsoluteConstraints(365, 5, 30, -1));
         jLabelWarning.getAccessibleContext().setAccessibleName("jLabelWarning");
 
         getContentPane().add(jPanelBotton, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 290, 480, 30));
@@ -698,12 +708,21 @@ public class JRivitMain extends javax.swing.JFrame {
     public void set_warning() {
 
         switch (this.w_level) {
-            case 0 ->
+            case 0 -> {
                 this.Img_Warning = this.Img_No_Warning;
-            case 1, 2, 3, 4 ->
+                this.listWarning.setBackground(Color.GREEN);
+                this.listWarning.setForeground(Color.BLACK);
+            }
+            case 1, 2, 3, 4 -> {
                 this.Img_Warning = this.Img_Med_Warning;
-            case 5, 6, 7, 8, 9 ->
+                this.listWarning.setBackground(Color.YELLOW);
+                this.listWarning.setForeground(Color.BLACK);
+            }
+            case 5, 6, 7, 8, 9 -> {
                 this.Img_Warning = this.Img_Err_Warning;
+                this.listWarning.setBackground(Color.RED);
+                this.listWarning.setForeground(Color.WHITE);
+            }
 
         }
     }
@@ -836,9 +855,21 @@ public class JRivitMain extends javax.swing.JFrame {
                     }
                 }
             }
-            case "setup", "warning", "info" -> {
+            case "setup", "info" -> {
                 PanelMain();
                 this.set_jLabel_B_L("Main");
+            }
+            case "warning" -> {
+                switch (this.pannelloPrecedente) {
+                    case "main" ->
+                        PanelMain();
+                    case "start" ->
+                        PanelStart();
+                    case "started" ->
+                        PanelStarted();
+                    default ->
+                        PanelMain();
+                }
             }
             case "setup lan", "setup wifi" -> {
                 PanelSetup();
@@ -1026,6 +1057,14 @@ public class JRivitMain extends javax.swing.JFrame {
             avviaLavoro();
         }
     }//GEN-LAST:event_listLavoriMouseClicked
+
+    private void jLabelWarningMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelWarningMouseClicked
+        if (pannelloPrecedente.equals("warning")) { // Se sono già nel pannello warning, allora esco regolarmente
+            this.jButtonPL1ActionPerformed(null);
+        } else {
+            PanelWarning();
+        }
+    }//GEN-LAST:event_jLabelWarningMouseClicked
     /**
      * PanelMain Pannello che viene visualizzato all'avvio
      */
@@ -1033,6 +1072,7 @@ public class JRivitMain extends javax.swing.JFrame {
         this.changeButtons(this.Img_Warning, this.Img_Info, this.Img_Setup,
                 this.Img_Play, this.Img_Nulla, this.Img_Exit);
         this.jLayeredPaneCenter.moveToFront(this.jPanelMain);
+        this.set_jLabel_B_L("Main");
     }
 
     /**
@@ -1352,6 +1392,7 @@ public class JRivitMain extends javax.swing.JFrame {
      * Pannello che mostra il contenuto del file /tmp/warning.txt
      */
     private void PanelWarning() {
+        this.pannelloPrecedente = this.jLayeredPaneCenter.getComponent(0).getName();
         this.changeButtons(this.Img_Exit, this.Img_Nulla, this.Img_Nulla,
                 this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Nulla);
         this.jLayeredPaneCenter.moveToFront(this.jPanelWarning);
@@ -1494,7 +1535,6 @@ public class JRivitMain extends javax.swing.JFrame {
             }
 
         }
-
 
         //repaint();
     }//End PulsanteSx
@@ -1829,14 +1869,6 @@ public class JRivitMain extends javax.swing.JFrame {
 
     void update_sensori(String Valori) {
         String[] arrayValori;
-        switch(this.w_level){
-            case 0 ->
-                this.jLabelWarning.setForeground(Color.LIGHT_GRAY);
-            case 1234 ->
-                this.jLabelWarning.setForeground(Color.YELLOW);
-            case 56789->
-                this.jLabelWarning.setForeground(Color.RED);                
-        }
         if (Valori.equals("")) {
             this.jLabel_msg.setForeground(java.awt.Color.CYAN);
             this.jLabel_msg.setText("Air pressure not updated !");
@@ -1927,7 +1959,7 @@ public class JRivitMain extends javax.swing.JFrame {
         }
         this.jLabelNomeDevice.setText(nd);
         this.jLabelDeviceName.setText(nd);
-        this.jLabelVersione.setText("ver. "+versione + " rel. " + data_release);
+        this.jLabelVersione.setText("ver. " + versione + " rel. " + data_release);
         this.repaint();
     }
 
@@ -2239,12 +2271,13 @@ public class JRivitMain extends javax.swing.JFrame {
     }
 
     /**
-     * Server per fare il refresh dell'icona che cambia colore in base al
-     * livello di Warning
+     * Serve per fare il refresh dell'icona che cambia colore in base al livello
+     * di Warning
      *
      * @return
      */
     JButton getjButtonPL1() {
         return this.jButtonPL1;
     }
+
 }

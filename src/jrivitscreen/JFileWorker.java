@@ -224,21 +224,23 @@ public class JFileWorker extends Thread {
         if (panelName.equals("main")) {
             this.Rm.getjButtonPL1().setIcon(this.Rm.getImageWarning());
         }
-        switch(this.Rm.getW_level()){
-            case 0 ->{
-                this.Rm.getjLabelWarning().setForeground(Color.LIGHT_GRAY);
+        switch (this.Rm.getW_level()) {
+            case 0 -> {
+                this.Rm.getjLabelWarning().setBackground(Color.GREEN);
+                this.Rm.getjLabelWarning().setForeground(Color.BLACK);
+                this.Rm.getjLabelWarning().setText("OK");
+            }
+            case 1, 2, 3, 4 -> {
+                this.Rm.getjLabelWarning().setBackground(Color.YELLOW);
+                this.Rm.getjLabelWarning().setForeground(Color.BLACK);
                 this.Rm.getjLabelWarning().setText("W");
             }
-            case 1,2,3,4 ->{
-                this.Rm.getjLabelWarning().setForeground(Color.YELLOW);
-                this.Rm.getjLabelWarning().setText("W");
-            }
-            case 5,6,7,8,9->{
-                this.Rm.getjLabelWarning().setForeground(Color.RED); 
-                this.Rm.getjLabelWarning().setText("W");
+            case 5, 6, 7, 8, 9 -> {
+                this.Rm.getjLabelWarning().setBackground(Color.RED);
+                this.Rm.getjLabelWarning().setForeground(Color.WHITE);
+                this.Rm.getjLabelWarning().setText("E");
             }
         }
-        
         this.Rm.getjLabelWarning().repaint();
         this.Rm.repaint();
     }
@@ -301,12 +303,12 @@ public class JFileWorker extends Thread {
         //this.LeggiSessione();// Se non essite il file imposta il file a "0"
 //        this.mostraStatoAria(Static.ARIA_CHIUSA);//Se non esiste il file imposta a "0"
         String rigaFile = LeggiFileLock(Static.F_ARIA);
-        if(rigaFile.contains("errore")){
+        if (rigaFile.contains("errore")) {
             this.Rm.ariaChiusa();
-        }else{
+        } else {
             this.Rm.ariaAperta();
         }
-        
+
         this.readNomeDevice();//Se non esiste il file imposta a CT-0000-00
 //        cancellaFileLock(Static.PATH_WATCH + "errore"); // Dovrebbe farlo COntrol
         this.Rm.set_jLabel_B_L("Main");
