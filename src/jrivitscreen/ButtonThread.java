@@ -62,7 +62,7 @@ public class ButtonThread extends Thread {
                 // display pin state on console
                 String NomePulsante = event.getPin().getName().substring(0, 3);
                 read_pulsane_premuto(NomePulsante, "" + event.getState());
-                Static.debug(" Premuto: " + NomePulsante+ " = " + event.getState(), 3);
+                Static.debug(" Premuto: " + NomePulsante+ " = " + event.getState(), 4);
             }
 
         }, pulsanti);

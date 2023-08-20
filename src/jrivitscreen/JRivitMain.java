@@ -836,21 +836,16 @@ public class JRivitMain extends javax.swing.JFrame {
                 PanelMain();//Exit verso main
                 set_jLabel_B_L("Main");
             }
-            case "started", "canvas" ->//Continua
+            case "started" ->//Continua
             {
                 this.setStato(Static.CONTINUA);
-                if (isChiediConferma()) {
-                    this.AlertDialogStop = "Continua ?";
-                    this.jLabelDialog.setText(AlertDialogStop);
-                    PanelDialog();
-                    this.set_jLabel_B_L("Dialog");
-                } else {
-                    try {
-                        this.esegui("continua");
-                    } catch (Exception ex) {
-                        Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
+                rispostaErrore();
+
+            }
+            case "canvas" -> {
+                this.setStato(Static.CONTINUA);
+                rispostaErrore();
+                PanelStarted();
             }
             case "setup", "info" -> {
                 PanelMain();
@@ -888,21 +883,15 @@ public class JRivitMain extends javax.swing.JFrame {
                 PanelInfo();
                 this.jLabel_B_L.setText("Info");
             }
-            case "started", "canvas" ->//Accetta il tiro
+            case "started" ->//Accetta il tiro
             {
                 this.setStato(Static.ACCETTA);
-                if (this.isChiediConferma()) {
-                    this.AlertDialogStop = "Accetta ?";
-                    this.jLabelDialog.setText(AlertDialogStop);
-                    PanelDialog();
-                    this.set_jLabel_B_L("Dialog");
-                } else {
-                    try {
-                        this.esegui("accetta");
-                    } catch (Exception ex) {
-                        Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
+                rispostaErrore();
+            }
+            case "canvas" -> {
+                this.setStato(Static.ACCETTA);
+                rispostaErrore();
+                PanelStarted();
             }
             case "setup lan", "setup wifi" ->
                 this.PulsanteSxDx(-1);//Sinistra
@@ -941,20 +930,14 @@ public class JRivitMain extends javax.swing.JFrame {
                 PanelSetupWifi();
             }
             //Per ora nulla
-            case "started", "canvas" -> {//Annullare il tiro
+            case "started" -> {//Annullare il tiro
                 this.setStato(Static.ANNULLA);
-                if (this.isChiediConferma()) {
-                    this.AlertDialogStop = "Annulla ?";
-                    this.jLabelDialog.setText(AlertDialogAnnulla);
-                    PanelDialog();
-                    this.set_jLabel_B_L("Dialog");
-                } else {
-                    try {
-                        this.esegui("annulla");
-                    } catch (Exception ex) {
-                        Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
+                rispostaErrore();
+            }
+            case "canvas" -> {
+                this.setStato(Static.ANNULLA);
+                rispostaErrore();
+                PanelStarted();
             }
         }
     }//GEN-LAST:event_jButtonPL3ActionPerformed
@@ -1015,34 +998,53 @@ public class JRivitMain extends javax.swing.JFrame {
                 avviaLavoro();
             }
             case "started" -> {
-                this.jLayeredPaneCenter.moveToFront(g);
                 g.setInPrimoPiano(true);
-                this.set_jLabel_B_L("grafico");
+                this.PanelCanvas();
                 this.esegui("grafico");
-                this.repaint();
 
             }
             case "canvas" -> {
                 g.setInPrimoPiano(false);
                 PanelStarted();
-                this.set_jLabel_B_L("Started");
+
             }
             case "setup" -> {
                 this.esegui("on_of_nm_device");
                 this.set_jLabel_B_L("CON..");
-                //PanelSetup();
             }
-//            case "warning" ->
-//                PulsanteSu();
-//            case "info" ->
-//                PulsanteSu();
             case "setup lan", "setup wifi" -> {
                 PanelSetup();
                 this.set_jLabel_B_L("Setup");
             }
         }
     }//GEN-LAST:event_jButtonPR3ActionPerformed
+    /**
+     *
+     */
+    private void rispostaErrore() {
+        String rispostaErrore = "";
+        switch (this.stato) {
+            case Static.CONTINUA ->
+                rispostaErrore = "continua";
+            case Static.ANNULLA ->
+                rispostaErrore = "annulla";
+            case Static.ACCETTA ->
+                rispostaErrore = "accetta";
+        }
 
+        if (isChiediConferma()) {
+            this.AlertDialogStop = rispostaErrore + " ?";
+            this.jLabelDialog.setText(AlertDialogStop);
+            PanelDialog();
+            this.set_jLabel_B_L("Dialog");
+        } else {
+            try {
+                this.esegui(rispostaErrore);
+            } catch (Exception ex) {
+                Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
     private void listLavoriActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listLavoriActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_listLavoriActionPerformed
@@ -1137,7 +1139,7 @@ public class JRivitMain extends javax.swing.JFrame {
         this.inErrore = true;
         this.jPanelStarted.setBackground(Color.red);
         this.changeButtons(this.Img_Continua, this.Img_Ok, this.Img_Annulla,
-                this.Img_Stop, this.Img_Pause, this.Img_Estende);
+                this.Img_Stop, this.Img_Pause, this.Img_Grafico);
         this.jLayeredPaneCenter.moveToFront(this.jPanelStarted);
 //        this.repaint();
     }
@@ -1293,10 +1295,10 @@ public class JRivitMain extends javax.swing.JFrame {
             this.jPanelStarted.setBackground(Color.red);
         } else {
             this.jPanelStarted.setBackground(Color.white);
+            this.changeButtons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
+                    this.Img_Stop, this.Img_Pause, this.Img_Grafico);
         }
 
-        this.changeButtons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
-                this.Img_Stop, this.Img_Pause, this.Img_Grafico);
         String lavoro = this.listLavori.getSelectedItem();
         int idLavoro = this.listLavori.getSelectedIndex();
         this.lavoroScelto = this.elencoLavoriArray.get(idLavoro)[0];
@@ -1314,7 +1316,7 @@ public class JRivitMain extends javax.swing.JFrame {
         this.azzeraContatori();
         this.aggiornaContatori();
         this.jLayeredPaneCenter.moveToFront(this.jPanelStarted);
-
+        this.set_jLabel_B_L("Started");
         this.repaint();
     }
 
@@ -1579,8 +1581,9 @@ public class JRivitMain extends javax.swing.JFrame {
      * Pannello per disegnare il grafico
      */
     public void PanelCanvas() {
-        this.changeButtons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
-                this.Img_Ok, this.Img_Nulla, this.Img_Estende);
+        this.changeButtons(this.Img_Continua, this.Img_Ok, this.Img_Annulla,
+                this.Img_Stop, this.Img_Pause, this.Img_Estende);
+        this.set_jLabel_B_L("grafico");
         this.jLayeredPaneCenter.moveToFront(this.g);
     }
 
