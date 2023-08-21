@@ -1067,7 +1067,7 @@ public class JRivitMain extends javax.swing.JFrame {
     /**
      * PanelMain Pannello che viene visualizzato all'avvio
      */
-    private void PanelMain() {
+    public void PanelMain() {
         this.changeButtons(this.Img_Warning, this.Img_Info, this.Img_Setup,
                 this.Img_Play, this.Img_Nulla, this.Img_Exit);
         this.jLayeredPaneCenter.moveToFront(this.jPanelMain);
@@ -2285,6 +2285,13 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     JButton getjButtonPL1() {
         return this.jButtonPL1;
+    }
+/**
+ * 
+ * @return 
+ */
+    public JLabel getjLabelDeviceName() {
+        return jLabelDeviceName;
     }
 
 }

@@ -82,18 +82,29 @@ public class JDoWorker extends SwingWorker<String, Object> {
 
                 case "pausa" -> {
                     JFileWorker.ScriviFileLock(Static.F_STATO, Static.STATO_PAUSA);
-                    JFileWorker.ScriviFileLock(Static.F_AGGIORNATO_STATO, Static.STATO_STOP);
+                    JFileWorker.ScriviFileLock(Static.F_AGGIORNATO_STATO, Static.STATO_PAUSA);
                 }
 
                 case "start" -> {
                     JFileWorker.ScriviFileLock(Static.F_STATO, Static.STATO_AVVIATO);
-                    JFileWorker.ScriviFileLock(Static.F_AGGIORNATO_STATO, Static.STATO_STOP);
+                    JFileWorker.ScriviFileLock(Static.F_AGGIORNATO_STATO, Static.STATO_AVVIATO);
                 }
 
-                case "continua", "accetta", "annulla" -> {
+                case "continua" -> {
                     JFileWorker.ScriviFileLock(Static.F_RISPOSTA_TIRO_ERRATO + "_" + this.operation, this.operation);
+                    JFileWorker.ScriviFileLock(Static.F_STATO, Static.CONTINUA);
+                    JFileWorker.ScriviFileLock(Static.F_AGGIORNATO_STATO, Static.CONTINUA);
                 }
-
+                case "accetta" -> {
+                    JFileWorker.ScriviFileLock(Static.F_RISPOSTA_TIRO_ERRATO + "_" + this.operation, this.operation);
+                    JFileWorker.ScriviFileLock(Static.F_STATO, Static.ACCETTA);
+                    JFileWorker.ScriviFileLock(Static.F_AGGIORNATO_STATO, Static.ACCETTA);
+                }
+                case "annulla" -> {
+                    JFileWorker.ScriviFileLock(Static.F_RISPOSTA_TIRO_ERRATO + "_" + this.operation, this.operation);
+                    JFileWorker.ScriviFileLock(Static.F_STATO, Static.ANNULLA);
+                    JFileWorker.ScriviFileLock(Static.F_AGGIORNATO_STATO, Static.ANNULLA);
+                }
                 case "aggiorna_nome_device" -> {
                     this.NomeDevice = JFileWorker.LeggiFileLock(this.f_nome_device);
                     this.Rm.setNomeDevice(this.NomeDevice);
@@ -118,7 +129,6 @@ public class JDoWorker extends SwingWorker<String, Object> {
 
                 case "aggiorna info" ->
                     this.update_info();
-
 
                 case "orario" -> {
 
@@ -148,8 +158,8 @@ public class JDoWorker extends SwingWorker<String, Object> {
     }
 
     /**
-     * inizializza diversi stati per prevenire la scheda bianca
-     * Avvia l'istanza della classe FileWorker 
+     * inizializza diversi stati per prevenire la scheda bianca Avvia l'istanza
+     * della classe FileWorker
      */
     void init() {
         this.bt.start();//Gestione dei pulsanti
@@ -168,7 +178,6 @@ public class JDoWorker extends SwingWorker<String, Object> {
         this.Rm.setInErrore(false);
         JFileWorker.ScriviFileLock(Static.F_STATO, Static.STATO_AVVIATO);
         JFileWorker.ScriviFileLock(Static.F_AGGIORNATO_STATO, Static.STATO_AVVIATO);
-        this.Rm.PanelStarted();
     }
 
     /**
@@ -230,8 +239,6 @@ public class JDoWorker extends SwingWorker<String, Object> {
         this.Rm.setListInfo(lista_info);
     }
 
-
-
     void risposta_attesa_tiro_errato() {
         // Fabio: la gestione del tiro errato deve essere fatta 
         // da JControl. Quando i file saranno aggiornati da JControl
@@ -289,6 +296,5 @@ public class JDoWorker extends SwingWorker<String, Object> {
         }
         return line;
     }
-
 
 }

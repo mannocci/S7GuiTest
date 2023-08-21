@@ -29,13 +29,13 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class Static {
 
     //Variabili final (non modificabili)
-    final static String STATO_AVVIATO = "10";
-    final static String STATO_CONCLUSO = "12";
-    final static String STATO_PAUSA = "13";
-    final static String STATO_STOP = "14";
-    final static String CONTINUA = "1";
-    final static String ACCETTA = "2";
-    final static String ANNULLA = "3";
+   final static String STATO_AVVIATO = "91";
+    final static String STATO_CONCLUSO = "100";
+    final static String STATO_PAUSA = "92";
+    final static String STATO_STOP = "93";
+    final static String CONTINUA = "51";
+    final static String ACCETTA = "52";
+    final static String ANNULLA = "53";
     final static String ARIA_CHIUSA = "0";
     final static String ARIA_APERTA = "1";
 
@@ -80,6 +80,7 @@ public class Static {
     final static String F_LOTTI_OK = "lotti_ok";
     final static String F_SESSIONE = "sessione";
     final static String F_LISTA_NM_CON = "lista_nm_con";
+    final static String F_POWEROFF = "poweroff";
     static final String PATH_WATCH = "/tmp/CT/";
     static long ATTESA_SCRITTURA_FILE = 1000L;
     // da utilizzare per impostare il livello di debug

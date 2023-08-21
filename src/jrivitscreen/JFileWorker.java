@@ -126,6 +126,12 @@ public class JFileWorker extends Thread {
                             }
                             case Static.F_LISTA_NM_CON ->
                                 readListaNMdevice();
+                            case Static.F_POWEROFF ->{
+                                Rm.getjLabelDeviceName().setText("POWER OFF");
+                                Rm.PanelMain();
+                                
+                            }
+                                
                         }
 
                     }
@@ -600,12 +606,19 @@ public class JFileWorker extends Thread {
             Static.debug("File contatori contiene valori non numerici\n" + e.getMessage(), 2);
         }
     }
-
+/**
+ * networkmanager crea una lista dei device
+ * Questo metodo la legge, è stato avviato un bash prima che ha
+ * creato il file con la lista
+ */
     private void readListaNMdevice() {
         List<String> list_nm_con = LeggiFileElencoLock(Static.F_LISTA_NM_CON);
         this.Rm.setListNmCon(list_nm_con);
     }
-
+/**
+ * legge il file curva per costruire il grafico
+ * mostrato nel Panello Canvas
+ */
     private void gestisciCurva() {
         leggiCurva();
         this.Rm.PanelCanvas();
