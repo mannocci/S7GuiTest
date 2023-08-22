@@ -80,7 +80,6 @@ public class JFileWorker extends Thread {
     public void run() {
         try {
             while (null != (key = watcher.take())) {
-
                 for (WatchEvent<?> event : key.pollEvents()) {
                     WatchEvent.Kind<?> kind = event.kind();
                     if (kind == OVERFLOW) {
@@ -167,7 +166,7 @@ public class JFileWorker extends Thread {
                         }
 
                     }
-                }
+                }//End For wacthevent
                 //attesa per evitare segnalazioni ripetute
                 TimeUnit.SECONDS.sleep(1);
 
