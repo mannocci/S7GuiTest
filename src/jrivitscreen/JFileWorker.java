@@ -72,7 +72,7 @@ public class JFileWorker extends Thread {
         }
         Path dir = Paths.get(Static.PATH_WATCH);
         dir.register(watcher, ENTRY_MODIFY, ENTRY_CREATE,
-                ENTRY_DELETE);
+                ENTRY_DELETE, OVERFLOW);
         Static.debug("Watch Service Modify file registered for dir: " + dir.toString(), 3);
     }
 
@@ -113,6 +113,9 @@ public class JFileWorker extends Thread {
                             }
                             case Static.F_IN_STOP ->
                                 aggiornaStop();
+                                // Il file warning.txt viene ricreato ad ogni aggiornamento
+                            case Static.F_WARNING ->
+                                readWarning();
                             case "killScreen" ->
                                 this.Rm.exit();
                             case Static.F_FATTO_FILE_CURVA ->
@@ -125,14 +128,12 @@ public class JFileWorker extends Thread {
                             }
                             case Static.F_LISTA_NM_CON ->
                                 readListaNMdevice();
-                            case Static.F_POWEROFF ->{
+                            case Static.F_POWEROFF -> {
                                 Rm.getjLabelDeviceName().setText("POWER OFF");
                                 Rm.PanelMain();
-                                
-                            }
-                                
-                        }
 
+                            }
+                        }
                     }
                     if (kind == ENTRY_DELETE) {
                         switch (fileName.toString()) {
@@ -154,8 +155,6 @@ public class JFileWorker extends Thread {
                         switch (fileName.toString()) {
                             case Static.F_INFO ->
                                 readInfo();
-                            case Static.F_WARNING ->
-                                readWarning();
                             case Static.F_LAVORI ->
                                 readLavori();
                             case Static.F_NOME_DEVICE ->
@@ -217,7 +216,7 @@ public class JFileWorker extends Thread {
     }
 
     /**
-     * Legge il file con la descrizione dei JFileWorker
+     * Legge il file Warning e aggiorna la lista
      */
     private void readWarning() {
 //        lavoro che deve essere fatto da JDoWorker
@@ -605,22 +604,23 @@ public class JFileWorker extends Thread {
             Static.debug("File contatori contiene valori non numerici\n" + e.getMessage(), 2);
         }
     }
-/**
- * networkmanager crea una lista dei device
- * Questo metodo la legge, è stato avviato un bash prima che ha
- * creato il file con la lista
- */
+
+    /**
+     * networkmanager crea una lista dei device Questo metodo la legge, è stato
+     * avviato un bash prima che ha creato il file con la lista
+     */
     private void readListaNMdevice() {
         List<String> list_nm_con = LeggiFileElencoLock(Static.F_LISTA_NM_CON);
         this.Rm.setListNmCon(list_nm_con);
     }
-/**
- * legge il file curva per costruire il grafico
- * mostrato nel Panello Canvas
- */
+
+    /**
+     * legge il file curva per costruire il grafico mostrato nel Panello Canvas
+     */
     private void gestisciCurva() {
         leggiCurva();
-        this.Rm.PanelCanvas();
-        this.Rm.mostraCurva();
+        //this.Rm.PanelCanvas();
+        //this.Rm.mostraCurva();
     }
+
 }

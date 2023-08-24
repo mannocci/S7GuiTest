@@ -111,31 +111,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private Robot robot = null;
     private String pannelloPrecedente;
 
-    public List<String[]> getElencoLavoriArray() {
-        return elencoLavoriArray;
-    }
-
-    public void setElencoLavoriArray(List<String[]> elencoLavoriArray) {
-        this.elencoLavoriArray = elencoLavoriArray;
-    }
-
-    public List<String> getElencoDesLavoro() {
-        return elencoDesLavoro;
-    }
-
-    public void setElencoDesLavoro(List<String> elencoDesLavoro) {
-        this.elencoDesLavoro = elencoDesLavoro;
-    }
-
-    public boolean isLavoroConcluso() {
-        return lavoroConcluso;
-    }
-
-    public void setLavoroConcluso(boolean lavoroConcluso) {
-        this.lavoroConcluso = lavoroConcluso;
-    }
 //
-
 //Dopo una sospensione
     /**
      * Creates new form JRivitMain
@@ -186,7 +162,7 @@ public class JRivitMain extends javax.swing.JFrame {
             Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
         }
         formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-        try (InputStream in = this.getClass().getResourceAsStream("setup.propetiers")) {
+        try (InputStream in = this.getClass().getResourceAsStream("setup.properties")) {
             setup = new Properties();
             setup.load(in);
         } catch (IOException ex) {
@@ -244,6 +220,8 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelDesContatorePezzi = new javax.swing.JLabel();
         jLabelDesContatoreLotti = new javax.swing.JLabel();
         jLabelContatorePezzi = new javax.swing.JLabel();
+        jLabelDesPezziNoLimits = new javax.swing.JLabel();
+        jLabelPezziNoLimits = new javax.swing.JLabel();
         jPanelSetup = new javax.swing.JPanel();
         listSetupNM = new java.awt.List();
         jPanelMain = new javax.swing.JPanel();
@@ -280,6 +258,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelWarning = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setMaximumSize(new java.awt.Dimension(480, 320));
         setMinimumSize(new java.awt.Dimension(480, 320));
         setName("frameMain"); // NOI18N
         setUndecorated(true);
@@ -421,6 +400,17 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelContatorePezzi.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelContatorePezzi.setText("0/0");
         jPanelStarted.add(jLabelContatorePezzi, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 138, 160, 30));
+
+        jLabelDesPezziNoLimits.setFont(new java.awt.Font("SansSerif", 0, 24)); // NOI18N
+        jLabelDesPezziNoLimits.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelDesPezziNoLimits.setText("Pezzi");
+        jLabelDesPezziNoLimits.setToolTipText("");
+        jPanelStarted.add(jLabelDesPezziNoLimits, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 100, 160, 30));
+
+        jLabelPezziNoLimits.setFont(new java.awt.Font("SansSerif", 0, 36)); // NOI18N
+        jLabelPezziNoLimits.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelPezziNoLimits.setText("0/0");
+        jPanelStarted.add(jLabelPezziNoLimits, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 138, 160, 30));
 
         jLayeredPaneCenter.add(jPanelStarted, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 328, 276));
 
@@ -1001,7 +991,6 @@ public class JRivitMain extends javax.swing.JFrame {
                 g.setInPrimoPiano(true);
                 this.PanelCanvas();
                 this.esegui("grafico");
-
             }
             case "canvas" -> {
                 g.setInPrimoPiano(false);
@@ -1185,6 +1174,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private javax.swing.JLabel jLabelContatorePezzi;
     private javax.swing.JLabel jLabelDesContatoreLotti;
     private javax.swing.JLabel jLabelDesContatorePezzi;
+    private javax.swing.JLabel jLabelDesPezziNoLimits;
     private javax.swing.JLabel jLabelDeviceName;
     private javax.swing.JLabel jLabelDialog;
     private javax.swing.JLabel jLabelErrati;
@@ -1193,6 +1183,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private javax.swing.JLabel jLabelNomeDeviceCal;
     private javax.swing.JLabel jLabelNomeLavoro;
     private javax.swing.JLabel jLabelNomeLavoroCal;
+    private javax.swing.JLabel jLabelPezziNoLimits;
     private javax.swing.JLabel jLabelValidi;
     private javax.swing.JLabel jLabelVersione;
     private javax.swing.JLabel jLabelWarning;
@@ -1649,14 +1640,14 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     public void aggiornaLavori(List<String> lista) {
         this.listLavori.removeAll();
-        if (lista.isEmpty()) {
-            lista.add("Lavoro senza limiti§Lotti=-1§Pezzi=-1§Lavoro predefinito senza limiti");
+
+        if (lista.isEmpty() || lista.contains("errore")) {
+            lista.add("work without counting limits§Lotti=-1§Pezzi=-1§work without counting limits");
         }
-        if (lista.contains("Errore")) {
-            lista.add("Lavoro senza limiti§Lotti=-1§Pezzi=-1§Lavoro predefinito senza limiti");
-        }
+
         List<String> elencoTxt = new ArrayList<>();
         elencoDesLavoro = new ArrayList<>();
+        this.elencoLavoriArray.clear();
         for (String riga : lista) {
             String[] lavoroSplit = riga.split("§");
             this.elencoLavoriArray.add(lavoroSplit);
@@ -1812,16 +1803,8 @@ public class JRivitMain extends javax.swing.JFrame {
         this.jLabelErrati.setText("" + tiriErrati);
 
         if (this.nrTiriDaFare == -1) {
-            this.jLabelDesContatoreLotti.setVisible(false);
-            this.jLabelContatoreLotti.setVisible(false);
-            //Lavoro senza fine
-            this.jPanelStarted.setBackground(Color.LIGHT_GRAY);
-            this.jProgressBar.setVisible(false);
-            this.jLabelNomeLavoro.setText("Lavoro senza limiti");
-            this.jLabelContatorePezzi.setText("" + tiriValidi);
+            this.jLabelPezziNoLimits.setText("" + this.tiriNelLotto);
         } else {
-            this.jLabelDesContatoreLotti.setVisible(true);
-            this.jLabelContatoreLotti.setVisible(true);
             if (this.lotto == this.nrLottiDaFare && this.tiriNelLotto == this.nrTiriDaFare) {
                 // E' Finito il lavoro !
                 this.jPanelStarted.setBackground(Color.BLUE);
@@ -1833,10 +1816,6 @@ public class JRivitMain extends javax.swing.JFrame {
             }
             this.jLabelContatoreLotti.setText(this.lotto + "/" + this.nrLottiDaFare);
             this.jLabelContatorePezzi.setText(this.tiriNelLotto + "/" + this.nrTiriDaFare);
-
-            // Imposto la dimensione della barra percentuale (da spostare in fase di scelta lavoro)
-            this.jProgressBar.setMaximum(this.nrLottiDaFare * this.nrTiriDaFare);
-            this.jProgressBar.setVisible(true);
 
             // calcolo dei tiri complessivi per l'avanzamento della barra
             this.jProgressBar.setValue(this.tiriNelLotto + ((this.lotto - 1) * this.nrTiriDaFare));
@@ -2271,6 +2250,7 @@ public class JRivitMain extends javax.swing.JFrame {
             setLavoroConcluso(false);
             this.esegui("scegli_e_avvia");
             PanelStarted();
+            impostaLabelContatori();
             this.set_jLabel_B_L("Started");
         } catch (Exception ex) {
             Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
@@ -2286,12 +2266,59 @@ public class JRivitMain extends javax.swing.JFrame {
     JButton getjButtonPL1() {
         return this.jButtonPL1;
     }
-/**
- * 
- * @return 
- */
+
+    /**
+     *
+     * @return
+     */
     public JLabel getjLabelDeviceName() {
         return jLabelDeviceName;
     }
 
+    public List<String[]> getElencoLavoriArray() {
+        return elencoLavoriArray;
+    }
+
+    public void setElencoLavoriArray(List<String[]> elencoLavoriArray) {
+        this.elencoLavoriArray = elencoLavoriArray;
+    }
+
+    public List<String> getElencoDesLavoro() {
+        return elencoDesLavoro;
+    }
+
+    public void setElencoDesLavoro(List<String> elencoDesLavoro) {
+        this.elencoDesLavoro = elencoDesLavoro;
+    }
+
+    public boolean isLavoroConcluso() {
+        return lavoroConcluso;
+    }
+
+    public void setLavoroConcluso(boolean lavoroConcluso) {
+        this.lavoroConcluso = lavoroConcluso;
+    }
+
+    private void impostaLabelContatori() {
+        if (this.nrTiriDaFare == -1) { // Lavoro senza fine
+            this.jLabelDesContatoreLotti.setVisible(false);
+            this.jLabelContatoreLotti.setVisible(false);
+            this.jLabelDesContatorePezzi.setVisible(false);
+            this.jLabelContatorePezzi.setVisible(false);
+            this.jLabelDesPezziNoLimits.setVisible(true);
+            this.jLabelPezziNoLimits.setVisible(true);
+            this.jPanelStarted.setBackground(Color.LIGHT_GRAY);
+            this.jProgressBar.setVisible(false);
+        } else {
+            this.jLabelDesContatoreLotti.setVisible(true);
+            this.jLabelContatoreLotti.setVisible(true);
+            this.jLabelDesContatorePezzi.setVisible(true);
+            this.jLabelContatorePezzi.setVisible(true);
+            this.jLabelDesPezziNoLimits.setVisible(false);
+            this.jLabelPezziNoLimits.setVisible(false);
+            // Imposto la dimensione della barra percentuale
+            this.jProgressBar.setMaximum(this.nrLottiDaFare * this.nrTiriDaFare);
+            this.jProgressBar.setVisible(true);
+        }
+    }
 }

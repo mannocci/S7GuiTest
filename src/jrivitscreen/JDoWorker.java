@@ -21,9 +21,6 @@
  */
 package jrivitscreen;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -36,8 +33,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.Icon;
-import javax.swing.JLayeredPane;
 
 /**
  *
@@ -168,7 +163,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
     }
 
     /**
-     * Imposta lavoro scelto elo avvia
+     * Imposta lavoro scelto e lo avvia
      */
     void scegli_e_avvia() {
         String lavoro = this.Rm.getLavoroScelto();

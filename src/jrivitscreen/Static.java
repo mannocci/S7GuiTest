@@ -56,7 +56,7 @@ public class Static {
     final static String F_LAVORO_AVVIATO = "lavoro_avviato";
     final static String F_PRESSIONE_ARIA_IN_MIN = "pressione_aria_in_min";
     final static String F_PRESSIONE_ARIA_IN_MAX = "pressione_aria_in_max";
-
+    final static String F_NO_SENSORE = "no_sensore";
     final static String F_SENSORI_AGGIORNATI = "aggiornato_sensori";
     final static String F_CONTATORI_AGGIORNATI = "contatori_aggiornati";
     final static String F_CONTATORI = "contatori";
