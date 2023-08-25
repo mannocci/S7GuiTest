@@ -71,37 +71,31 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     this.init();
 
                 case "stop" -> {
-                    JFileWorker.ScriviFileLock(Static.F_STATO, Static.STATO_STOP);
-                    JFileWorker.ScriviFileLock(Static.F_AGGIORNATO_STATO, Static.STATO_STOP);
+                    JFileWorker.scriviFile(Static.F_STATO, Static.STATO_STOP);
                 }
 
                 case "pausa" -> {
-                    JFileWorker.ScriviFileLock(Static.F_STATO, Static.STATO_PAUSA);
-                    JFileWorker.ScriviFileLock(Static.F_AGGIORNATO_STATO, Static.STATO_PAUSA);
+                    JFileWorker.scriviFile(Static.F_STATO, Static.STATO_PAUSA);
                 }
 
                 case "start" -> {
-                    JFileWorker.ScriviFileLock(Static.F_STATO, Static.STATO_AVVIATO);
-                    JFileWorker.ScriviFileLock(Static.F_AGGIORNATO_STATO, Static.STATO_AVVIATO);
+                    JFileWorker.scriviFile(Static.F_STATO, Static.STATO_AVVIATO);
                 }
 
                 case "continua" -> {
-                    JFileWorker.ScriviFileLock(Static.F_RISPOSTA_TIRO_ERRATO + "_" + this.operation, this.operation);
-                    JFileWorker.ScriviFileLock(Static.F_STATO, Static.CONTINUA);
-                    JFileWorker.ScriviFileLock(Static.F_AGGIORNATO_STATO, Static.CONTINUA);
+                    JFileWorker.scriviFile(Static.F_RISPOSTA_TIRO_ERRATO + "_" + this.operation, this.operation);
+                    JFileWorker.scriviFile(Static.F_STATO, Static.CONTINUA);
                 }
                 case "accetta" -> {
-                    JFileWorker.ScriviFileLock(Static.F_RISPOSTA_TIRO_ERRATO + "_" + this.operation, this.operation);
-                    JFileWorker.ScriviFileLock(Static.F_STATO, Static.ACCETTA);
-                    JFileWorker.ScriviFileLock(Static.F_AGGIORNATO_STATO, Static.ACCETTA);
+                    JFileWorker.scriviFile(Static.F_RISPOSTA_TIRO_ERRATO + "_" + this.operation, this.operation);
+                    JFileWorker.scriviFile(Static.F_STATO, Static.ACCETTA);
                 }
                 case "annulla" -> {
-                    JFileWorker.ScriviFileLock(Static.F_RISPOSTA_TIRO_ERRATO + "_" + this.operation, this.operation);
-                    JFileWorker.ScriviFileLock(Static.F_STATO, Static.ANNULLA);
-                    JFileWorker.ScriviFileLock(Static.F_AGGIORNATO_STATO, Static.ANNULLA);
+                    JFileWorker.scriviFile(Static.F_RISPOSTA_TIRO_ERRATO + "_" + this.operation, this.operation);
+                    JFileWorker.scriviFile(Static.F_STATO, Static.ANNULLA);
                 }
                 case "aggiorna_nome_device" -> {
-                    this.NomeDevice = JFileWorker.LeggiFileLock(this.f_nome_device);
+                    this.NomeDevice = JFileWorker.leggiFile(this.f_nome_device);
                     this.Rm.setNomeDevice(this.NomeDevice);
                 }
                 case "aggiorna_nm_list" ->
@@ -116,17 +110,14 @@ public class JDoWorker extends SwingWorker<String, Object> {
                 case "on_of_nm_device" ->
                     this.on_of_nm_device();
 
-                case "risposta_attesa_tiro_errato" ->
-                    risposta_attesa_tiro_errato();
 
                 case "scegli_e_avvia" ->
                     this.scegli_e_avvia();
 
                 case "aggiorna info" ->
-                    this.update_info();
+                    this.updateInfo();
 
                 case "orario" -> {
-
                     Date orario = now.getTime();
                     //this.dateFormat.setTimeZone(TimeZone.getTimeZone("Europe/London"));
                     this.Rm.set_jLabel_B_L(this.dateFormat.format(orario));
@@ -167,12 +158,9 @@ public class JDoWorker extends SwingWorker<String, Object> {
      */
     void scegli_e_avvia() {
         String lavoro = this.Rm.getLavoroScelto();
-        JFileWorker.cancellaFile(Static.F_LAVORO_SCELTO);
-        JFileWorker.cancellaFile(Static.F_AGGIORNATO_STATO);
-        JFileWorker.ScriviFileLock(Static.F_LAVORO_SCELTO, lavoro);
+        JFileWorker.scriviFile(Static.F_LAVORO_SCELTO, lavoro);
         this.Rm.setInErrore(false);
-        JFileWorker.ScriviFileLock(Static.F_STATO, Static.STATO_AVVIATO);
-        JFileWorker.ScriviFileLock(Static.F_AGGIORNATO_STATO, Static.STATO_AVVIATO);
+        JFileWorker.scriviFile(Static.F_STATO, Static.STATO_AVVIATO);
     }
 
     /**
@@ -224,40 +212,16 @@ public class JDoWorker extends SwingWorker<String, Object> {
     /**
      * Aggiorna la lista che contiene le informazioni del sistema
      */
-    void update_info() {
-        List<String> lista_info = JFileWorker.LeggiFileElencoLock(Static.F_INFO);
-        List<String> lista_sensori = JFileWorker.LeggiFileElencoLock(Static.F_SENSORI);
-        lista_info.add("=========================");
-        for (String string : lista_sensori) {
-            lista_info.add(string);
+    void updateInfo() {
+        List<String> listaInfo = JFileWorker.leggiFileElenco(Static.F_INFO);
+        List<String> listaSensori = JFileWorker.leggiFileElenco(Static.F_SENSORI);
+        listaInfo.add("=========================");
+        for (String string : listaSensori) {
+            listaInfo.add(string);
         }
-        this.Rm.setListInfo(lista_info);
+        this.Rm.setListInfo(listaInfo);
     }
 
-    void risposta_attesa_tiro_errato() {
-        // Fabio: la gestione del tiro errato deve essere fatta 
-        // da JControl. Quando i file saranno aggiornati da JControl
-        // stesso l'interfaccia si adeguerà automaticamente
-        switch (JFileWorker.LeggiFileLock(f_risposta_tiro_errato)) {
-            case "1" -> //Continua non devo contare il tiro come ok
-                this.Rm.aggiornaDaErroreTiro();
-            case "4" -> //Annulla
-                this.Rm.setAlertDialogStop("Annullare il Tiro ?");
-            case "2" -> // Estendi
-            {
-                // Estendi
-                this.Rm.aggiornaDaErroreTiro();
-                int t = Integer.parseInt(this.Rm.getjLabelValidi());
-                t++;
-                this.Rm.setjLabelValidi("" + t);
-            }
-            case "3" -> // Accetta, come se fosse stato un tiro ok
-            {
-
-            }
-
-        }
-    }
 
     /**
      *

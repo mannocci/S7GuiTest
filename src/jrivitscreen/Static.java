@@ -41,24 +41,20 @@ public class Static {
 
     // Nomi dei file
     final static String F_STATO = "stato";
-    final static String F_AGGIORNATO_STATO = "aggiornato_stato";
     final static String F_LAVORO_SCELTO = "lavoro_scelto";
     final static String F_RISPOSTA_TIRO_ERRATO = "risposta_tiro_errato";
     final static String F_RISPOSTA_TIRO_ERRATO_CONTINUA = "risposta_tiro_errato_continua";
     final static String F_RISPOSTA_TIRO_ERRATO_ACCETTA = "risposta_tiro_errato_accetta";
     final static String F_RISPOSTA_TIRO_ERRATO_ANNULLA = "risposta_tiro_errato_annulla";
     final static String F_CHIEDE_CONFERMA_NO = "chiedi_conferma_no";
-    final static String F_IN_PAUSA = "in_pausa";
-    final static String F_IN_STOP = "in_stop";
+
+
     final static String F_LAVORI = "lavori.txt";
-    final static String F_AGGIORNATO_LAVORI = "aggiornato_lavori";
     final static String F_LAVORO_CONCLUSO = "lavoro_concluso";
     final static String F_LAVORO_AVVIATO = "lavoro_avviato";
     final static String F_PRESSIONE_ARIA_IN_MIN = "pressione_aria_in_min";
     final static String F_PRESSIONE_ARIA_IN_MAX = "pressione_aria_in_max";
     final static String F_NO_SENSORE = "no_sensore";
-    final static String F_SENSORI_AGGIORNATI = "aggiornato_sensori";
-    final static String F_CONTATORI_AGGIORNATI = "contatori_aggiornati";
     final static String F_CONTATORI = "contatori";
     final static String F_TIRI_NEL_LOTTO = "tiri_nel_lotto";
     final static String F_TIRI_OK = "tiri_ok";
@@ -69,12 +65,12 @@ public class Static {
     final static String F_WARNING = "warning.txt";
     final static String F_STATUS_LAN = "status_lan";
     final static String F_STATUS_WIFI = "status_wifi";
+    final static String F_IN_PAUSA = "in_pausa";
 
     final static String F_NOME_DEVICE = "nome_device";
     final static String F_ARIA = "aria";
     final static String F_ERRORE = "errore";
     final static String F_CURVA = "curva";
-    final static String F_FATTO_FILE_CURVA = "fatto_file_curva";
     final static String F_CHIEDI_CONFERMA_NO = "chiedi_conferma_no";
     final static String F_CHIEDI_CONFERMA_STOP = "chiedi_conferma_stop";
     final static String F_LOTTI_OK = "lotti_ok";
@@ -82,10 +78,13 @@ public class Static {
     final static String F_LISTA_NM_CON = "lista_nm_con";
     final static String F_POWEROFF = "poweroff";
     static final String PATH_WATCH = "/tmp/CT/";
+    static final String PATH_LCK = "/tmp/";
     static long ATTESA_SCRITTURA_FILE = 1000L;
     // da utilizzare per impostare il livello di debug
     // 0:debug disattivato 1:errore 2:warning 3:info 4:verbose
     final private static int DEBUGLEVEL = 3;
+    static float MAX_VARIAZIONE_PRESSIONE = 4.0f;
+    
 
     /**
      * Visualizza informazioni di debug.

@@ -57,7 +57,6 @@ public class JFileWorker extends Thread {
     private WatchService watcher;
     private Path fileName;
     private WatchKey key;
-    private String fileExtension = ".lok";
     // se il lavoro è in corso contiene "1"
     private final String f_soglia_pressione_aria_in_min = "soglia_pressione_aria_in_min";
     private final String f_soglia_pressione_aria_in_max = "soglia_pressione_aria_in_max";
@@ -71,8 +70,7 @@ public class JFileWorker extends Thread {
             Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
         }
         Path dir = Paths.get(Static.PATH_WATCH);
-        dir.register(watcher, ENTRY_MODIFY, ENTRY_CREATE,
-                ENTRY_DELETE, OVERFLOW);
+        dir.register(watcher, ENTRY_CREATE, ENTRY_DELETE);
         Static.debug("Watch Service Modify file registered for dir: " + dir.toString(), 3);
     }
 
@@ -82,24 +80,17 @@ public class JFileWorker extends Thread {
             while (null != (key = watcher.take())) {
                 for (WatchEvent<?> event : key.pollEvents()) {
                     WatchEvent.Kind<?> kind = event.kind();
-                    if (kind == OVERFLOW) {
-                        //Salta evento Overflow
-                        continue;
-                    }
-                    fileName = (Path) event.context();
 
-                    if (fileName.toString().endsWith(fileExtension)) {
-                        continue; // se è un file di tipo lok salta all'evento successivo
-                    }
+                    fileName = (Path) event.context();
 
                     Static.debug(kind.name() + ": " + fileName, 4);
                     if (kind == ENTRY_CREATE) {
                         switch (fileName.toString()) {
                             case Static.F_ARIA ->
                                 this.Rm.ariaAperta();
-                            case Static.F_CONTATORI_AGGIORNATI ->
+                            case Static.F_CONTATORI ->
                                 aggiornaContatori();
-                            case Static.F_SENSORI_AGGIORNATI ->
+                            case Static.F_SENSORI ->
                                 aggiornaSensori();
                             case Static.F_ERRORE ->
                                 errore(true);
@@ -107,18 +98,13 @@ public class JFileWorker extends Thread {
                                 impostaChiediConferma(true);
                             case Static.F_CHIEDI_CONFERMA_STOP ->
                                 impostaChiediConfermaStop(true);
-                            case Static.F_IN_PAUSA -> {
-                                readLavoroInPausa();
-                                aggiornaPausa();
-                            }
-                            case Static.F_IN_STOP ->
-                                aggiornaStop();
-                                // Il file warning.txt viene ricreato ad ogni aggiornamento
+
+                            // Il file warning.txt viene ricreato ad ogni aggiornamento
                             case Static.F_WARNING ->
                                 readWarning();
                             case "killScreen" ->
                                 this.Rm.exit();
-                            case Static.F_FATTO_FILE_CURVA ->
+                            case Static.F_CURVA ->
                                 gestisciCurva();
                             case Static.F_STATUS_LAN -> {
                                 readSetupLan();
@@ -133,6 +119,14 @@ public class JFileWorker extends Thread {
                                 Rm.PanelMain();
 
                             }
+                            case Static.F_NOME_DEVICE ->
+                                readNomeDevice();
+                            case Static.F_LAVORI ->
+                                readLavori();
+                            case Static.F_INFO ->
+                                readInfo();
+                            case Static.F_STATO ->
+                                stato();
                         }
                     }
                     if (kind == ENTRY_DELETE) {
@@ -151,23 +145,10 @@ public class JFileWorker extends Thread {
                             }
                         }
                     }
-                    if (kind == ENTRY_MODIFY) {
-                        switch (fileName.toString()) {
-                            case Static.F_INFO ->
-                                readInfo();
-                            case Static.F_LAVORI ->
-                                readLavori();
-                            case Static.F_NOME_DEVICE ->
-                                readNomeDevice();
-                            case Static.F_LISTA_NM_CON ->
-                                readListaNMdevice();
 
-                        }
-
-                    }
                 }//End For wacthevent
-                //attesa per evitare segnalazioni ripetute
-                TimeUnit.SECONDS.sleep(1);
+//                //attesa per evitare segnalazioni ripetute
+//                TimeUnit.SECONDS.sleep(1);
 
                 if (!key.reset()) {
                     //Problema non riesce il sistema a controllare il path indicato
@@ -201,14 +182,14 @@ public class JFileWorker extends Thread {
      * Legge il file con la descrizione dei lavori
      */
     private void readLavori() {
-        this.Rm.aggiornaLavori(LeggiFileElencoLock(Static.F_LAVORI));
+        this.Rm.aggiornaLavori(leggiFileElenco(Static.F_LAVORI));
     }
 
     /**
      * Legge il file con la descrizione delle info di sistema
      */
     private void readInfo() {
-        List<String> LeggiFileElencoInfo = this.LeggiFileElencoLock(Static.F_INFO);
+        List<String> LeggiFileElencoInfo = this.leggiFileElenco(Static.F_INFO);
         if (LeggiFileElencoInfo.isEmpty()) {
             LeggiFileElencoInfo.add("Manca file Info");
         }
@@ -220,7 +201,7 @@ public class JFileWorker extends Thread {
      */
     private void readWarning() {
 //        lavoro che deve essere fatto da JDoWorker
-        List<String> warning_file = this.LeggiFileElencoLock(Static.F_WARNING);
+        List<String> warning_file = this.leggiFileElenco(Static.F_WARNING);
         if (warning_file.isEmpty()) {
             warning_file.add("Manca file Warning o file vuoto");
         }
@@ -256,7 +237,7 @@ public class JFileWorker extends Thread {
      * Leggere il DB è meglio
      */
     private void readSetupLan() {
-        this.Rm.aggiornaSetupLan(this.LeggiFileElencoLock(Static.F_STATUS_LAN));
+        this.Rm.aggiornaSetupLan(this.leggiFileElenco(Static.F_STATUS_LAN));
     }
 
     /**
@@ -264,7 +245,7 @@ public class JFileWorker extends Thread {
      * sopra forse è meglio leggere il DB
      */
     private void readSetupWifi() {
-        this.Rm.aggiornaSetupWiFi(this.LeggiFileElencoLock(Static.F_STATUS_WIFI));
+        this.Rm.aggiornaSetupWiFi(this.leggiFileElenco(Static.F_STATUS_WIFI));
     }
 
     /**
@@ -284,11 +265,11 @@ public class JFileWorker extends Thread {
     }
 
     /**
-     * PressioneAria viene letta ogni secondo
+     * Pressione Aria viene letta ogni 5 secondi
      */
     private void aggiornaSensori() {
-        String line = this.LeggiFileLock(Static.F_SENSORI);
-        this.Rm.update_sensori(line);
+        String line = this.leggiFile(Static.F_SENSORI);
+        this.Rm.updateSensori(line);
     }
 
     /**
@@ -301,15 +282,15 @@ public class JFileWorker extends Thread {
         this.leggiAriaInMinMax();   // Valori scritti nei files da Control
         this.aggiornaSensori();// Occorre che vi sia il batch avviato
         this.aggiornaContatori();
-        this.readLavori();//Se non essite il file imposta il default
-        this.readInfo();// Se non esite il file imposta a stringa info
+        this.readLavori();//Se non esite il file imposta il default
+        this.readInfo();// Se non esiste il file imposta a stringa info
         this.readWarning();// Se non esiste il file imposta a sringa warning
-        this.read_lavoro_scelto();//Se non esite il file imposta a 0
-        this.readLavoroInPausa();//Se non esite il file imposta non in pausa
+        this.read_lavoro_scelto();//Se non esiste il file imposta a 0
+        this.readLavoroInPausa();//Se non esiste il file imposta non in pausa
         //this.LeggiAriaInMinMax(); // Letto dal DB
-        //this.LeggiSessione();// Se non essite il file imposta il file a "0"
+        //this.LeggiSessione();// Se non esite il file imposta il file a "0"
 //        this.mostraStatoAria(Static.ARIA_CHIUSA);//Se non esiste il file imposta a "0"
-        String rigaFile = LeggiFileLock(Static.F_ARIA);
+        String rigaFile = leggiFile(Static.F_ARIA);
         if (rigaFile.contains("errore")) {
             this.Rm.ariaChiusa();
         } else {
@@ -317,24 +298,11 @@ public class JFileWorker extends Thread {
         }
 
         this.readNomeDevice();//Se non esiste il file imposta a CT-0000-00
-//        cancellaFileLock(Static.PATH_WATCH + "errore"); // Dovrebbe farlo COntrol
+//        cancellaFile(Static.PATH_WATCH + "errore"); // Dovrebbe farlo COntrol
         this.Rm.set_jLabel_B_L("Main");
         this.Rm.repaint();
     }
 
-    /**
-     * LeggiFileLavoroInPausa /tmp/CT/inpausa
-     */
-    private void readLavoroInPausa() {
-        this.Rm.setInPausa(LeggiFileLock(Static.F_IN_PAUSA));
-    }
-
-    /**
-     * LeggiSessione
-     */
-    private void LeggiSessione() {
-        this.Rm.aggiornaSessione(LeggiFileLock(Static.F_SESSIONE));
-    }//End LeggiFileLavoriDescrizione
 
     /**
      * ScriviFile metodo generico per scrivere una riga in un file
@@ -359,8 +327,8 @@ public class JFileWorker extends Thread {
      *
      * @return
      */
-    public static boolean LockFile(String NomeFile) {
-        File inputFile = new File(Static.PATH_WATCH + NomeFile + ".lok");
+    public static boolean lockFile(String NomeFile) {
+        File inputFile = new File(Static.PATH_LCK + NomeFile + ".lck");
         if (inputFile.exists()) {
             while (inputFile.exists()) {//Attesa che si liberi il file
                 try {
@@ -371,7 +339,7 @@ public class JFileWorker extends Thread {
                 }
             }
             try {
-                FileWriter fw = new FileWriter(Static.PATH_WATCH + NomeFile + ".lok");
+                FileWriter fw = new FileWriter(Static.PATH_LCK + NomeFile + ".lck");
                 try (PrintWriter pw = new PrintWriter(fw)) {
                     pw.print("1");
                     pw.flush();
@@ -384,23 +352,15 @@ public class JFileWorker extends Thread {
     }
 
     /**
-     * Libera il lock cancellando <nomeFile>.lock
-     *
-     * @param NomeFile
-     */
-    public void unlockFile(String NomeFile) {
-        cancellaFileLock(NomeFile + ".lok");
-    }
-
-    /**
      * scrive in un file
      *
      * @param NomeFile
      * @param Testo String testo da scrivere nel file
+     * @return -1  per errore
      */
-    public static int ScriviFileLock(String NomeFile, String Testo) {
-        //cancellaFile(NomeFile);
-        boolean lock = LockFile(NomeFile);
+    public static int scriviFile(String NomeFile, String Testo) {
+        cancellaFile(NomeFile);
+        boolean lock = lockFile(NomeFile);
         if (lock) {
             try {
                 FileWriter fw = new FileWriter(Static.PATH_WATCH + NomeFile);
@@ -410,10 +370,10 @@ public class JFileWorker extends Thread {
                 }
             } catch (IOException ex) {
                 Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
-                cancellaFileLock(NomeFile + ".lok");
+                unLock(NomeFile);
                 return -1;
             }
-            cancellaFileLock(NomeFile + ".lok");
+            unLock(NomeFile);
         }
         return 0;
     }
@@ -424,7 +384,7 @@ public class JFileWorker extends Thread {
      * @param NomeFile
      * @return La riga letta del file
      */
-    public static List<String> LeggiFileElencoLock(String NomeFile) {
+    public static List<String> leggiFileElenco(String NomeFile) {
         List<String> ListaRighe = new ArrayList<>();
         boolean lock;
         try {
@@ -435,14 +395,14 @@ public class JFileWorker extends Thread {
                 ListaRighe.add("errore lettura File " + NomeFile);
                 return ListaRighe;
             }
-            lock = LockFile(NomeFile);
+            lock = lockFile(NomeFile);
             if (lock) {
                 ListaRighe = Files.readAllLines(Paths.get(Static.PATH_WATCH + NomeFile), StandardCharsets.UTF_8);
-                cancellaFileLock(NomeFile + ".lok");
+                unLock(NomeFile);
             }
         } catch (IOException ex) {
             Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
-            cancellaFileLock(NomeFile + ".lok");
+            unLock(NomeFile);
             return ListaRighe;
         }
         return ListaRighe;
@@ -454,7 +414,7 @@ public class JFileWorker extends Thread {
      * @param NomeFile
      * @return La riga letta del file
      */
-    public static String LeggiFileLock(String NomeFile) {
+    public static String leggiFile(String NomeFile) {
         String contenutoFile = "";
         Scanner myReader;
         boolean lock;
@@ -466,7 +426,7 @@ public class JFileWorker extends Thread {
                 contenutoFile = "errore " + NomeFile;
                 return contenutoFile;
             }
-            lock = LockFile(NomeFile);
+            lock = lockFile(NomeFile);
             if (lock) {
                 FileReader fr = new FileReader(Static.PATH_WATCH + NomeFile);
                 myReader = new Scanner(fr);
@@ -476,18 +436,18 @@ public class JFileWorker extends Thread {
             }
         } catch (IOException ex) {
             Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
-            cancellaFileLock(NomeFile + ".lok");
+            unLock(NomeFile);
             return "";
         }
-        cancellaFileLock(NomeFile + ".lok");
+        unLock(NomeFile);
         return contenutoFile;
     }
 
     private void leggiAriaInMinMax() {
         try {
             float min, max;
-            min = Float.parseFloat(LeggiFileLock(Static.F_PRESSIONE_ARIA_IN_MIN));
-            max = Float.parseFloat(LeggiFileLock(Static.F_PRESSIONE_ARIA_IN_MAX));
+            min = Float.parseFloat(leggiFile(Static.F_PRESSIONE_ARIA_IN_MIN));
+            max = Float.parseFloat(leggiFile(Static.F_PRESSIONE_ARIA_IN_MAX));
             this.Rm.updateSogliePressioneAriaIn(min, max);
         } catch (NumberFormatException e) {
             Static.debug("Contenuto dei file pressione_in non numerico !\n" + e.getMessage(), 2);
@@ -495,11 +455,11 @@ public class JFileWorker extends Thread {
     }
 
     private void leggiCurva() {
-        this.Rm.setCurva(LeggiFileLock(Static.F_CURVA));
+        this.Rm.setCurva(leggiFile(Static.F_CURVA));
     }
 
     private void read_lavoro_scelto() {
-        this.Rm.setLavoroScelto(LeggiFileLock(Static.F_LAVORO_SCELTO));
+        this.Rm.setLavoroScelto(leggiFile(Static.F_LAVORO_SCELTO));
     }
 
     /**
@@ -507,12 +467,12 @@ public class JFileWorker extends Thread {
      * record CT -> sn
      */
     private void readNomeDevice() {
-        this.Rm.setNomeDevice(LeggiFileLock(Static.F_NOME_DEVICE));
+        this.Rm.setNomeDevice(leggiFile(Static.F_NOME_DEVICE));
     }
 
     private void lottiOk() {
         try {
-            int lottiok = Integer.parseInt(LeggiFileLock(Static.F_LOTTI_OK));
+            int lottiok = Integer.parseInt(leggiFile(Static.F_LOTTI_OK));
             if (lottiok == 0) {
                 lottiok = 1;
             }
@@ -530,7 +490,7 @@ public class JFileWorker extends Thread {
      *
      */
     private void aggiornaStop() {
-        ScriviFileLock(Static.F_IN_STOP, "" + Static.STATO_STOP);  //  stato di abort
+        scriviFile(Static.F_STATO, Static.STATO_STOP);  //  stato di abort
     }
 
     /**
@@ -539,7 +499,7 @@ public class JFileWorker extends Thread {
      *
      */
     private void aggiornaPausa() {
-        this.ScriviFileLock(Static.F_IN_PAUSA, "" + Static.STATO_PAUSA);
+        this.scriviFile(Static.F_STATO, Static.STATO_PAUSA);
     }
 
     private void impostaChiediConferma(boolean si_o_no) {
@@ -552,32 +512,30 @@ public class JFileWorker extends Thread {
      *
      * @param NomeFile
      */
-    public static void cancellaFileLock(String NomeFile) {
+    public static void cancellaFile(String NomeFile) {
         File f = new File(Static.PATH_WATCH + NomeFile);
-        while (f.canWrite()) {
-            try {
-                Thread.sleep(Static.ATTESA_SCRITTURA_FILE);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
         if (f.exists()) {
-            if (!f.delete()) {
-                Static.debug("errore eliminando il file " + NomeFile, 2);
+            boolean lock = lockFile(NomeFile);
+            if (lock) {
+
+                if (!f.delete()) {
+                    Static.debug("errore eliminando il file " + NomeFile, 2);
+                }
             }
+            unLock(NomeFile);
         }
     }
 
     /**
-     * cancella un file
+     * Cancella file lck in /tmp
      *
      * @param NomeFile
      */
-    public static void cancellaFile(String NomeFile) {
-        File f = new File(Static.PATH_WATCH + NomeFile);
+    private static void unLock(String NomeFile) {
+        File f = new File(Static.PATH_LCK + NomeFile + ".lck");
         if (f.exists()) {
             if (!f.delete()) {
-                Static.debug("errore eliminando il file " + NomeFile, 2);
+                Static.debug("Errore eliminando il file " + NomeFile, 2);
             }
         }
     }
@@ -587,7 +545,7 @@ public class JFileWorker extends Thread {
     }
 
     private void aggiornaContatori() {
-        String testo = LeggiFileLock(Static.F_CONTATORI);
+        String testo = leggiFile(Static.F_CONTATORI);
         String[] contatori = testo.split(",");
         try {
             this.Rm.setLotto(Integer.parseInt(contatori[0]));
@@ -599,7 +557,6 @@ public class JFileWorker extends Thread {
 
             // aggiorna la visualizzazione dei contatori nel pannello
             this.Rm.aggiornaContatori();
-            cancellaFile(Static.F_CONTATORI_AGGIORNATI);
         } catch (NumberFormatException e) {
             Static.debug("File contatori contiene valori non numerici\n" + e.getMessage(), 2);
         }
@@ -610,7 +567,7 @@ public class JFileWorker extends Thread {
      * avviato un bash prima che ha creato il file con la lista
      */
     private void readListaNMdevice() {
-        List<String> list_nm_con = LeggiFileElencoLock(Static.F_LISTA_NM_CON);
+        List<String> list_nm_con = leggiFileElenco(Static.F_LISTA_NM_CON);
         this.Rm.setListNmCon(list_nm_con);
     }
 
@@ -621,6 +578,24 @@ public class JFileWorker extends Thread {
         leggiCurva();
         //this.Rm.PanelCanvas();
         //this.Rm.mostraCurva();
+    }
+
+    private void stato() {
+        String stato = leggiFile(Static.F_STATO);
+        switch (stato) {
+            case Static.STATO_CONCLUSO -> {
+                this.Rm.setLavoroConcluso(true);
+                this.Rm.PanelStarted();
+            }
+        }
+    }
+
+    private void readLavoroInPausa() {
+        String testo = leggiFile(Static.F_IN_PAUSA);
+        if(! testo.startsWith("errore")){
+            this.Rm.setInPausa("1");
+        }
+        cancellaFile(Static.F_IN_PAUSA);
     }
 
 }

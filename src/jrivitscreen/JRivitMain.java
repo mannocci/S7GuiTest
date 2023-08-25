@@ -50,7 +50,7 @@ import javax.swing.JScrollPane;
  */
 public class JRivitMain extends javax.swing.JFrame {
 
-    private String stato;
+    private String statoPulsanti;
 
     private ImageIcon Img_Exit, Img_Ok, Img_Nulla, Img_Freccia_su,
             Img_Freccia_giu, Img_Warning, Img_Setup, Img_Play,
@@ -110,6 +110,8 @@ public class JRivitMain extends javax.swing.JFrame {
     public JGrafico g;
     private Robot robot = null;
     private String pannelloPrecedente;
+    private List infoAggiuntive;
+    private Float precPressioneAria;
 
 //
 //Dopo una sospensione
@@ -128,7 +130,8 @@ public class JRivitMain extends javax.swing.JFrame {
         g.setPreferredSize(new java.awt.Dimension(328, 276));
         g.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
         this.jLayeredPaneCenter.add(g, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 328, 276));
-
+        this.jLabelDesPezziNoLimits.setVisible(false);
+        this.jLabelPezziNoLimits.setVisible(false);
         this.AlertDialogStop = "Annullare Tiro ?";
 
         Img_Exit = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/exit.png"));
@@ -156,6 +159,8 @@ public class JRivitMain extends javax.swing.JFrame {
         Img_Info = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/info.png"));
         Img_Grafico = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/grafico.png"));
         elencoLavoriArray = new ArrayList<>();
+        infoAggiuntive = new ArrayList<>();
+
         try {
             robot = new Robot();
         } catch (AWTException ex) {
@@ -176,6 +181,8 @@ public class JRivitMain extends javax.swing.JFrame {
         this.pannelloPrecedente = "main";   // Server per gestire il ritorno dal pannello di warning
         this.chiedi_conferma_stop = true;
         this.chiedi_conferma = false;
+        this.pressione_aria_in = 0f;
+        this.inPausa = "0";
 
         try {
             fileWorker = new JFileWorker(this);
@@ -543,11 +550,11 @@ public class JRivitMain extends javax.swing.JFrame {
         });
         jPanelStart.add(listLavori, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 2, 326, 180));
 
+        JTextAreaDescrizioneLavoro.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
         JTextAreaDescrizioneLavoro.setLineWrap(true);
         JTextAreaDescrizioneLavoro.setRows(5);
         JTextAreaDescrizioneLavoro.setMaximumSize(new java.awt.Dimension(320, 80));
         JTextAreaDescrizioneLavoro.setMinimumSize(new java.awt.Dimension(320, 80));
-        JTextAreaDescrizioneLavoro.setPreferredSize(new java.awt.Dimension(320, 80));
         jPanelStart.add(JTextAreaDescrizioneLavoro, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 190, 326, 80));
 
         jLayeredPaneCenter.add(jPanelStart, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 328, 276));
@@ -738,9 +745,13 @@ public class JRivitMain extends javax.swing.JFrame {
                     }
                     this.listLavori.select(i);
                     // todo Gestire il caso in cui il lavoro in pausa non viene trovato
+                    PanelStarted();
+                    this.set_jLabel_B_L("Started");
+                }else{
+                    PanelStart();
+                    this.set_jLabel_B_L("Start");
                 }
-                PanelStart();
-                this.set_jLabel_B_L("Start");
+
             }
             case "start" ->
                 PulsanteSu();
@@ -748,23 +759,29 @@ public class JRivitMain extends javax.swing.JFrame {
                 //esiste conferma_no come file in /tmp/CT ?
                 // se esiste non chiede conferma della scelta
 //                DialogQ = STATO_STOP;
-                stato = Static.STATO_STOP;
-                if (this.isChiediConfermaStop()) {
-                    this.AlertDialogStop = "Annullare il Lavoro ?";
-                    this.jLabelDialog.setText(AlertDialogStop);
-                    PanelDialog();
-                    this.set_jLabel_B_L("Dialog");
+                
+                if (this.lavoroConcluso) {
+                    PanelStart();
                 } else {
-                    try {
-                        //passa direttamente ad annullare lavoro
-                        this.esegui("stop");
+                    if (this.isChiediConfermaStop()) {
+                        statoPulsanti = Static.STATO_STOP;
+                        this.AlertDialogStop = "Annullare il Lavoro ?";
+                        this.jLabelDialog.setText(AlertDialogStop);
+                        PanelDialog();
+                        this.set_jLabel_B_L("Dialog");
+                    } else {
+                        try {
+                            //passa direttamente ad annullare lavoro
+                            this.esegui("stop");
 //                    gestioneDialogRisposte(STATO_STOP);
-                        this.PanelStart();
-                        this.set_jLabel_B_L("Start");
-                    } catch (Exception ex) {
-                        Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
+                            this.PanelStart();
+                            this.set_jLabel_B_L("Start");
+                        } catch (Exception ex) {
+                            Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }
                 }
+
             }
             case "canvas" ->
                 this.esegui("grafico");
@@ -775,7 +792,8 @@ public class JRivitMain extends javax.swing.JFrame {
                 try {
                     //Pulsante Sì alla domanda ? Annulla ? Abort ?
                     //passa direttamente ad annullare lavoro
-                    switch (this.stato) {
+                    switch (this.statoPulsanti) {
+
                         case Static.ANNULLA -> {
                             this.esegui("annulla");
                         }
@@ -797,6 +815,7 @@ public class JRivitMain extends javax.swing.JFrame {
                     Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
+
         }
     }//GEN-LAST:event_jButtonPR1ActionPerformed
 
@@ -828,12 +847,12 @@ public class JRivitMain extends javax.swing.JFrame {
             }
             case "started" ->//Continua
             {
-                this.setStato(Static.CONTINUA);
+                this.setStatoPulsanti(Static.CONTINUA);
                 rispostaErrore();
 
             }
             case "canvas" -> {
-                this.setStato(Static.CONTINUA);
+                this.setStatoPulsanti(Static.CONTINUA);
                 rispostaErrore();
                 PanelStarted();
             }
@@ -875,11 +894,11 @@ public class JRivitMain extends javax.swing.JFrame {
             }
             case "started" ->//Accetta il tiro
             {
-                this.setStato(Static.ACCETTA);
+                this.setStatoPulsanti(Static.ACCETTA);
                 rispostaErrore();
             }
             case "canvas" -> {
-                this.setStato(Static.ACCETTA);
+                this.setStatoPulsanti(Static.ACCETTA);
                 rispostaErrore();
                 PanelStarted();
             }
@@ -921,11 +940,11 @@ public class JRivitMain extends javax.swing.JFrame {
             }
             //Per ora nulla
             case "started" -> {//Annullare il tiro
-                this.setStato(Static.ANNULLA);
+                this.setStatoPulsanti(Static.ANNULLA);
                 rispostaErrore();
             }
             case "canvas" -> {
-                this.setStato(Static.ANNULLA);
+                this.setStatoPulsanti(Static.ANNULLA);
                 rispostaErrore();
                 PanelStarted();
             }
@@ -945,9 +964,10 @@ public class JRivitMain extends javax.swing.JFrame {
             case "start", "warning", "info", "setup lan", "setup wifi" ->
                 PulsanteGiu();
             case "started", "canvas" -> {//Pausa del lavoro 
-                this.setStato(Static.STATO_PAUSA);
+
                 if (this.isChiediConfermaStop()) {
 //                    DialogQ = STATO_PAUSA;
+                    this.setStatoPulsanti(Static.STATO_PAUSA);
                     this.AlertDialogStop = "Pausa ?";
                     this.jLabelDialog.setText(AlertDialogStop);
                     PanelDialog();
@@ -955,6 +975,8 @@ public class JRivitMain extends javax.swing.JFrame {
                 } else {
                     //passa direttamente ad annullare lavoro
                     this.PanelStart();
+
+                    this.esegui("pausa");
                     this.set_jLabel_B_L("Start");
                 }
             }
@@ -1012,7 +1034,8 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     private void rispostaErrore() {
         String rispostaErrore = "";
-        switch (this.stato) {
+        switch (this.statoPulsanti) {
+
             case Static.CONTINUA ->
                 rispostaErrore = "continua";
             case Static.ANNULLA ->
@@ -1282,8 +1305,13 @@ public class JRivitMain extends javax.swing.JFrame {
      * lavori, ...
      */
     public void PanelStarted() {
+
         if (this.inErrore) {
             this.jPanelStarted.setBackground(Color.red);
+        } else if (this.lavoroConcluso) {
+            this.jPanelStarted.setBackground(Color.blue);
+            this.changeButtons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
+                    this.Img_Exit, this.Img_Nulla, this.Img_Grafico);
         } else {
             this.jPanelStarted.setBackground(Color.white);
             this.changeButtons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
@@ -1572,8 +1600,16 @@ public class JRivitMain extends javax.swing.JFrame {
      * Pannello per disegnare il grafico
      */
     public void PanelCanvas() {
-        this.changeButtons(this.Img_Continua, this.Img_Ok, this.Img_Annulla,
-                this.Img_Stop, this.Img_Pause, this.Img_Estende);
+        if (this.inErrore) {
+            this.changeButtons(this.Img_Continua, this.Img_Ok, this.Img_Annulla,
+                    this.Img_Stop, this.Img_Pause, this.Img_Estende);
+        } else if (this.lavoroConcluso) {
+            this.changeButtons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
+                    this.Img_Exit, this.Img_Nulla, this.Img_Estende);
+        } else {
+            this.changeButtons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
+                    this.Img_Stop, this.Img_Pause, this.Img_Estende);
+        }
         this.set_jLabel_B_L("grafico");
         this.jLayeredPaneCenter.moveToFront(this.g);
     }
@@ -1805,15 +1841,14 @@ public class JRivitMain extends javax.swing.JFrame {
         if (this.nrTiriDaFare == -1) {
             this.jLabelPezziNoLimits.setText("" + this.tiriNelLotto);
         } else {
-            if (this.lotto == this.nrLottiDaFare && this.tiriNelLotto == this.nrTiriDaFare) {
-                // E' Finito il lavoro !
-                this.jPanelStarted.setBackground(Color.BLUE);
-                setLavoroConcluso(true);
-            } else {
-                if (!this.inErrore) {
-                    this.jPanelStarted.setBackground(Color.WHITE);
-                }
-            }
+//            if (this.lotto == this.nrLottiDaFare && this.tiriNelLotto == this.nrTiriDaFare) {
+//                // E' Finito il lavoro !
+//                setLavoroConcluso(true);
+//            } else {
+//                if (!this.inErrore) {
+//                    this.jPanelStarted.setBackground(Color.WHITE);
+//                }
+//            }
             this.jLabelContatoreLotti.setText(this.lotto + "/" + this.nrLottiDaFare);
             this.jLabelContatorePezzi.setText(this.tiriNelLotto + "/" + this.nrTiriDaFare);
 
@@ -1846,7 +1881,7 @@ public class JRivitMain extends javax.swing.JFrame {
         this.tiriNelLotto = Tiri_fatti;
     }
 
-    void update_sensori(String Valori) {
+    void updateSensori(String Valori) {
         String[] arrayValori;
         if (Valori.equals("")) {
             this.jLabel_msg.setForeground(java.awt.Color.CYAN);
@@ -1858,8 +1893,14 @@ public class JRivitMain extends javax.swing.JFrame {
                 this.temp_io_board = Float.valueOf(arrayValori[1]);
                 this.v_in = Float.valueOf(arrayValori[2]);
                 this.v_rpi = Float.valueOf(arrayValori[3]);
+                this.setListInfo(infoAggiuntive);
                 // il valore di pressione letto dal sensore deve essere raddoppiato
-                this.pressione_aria_in = Float.parseFloat(arrayValori[4]) * 2;
+                float nuovoValore = Float.parseFloat(arrayValori[4]) * 2;
+                this.precPressioneAria = this.pressione_aria_in;
+                if (this.precPressioneAria - nuovoValore < Static.MAX_VARIAZIONE_PRESSIONE) {
+                    this.pressione_aria_in = nuovoValore;
+                }
+
                 if (!(this.pressione_aria_in == null)) {
                     DecimalFormat df = new DecimalFormat("0.0");// solo una cifra decimale
                     if (pressione_aria_in <= this.sogliaMin) {
@@ -2004,15 +2045,16 @@ public class JRivitMain extends javax.swing.JFrame {
             listInfo.add("Pressione aria Null");
         }
         try {
-            listInfo.add("P. aria in ingresso: " + this.pressione_aria_in.toString() + " bar");
-            listInfo.add("Tensione CPU: " + this.v_rpi.toString() + " V");
-            listInfo.add("Tensione ingresso: " + this.v_in.toString() + " V");
-            listInfo.add("Temperatura scheda I/O: " + this.temp_io_board.toString() + " °C");
-            listInfo.add("Temperatura CPU: " + this.temp_rpi.toString() + " °C");
+            listInfo.add("Air pressure: " + this.pressione_aria_in.toString() + " bar");
+            listInfo.add("V CPU: " + this.v_rpi.toString() + " V");
+            listInfo.add("V IN: " + this.v_in.toString() + " V");
+            listInfo.add("I/O board Temp.: " + this.temp_io_board.toString() + " °C");
+            listInfo.add("CPU Temp.: " + this.temp_rpi.toString() + " °C");
             listInfo.add("-------------------------------------------------------");
         } catch (Exception e) {
             System.out.printf("errore lettura file info " + e);
         }
+        infoAggiuntive = Info;
         for (int c = 0; c < Info.size(); c++) {
             this.listInfo.add(Info.get(c).toString());
         }
@@ -2102,15 +2144,12 @@ public class JRivitMain extends javax.swing.JFrame {
      * @param inPausa
      */
     public void setInPausa(String inPausa) {
-        if (inPausa.contains("Errore")) {
-            inPausa = "0";
-        }
         this.inPausa = inPausa;
     }
 
     /**
      * dalla operazione Abort o Pause Panel Started passa il lavoro che
-     * precedentemente era stato scelto
+     * precedentemente era statoPulsanti scelto
      *
      * @param lavoro scelto,
      *
@@ -2128,14 +2167,14 @@ public class JRivitMain extends javax.swing.JFrame {
 
     /**
      *
-     * @return se è stato impostato lo stato in pausa
+     * @return se è statoPulsanti impostato lo statoPulsanti in pausa
      */
     public boolean isInPausa() {
         return in_pausa;
     }
 
     /**
-     * imposta lo stato in pausa
+     * imposta lo statoPulsanti in pausa
      *
      * @param in_pausa
      */
@@ -2165,13 +2204,13 @@ public class JRivitMain extends javax.swing.JFrame {
     }
 
     /**
-     * registra lo stato attuale della scelta dell'operatore Continua, annulla,
-     * pausa, stop, accetta, fine lavoro,
+     * registra lo statoPulsanti attuale della scelta dell'operatore Continua,
+     * annulla, pausa, stop, accetta, fine lavoro,
      *
-     * @param stato
+     * @param statoPulsanti
      */
-    public void setStato(String stato) {
-        this.stato = stato;
+    public void setStatoPulsanti(String statoPulsanti) {
+        this.statoPulsanti = statoPulsanti;
     }
 
     /**
