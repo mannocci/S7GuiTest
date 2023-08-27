@@ -547,18 +547,20 @@ public class JFileWorker extends Thread {
     private void aggiornaContatori() {
         String testo = leggiFile(Static.F_CONTATORI);
         String[] contatori = testo.split(",");
-        try {
-            this.Rm.setLotto(Integer.parseInt(contatori[0]));
-            this.Rm.setTiriNelLotto(Integer.parseInt(contatori[1]));
-            this.Rm.setTiriValidi(Integer.parseInt(contatori[2]));
-            this.Rm.setTiriAnnullati(Integer.parseInt(contatori[3]));
-            this.Rm.setTiriErrati(Integer.parseInt(contatori[4]));
-            this.Rm.setTiriTotali(Integer.parseInt(contatori[5]));
+        if (contatori.length == 6) {
+            try {
+                this.Rm.setLotto(Integer.parseInt(contatori[0]));
+                this.Rm.setTiriNelLotto(Integer.parseInt(contatori[1]));
+                this.Rm.setTiriValidi(Integer.parseInt(contatori[2]));
+                this.Rm.setTiriAnnullati(Integer.parseInt(contatori[3]));
+                this.Rm.setTiriErrati(Integer.parseInt(contatori[4]));
+                this.Rm.setTiriTotali(Integer.parseInt(contatori[5]));
 
-            // aggiorna la visualizzazione dei contatori nel pannello
-            this.Rm.aggiornaContatori();
-        } catch (NumberFormatException e) {
-            Static.debug("File contatori contiene valori non numerici\n" + e.getMessage(), 2);
+                // aggiorna la visualizzazione dei contatori nel pannello
+                this.Rm.aggiornaContatori();
+            } catch (NumberFormatException e) {
+                Static.debug("File contatori contiene valori non numerici\n" + e.getMessage(), 2);
+            }
         }
     }
 

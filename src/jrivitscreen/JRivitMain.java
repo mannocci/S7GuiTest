@@ -43,6 +43,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 /**
  *
@@ -216,7 +217,6 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelStarted = new javax.swing.JPanel();
         jLabelContatoreLotti = new javax.swing.JLabel();
         jLabelNomeDevice = new javax.swing.JLabel();
-        jLabelNomeLavoro = new javax.swing.JLabel();
         jProgressBar = new javax.swing.JProgressBar();
         jLabelErrati = new javax.swing.JLabel();
         jLabelAnnullati = new javax.swing.JLabel();
@@ -229,6 +229,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelContatorePezzi = new javax.swing.JLabel();
         jLabelDesPezziNoLimits = new javax.swing.JLabel();
         jLabelPezziNoLimits = new javax.swing.JLabel();
+        jLabelNomeLavoro = new javax.swing.JLabel();
         jPanelSetup = new javax.swing.JPanel();
         listSetupNM = new java.awt.List();
         jPanelMain = new javax.swing.JPanel();
@@ -334,22 +335,17 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelContatoreLotti.setText("0/0");
         jPanelStarted.add(jLabelContatoreLotti, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 138, 160, 30));
 
-        jLabelNomeDevice.setFont(new java.awt.Font("DejaVu Sans Condensed", 1, 20)); // NOI18N
+        jLabelNomeDevice.setFont(new java.awt.Font("SansSerif", 1, 20)); // NOI18N
         jLabelNomeDevice.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelNomeDevice.setText("Nome Device");
-        jPanelStarted.add(jLabelNomeDevice, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 10, 316, 30));
-
-        jLabelNomeLavoro.setFont(new java.awt.Font("DejaVu Sans Condensed", 1, 24)); // NOI18N
-        jLabelNomeLavoro.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabelNomeLavoro.setText("Nome Lavoro");
-        jPanelStarted.add(jLabelNomeLavoro, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 65, 316, 30));
+        jPanelStarted.add(jLabelNomeDevice, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 5, 320, 30));
 
         jProgressBar.setFont(new java.awt.Font("Liberation Sans", 1, 14)); // NOI18N
         jProgressBar.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jProgressBar.setMaximumSize(new java.awt.Dimension(245, 40));
         jProgressBar.setMinimumSize(new java.awt.Dimension(245, 40));
         jProgressBar.setStringPainted(true);
-        jPanelStarted.add(jProgressBar, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 173, 316, 40));
+        jPanelStarted.add(jProgressBar, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 173, 322, 40));
 
         jLabelErrati.setBackground(java.awt.Color.red);
         jLabelErrati.setFont(new java.awt.Font("SansSerif", 0, 24)); // NOI18N
@@ -358,7 +354,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelErrati.setText("0");
         jLabelErrati.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jLabelErrati.setOpaque(true);
-        jPanelStarted.add(jLabelErrati, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 220, 90, 25));
+        jPanelStarted.add(jLabelErrati, new org.netbeans.lib.awtextra.AbsoluteConstraints(232, 220, 90, 25));
 
         jLabelAnnullati.setBackground(new java.awt.Color(255, 204, 204));
         jLabelAnnullati.setFont(new java.awt.Font("SansSerif", 0, 24)); // NOI18N
@@ -366,22 +362,22 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelAnnullati.setText("0");
         jLabelAnnullati.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jLabelAnnullati.setOpaque(true);
-        jPanelStarted.add(jLabelAnnullati, new org.netbeans.lib.awtextra.AbsoluteConstraints(118, 220, 90, 25));
+        jPanelStarted.add(jLabelAnnullati, new org.netbeans.lib.awtextra.AbsoluteConstraints(119, 220, 90, 25));
 
         jLabel_Errati.setFont(new java.awt.Font("Liberation Sans", 1, 15)); // NOI18N
         jLabel_Errati.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel_Errati.setText("Errati");
-        jPanelStarted.add(jLabel_Errati, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 255, 90, -1));
+        jPanelStarted.add(jLabel_Errati, new org.netbeans.lib.awtextra.AbsoluteConstraints(232, 252, 90, -1));
 
         jLabel_Annullati.setFont(new java.awt.Font("Liberation Sans", 1, 15)); // NOI18N
         jLabel_Annullati.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel_Annullati.setText("Annullati");
-        jPanelStarted.add(jLabel_Annullati, new org.netbeans.lib.awtextra.AbsoluteConstraints(118, 255, 90, -1));
+        jPanelStarted.add(jLabel_Annullati, new org.netbeans.lib.awtextra.AbsoluteConstraints(119, 252, 90, -1));
 
         jLabel_Validi.setFont(new java.awt.Font("Liberation Sans", 1, 15)); // NOI18N
         jLabel_Validi.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel_Validi.setText("Validi");
-        jPanelStarted.add(jLabel_Validi, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 255, 90, -1));
+        jPanelStarted.add(jLabel_Validi, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 252, 90, -1));
 
         jLabelValidi.setBackground(java.awt.Color.green);
         jLabelValidi.setFont(new java.awt.Font("SansSerif", 0, 24)); // NOI18N
@@ -412,12 +408,17 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelDesPezziNoLimits.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelDesPezziNoLimits.setText("Pezzi");
         jLabelDesPezziNoLimits.setToolTipText("");
-        jPanelStarted.add(jLabelDesPezziNoLimits, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 100, 160, 30));
+        jPanelStarted.add(jLabelDesPezziNoLimits, new org.netbeans.lib.awtextra.AbsoluteConstraints(84, 100, 160, 30));
 
         jLabelPezziNoLimits.setFont(new java.awt.Font("SansSerif", 0, 36)); // NOI18N
         jLabelPezziNoLimits.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabelPezziNoLimits.setText("0/0");
-        jPanelStarted.add(jLabelPezziNoLimits, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 138, 160, 30));
+        jLabelPezziNoLimits.setText("0");
+        jPanelStarted.add(jLabelPezziNoLimits, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 138, 310, 30));
+
+        jLabelNomeLavoro.setFont(new java.awt.Font("SansSerif", 1, 20)); // NOI18N
+        jLabelNomeLavoro.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelNomeLavoro.setText("Nome Lavoro");
+        jPanelStarted.add(jLabelNomeLavoro, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 38, 320, -1));
 
         jLayeredPaneCenter.add(jPanelStarted, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 328, 276));
 
@@ -550,6 +551,7 @@ public class JRivitMain extends javax.swing.JFrame {
         });
         jPanelStart.add(listLavori, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 2, 326, 180));
 
+        JTextAreaDescrizioneLavoro.setEditable(false);
         JTextAreaDescrizioneLavoro.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
         JTextAreaDescrizioneLavoro.setLineWrap(true);
         JTextAreaDescrizioneLavoro.setRows(5);
@@ -1321,7 +1323,7 @@ public class JRivitMain extends javax.swing.JFrame {
         String lavoro = this.listLavori.getSelectedItem();
         int idLavoro = this.listLavori.getSelectedIndex();
         this.lavoroScelto = this.elencoLavoriArray.get(idLavoro)[0];
-        this.jLabelNomeLavoro.setText(this.lavoroScelto);
+        this.jLabelNomeLavoro.setText(this.lavoroScelto.trim());
         String[] det_nr_lotti = this.elencoLavoriArray.get(idLavoro)[1].split("=");
         String[] det_nr_tiri = this.elencoLavoriArray.get(idLavoro)[2].split("=");
         try {
@@ -1678,7 +1680,7 @@ public class JRivitMain extends javax.swing.JFrame {
         this.listLavori.removeAll();
 
         if (lista.isEmpty() || lista.contains("errore")) {
-            lista.add("work without counting limits§Lotti=-1§Pezzi=-1§work without counting limits");
+            lista.add(" no count limits§Lotti=-1§Pezzi=-1§work without counting limits");
         }
 
         List<String> elencoTxt = new ArrayList<>();
