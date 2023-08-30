@@ -84,7 +84,7 @@ public class JGrafico extends JPanel {
                 int[] xpoints = new int[nPoints];
                 for (int i = 0; i < nPoints; i++) {
                     xpoints[i] = i * 3;
-                    ypoints[i] = y - 10 - Integer.parseInt(yRifchar[i]) / 6;
+                    ypoints[i] = y - 10 - Integer.parseInt(yRifchar[i]) / 7;
                 }
                 gr.drawPolyline(xpoints, ypoints, nPoints);
                 //this.Rm.getjLayeredPaneCenter().repaint();
@@ -97,16 +97,20 @@ public class JGrafico extends JPanel {
                 int[] xpoints = new int[nPoints];
                 for (int i = 0; i < nPoints; i++) {
                     xpoints[i] = i * 3;
-                    ypoints[i] = y - 10 - Integer.parseInt(ychar[i]) / 6;
+                    ypoints[i] = y - 10 - Integer.parseInt(ychar[i]) / 7;
                 }
                 gr.setStroke(new BasicStroke(3));
                 gr.setColor(Color.BLACK);
                 gr.drawPolyline(xpoints, ypoints, nPoints);
                 //this.Rm.getjLayeredPaneCenter().repaint();
-                gr.setColor(Color.RED);
-                Font f = new Font("Arial", 2, 22);
+                gr.setColor(Color.GREEN);
+                Font f = new Font("Arial", 2, 20);
                 gr.setFont(f);
-                gr.drawString("TRAZIONE ERRATA !", 10, 30);
+                gr.drawString("REFERENCE", 5, 10);
+                gr.setColor(Color.BLACK);
+                f = new Font("Arial", 2, 20);
+                gr.setFont(f);
+                gr.drawString("TRACTION", 5, 25);
             }
 
         }

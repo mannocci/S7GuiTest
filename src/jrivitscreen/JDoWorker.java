@@ -125,8 +125,6 @@ public class JDoWorker extends SwingWorker<String, Object> {
                 }
 
                 case "grafico" -> {
-
-                    this.Rm.g.setCurva(this.Rm.getCurva());
                     this.Rm.repaint();
 
                     //this.drawGrafico();
@@ -159,6 +157,8 @@ public class JDoWorker extends SwingWorker<String, Object> {
     void scegli_e_avvia() {
         String lavoro = this.Rm.getLavoroScelto();
         JFileWorker.scriviFile(Static.F_LAVORO_SCELTO, lavoro);
+        this.Rm.azzeraContatori();
+
         this.Rm.setInErrore(false);
         JFileWorker.scriviFile(Static.F_STATO, Static.STATO_AVVIATO);
     }

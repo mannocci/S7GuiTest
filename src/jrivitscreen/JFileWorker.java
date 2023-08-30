@@ -102,10 +102,14 @@ public class JFileWorker extends Thread {
                             // Il file warning.txt viene ricreato ad ogni aggiornamento
                             case Static.F_WARNING ->
                                 readWarning();
+                            case Static.F_PRESSIONE_ARIA_IN_MIN ->
+                                this.leggiAriaInMinMax();
                             case "killScreen" ->
                                 this.Rm.exit();
                             case Static.F_CURVA ->
                                 gestisciCurva();
+                            case Static.F_CURVA_DI_RIFERIMENTO ->
+                                read_lavoro_scelto();
                             case Static.F_STATUS_LAN -> {
                                 readSetupLan();
                             }
@@ -456,10 +460,13 @@ public class JFileWorker extends Thread {
 
     private void leggiCurva() {
         this.Rm.setCurva(leggiFile(Static.F_CURVA));
+        this.Rm.g.setCurva(this.Rm.getCurva());
     }
 
     private void read_lavoro_scelto() {
         this.Rm.setLavoroScelto(leggiFile(Static.F_LAVORO_SCELTO));
+        this.Rm.setCurvaDiRiferimento(leggiFile(Static.F_CURVA_DI_RIFERIMENTO));
+        this.Rm.g.setCurvaDiRiferimento(this.Rm.getCurvaDiRiferimento());
     }
 
     /**

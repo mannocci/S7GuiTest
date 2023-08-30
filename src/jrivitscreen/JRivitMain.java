@@ -28,6 +28,8 @@ package jrivitscreen;
 import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Robot;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.io.InputStream;
@@ -92,7 +94,8 @@ public class JRivitMain extends javax.swing.JFrame {
     private final String versione;
     private final String data_release;
     private final String srvKey;
-    private List<String[]> elencoLavoriArray;
+    private List<String[]> elencoLavori;
+    private List<String[]> elencoLavoriAvviabili;
     private String inPausa;
     private Float temp_rpi;
     private Float temp_io_board;
@@ -113,6 +116,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private String pannelloPrecedente;
     private List infoAggiuntive;
     private Float precPressioneAria;
+    private String curvaDiRiferimento;
 
 //
 //Dopo una sospensione
@@ -159,7 +163,7 @@ public class JRivitMain extends javax.swing.JFrame {
         Img_WiFi = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/cell.png"));
         Img_Info = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/info.png"));
         Img_Grafico = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/grafico.png"));
-        elencoLavoriArray = new ArrayList<>();
+        elencoLavori = new ArrayList<>();
         infoAggiuntive = new ArrayList<>();
 
         try {
@@ -741,7 +745,7 @@ public class JRivitMain extends javax.swing.JFrame {
                     int quanti = this.listLavori.getItemCount();
                     int i;
                     for (i = 0; i < quanti; i++) {
-                        if (this.elencoLavoriArray.get(i)[0].equals(this.lavoroScelto)) {
+                        if (this.elencoLavori.get(i)[0].equals(this.lavoroScelto)) {
                             break;
                         }
                     }
@@ -749,11 +753,10 @@ public class JRivitMain extends javax.swing.JFrame {
                     // todo Gestire il caso in cui il lavoro in pausa non viene trovato
                     PanelStarted();
                     this.set_jLabel_B_L("Started");
-                }else{
+                } else {
                     PanelStart();
                     this.set_jLabel_B_L("Start");
                 }
-
             }
             case "start" ->
                 PulsanteSu();
@@ -761,7 +764,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 //esiste conferma_no come file in /tmp/CT ?
                 // se esiste non chiede conferma della scelta
 //                DialogQ = STATO_STOP;
-                
+
                 if (this.lavoroConcluso) {
                     PanelStart();
                 } else {
@@ -1253,8 +1256,8 @@ public class JRivitMain extends javax.swing.JFrame {
         this.lotto = lotti_ok;
     }
 
-    public void setTiriNelLotto(int Tiri) {
-        this.tiriNelLotto = Tiri;
+    public void setTiriNelLotto(int tiriNelLotto) {
+        this.tiriNelLotto = tiriNelLotto;
     }
 
     public void set_nr_tiri_ok(int TiriOk) {
@@ -1320,21 +1323,6 @@ public class JRivitMain extends javax.swing.JFrame {
                     this.Img_Stop, this.Img_Pause, this.Img_Grafico);
         }
 
-        String lavoro = this.listLavori.getSelectedItem();
-        int idLavoro = this.listLavori.getSelectedIndex();
-        this.lavoroScelto = this.elencoLavoriArray.get(idLavoro)[0];
-        this.jLabelNomeLavoro.setText(this.lavoroScelto.trim());
-        String[] det_nr_lotti = this.elencoLavoriArray.get(idLavoro)[1].split("=");
-        String[] det_nr_tiri = this.elencoLavoriArray.get(idLavoro)[2].split("=");
-        try {
-            nrLottiDaFare = Integer.parseInt(det_nr_lotti[1]);
-            nrTiriDaFare = Integer.parseInt(det_nr_tiri[1]);
-        } catch (NumberFormatException e) {
-            System.out.print("nr_lotti_da_fare null !\n" + e);
-            nrLottiDaFare = 1;
-            nrTiriDaFare = 1;
-        }
-        this.azzeraContatori();
         this.aggiornaContatori();
         this.jLayeredPaneCenter.moveToFront(this.jPanelStarted);
         this.set_jLabel_B_L("Started");
@@ -1679,25 +1667,32 @@ public class JRivitMain extends javax.swing.JFrame {
     public void aggiornaLavori(List<String> lista) {
         this.listLavori.removeAll();
 
-        if (lista.isEmpty() || lista.contains("errore")) {
-            lista.add(" no count limits§Lotti=-1§Pezzi=-1§work without counting limits");
+        if (lista.isEmpty() || lista.contains("errore")) {  // sintassi nomelavoro, lotti, pezzi, descrizione, canStart
+            lista.add(" no count limits§-1§-1§work without counting limits§0");
+            // todo verificare se in caso di file lavori.txt vuoto occore fermarsi
         }
 
         List<String> elencoTxt = new ArrayList<>();
         elencoDesLavoro = new ArrayList<>();
-        this.elencoLavoriArray.clear();
+        elencoLavoriAvviabili = new ArrayList<>();
+        this.elencoLavori.clear();
+        this.elencoLavoriAvviabili.clear();
         for (String riga : lista) {
-            String[] lavoroSplit = riga.split("§");
-            this.elencoLavoriArray.add(lavoroSplit);
-            if (lavoroSplit[1].contains("=-1")) { // Lavoro senza limiti -> visualizzo solo il nome
-                elencoTxt.add(lavoroSplit[0]);
-            } else {
-                elencoTxt.add(lavoroSplit[0] + " " + lavoroSplit[1] + " " + lavoroSplit[2]);
-            }
-            if (lavoroSplit.length >= 3) {
-                this.elencoDesLavoro.add(lavoroSplit[3]);
-            } else {    // Nessuna descrizione trovata
-                this.elencoDesLavoro.add("");
+            String[] lavoroSplit = riga.split("§"); // nomeLavoro, limLotti, limPezzi, descrizione, canStart
+            this.elencoLavori.add(lavoroSplit);
+            String nomeLavoro = lavoroSplit[0];
+            String limLotti = lavoroSplit[1];
+            String limPezzi = lavoroSplit[2];
+            String descrizione = lavoroSplit[3];
+            String canStart = lavoroSplit[4];
+            if (canStart.equals("1")) { // elenco solo i lavori avviabili
+                if (limLotti.equals("-1")) { // Lavoro senza limiti -> visualizzo solo il nome
+                    elencoTxt.add(nomeLavoro);
+                } else {
+                    elencoTxt.add(nomeLavoro + " Lotti=" + limLotti + " Pezzi=" + limPezzi);
+                }
+                this.elencoLavoriAvviabili.add(lavoroSplit);
+                this.elencoDesLavoro.add(descrizione);
             }
         }
         RefreshList(listLavori, elencoTxt);
@@ -1879,15 +1874,14 @@ public class JRivitMain extends javax.swing.JFrame {
         this.repaint();
     }
 
-    public void set_nr_tiri_fatti(int Tiri_fatti) {
-        this.tiriNelLotto = Tiri_fatti;
+    public void set_nr_tiri_fatti(int tiriNelLotto) {
+        this.tiriNelLotto = tiriNelLotto;
     }
 
     void updateSensori(String Valori) {
         String[] arrayValori;
         if (Valori.equals("")) {
-            this.jLabel_msg.setForeground(java.awt.Color.CYAN);
-            this.jLabel_msg.setText("Air pressure not updated !");
+//            this.jLabel_msg.setText("Air pressure not updated !"); // Aggiungere eventualmente un contatore
         } else {
             arrayValori = Valori.split(",");
             try {
@@ -2005,11 +1999,11 @@ public class JRivitMain extends javax.swing.JFrame {
         return this.Img_Warning;
     }
 
-    void setCurva(String Curva) {
+    public void setCurva(String Curva) {
         this.Curva = Curva;
     }
 
-    void mostraCurva() {
+    public void mostraCurva() {
         this.jLayeredPaneCenter.moveToFront(this.g);
         this.repaint();
         //esegui("curva");
@@ -2272,9 +2266,10 @@ public class JRivitMain extends javax.swing.JFrame {
         this.tiriErrati = tiriErrati;
     }
 
-    private void azzeraContatori() {
+    public void azzeraContatori() {
         this.lotto = 1;
         this.tiriNelLotto = 0;
+        this.tiriValidi = 0;
         this.tiriAnnullati = 0;
         this.tiriErrati = 0;
     }
@@ -2282,12 +2277,26 @@ public class JRivitMain extends javax.swing.JFrame {
     private void avviaLavoro() {
         try {
             //Scelta lavoro
-            if (this.listLavori.getSelectedItem().contains("=")) {
-                this.lavoroScelto = this.listLavori.getSelectedItem().substring(0,
-                        (this.listLavori.getSelectedItem().indexOf("Lotti") - 1));
-            } else {
-                this.lavoroScelto = this.listLavori.getSelectedItem();
+//            if (this.listLavori.getSelectedItem().contains("=")) {
+//                this.lavoroScelto = this.listLavori.getSelectedItem().substring(0,
+//                        (this.listLavori.getSelectedItem().indexOf("Lotti") - 1));
+//            } else {
+//                this.lavoroScelto = this.listLavori.getSelectedItem();
+//            }
+//            
+
+            int idLavoro = this.listLavori.getSelectedIndex();
+            this.jLabelNomeLavoro.setText(this.lavoroScelto.trim());
+            try {
+                this.lavoroScelto = this.elencoLavoriAvviabili.get(idLavoro)[0];
+                nrLottiDaFare = Integer.parseInt(this.elencoLavoriAvviabili.get(idLavoro)[1]);
+                nrTiriDaFare = Integer.parseInt(this.elencoLavoriAvviabili.get(idLavoro)[2]);
+            } catch (NumberFormatException e) {
+                Static.debug("nr_lotti_da_fare null !\n", 2);
+                nrLottiDaFare = 1;
+                nrTiriDaFare = 1;
             }
+
             setLavoroConcluso(false);
             this.esegui("scegli_e_avvia");
             PanelStarted();
@@ -2316,12 +2325,12 @@ public class JRivitMain extends javax.swing.JFrame {
         return jLabelDeviceName;
     }
 
-    public List<String[]> getElencoLavoriArray() {
-        return elencoLavoriArray;
+    public List<String[]> getElencoLavori() {
+        return elencoLavori;
     }
 
-    public void setElencoLavoriArray(List<String[]> elencoLavoriArray) {
-        this.elencoLavoriArray = elencoLavoriArray;
+    public void setElencoLavori(List<String[]> elencoLavori) {
+        this.elencoLavori = elencoLavori;
     }
 
     public List<String> getElencoDesLavoro() {
@@ -2361,5 +2370,13 @@ public class JRivitMain extends javax.swing.JFrame {
             this.jProgressBar.setMaximum(this.nrLottiDaFare * this.nrTiriDaFare);
             this.jProgressBar.setVisible(true);
         }
+    }
+
+    public void setCurvaDiRiferimento(String curvaDiRiferimanto) {
+        this.curvaDiRiferimento = curvaDiRiferimanto;
+    }
+
+    public String getCurvaDiRiferimento() {
+        return curvaDiRiferimento;
     }
 }
