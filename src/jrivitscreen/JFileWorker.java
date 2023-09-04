@@ -27,7 +27,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-//import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
@@ -42,7 +41,6 @@ import java.nio.file.WatchService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
 import javax.swing.JLayeredPane;
 
 /**
@@ -58,8 +56,6 @@ public class JFileWorker extends Thread {
     private Path fileName;
     private WatchKey key;
     // se il lavoro è in corso contiene "1"
-    private final String f_soglia_pressione_aria_in_min = "soglia_pressione_aria_in_min";
-    private final String f_soglia_pressione_aria_in_max = "soglia_pressione_aria_in_max";
 
     public JFileWorker(JRivitMain mf) throws IOException {
         this.Rm = mf;
@@ -70,7 +66,7 @@ public class JFileWorker extends Thread {
             Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
         }
         Path dir = Paths.get(Static.PATH_WATCH);
-        dir.register(watcher, ENTRY_CREATE, ENTRY_DELETE);
+        dir.register(watcher, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
         Static.debug("Watch Service Modify file registered for dir: " + dir.toString(), 3);
     }
 
@@ -84,12 +80,24 @@ public class JFileWorker extends Thread {
                     fileName = (Path) event.context();
 
                     Static.debug(kind.name() + ": " + fileName, 4);
+                    if (kind == ENTRY_MODIFY) {
+                        if (!fileName.toString().equals(Static.F_SENSORI)) {
+                            System.err.println("Modificato: " + fileName + "\n");
+                        }
+                        switch (fileName.toString()) {
+                            case Static.F_CONTATORI ->
+                                aggiornaContatori();
+                            case Static.F_CURVA ->
+                                gestisciCurva();
+                        }
+
+                    }
                     if (kind == ENTRY_CREATE) {
                         switch (fileName.toString()) {
                             case Static.F_ARIA ->
                                 this.Rm.ariaAperta();
-                            case Static.F_CONTATORI ->
-                                aggiornaContatori();
+//                            case Static.F_CONTATORI ->
+//                                aggiornaContatori();
                             case Static.F_SENSORI ->
                                 aggiornaSensori();
                             case Static.F_ERRORE ->
@@ -106,8 +114,8 @@ public class JFileWorker extends Thread {
                                 this.leggiAriaInMinMax();
                             case "killScreen" ->
                                 this.Rm.exit();
-                            case Static.F_CURVA ->
-                                gestisciCurva();
+//                            case Static.F_CURVA ->
+//                                gestisciCurva();
                             case Static.F_CURVA_DI_RIFERIMENTO ->
                                 read_lavoro_scelto();
                             case Static.F_STATUS_LAN -> {
@@ -307,7 +315,6 @@ public class JFileWorker extends Thread {
         this.Rm.repaint();
     }
 
-
     /**
      * ScriviFile metodo generico per scrivere una riga in un file
      *
@@ -360,13 +367,13 @@ public class JFileWorker extends Thread {
      *
      * @param NomeFile
      * @param Testo String testo da scrivere nel file
-     * @return -1  per errore
+     * @return -1 per errore
      */
     public static int scriviFile(String NomeFile, String Testo) {
-        cancellaFile(NomeFile);
         boolean lock = lockFile(NomeFile);
         if (lock) {
             try {
+                cancellaFile(NomeFile);
                 FileWriter fw = new FileWriter(Static.PATH_WATCH + NomeFile);
                 try (PrintWriter pw = new PrintWriter(fw)) {
                     pw.print(Testo);
@@ -601,7 +608,7 @@ public class JFileWorker extends Thread {
 
     private void readLavoroInPausa() {
         String testo = leggiFile(Static.F_IN_PAUSA);
-        if(! testo.startsWith("errore")){
+        if (!testo.startsWith("errore")) {
             this.Rm.setInPausa("1");
         }
         cancellaFile(Static.F_IN_PAUSA);

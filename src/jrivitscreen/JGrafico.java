@@ -32,6 +32,8 @@ public class JGrafico extends JPanel {
     private String curva;
     private boolean inPrimoPiano = false;
     private String curvaDiRiferimento;
+    int nPoints;
+    int[] xpoints, ypoints;
 
     public void setCurva(String curva) {
         this.curva = curva;
@@ -48,8 +50,6 @@ public class JGrafico extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
-        int nPoints;
-        int[] ypoints;
 
         if (inPrimoPiano) {
             Graphics2D gr = (Graphics2D) g;
@@ -79,9 +79,9 @@ public class JGrafico extends JPanel {
             gr.setStroke(new BasicStroke(3));
             String[] yRifchar = curvaDiRiferimento.split(",");
             nPoints = yRifchar.length;
-            ypoints = new int[nPoints];
             if (nPoints > 0) {
-                int[] xpoints = new int[nPoints];
+                xpoints = new int[nPoints];
+                ypoints = new int[nPoints];
                 for (int i = 0; i < nPoints; i++) {
                     xpoints[i] = i * 3;
                     ypoints[i] = y - 10 - Integer.parseInt(yRifchar[i]) / 7;
@@ -92,9 +92,9 @@ public class JGrafico extends JPanel {
 
             String[] ychar = curva.split(",");
             nPoints = ychar.length;
-            ypoints = new int[nPoints];
             if (nPoints > 0) {
-                int[] xpoints = new int[nPoints];
+                xpoints = new int[nPoints];
+                ypoints = new int[nPoints];
                 for (int i = 0; i < nPoints; i++) {
                     xpoints[i] = i * 3;
                     ypoints[i] = y - 10 - Integer.parseInt(ychar[i]) / 7;
@@ -103,16 +103,15 @@ public class JGrafico extends JPanel {
                 gr.setColor(Color.BLACK);
                 gr.drawPolyline(xpoints, ypoints, nPoints);
                 //this.Rm.getjLayeredPaneCenter().repaint();
-                gr.setColor(Color.GREEN);
+                gr.setColor(Color.DARK_GRAY);
                 Font f = new Font("Arial", 2, 20);
                 gr.setFont(f);
-                gr.drawString("REFERENCE", 5, 10);
+                gr.drawString("Green: Reference", 5, 25);
                 gr.setColor(Color.BLACK);
                 f = new Font("Arial", 2, 20);
                 gr.setFont(f);
-                gr.drawString("TRACTION", 5, 25);
+                gr.drawString("Black: Traction", 5, 50);
             }
-
         }
 
     }

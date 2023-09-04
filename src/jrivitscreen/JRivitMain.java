@@ -1864,13 +1864,12 @@ public class JRivitMain extends javax.swing.JFrame {
     }
 
     /**
-     * aggiornaDaErroreTiro ripristina i colori di default Imposta ARIA ON ?? DA
-     * RIFARE
+     * aggiornaDaErroreTiro ripristina i colori di default Imposta ARIA ON ??
      */
     public void aggiornaDaErroreTiro() {
         this.jPanelStarted.setBackground(Color.WHITE);
         this.changeButtons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
-                this.Img_Stop, this.Img_Pause, this.Img_Nulla);
+                this.Img_Stop, this.Img_Pause, this.Img_Grafico);
         this.repaint();
     }
 

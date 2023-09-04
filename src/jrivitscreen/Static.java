@@ -18,8 +18,6 @@
  */
 package jrivitscreen;
 
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-
 /**
  * classe che contiene le variabili static final per i programmi come i nomi dei
  * file o di stati del sistema numerici
@@ -79,7 +77,7 @@ public class Static {
     final static String F_LISTA_NM_CON = "lista_nm_con";
     final static String F_POWEROFF = "poweroff";
     static final String PATH_WATCH = "/tmp/CT/";
-    static final String PATH_LCK = "/tmp/";
+    static final String PATH_LCK = "/tmp/CTLock/";
     static long ATTESA_SCRITTURA_FILE = 1000L;
     // da utilizzare per impostare il livello di debug
     // 0:debug disattivato 1:errore 2:warning 3:info 4:verbose
