@@ -89,6 +89,8 @@ public class JFileWorker extends Thread {
                                 aggiornaContatori();
                             case Static.F_CURVA ->
                                 gestisciCurva();
+//                            case Static.F_STATO ->
+//                                stato();
                         }
 
                     }
@@ -106,7 +108,8 @@ public class JFileWorker extends Thread {
                                 impostaChiediConferma(true);
                             case Static.F_CHIEDI_CONFERMA_STOP ->
                                 impostaChiediConfermaStop(true);
-
+                            case Static.F_PULSANTE ->
+                                gestisciPulsante();
                             // Il file warning.txt viene ricreato ad ogni aggiornamento
                             case Static.F_WARNING ->
                                 readWarning();
@@ -153,7 +156,8 @@ public class JFileWorker extends Thread {
                                 impostaChiediConfermaStop(false);
                             case Static.F_RISPOSTA_TIRO_ERRATO_CONTINUA, Static.F_RISPOSTA_TIRO_ERRATO_ACCETTA, Static.F_RISPOSTA_TIRO_ERRATO_ANNULLA -> {
                                 this.Rm.setInErrore(false);
-                                this.Rm.aggiornaDaErroreTiro();
+                                //this.Rm.aggiornaDaErroreTiro(); //Non colorava lo sfondo rimosso metodo
+                                this.Rm.PanelStarted();//Ricalcola i contatori e colora in modo corretto
                             }
                         }
                     }
@@ -603,6 +607,10 @@ public class JFileWorker extends Thread {
                 this.Rm.setLavoroConcluso(true);
                 this.Rm.PanelStarted();
             }
+            case Static.STATO_AVVIATO -> {
+                this.Rm.setLavoroConcluso(false);
+                this.Rm.PanelStarted();
+            }
         }
     }
 
@@ -614,4 +622,12 @@ public class JFileWorker extends Thread {
         cancellaFile(Static.F_IN_PAUSA);
     }
 
+    /**
+     * Il file "pulsante" viene utilizzato dal webserver per telecontrallare la
+     * pressione virtuale di un pulsante
+     */
+    private void gestisciPulsante() {
+        String pulsante = leggiFile(Static.F_PULSANTE);
+        this.Rm.pulsanteHw(pulsante);
+    }
 }
