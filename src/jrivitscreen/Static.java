@@ -27,8 +27,13 @@ package jrivitscreen;
 public class Static {
 
     //Variabili final (non modificabili)
-   final static String STATO_AVVIATO = "91";
+    final static String STATO_RICHIESTA_AVVIO = "90";
+    final static String STATO_AVVIATO = "91";
     final static String STATO_CONCLUSO = "100";
+    final static String STATO_CALIBRAZIONE = "200";
+    final static String STATO_CALIBRAZIONE_OK = "210";
+    final static String STATO_CALIBRAZIONE_TEST = "220";
+    final static String STATO_CALIBRAZIONE_SALVA = "230";
     final static String STATO_PAUSA = "92";
     final static String STATO_STOP = "93";
     final static String CONTINUA = "51";
@@ -39,13 +44,13 @@ public class Static {
 
     // Nomi dei file
     final static String F_STATO = "stato";
+    final static String F_PULSANTE = "pulsante";
     final static String F_LAVORO_SCELTO = "lavoro_scelto";
     final static String F_RISPOSTA_TIRO_ERRATO = "risposta_tiro_errato";
     final static String F_RISPOSTA_TIRO_ERRATO_CONTINUA = "risposta_tiro_errato_continua";
     final static String F_RISPOSTA_TIRO_ERRATO_ACCETTA = "risposta_tiro_errato_accetta";
     final static String F_RISPOSTA_TIRO_ERRATO_ANNULLA = "risposta_tiro_errato_annulla";
     final static String F_CHIEDE_CONFERMA_NO = "chiedi_conferma_no";
-
 
     final static String F_LAVORI = "lavori.txt";
     final static String F_LAVORO_CONCLUSO = "lavoro_concluso";
@@ -83,7 +88,6 @@ public class Static {
     // 0:debug disattivato 1:errore 2:warning 3:info 4:verbose
     final private static int DEBUGLEVEL = 3;
     static float MAX_VARIAZIONE_PRESSIONE = 4.0f;
-    
 
     /**
      * Visualizza informazioni di debug.
