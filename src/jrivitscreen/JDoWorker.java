@@ -84,15 +84,12 @@ public class JDoWorker extends SwingWorker<String, Object> {
 
                 case "continua" -> {
                     JFileWorker.scriviFile(Static.F_RISPOSTA_TIRO_ERRATO + "_" + this.operation, this.operation);
-                    JFileWorker.scriviFile(Static.F_STATO, Static.CONTINUA);
                 }
                 case "accetta" -> {
                     JFileWorker.scriviFile(Static.F_RISPOSTA_TIRO_ERRATO + "_" + this.operation, this.operation);
-                    JFileWorker.scriviFile(Static.F_STATO, Static.ACCETTA);
                 }
                 case "annulla" -> {
                     JFileWorker.scriviFile(Static.F_RISPOSTA_TIRO_ERRATO + "_" + this.operation, this.operation);
-                    JFileWorker.scriviFile(Static.F_STATO, Static.ANNULLA);
                 }
                 case "aggiorna_nome_device" -> {
                     this.NomeDevice = JFileWorker.leggiFile(this.f_nome_device);
