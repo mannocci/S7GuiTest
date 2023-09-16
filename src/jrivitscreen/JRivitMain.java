@@ -1365,8 +1365,8 @@ public class JRivitMain extends javax.swing.JFrame {
             this.jPanelStarted.setBackground(Color.RED);
             this.changeButtons(this.Img_Continua, this.Img_Ok, this.Img_Annulla,
                     this.Img_Stop, this.Img_Pause, this.Img_Estende);
-        } 
-        if(! this.inErrore && ! this.lavoroConcluso ){
+        }
+        if (!this.inErrore && !this.lavoroConcluso) {
             this.jPanelStarted.setBackground(Color.WHITE);
             this.changeButtons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
                     this.Img_Stop, this.Img_Pause, this.Img_Grafico);
@@ -2400,16 +2400,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private void avviaLavoro() {
         try {
             //Scelta lavoro
-//            if (this.listLavori.getSelectedItem().contains("=")) {
-//                this.lavoroScelto = this.listLavori.getSelectedItem().substring(0,
-//                        (this.listLavori.getSelectedItem().indexOf("Lotti") - 1));
-//            } else {
-//                this.lavoroScelto = this.listLavori.getSelectedItem();
-//            }
-//            
-
             int idLavoro = this.listLavori.getSelectedIndex();
-
             try {
                 this.lavoroScelto = this.elencoLavori.get(idLavoro)[0];
                 nrLottiDaFare = Integer.parseInt(this.elencoLavori.get(idLavoro)[1]);
@@ -2421,6 +2412,8 @@ public class JRivitMain extends javax.swing.JFrame {
             }
             this.jLabelNomeLavoro.setText(this.lavoroScelto.trim());
             setLavoroConcluso(false);
+            setInErrore(false);
+            azzeraContatori();
             this.esegui("scegli_e_avvia");
             PanelStarted();
             impostaLabelContatori();
