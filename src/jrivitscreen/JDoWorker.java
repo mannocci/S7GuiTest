@@ -107,7 +107,6 @@ public class JDoWorker extends SwingWorker<String, Object> {
                 case "on_of_nm_device" ->
                     this.on_of_nm_device();
 
-
                 case "scegli_e_avvia" ->
                     this.scegli_e_avvia();
 
@@ -154,10 +153,8 @@ public class JDoWorker extends SwingWorker<String, Object> {
     void scegli_e_avvia() {
         String lavoro = this.Rm.getLavoroScelto();
         JFileWorker.scriviFile(Static.F_LAVORO_SCELTO, lavoro);
-        this.Rm.azzeraContatori();
-
-        this.Rm.setInErrore(false);
-        JFileWorker.scriviFile(Static.F_STATO, Static.STATO_AVVIATO);
+        // Lo stato viene scritto da Control
+//        JFileWorker.scriviFile(Static.F_STATO, Static.STATO_AVVIATO);
     }
 
     /**
