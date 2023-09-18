@@ -18,6 +18,9 @@
  */
 package jrivitscreen;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 /**
  * classe che contiene le variabili static final per i programmi come i nomi dei
  * file o di stati del sistema numerici
@@ -52,6 +55,7 @@ public class Static {
     final static String F_RISPOSTA_TIRO_ERRATO_ANNULLA = "risposta_tiro_errato_annulla";
     final static String F_CHIEDE_CONFERMA_NO = "chiedi_conferma_no";
 
+    final static String F_AGGIORNATO_LAVORI = "aggiornato_lavori";
     final static String F_LAVORI = "lavori.txt";
     final static String F_LAVORO_CONCLUSO = "lavoro_concluso";
     final static String F_LAVORO_AVVIATO = "lavoro_avviato";
@@ -89,7 +93,9 @@ public class Static {
     final private static int DEBUGLEVEL = 3;
     static float MAX_VARIAZIONE_PRESSIONE = 4.0f;
 
-    /**
+    final private static DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yy HH:mm:ss.SSS");  // per i messaggi di log
+
+     /**
      * Visualizza informazioni di debug.
      *
      * @param string stringa da visualizzare
@@ -97,7 +103,7 @@ public class Static {
      */
     static void debug(String string, int livello) {
         if (livello <= Static.DEBUGLEVEL) {
-            System.out.println(string);
+            System.out.println(dtf.format(LocalDateTime.now()) + ": " + string);
         }
     }
 
