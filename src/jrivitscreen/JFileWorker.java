@@ -82,7 +82,7 @@ public class JFileWorker extends Thread {
                     Static.debug(kind.name() + ": " + fileName, 4);
                     if (kind == ENTRY_MODIFY) {
                         if (!fileName.toString().equals(Static.F_SENSORI)) {
-                            System.err.println("Modificato: " + fileName + "\n");
+                            Static.debug("Modificato: " + fileName + " - n.modifiche: " + event.count(), 3);
                         }
                         switch (fileName.toString()) {
                             case Static.F_CONTATORI ->
@@ -92,9 +92,11 @@ public class JFileWorker extends Thread {
 //                            case Static.F_STATO ->
 //                                stato();
                         }
-
                     }
                     if (kind == ENTRY_CREATE) {
+                        if (!fileName.toString().equals(Static.F_SENSORI)) {
+                            Static.debug("Creato: " + fileName, 3);
+                        }
                         switch (fileName.toString()) {
                             case Static.F_ARIA ->
                                 this.Rm.ariaAperta();
@@ -132,12 +134,9 @@ public class JFileWorker extends Thread {
                             case Static.F_POWEROFF -> {
                                 Rm.getjLabelDeviceName().setText("POWER OFF");
                                 Rm.PanelMain();
-
                             }
                             case Static.F_NOME_DEVICE ->
                                 readNomeDevice();
-                            case Static.F_LAVORI ->
-                                readLavori();
                             case Static.F_INFO ->
                                 readInfo();
                             case Static.F_STATO ->
@@ -145,7 +144,12 @@ public class JFileWorker extends Thread {
                         }
                     }
                     if (kind == ENTRY_DELETE) {
+                        if (!fileName.toString().equals(Static.F_SENSORI)) {
+                            Static.debug("Eliminato: " + fileName, 3);
+                        }
                         switch (fileName.toString()) {
+                            case Static.F_AGGIORNATO_LAVORI ->
+                                readLavori();
                             case Static.F_ARIA ->
                                 this.Rm.ariaChiusa();
                             case Static.F_ERRORE ->
