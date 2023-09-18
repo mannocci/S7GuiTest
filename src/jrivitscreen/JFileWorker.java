@@ -615,6 +615,7 @@ public class JFileWorker extends Thread {
                 this.Rm.setLavoroConcluso(false);
                 this.Rm.PanelStarted();
             }
+            
         }
     }
 
