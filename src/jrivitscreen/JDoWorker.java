@@ -153,8 +153,8 @@ public class JDoWorker extends SwingWorker<String, Object> {
     void scegli_e_avvia() {
         String lavoro = this.Rm.getLavoroScelto();
         JFileWorker.scriviFile(Static.F_LAVORO_SCELTO, lavoro);
-        // Lo stato viene scritto da Control
-//        JFileWorker.scriviFile(Static.F_STATO, Static.STATO_AVVIATO);
+        JFileWorker.scriviFile(Static.F_STATO, Static.STATO_RICHIESTA_AVVIO);
+        // Lo stato AVVIATO verrà scritto da Control
     }
 
     /**
