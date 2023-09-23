@@ -34,9 +34,7 @@ public class Static {
     final static String STATO_AVVIATO = "91";
     final static String STATO_CONCLUSO = "100";
     final static String STATO_CALIBRAZIONE = "200";
-    final static String STATO_CALIBRAZIONE_OK = "210";
     final static String STATO_CALIBRAZIONE_TEST = "220";
-    final static String STATO_CALIBRAZIONE_SALVA = "230";
     final static String STATO_PAUSA = "92";
     final static String STATO_STOP = "93";
     final static String CONTINUA = "51";

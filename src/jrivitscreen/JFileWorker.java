@@ -56,6 +56,7 @@ public class JFileWorker extends Thread {
     private Path fileName;
     private WatchKey key;
     // se il lavoro è in corso contiene "1"
+    private String stato;
 
     public JFileWorker(JRivitMain mf) throws IOException {
         this.Rm = mf;
@@ -80,7 +81,7 @@ public class JFileWorker extends Thread {
                     fileName = (Path) event.context();
 
                     Static.debug(kind.name() + ": " + fileName, 4);
-                    if (kind == ENTRY_MODIFY) {
+                    if (kind == ENTRY_MODIFY && event.count() == 1) {
                         if (!fileName.toString().equals(Static.F_SENSORI)) {
                             Static.debug("Modificato: " + fileName + " - n.modifiche: " + event.count(), 3);
                         }
@@ -280,6 +281,7 @@ public class JFileWorker extends Thread {
             this.Rm.set_errore_tiro();
         } else {
             this.Rm.setInErrore(false);
+            this.Rm.g.setIsInError(false);
         }
         this.Rm.setInErrore(si_o_no);
     }
@@ -410,7 +412,7 @@ public class JFileWorker extends Thread {
             File inputFile = new File(Static.PATH_WATCH + NomeFile);
             if (!inputFile.exists()) {
                 Static.debug("Il File " + inputFile.getAbsolutePath()
-                        + " non esiste\n", 2);
+                    + " non esiste\n", 2);
                 ListaRighe.add("errore lettura File " + NomeFile);
                 return ListaRighe;
             }
@@ -441,7 +443,7 @@ public class JFileWorker extends Thread {
             File inputFile = new File(Static.PATH_WATCH + NomeFile);
             if (!inputFile.exists()) {
                 Static.debug("Il File " + inputFile.getAbsolutePath()
-                        + " non esiste\n", 2);
+                    + " non esiste\n", 2);
                 contenutoFile = "errore " + NomeFile;
                 return contenutoFile;
             }
@@ -476,11 +478,17 @@ public class JFileWorker extends Thread {
     private void leggiCurva() {
         this.Rm.setCurva(leggiFile(Static.F_CURVA));
         this.Rm.g.setCurva(this.Rm.getCurva());
+        this.Rm.g.setPicco(100, 45);
     }
 
     private void read_lavoro_scelto() {
         this.Rm.setLavoroScelto(leggiFile(Static.F_LAVORO_SCELTO));
-        this.Rm.setCurvaDiRiferimento(leggiFile(Static.F_CURVA_DI_RIFERIMENTO));
+        String curvaRifStr = leggiFile(Static.F_CURVA_DI_RIFERIMENTO);
+        if (curvaRifStr.equals("empty")) {
+            this.Rm.setCurvaDiRiferimento(null);
+        } else {
+            this.Rm.setCurvaDiRiferimento(curvaRifStr);
+        }
         this.Rm.g.setCurvaDiRiferimento(this.Rm.getCurvaDiRiferimento());
     }
 
@@ -596,16 +604,17 @@ public class JFileWorker extends Thread {
     }
 
     /**
-     * legge il file curva per costruire il grafico mostrato nel Panello Canvas
+     * legge il file curva per costruire il grafico mostrato nel Pannello Canvas
      */
     private void gestisciCurva() {
         leggiCurva();
+        this.Rm.repaint();
         //this.Rm.PanelCanvas();
         //this.Rm.mostraCurva();
     }
 
     private void stato() {
-        String stato = leggiFile(Static.F_STATO);
+        stato = leggiFile(Static.F_STATO);
         switch (stato) {
             case Static.STATO_CONCLUSO -> {
                 this.Rm.setLavoroConcluso(true);
@@ -615,7 +624,14 @@ public class JFileWorker extends Thread {
                 this.Rm.setLavoroConcluso(false);
                 this.Rm.PanelStarted();
             }
-            
+            case Static.STATO_CALIBRAZIONE -> {
+                this.Rm.avviaCalibrazione();
+            }
+            case Static.STATO_STOP -> {
+                if (this.stato.equals(Static.STATO_CALIBRAZIONE)) {
+                    this.Rm.fineCalibrazione();
+                }
+            }
         }
     }
 
