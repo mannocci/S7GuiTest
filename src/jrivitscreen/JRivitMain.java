@@ -58,7 +58,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private ImageIcon Img_Exit, Img_Ok, Img_Nulla, Img_Freccia_su,
         Img_Freccia_giu, Img_Warning, Img_Setup, Img_Play,
         Img_No_Warning, Img_Err_Warning, Img_Med_Warning,
-        Img_Grafico, Img_Calibrazione;
+        Img_Grafico, Img_Calibrazione,Img_reloadWork;
     private JDoWorker doWorker;
     private ImageIcon Img_Continua;
     private ImageIcon Img_Estende;
@@ -167,7 +167,7 @@ public class JRivitMain extends javax.swing.JFrame {
         Img_Info = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/info.png"));
         Img_Grafico = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/grafico.png"));
         Img_Calibrazione = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/calibrazione.png"));
-
+        Img_reloadWork= new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/autorenew.png"));
         elencoLavori = new ArrayList<>();
         infoAggiuntive = new ArrayList<>();
 
@@ -1023,21 +1023,25 @@ public class JRivitMain extends javax.swing.JFrame {
                 PulsanteSu();
             case "warning", "info", "setup lan", "setup wifi" ->
                 PulsanteGiu();
-            case "started", "canvas" -> {//Pausa del lavoro 
-
-                if (this.isChiediConfermaStop()) {
-//                    DialogQ = STATO_PAUSA;
-                    this.setStatoPulsanti(Static.STATO_PAUSA);
-                    this.AlertDialogStop = "Pausa ?";
-                    this.jLabelDialog.setText(AlertDialogStop);
-                    PanelDialog();
-                    this.set_jLabel_B_L("Dialog");
+            case "started", "canvas" -> {//Reload Lavoro appena concluso
+                if (this.lavoroConcluso) {
+                    avviaLavoro();
                 } else {
-                    //passa direttamente ad annullare lavoro
-                    this.PanelStart();
-                    this.esegui("pausa");
-                    this.set_jLabel_B_L("Start");
+                    if (this.isChiediConfermaStop()) {
+//                    DialogQ = STATO_PAUSA;
+                        this.setStatoPulsanti(Static.STATO_PAUSA);
+                        this.AlertDialogStop = "Pausa ?";
+                        this.jLabelDialog.setText(AlertDialogStop);
+                        PanelDialog();
+                        this.set_jLabel_B_L("Dialog");
+                    } else {
+                        //passa direttamente ad annullare lavoro
+                        this.PanelStart();
+                        this.esegui("pausa");
+                        this.set_jLabel_B_L("Start");
+                    }
                 }
+
             }
             case "setup" -> {
                 PulsanteGiu();
@@ -1357,7 +1361,7 @@ public class JRivitMain extends javax.swing.JFrame {
         if (this.lavoroConcluso) {
             this.jPanelStarted.setBackground(Color.BLUE);
             this.changeButtons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
-                this.Img_Exit, this.Img_Nulla, this.Img_Grafico);
+                this.Img_Exit, this.Img_reloadWork, this.Img_Grafico);
         }
         if (this.inErrore) {
             this.jPanelStarted.setBackground(Color.RED);
@@ -1651,7 +1655,7 @@ public class JRivitMain extends javax.swing.JFrame {
                     this.Img_Stop, this.Img_Pause, this.Img_Estende);
             } else if (this.lavoroConcluso) {
                 this.changeButtons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
-                    this.Img_Exit, this.Img_Nulla, this.Img_Estende);
+                    this.Img_Exit, this.Img_reloadWork, this.Img_Estende);
             } else {
                 this.changeButtons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
                     this.Img_Stop, this.Img_Pause, this.Img_Estende);
@@ -2567,8 +2571,8 @@ public class JRivitMain extends javax.swing.JFrame {
     }
 
     /**
-    * conclude la fase di calibrazione
-    */
+     * conclude la fase di calibrazione
+     */
     void fineCalibrazione() {
         setInCalibrazione(false);
         g.setInPrimoPiano(false);
