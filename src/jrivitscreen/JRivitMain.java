@@ -45,6 +45,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JScrollPane;
+import org.apache.commons.cli.*;
 import javax.swing.JTextArea;
 
 /**
@@ -58,7 +59,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private ImageIcon Img_Exit, Img_Ok, Img_Nulla, Img_Freccia_su,
         Img_Freccia_giu, Img_Warning, Img_Setup, Img_Play,
         Img_No_Warning, Img_Err_Warning, Img_Med_Warning,
-        Img_Grafico, Img_Calibrazione,Img_reloadWork;
+        Img_Grafico, Img_Calibrazione, Img_reloadWork;
     private JDoWorker doWorker;
     private ImageIcon Img_Continua;
     private ImageIcon Img_Estende;
@@ -107,7 +108,8 @@ public class JRivitMain extends javax.swing.JFrame {
     private boolean inErrore = false;
     private boolean in_pausa = false;
     private boolean chiedi_conferma = false;
-    private boolean lavoroConcluso = false;
+    private boolean statoConcluso = false;
+    private boolean statoPausa = false;
     private boolean chiedi_conferma_stop;
     private List<String> elencoDesLavoro;
     private int w_level;
@@ -167,7 +169,7 @@ public class JRivitMain extends javax.swing.JFrame {
         Img_Info = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/info.png"));
         Img_Grafico = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/grafico.png"));
         Img_Calibrazione = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/calibrazione.png"));
-        Img_reloadWork= new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/autorenew.png"));
+        Img_reloadWork = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/autorenew.png"));
         elencoLavori = new ArrayList<>();
         infoAggiuntive = new ArrayList<>();
 
@@ -772,7 +774,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 // se esiste non chiede conferma della scelta
 //                DialogQ = STATO_STOP;
 
-                if (this.lavoroConcluso) {
+                if (this.statoConcluso) {
                     PanelStart();
                 } else {
                     if (this.isChiediConfermaStop()) {
@@ -798,7 +800,7 @@ public class JRivitMain extends javax.swing.JFrame {
             case "canvas" -> {
                 //Annullare il lavoro
                 if (!this.inCalibrazione) {
-                    if (this.lavoroConcluso) {
+                    if (this.statoConcluso) {
                         PanelStart();
                     } else {
                         if (this.isChiediConfermaStop()) {
@@ -852,6 +854,7 @@ public class JRivitMain extends javax.swing.JFrame {
                         case Static.STATO_PAUSA -> {
                             this.esegui("pausa");
                             this.PanelStart();
+                            this.statoPausa=true;
                             this.set_jLabel_B_L("Start");
                         }
                     }
@@ -1024,12 +1027,13 @@ public class JRivitMain extends javax.swing.JFrame {
             case "warning", "info", "setup lan", "setup wifi" ->
                 PulsanteGiu();
             case "started", "canvas" -> {//Reload Lavoro appena concluso
-                if (this.lavoroConcluso) {
+                if (this.statoConcluso) {
                     avviaLavoro();
                 } else {
                     if (this.isChiediConfermaStop()) {
 //                    DialogQ = STATO_PAUSA;
                         this.setStatoPulsanti(Static.STATO_PAUSA);
+                        
                         this.AlertDialogStop = "Pausa ?";
                         this.jLabelDialog.setText(AlertDialogStop);
                         PanelDialog();
@@ -1038,7 +1042,9 @@ public class JRivitMain extends javax.swing.JFrame {
                         //passa direttamente ad annullare lavoro
                         this.PanelStart();
                         this.esegui("pausa");
+                        this.statoPausa=true;
                         this.set_jLabel_B_L("Start");
+                        
                     }
                 }
 
@@ -1232,6 +1238,31 @@ public class JRivitMain extends javax.swing.JFrame {
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
+        Options opzioni = new Options();
+        Option pathW = new Option("pw", "pathWork", true, "Work path");
+        CommandLine cmd = null; 
+        Option pathL = new Option("pl", "pathLock", true, "Lock path");
+
+        CommandLineParser parser = new DefaultParser();
+        HelpFormatter formatter = new HelpFormatter();
+        try {
+            cmd = parser.parse(opzioni, args);
+        } catch (ParseException e) {
+            System.out.println(e.getMessage());
+            formatter.printHelp("utility-name", opzioni);
+            System.exit(1);
+        }
+        if (pathW.getValue() != null) {
+            pathW.setRequired(false);
+            opzioni.addOption(pathW);
+            Static.setPATH_WATCH(cmd.getOptionValue("pathWork"));
+        }
+        if (pathL.getValue() != null) {
+            pathL.setRequired(false);
+            opzioni.addOption(pathL);
+            Static.setPATH_LCK(cmd.getOptionValue("pathLock"));
+        }
+        
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -1243,6 +1274,7 @@ public class JRivitMain extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(JRivitMain.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
+
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
@@ -1358,7 +1390,7 @@ public class JRivitMain extends javax.swing.JFrame {
     public void PanelStarted() {
         this.aggiornaContatori();
 
-        if (this.lavoroConcluso) {
+        if (this.statoConcluso) {
             this.jPanelStarted.setBackground(Color.BLUE);
             this.changeButtons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
                 this.Img_Exit, this.Img_reloadWork, this.Img_Grafico);
@@ -1368,14 +1400,14 @@ public class JRivitMain extends javax.swing.JFrame {
             this.changeButtons(this.Img_Continua, this.Img_Ok, this.Img_Annulla,
                 this.Img_Stop, this.Img_Pause, this.Img_Grafico);
         }
-        if (!this.inErrore && !this.lavoroConcluso) {
+        if (!this.inErrore && !this.statoConcluso) {
             this.jPanelStarted.setBackground(Color.WHITE);
             this.changeButtons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
                 this.Img_Stop, this.Img_Pause, this.Img_Grafico);
         }
 
         //lavoro terminato e in errore
-        if (this.lavoroConcluso && this.inErrore) {
+        if (this.statoConcluso && this.inErrore) {
             this.jPanelStarted.setBackground(Color.ORANGE);
         }
 
@@ -1653,7 +1685,7 @@ public class JRivitMain extends javax.swing.JFrame {
             if (this.inErrore) {
                 this.changeButtons(this.Img_Continua, this.Img_Ok, this.Img_Annulla,
                     this.Img_Stop, this.Img_Pause, this.Img_Estende);
-            } else if (this.lavoroConcluso) {
+            } else if (this.statoConcluso) {
                 this.changeButtons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
                     this.Img_Exit, this.Img_reloadWork, this.Img_Estende);
             } else {
@@ -2405,7 +2437,7 @@ public class JRivitMain extends javax.swing.JFrame {
     /**
      * Avviare il lavoro scelto
      */
-    private void avviaLavoro() {
+    public void avviaLavoro() {
         try {
             //Scelta lavoro
             int idLavoro = this.listLavori.getSelectedIndex();
@@ -2419,13 +2451,10 @@ public class JRivitMain extends javax.swing.JFrame {
                 nrTiriDaFare = 1;
             }
             this.jLabelNomeLavoro.setText(this.lavoroScelto.trim());
-            setLavoroConcluso(false);
+            setStatoConcluso(false);
             setInErrore(false);
             azzeraContatori();
             this.esegui("scegli_e_avvia");
-            PanelStarted();
-            impostaLabelContatori();
-            this.set_jLabel_B_L("Started");
         } catch (Exception ex) {
             Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -2466,12 +2495,12 @@ public class JRivitMain extends javax.swing.JFrame {
         this.elencoDesLavoro = elencoDesLavoro;
     }
 
-    public boolean isLavoroConcluso() {
-        return lavoroConcluso;
+    public boolean isStatoConcluso() {
+        return statoConcluso;
     }
 
-    public void setLavoroConcluso(boolean lavoroConcluso) {
-        this.lavoroConcluso = lavoroConcluso;
+    public void setStatoConcluso(boolean statoConcluso) {
+        this.statoConcluso = statoConcluso;
     }
 
     /**
@@ -2578,5 +2607,14 @@ public class JRivitMain extends javax.swing.JFrame {
         g.setInPrimoPiano(false);
         g.setStato(Static.STATO_STOP);
         PanelMain();
+    }
+/**
+ * Control una volta preparato l'"ambiente" per il lavoro 
+ * consente l'avvio
+ */
+    public void lavoroPronto() {
+        PanelStarted();
+        impostaLabelContatori();
+        this.set_jLabel_B_L("Started");
     }
 }
