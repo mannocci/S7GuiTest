@@ -30,7 +30,12 @@ import java.time.format.DateTimeFormatter;
 public class Static {
 
     //Variabili final (non modificabili)
-    final static String STATO_RICHIESTA_AVVIO = "90";
+    final static String RICHIESTA_AVVIO = "80";
+    final static String RICHIESTA_PAUSA = "81";
+    final static String RICHIESTA_STOP = "82";
+    final static String RICHIESTA_CALIBRAZIONE = "83";
+    final static String RICHIESTA_CALIBRAZIONE_TEST = "84";
+    final static String RICHIESTA_RIAVVIO = "85";
     final static String STATO_AVVIATO = "91";
     final static String STATO_CONCLUSO = "100";
     final static String STATO_CALIBRAZIONE = "200";
@@ -45,6 +50,7 @@ public class Static {
 
     // Nomi dei file
     final static String F_STATO = "stato";
+    final static String F_RICHIESTA = "richiesta";
     final static String F_PULSANTE = "pulsante";
     final static String F_LAVORO_SCELTO = "lavoro_scelto";
     final static String F_RISPOSTA_TIRO_ERRATO = "risposta_tiro_errato";
@@ -55,8 +61,9 @@ public class Static {
 
     final static String F_AGGIORNATO_LAVORI = "aggiornato_lavori";
     final static String F_LAVORI = "lavori.txt";
-    final static String F_LAVORO_CONCLUSO = "lavoro_concluso";
+    final static String F_RELOAD = "reload";
     final static String F_LAVORO_AVVIATO = "lavoro_avviato";
+    final static String F_LAVORO_PRONTO = "lavoro_pronto";
     final static String F_PRESSIONE_ARIA_IN_MIN = "pressione_aria_in_min";
     final static String F_PRESSIONE_ARIA_IN_MAX = "pressione_aria_in_max";
     final static String F_NO_SENSORE = "no_sensore";
@@ -83,8 +90,8 @@ public class Static {
     final static String F_SESSIONE = "sessione";
     final static String F_LISTA_NM_CON = "lista_nm_con";
     final static String F_POWEROFF = "poweroff";
-    static final String PATH_WATCH = "/tmp/CT/";
-    static final String PATH_LCK = "/tmp/CTLock/";
+    static String PATH_WATCH = "/tmp/CT/";
+    static String PATH_LCK = "/tmp/CTLock/";
     static long ATTESA_SCRITTURA_FILE = 1000L;
     // da utilizzare per impostare il livello di debug
     // 0:debug disattivato 1:errore 2:warning 3:info 4:verbose
@@ -108,5 +115,11 @@ public class Static {
     public Static() {
         System.out.print("Istanziato variabili static e static final\n");
     }
+    public static void setPATH_WATCH(String PATH_WATCH) {
+        Static.PATH_WATCH = PATH_WATCH;
+    }
 
+    public static void setPATH_LCK(String PATH_LCK) {
+        Static.PATH_LCK = PATH_LCK;
+    }
 }
