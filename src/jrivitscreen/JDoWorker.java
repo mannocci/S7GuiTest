@@ -71,15 +71,17 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     this.init();
 
                 case "stop" -> {
-                    JFileWorker.scriviFile(Static.F_STATO, Static.STATO_STOP);
+                    JFileWorker.scriviFile(Static.F_RICHIESTA, Static.RICHIESTA_STOP);
                 }
 
                 case "pausa" -> {
-                    JFileWorker.scriviFile(Static.F_STATO, Static.STATO_PAUSA);
+                    JFileWorker.scriviFile(Static.F_RICHIESTA, Static.RICHIESTA_PAUSA);
                 }
-
+                case "riavvio" -> {
+                    JFileWorker.scriviFile(Static.F_RICHIESTA, Static.RICHIESTA_RIAVVIO);
+                }
                 case "start" -> {
-                    JFileWorker.scriviFile(Static.F_STATO, Static.STATO_AVVIATO);
+                    JFileWorker.scriviFile(Static.F_RICHIESTA, Static.RICHIESTA_AVVIO);
                 }
 
                 case "continua" -> {
@@ -153,7 +155,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
     void scegli_e_avvia() {
         String lavoro = this.Rm.getLavoroScelto();
         JFileWorker.scriviFile(Static.F_LAVORO_SCELTO, lavoro);
-        JFileWorker.scriviFile(Static.F_STATO, Static.STATO_RICHIESTA_AVVIO);
+        JFileWorker.scriviFile(Static.F_RICHIESTA, Static.RICHIESTA_AVVIO);
         // Lo stato AVVIATO verrà scritto da Control
     }
 
