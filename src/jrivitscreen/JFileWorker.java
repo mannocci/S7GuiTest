@@ -90,8 +90,8 @@ public class JFileWorker extends Thread {
                                 aggiornaContatori();
                             case Static.F_CURVA ->
                                 gestisciCurva();
-//                            case Static.F_STATO ->
-//                                stato();
+                            case Static.F_STATO ->
+                                stato();
                         }
                     }
                     if (kind == ENTRY_CREATE) {
@@ -140,8 +140,13 @@ public class JFileWorker extends Thread {
                                 readNomeDevice();
                             case Static.F_INFO ->
                                 readInfo();
-                            case Static.F_STATO ->
-                                stato();
+                            case Static.F_RELOAD -> {
+                                if (Rm.isStatoConcluso()) {
+                                    Rm.lavoroPronto();
+                                }
+                            }
+                            case Static.F_LAVORO_PRONTO ->
+                                Rm.lavoroPronto();
                         }
                     }
                     if (kind == ENTRY_DELETE) {
@@ -512,26 +517,6 @@ public class JFileWorker extends Thread {
         }
     }
 
-    /**
-     * Cancellazione del lavoro svolto azzerare i contatori azzera lavoro-scelto
-     * impostando prima il file ultimo_lavoro_scelto con il nome del alvoro,
-     * consentendo così al Pannello Start con la lista dei lavori di
-     * posizionarsi sull'ultimo lavoro scelto accendere led giallo
-     *
-     */
-    private void aggiornaStop() {
-        scriviFile(Static.F_STATO, Static.STATO_STOP);  //  stato di abort
-    }
-
-    /**
-     * I contatori rimangono tali posizionarsi sull'ultimo lavoro scelto
-     * accendere led giallo
-     *
-     */
-    private void aggiornaPausa() {
-        this.scriviFile(Static.F_STATO, Static.STATO_PAUSA);
-    }
-
     private void impostaChiediConferma(boolean si_o_no) {
 
         this.Rm.setChiedi_conferma(si_o_no);
@@ -617,11 +602,11 @@ public class JFileWorker extends Thread {
         stato = leggiFile(Static.F_STATO);
         switch (stato) {
             case Static.STATO_CONCLUSO -> {
-                this.Rm.setLavoroConcluso(true);
+                this.Rm.setStatoConcluso(true);
                 this.Rm.PanelStarted();
             }
             case Static.STATO_AVVIATO -> {
-                this.Rm.setLavoroConcluso(false);
+                this.Rm.setStatoConcluso(false);
                 this.Rm.PanelStarted();
             }
             case Static.STATO_CALIBRAZIONE -> {
@@ -630,8 +615,22 @@ public class JFileWorker extends Thread {
             case Static.STATO_STOP -> {
                 if (this.stato.equals(Static.STATO_CALIBRAZIONE)) {
                     this.Rm.fineCalibrazione();
+                } else {
+//                    scriviFile(Static.F_RICHIESTA, Static.RICHIESTA_STOP);
+                    this.Rm.PanelStart();
+                    this.Rm.set_jLabel_B_L("Start");
                 }
             }
+            case Static.STATO_PAUSA -> {
+                this.Rm.setStatoConcluso(false);
+                this.Rm.PanelStart();
+            }
+            case Static.RICHIESTA_RIAVVIO -> {
+                if (this.stato.equals(Static.STATO_CONCLUSO)) {
+                    this.Rm.avviaLavoro();
+                }
+            }
+
         }
     }
 
