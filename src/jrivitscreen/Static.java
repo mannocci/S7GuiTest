@@ -60,6 +60,15 @@ public class Static {
     final static String F_CHIEDE_CONFERMA_NO = "chiedi_conferma_no";
 
     final static String F_AGGIORNATO_LAVORI = "aggiornato_lavori";
+    
+    // File civetta usati per essere certi della completa scrittura dei file corrispondenti
+    final static String F_CURVA_READY = "curva_ready";
+    final static String F_CONTATORI_READY = "contatori_ready";
+    final static String F_STATO_READY = "stato_ready";
+    final static String F_LAVORO_READY = "lavoro_ready";
+    final static String F_SENSORI_READY = "sensori_ready";
+    final static String F_PULSANTE_READY = "pulsante_ready";
+    
     final static String F_LAVORI = "lavori.txt";
     final static String F_RELOAD = "reload";
     final static String F_LAVORO_AVVIATO = "lavoro_avviato";
@@ -100,7 +109,7 @@ public class Static {
 
     final private static DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yy HH:mm:ss.SSS");  // per i messaggi di log
 
-     /**
+    /**
      * Visualizza informazioni di debug.
      *
      * @param string stringa da visualizzare
@@ -115,6 +124,7 @@ public class Static {
     public Static() {
         System.out.print("Istanziato variabili static e static final\n");
     }
+
     public static void setPATH_WATCH(String PATH_WATCH) {
         Static.PATH_WATCH = PATH_WATCH;
     }

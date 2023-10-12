@@ -86,8 +86,8 @@ public class JFileWorker extends Thread {
                             Static.debug("Modificato: " + fileName + " - n.modifiche: " + event.count(), 3);
                         }
                         switch (fileName.toString()) {
-                            case Static.F_CONTATORI ->
-                                aggiornaContatori();
+//                            case Static.F_CONTATORI ->
+//                                aggiornaContatori();
                             case Static.F_CURVA ->
                                 gestisciCurva();
                             case Static.F_STATO ->
@@ -101,8 +101,8 @@ public class JFileWorker extends Thread {
                         switch (fileName.toString()) {
                             case Static.F_ARIA ->
                                 this.Rm.ariaAperta();
-//                            case Static.F_CONTATORI ->
-//                                aggiornaContatori();
+                            case Static.F_CONTATORI_READY ->
+                                aggiornaContatori();
                             case Static.F_SENSORI ->
                                 aggiornaSensori();
                             case Static.F_ERRORE ->
@@ -123,7 +123,7 @@ public class JFileWorker extends Thread {
 //                            case Static.F_CURVA ->
 //                                gestisciCurva();
                             case Static.F_CURVA_DI_RIFERIMENTO ->
-                                read_lavoro_scelto();
+                                readCurvaDiRiferimento();
                             case Static.F_STATUS_LAN -> {
                                 readSetupLan();
                             }
@@ -147,6 +147,11 @@ public class JFileWorker extends Thread {
                             }
                             case Static.F_LAVORO_PRONTO ->
                                 Rm.lavoroPronto();
+                                /*Aggiungere la gestione della curva, contatori, stato con 
+                                * la creazione dei file F_CURVA_READY, F_CONTATORI_READY , 
+                                   F_STATO_READY, F_LAVORO_READY. F_SENSORI_READY, 
+                                   F_PULSANTE_READY
+                                */
                         }
                     }
                     if (kind == ENTRY_DELETE) {
@@ -172,7 +177,7 @@ public class JFileWorker extends Thread {
                         }
                     }
 
-                }//End For wacthevent
+                }//End For watchevent
 //                //attesa per evitare segnalazioni ripetute
 //                TimeUnit.SECONDS.sleep(1);
 
@@ -312,7 +317,7 @@ public class JFileWorker extends Thread {
         this.readLavori();//Se non esite il file imposta il default
         this.readInfo();// Se non esiste il file imposta a stringa info
         this.readWarning();// Se non esiste il file imposta a sringa warning
-        this.read_lavoro_scelto();//Se non esiste il file imposta a 0
+        this.readCurvaDiRiferimento();//Se non esiste il file imposta a 0
         this.readLavoroInPausa();//Se non esiste il file imposta non in pausa
         //this.LeggiAriaInMinMax(); // Letto dal DB
         //this.LeggiSessione();// Se non esite il file imposta il file a "0"
@@ -483,13 +488,12 @@ public class JFileWorker extends Thread {
     private void leggiCurva() {
         this.Rm.setCurva(leggiFile(Static.F_CURVA));
         this.Rm.g.setCurva(this.Rm.getCurva());
-        this.Rm.g.setPicco(100, 45);
+        this.Rm.g.setPicco(100, 45);    // temporaneo !! Il valore reale lo dovrà scrivere Control in qualche file
     }
 
-    private void read_lavoro_scelto() {
-        this.Rm.setLavoroScelto(leggiFile(Static.F_LAVORO_SCELTO));
+    private void readCurvaDiRiferimento() {
         String curvaRifStr = leggiFile(Static.F_CURVA_DI_RIFERIMENTO);
-        if (curvaRifStr.equals("empty")) {
+        if (curvaRifStr.equals("empty") || curvaRifStr.isEmpty()) {
             this.Rm.setCurvaDiRiferimento(null);
         } else {
             this.Rm.setCurvaDiRiferimento(curvaRifStr);

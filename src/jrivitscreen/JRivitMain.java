@@ -82,8 +82,8 @@ public class JRivitMain extends javax.swing.JFrame {
     private int tiriValidi;
     private int tiriAnnullati;
     private int tiriErrati;
-    private int nrLottiDaFare;
-    private int nrTiriDaFare;
+    private int limLotti;
+    private int limPezzi;
 
     private Float sogliaMin = 5.5f;
     private Float sogliaMax = 7.0f;
@@ -854,7 +854,7 @@ public class JRivitMain extends javax.swing.JFrame {
                         case Static.STATO_PAUSA -> {
                             this.esegui("pausa");
                             this.PanelStart();
-                            this.statoPausa=true;
+                            this.statoPausa = true;
                             this.set_jLabel_B_L("Start");
                         }
                     }
@@ -1033,7 +1033,7 @@ public class JRivitMain extends javax.swing.JFrame {
                     if (this.isChiediConfermaStop()) {
 //                    DialogQ = STATO_PAUSA;
                         this.setStatoPulsanti(Static.STATO_PAUSA);
-                        
+
                         this.AlertDialogStop = "Pausa ?";
                         this.jLabelDialog.setText(AlertDialogStop);
                         PanelDialog();
@@ -1042,9 +1042,9 @@ public class JRivitMain extends javax.swing.JFrame {
                         //passa direttamente ad annullare lavoro
                         this.PanelStart();
                         this.esegui("pausa");
-                        this.statoPausa=true;
+                        this.statoPausa = true;
                         this.set_jLabel_B_L("Start");
-                        
+
                     }
                 }
 
@@ -1238,31 +1238,34 @@ public class JRivitMain extends javax.swing.JFrame {
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
+        CommandLine cmd = null;
         Options opzioni = new Options();
         Option pathW = new Option("pw", "pathWork", true, "Work path");
-        CommandLine cmd = null; 
+        pathW.setRequired(true);
+        opzioni.addOption(pathW);
         Option pathL = new Option("pl", "pathLock", true, "Lock path");
+        pathL.setRequired(false);
+        opzioni.addOption(pathL);
 
         CommandLineParser parser = new DefaultParser();
         HelpFormatter formatter = new HelpFormatter();
         try {
             cmd = parser.parse(opzioni, args);
+            if (cmd.hasOption("pw")) {
+                Static.setPATH_WATCH(cmd.getOptionValue("pathWork"));
+                Static.debug("Impostato Path per Work " + Static.PATH_WATCH, 2);
+
+            }
+            if (cmd.hasOption("pl")) {
+                Static.setPATH_LCK(cmd.getOptionValue("pathLock"));
+                Static.debug("Impostato Path per Lock " + Static.PATH_LCK, 2);
+            }
         } catch (ParseException e) {
             System.out.println(e.getMessage());
             formatter.printHelp("utility-name", opzioni);
             System.exit(1);
         }
-        if (pathW.getValue() != null) {
-            pathW.setRequired(false);
-            opzioni.addOption(pathW);
-            Static.setPATH_WATCH(cmd.getOptionValue("pathWork"));
-        }
-        if (pathL.getValue() != null) {
-            pathL.setRequired(false);
-            opzioni.addOption(pathL);
-            Static.setPATH_LCK(cmd.getOptionValue("pathLock"));
-        }
-        
+
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -1953,7 +1956,7 @@ public class JRivitMain extends javax.swing.JFrame {
         this.jLabelAnnullati.setText("" + tiriAnnullati);
         this.jLabelErrati.setText("" + tiriErrati);
 
-        if (this.nrTiriDaFare == -1) {
+        if (this.limPezzi == -1) {
             this.jLabelPezziNoLimits.setText("" + this.tiriNelLotto);
         } else {
 //            if (this.lotto == this.nrLottiDaFare && this.tiriNelLotto == this.nrTiriDaFare) {
@@ -1964,11 +1967,11 @@ public class JRivitMain extends javax.swing.JFrame {
 //                    this.jPanelStarted.setBackground(Color.WHITE);
 //                }
 //            }
-            this.jLabelContatoreLotti.setText(this.lotto + "/" + this.nrLottiDaFare);
-            this.jLabelContatorePezzi.setText(this.tiriNelLotto + "/" + this.nrTiriDaFare);
+            this.jLabelContatoreLotti.setText(this.lotto + "/" + this.limLotti);
+            this.jLabelContatorePezzi.setText(this.tiriNelLotto + "/" + this.limPezzi);
 
             // calcolo dei tiri complessivi per l'avanzamento della barra
-            this.jProgressBar.setValue(this.tiriNelLotto + ((this.lotto - 1) * this.nrTiriDaFare));
+            this.jProgressBar.setValue(this.tiriNelLotto + ((this.lotto - 1) * this.limPezzi));
         }
         this.repaint();
     }
@@ -2443,12 +2446,12 @@ public class JRivitMain extends javax.swing.JFrame {
             int idLavoro = this.listLavori.getSelectedIndex();
             try {
                 this.lavoroScelto = this.elencoLavori.get(idLavoro)[0];
-                nrLottiDaFare = Integer.parseInt(this.elencoLavori.get(idLavoro)[1]);
-                nrTiriDaFare = Integer.parseInt(this.elencoLavori.get(idLavoro)[2]);
+                limLotti = Integer.parseInt(this.elencoLavori.get(idLavoro)[1]);
+                limPezzi = Integer.parseInt(this.elencoLavori.get(idLavoro)[2]);
             } catch (NumberFormatException e) {
                 Static.debug("nr_lotti_da_fare null !\n", 2);
-                nrLottiDaFare = 1;
-                nrTiriDaFare = 1;
+                limLotti = 1;
+                limPezzi = 1;
             }
             this.jLabelNomeLavoro.setText(this.lavoroScelto.trim());
             setStatoConcluso(false);
@@ -2507,7 +2510,7 @@ public class JRivitMain extends javax.swing.JFrame {
      * Imposta le Label diversamente se il lavoro scelto è quello senza Limiti
      */
     private void impostaLabelContatori() {
-        if (this.nrTiriDaFare == -1) { // Lavoro senza fine
+        if (this.limPezzi == -1) { // Lavoro senza fine
             this.jLabelDesContatoreLotti.setVisible(false);
             this.jLabelContatoreLotti.setVisible(false);
             this.jLabelDesContatorePezzi.setVisible(false);
@@ -2524,7 +2527,7 @@ public class JRivitMain extends javax.swing.JFrame {
             this.jLabelDesPezziNoLimits.setVisible(false);
             this.jLabelPezziNoLimits.setVisible(false);
             // Imposto la dimensione della barra percentuale
-            this.jProgressBar.setMaximum(this.nrLottiDaFare * this.nrTiriDaFare);
+            this.jProgressBar.setMaximum(this.limLotti * this.limPezzi);
             this.jProgressBar.setVisible(true);
         }
     }
@@ -2608,13 +2611,20 @@ public class JRivitMain extends javax.swing.JFrame {
         g.setStato(Static.STATO_STOP);
         PanelMain();
     }
-/**
- * Control una volta preparato l'"ambiente" per il lavoro 
- * consente l'avvio
- */
+
+    /**
+     * Control una volta preparato l'"ambiente" per il lavoro consente l'avvio
+     */
     public void lavoroPronto() {
         PanelStarted();
         impostaLabelContatori();
         this.set_jLabel_B_L("Started");
+    }
+    
+    public int getLimLotti () {
+        return limLotti;
+    }
+    public int getLimPezzi () {
+        return limPezzi;
     }
 }

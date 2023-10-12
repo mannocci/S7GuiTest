@@ -138,7 +138,7 @@ public class JGrafico extends JPanel {
                 gr.setColor(Color.DARK_GRAY);
                 f = new Font("Arial", 2, 20);
                 gr.setFont(f);
-                gr.drawString("Green: Reference, Black: Traction", 5, 25);
+                gr.drawString("Green:Ref", 5, 25);
             }
             gr.setColor(Color.BLACK);
             f = new Font("Arial", 2, 20);

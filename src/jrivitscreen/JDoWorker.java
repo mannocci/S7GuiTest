@@ -154,7 +154,10 @@ public class JDoWorker extends SwingWorker<String, Object> {
      */
     void scegli_e_avvia() {
         String lavoro = this.Rm.getLavoroScelto();
-        JFileWorker.scriviFile(Static.F_LAVORO_SCELTO, lavoro);
+        // Scrivo anche i dettagli del lavoro. Serviranno allo scambio dati tramite webSocket
+        JFileWorker.scriviFile(Static.F_LAVORO_SCELTO, lavoro
+            + "§" + this.Rm.getLimLotti()
+            + "§" + this.Rm.getLimPezzi());
         JFileWorker.scriviFile(Static.F_RICHIESTA, Static.RICHIESTA_AVVIO);
         // Lo stato AVVIATO verrà scritto da Control
     }
@@ -217,7 +220,6 @@ public class JDoWorker extends SwingWorker<String, Object> {
         }
         this.Rm.setListInfo(listaInfo);
     }
-
 
     /**
      *
