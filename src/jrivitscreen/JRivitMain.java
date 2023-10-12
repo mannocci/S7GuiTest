@@ -50,7 +50,7 @@ import javax.swing.JTextArea;
 
 /**
  *
- * @author Luca Mannocci & Fabio Fragapane
+ * @author Luca Mannocci e Fabio Fragapane
  */
 public class JRivitMain extends javax.swing.JFrame {
 
@@ -1715,7 +1715,7 @@ public class JRivitMain extends javax.swing.JFrame {
     /**
      * aggiornaWarning carica eventuali Warning dal file warning.txt
      *
-     * @param lista
+     * @param jLabelWarning
      */
     public void setjLabelWarning(JLabel jLabelWarning) {
         this.jLabelWarning = jLabelWarning;

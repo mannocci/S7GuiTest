@@ -86,12 +86,8 @@ public class JFileWorker extends Thread {
                             Static.debug("Modificato: " + fileName + " - n.modifiche: " + event.count(), 3);
                         }
                         switch (fileName.toString()) {
-//                            case Static.F_CONTATORI ->
-//                                aggiornaContatori();
                             case Static.F_CURVA ->
                                 gestisciCurva();
-                            case Static.F_STATO ->
-                                stato();
                         }
                     }
                     if (kind == ENTRY_CREATE) {
@@ -99,14 +95,18 @@ public class JFileWorker extends Thread {
                             Static.debug("Creato: " + fileName, 3);
                         }
                         switch (fileName.toString()) {
+                            case (Static.F_STATO + "_ready") ->
+                                stato();
                             case Static.F_ARIA ->
                                 this.Rm.ariaAperta();
-                            case Static.F_CONTATORI_READY ->
+                            case (Static.F_CONTATORI + "_ready") ->
                                 aggiornaContatori();
                             case Static.F_SENSORI ->
                                 aggiornaSensori();
                             case Static.F_ERRORE ->
                                 errore(true);
+                            case (Static.F_LAVORI + "_ready") ->
+                                readLavori();
                             case Static.F_CHIEDI_CONFERMA_NO ->
                                 impostaChiediConferma(true);
                             case Static.F_CHIEDI_CONFERMA_STOP ->
@@ -114,15 +114,15 @@ public class JFileWorker extends Thread {
                             case Static.F_PULSANTE ->
                                 gestisciPulsante();
                             // Il file warning.txt viene ricreato ad ogni aggiornamento
-                            case Static.F_WARNING ->
+                            case (Static.F_WARNING + "_ready") ->
                                 readWarning();
-                            case Static.F_PRESSIONE_ARIA_IN_MIN ->
+                            case (Static.F_PRESSIONE_ARIA_IN_MIN + "_ready") ->
                                 this.leggiAriaInMinMax();
                             case "killScreen" ->
                                 this.Rm.exit();
 //                            case Static.F_CURVA ->
 //                                gestisciCurva();
-                            case Static.F_CURVA_DI_RIFERIMENTO ->
+                            case (Static.F_CURVA_DI_RIFERIMENTO + "_ready") ->
                                 readCurvaDiRiferimento();
                             case Static.F_STATUS_LAN -> {
                                 readSetupLan();
@@ -136,9 +136,9 @@ public class JFileWorker extends Thread {
                                 Rm.getjLabelDeviceName().setText("POWER OFF");
                                 Rm.PanelMain();
                             }
-                            case Static.F_NOME_DEVICE ->
+                            case (Static.F_NOME_DEVICE + "_ready") ->
                                 readNomeDevice();
-                            case Static.F_INFO ->
+                            case (Static.F_INFO + "_ready") ->
                                 readInfo();
                             case Static.F_RELOAD -> {
                                 if (Rm.isStatoConcluso()) {
@@ -147,11 +147,11 @@ public class JFileWorker extends Thread {
                             }
                             case Static.F_LAVORO_PRONTO ->
                                 Rm.lavoroPronto();
-                                /*Aggiungere la gestione della curva, contatori, stato con 
+                            /*Aggiungere la gestione della curva, contatori, stato con 
                                 * la creazione dei file F_CURVA_READY, F_CONTATORI_READY , 
                                    F_STATO_READY, F_LAVORO_READY. F_SENSORI_READY, 
                                    F_PULSANTE_READY
-                                */
+                             */
                         }
                     }
                     if (kind == ENTRY_DELETE) {
@@ -159,8 +159,6 @@ public class JFileWorker extends Thread {
                             Static.debug("Eliminato: " + fileName, 3);
                         }
                         switch (fileName.toString()) {
-                            case Static.F_AGGIORNATO_LAVORI ->
-                                readLavori();
                             case Static.F_ARIA ->
                                 this.Rm.ariaChiusa();
                             case Static.F_ERRORE ->
@@ -353,8 +351,8 @@ public class JFileWorker extends Thread {
 //        }
 //    }
     /**
-     * Metodo per fare il lock del file "alla vecchia" ;-) se non
-     * essite<nomFile>.lock lo scrive blocccando così il file
+     * Metodo per fare il lock del file basato su filesystem: se non esiste
+     * nomFile.lock lo scrive bloccando così il file
      *
      * @return
      */
@@ -422,7 +420,7 @@ public class JFileWorker extends Thread {
             File inputFile = new File(Static.PATH_WATCH + NomeFile);
             if (!inputFile.exists()) {
                 Static.debug("Il File " + inputFile.getAbsolutePath()
-                    + " non esiste\n", 2);
+                        + " non esiste\n", 2);
                 ListaRighe.add("errore lettura File " + NomeFile);
                 return ListaRighe;
             }
@@ -453,7 +451,7 @@ public class JFileWorker extends Thread {
             File inputFile = new File(Static.PATH_WATCH + NomeFile);
             if (!inputFile.exists()) {
                 Static.debug("Il File " + inputFile.getAbsolutePath()
-                    + " non esiste\n", 2);
+                        + " non esiste\n", 2);
                 contenutoFile = "errore " + NomeFile;
                 return contenutoFile;
             }
