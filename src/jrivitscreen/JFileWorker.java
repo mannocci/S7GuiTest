@@ -130,8 +130,11 @@ public class JFileWorker extends Thread {
                             case Static.F_STATUS_WIFI -> {
                                 readSetupWifi();
                             }
-                            case Static.F_LISTA_NM_CON ->
-                                readListaNMdevice();
+                            case (Static.F_LISTA_NM_CON + "_ready") ->
+                                readListaNMdevice();    
+                                // Per accendere gli indicatori  sarebbe meglio usare il comando "nmcli networking connectivity" che indica se siamo in lan 
+                                // e se riusciamo anche ad uscire su internet
+                                // Verificare se si può usare "nmcli monitor" per tenere sotto controllo la rete e avvisare in caso di cambiamenti
                             case Static.F_POWEROFF -> {
                                 Rm.getjLabelDeviceName().setText("POWER OFF");
                                 Rm.PanelMain();
@@ -320,6 +323,8 @@ public class JFileWorker extends Thread {
         //this.LeggiAriaInMinMax(); // Letto dal DB
         //this.LeggiSessione();// Se non esite il file imposta il file a "0"
 //        this.mostraStatoAria(Static.ARIA_CHIUSA);//Se non esiste il file imposta a "0"
+        this.readSetupLan();
+        this.readListaNMdevice();
         String rigaFile = leggiFile(Static.F_ARIA);
         if (rigaFile.contains("errore")) {
             this.Rm.ariaChiusa();
@@ -588,6 +593,22 @@ public class JFileWorker extends Thread {
     private void readListaNMdevice() {
         List<String> list_nm_con = leggiFileElenco(Static.F_LISTA_NM_CON);
         this.Rm.setListNmCon(list_nm_con);
+        boolean lanIndicator = false;
+        boolean vpnIndicator = false;
+        for (String string : list_nm_con) {
+            if (string.contains("eth") && string.contains("ON")) {    // la prima riga che contiene "eth" e "ON" accende l'indicatore Lan
+                lanIndicator = true;
+                break;
+            }
+        }
+        for (String string : list_nm_con) {
+            if (string.contains("tun") && string.contains("ON")) {    // la prima riga che contiene "tun" e "ON" accende l'indicatore VPN
+                vpnIndicator = true;
+                break;
+            }
+        }
+        this.Rm.setLanIndicator(lanIndicator);
+        this.Rm.setVPNIndicator(vpnIndicator);
     }
 
     /**

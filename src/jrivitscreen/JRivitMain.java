@@ -275,6 +275,9 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabel_B_R = new javax.swing.JLabel();
         jLabel_msg = new javax.swing.JLabel();
         jLabelWarning = new javax.swing.JLabel();
+        jLabelLan = new javax.swing.JLabel();
+        jLabelVPN = new javax.swing.JLabel();
+        jLabelController = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMaximumSize(new java.awt.Dimension(480, 320));
@@ -377,17 +380,18 @@ public class JRivitMain extends javax.swing.JFrame {
 
         jLabel_Errati.setFont(new java.awt.Font("Liberation Sans", 1, 15)); // NOI18N
         jLabel_Errati.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel_Errati.setText("Errati");
+        jLabel_Errati.setText("Wrong");
+        jLabel_Errati.setToolTipText("");
         jPanelStarted.add(jLabel_Errati, new org.netbeans.lib.awtextra.AbsoluteConstraints(232, 252, 90, -1));
 
         jLabel_Annullati.setFont(new java.awt.Font("Liberation Sans", 1, 15)); // NOI18N
         jLabel_Annullati.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel_Annullati.setText("Annullati");
+        jLabel_Annullati.setText("Canceled");
         jPanelStarted.add(jLabel_Annullati, new org.netbeans.lib.awtextra.AbsoluteConstraints(119, 252, 90, -1));
 
         jLabel_Validi.setFont(new java.awt.Font("Liberation Sans", 1, 15)); // NOI18N
         jLabel_Validi.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel_Validi.setText("Validi");
+        jLabel_Validi.setText("Valid");
         jPanelStarted.add(jLabel_Validi, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 252, 90, -1));
 
         jLabelValidi.setBackground(java.awt.Color.green);
@@ -400,13 +404,13 @@ public class JRivitMain extends javax.swing.JFrame {
 
         jLabelDesContatorePezzi.setFont(new java.awt.Font("SansSerif", 0, 24)); // NOI18N
         jLabelDesContatorePezzi.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabelDesContatorePezzi.setText("Pezzi");
+        jLabelDesContatorePezzi.setText("Piece");
         jLabelDesContatorePezzi.setToolTipText("");
         jPanelStarted.add(jLabelDesContatorePezzi, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 100, 160, 30));
 
         jLabelDesContatoreLotti.setFont(new java.awt.Font("SansSerif", 0, 24)); // NOI18N
         jLabelDesContatoreLotti.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabelDesContatoreLotti.setText("Lotti");
+        jLabelDesContatoreLotti.setText("Lot");
         jLabelDesContatoreLotti.setToolTipText("");
         jPanelStarted.add(jLabelDesContatoreLotti, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 100, 160, 30));
 
@@ -417,7 +421,7 @@ public class JRivitMain extends javax.swing.JFrame {
 
         jLabelDesPezziNoLimits.setFont(new java.awt.Font("SansSerif", 0, 24)); // NOI18N
         jLabelDesPezziNoLimits.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabelDesPezziNoLimits.setText("Pezzi");
+        jLabelDesPezziNoLimits.setText("Piece");
         jLabelDesPezziNoLimits.setToolTipText("");
         jPanelStarted.add(jLabelDesPezziNoLimits, new org.netbeans.lib.awtextra.AbsoluteConstraints(84, 100, 160, 30));
 
@@ -670,7 +674,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabel_B_L.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel_B_L.setText("00:00");
         jLabel_B_L.setOpaque(true);
-        jPanelBotton.add(jLabel_B_L, new org.netbeans.lib.awtextra.AbsoluteConstraints(3, 5, 90, 20));
+        jPanelBotton.add(jLabel_B_L, new org.netbeans.lib.awtextra.AbsoluteConstraints(75, 5, 90, 20));
 
         jLabel_B_R.setBackground(java.awt.Color.lightGray);
         jLabel_B_R.setFont(new java.awt.Font("DejaVu Sans", 1, 14)); // NOI18N
@@ -686,11 +690,12 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabel_msg.setText("message");
         jLabel_msg.setAlignmentX(0.2F);
         jLabel_msg.setOpaque(true);
-        jPanelBotton.add(jLabel_msg, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 5, 260, 20));
+        jPanelBotton.add(jLabel_msg, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 5, 190, 20));
 
         jLabelWarning.setFont(new java.awt.Font("DejaVu Sans", 1, 13)); // NOI18N
         jLabelWarning.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelWarning.setText("OK");
+        jLabelWarning.setToolTipText("");
         jLabelWarning.setOpaque(true);
         jLabelWarning.setPreferredSize(new java.awt.Dimension(15, 20));
         jLabelWarning.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -698,8 +703,50 @@ public class JRivitMain extends javax.swing.JFrame {
                 jLabelWarningMouseClicked(evt);
             }
         });
-        jPanelBotton.add(jLabelWarning, new org.netbeans.lib.awtextra.AbsoluteConstraints(367, 5, 30, -1));
+        jPanelBotton.add(jLabelWarning, new org.netbeans.lib.awtextra.AbsoluteConstraints(368, 5, 30, -1));
         jLabelWarning.getAccessibleContext().setAccessibleName("jLabelWarning");
+
+        jLabelLan.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Red"));
+        jLabelLan.setFont(new java.awt.Font("DejaVu Sans", 1, 13)); // NOI18N
+        jLabelLan.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelLan.setText("L");
+        jLabelLan.setToolTipText("");
+        jLabelLan.setOpaque(true);
+        jLabelLan.setPreferredSize(new java.awt.Dimension(15, 20));
+        jLabelLan.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabelLanMouseClicked(evt);
+            }
+        });
+        jPanelBotton.add(jLabelLan, new org.netbeans.lib.awtextra.AbsoluteConstraints(3, 5, 20, -1));
+
+        jLabelVPN.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Red"));
+        jLabelVPN.setFont(new java.awt.Font("DejaVu Sans", 1, 13)); // NOI18N
+        jLabelVPN.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelVPN.setText("V");
+        jLabelVPN.setToolTipText("");
+        jLabelVPN.setOpaque(true);
+        jLabelVPN.setPreferredSize(new java.awt.Dimension(15, 20));
+        jLabelVPN.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabelVPNMouseClicked(evt);
+            }
+        });
+        jPanelBotton.add(jLabelVPN, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 5, 20, -1));
+
+        jLabelController.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Red"));
+        jLabelController.setFont(new java.awt.Font("DejaVu Sans", 1, 13)); // NOI18N
+        jLabelController.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelController.setText("C");
+        jLabelController.setToolTipText("");
+        jLabelController.setOpaque(true);
+        jLabelController.setPreferredSize(new java.awt.Dimension(15, 20));
+        jLabelController.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabelControllerMouseClicked(evt);
+            }
+        });
+        jPanelBotton.add(jLabelController, new org.netbeans.lib.awtextra.AbsoluteConstraints(27, 5, 20, -1));
 
         getContentPane().add(jPanelBotton, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 290, 480, 30));
 
@@ -1147,6 +1194,18 @@ public class JRivitMain extends javax.swing.JFrame {
             PanelWarning();
         }
     }//GEN-LAST:event_jLabelWarningMouseClicked
+
+    private void jLabelLanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelLanMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jLabelLanMouseClicked
+
+    private void jLabelVPNMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelVPNMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jLabelVPNMouseClicked
+
+    private void jLabelControllerMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelControllerMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jLabelControllerMouseClicked
     /**
      * PanelMain Pannello che viene visualizzato all'avvio
      */
@@ -1297,18 +1356,21 @@ public class JRivitMain extends javax.swing.JFrame {
     private javax.swing.JLabel jLabelAvvisoCalibrazione;
     private javax.swing.JLabel jLabelContatoreLotti;
     private javax.swing.JLabel jLabelContatorePezzi;
+    private javax.swing.JLabel jLabelController;
     private javax.swing.JLabel jLabelDesContatoreLotti;
     private javax.swing.JLabel jLabelDesContatorePezzi;
     private javax.swing.JLabel jLabelDesPezziNoLimits;
     private javax.swing.JLabel jLabelDeviceName;
     private javax.swing.JLabel jLabelDialog;
     private javax.swing.JLabel jLabelErrati;
+    private javax.swing.JLabel jLabelLan;
     private javax.swing.JLabel jLabelLogo;
     private javax.swing.JLabel jLabelNomeDevice;
     private javax.swing.JLabel jLabelNomeDeviceCal;
     private javax.swing.JLabel jLabelNomeLavoro;
     private javax.swing.JLabel jLabelNomeLavoroCal;
     private javax.swing.JLabel jLabelPezziNoLimits;
+    private javax.swing.JLabel jLabelVPN;
     private javax.swing.JLabel jLabelValidi;
     private javax.swing.JLabel jLabelVersione;
     private javax.swing.JLabel jLabelWarning;
@@ -1788,7 +1850,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 if (limLotti.equals("-1")) { // Lavoro senza limiti -> visualizzo solo il nome
                     elencoTxt.add(nomeLavoro);
                 } else {
-                    elencoTxt.add(nomeLavoro + " Lotti=" + limLotti + " Pezzi=" + limPezzi);
+                    elencoTxt.add(nomeLavoro + " Lots=" + limLotti + " Pieces=" + limPezzi);
                 }
                 this.elencoLavori.add(lavoroSplit);
                 this.elencoDesLavoro.add(descrizione);
@@ -2000,27 +2062,28 @@ public class JRivitMain extends javax.swing.JFrame {
                 this.v_in = Float.valueOf(arrayValori[2]);
                 this.v_rpi = Float.valueOf(arrayValori[3]);
                 this.setListInfo(infoAggiuntive);
-                // il valore di pressione letto dal sensore deve essere raddoppiato
-                float nuovoValore = Float.parseFloat(arrayValori[4]) * 2;
+                // Calcolo esatto della pressione in base al grafico di risposta del sensore emc
+                float nuovoValorePressione = (Float.parseFloat(arrayValori[4]) - 1) * 10 / 4;
+
                 this.precPressioneAria = this.pressione_aria_in;
-                if (this.precPressioneAria - nuovoValore < Static.MAX_VARIAZIONE_PRESSIONE) {
-                    this.pressione_aria_in = nuovoValore;
+                if (this.precPressioneAria - nuovoValorePressione < Static.MAX_VARIAZIONE_PRESSIONE) {
+                    this.pressione_aria_in = nuovoValorePressione;
                 }
 
                 if (!(this.pressione_aria_in == null)) {
-                    DecimalFormat df = new DecimalFormat("0.0");// solo una cifra decimale
+                    DecimalFormat df = new DecimalFormat("0.00");// solo due cifre decimali
                     if (pressione_aria_in <= this.sogliaMin) {
                         this.jLabel_msg.setBackground(java.awt.Color.RED);
                         this.jLabel_msg.setForeground(java.awt.Color.WHITE);
-                        this.jLabel_msg.setText("INC. AIR TOO LOW: " + df.format(pressione_aria_in) + " Bar");
+                        this.jLabel_msg.setText("INC.AIR LOW: " + df.format(pressione_aria_in) + " Bar");
                     } else if (pressione_aria_in > this.sogliaMax) {
                         this.jLabel_msg.setBackground(java.awt.Color.YELLOW);
                         this.jLabel_msg.setForeground(java.awt.Color.BLACK);
-                        this.jLabel_msg.setText("INC. AIR TOO HIGH: " + df.format(pressione_aria_in) + " Bar");
+                        this.jLabel_msg.setText("INC.AIR HIGH: " + df.format(pressione_aria_in) + " Bar");
                     } else {
                         this.jLabel_msg.setBackground(java.awt.Color.GREEN);
                         this.jLabel_msg.setForeground(java.awt.Color.BLACK);
-                        this.jLabel_msg.setText("INC. AIR OK: " + df.format(pressione_aria_in) + " Bar");
+                        this.jLabel_msg.setText("INC.AIR OK: " + df.format(pressione_aria_in) + " Bar");
                     }
                 }
             } catch (NumberFormatException e) {
@@ -2627,4 +2690,41 @@ public class JRivitMain extends javax.swing.JFrame {
     public int getLimPezzi () {
         return limPezzi;
     }
+    
+    /**
+     * Imposta il visualizzatore dello stato della Lan
+     * @param stato 
+     */
+    public void setLanIndicator(boolean stato) {
+        if (stato) {
+            jLabelLan.setBackground(Color.green);
+        } else {
+            jLabelLan.setBackground(Color.red);
+        }
+    }
+
+    /**
+    * Imposta il visualizzatore dello stato della VPN
+    * @param stato 
+    */
+    public void setVPNIndicator(boolean stato) {
+        if (stato) {
+            jLabelVPN.setBackground(Color.green);
+        } else {
+            jLabelVPN.setBackground(Color.red);
+        }
+    }
+
+    /**
+    * Imposta il visualizzatore dello stato di raggiungibilità del Controller
+    * @param stato 
+    */
+    public void setControllerIndicator(boolean stato) {
+        if (stato) {
+            jLabelController.setBackground(Color.green);
+        } else {
+            jLabelController.setBackground(Color.red);
+        }
+    }
+
 }

@@ -61,14 +61,6 @@ public class Static {
 
     final static String F_AGGIORNATO_LAVORI = "aggiornato_lavori";
     
-    // File civetta usati per essere certi della completa scrittura dei file corrispondenti
-    final static String F_CURVA_READY = "curva_ready";
-    final static String F_CONTATORI_READY = "contatori_ready";
-    final static String F_STATO_READY = "stato_ready";
-    final static String F_LAVORO_READY = "lavoro_ready";
-    final static String F_SENSORI_READY = "sensori_ready";
-    final static String F_PULSANTE_READY = "pulsante_ready";
-    
     final static String F_LAVORI = "lavori.txt";
     final static String F_RELOAD = "reload";
     final static String F_LAVORO_AVVIATO = "lavoro_avviato";
