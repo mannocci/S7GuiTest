@@ -21,9 +21,6 @@
  */
 package jrivitscreen;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -59,7 +56,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
 
     JDoWorker(JRivitMain mf, JFileWorker fw) {
         this.Rm = mf;
-        this.file_worker =fw;
+        this.file_worker = fw;
         this.bt = new ButtonThread(this.Rm);
         dateFormat = new SimpleDateFormat("HH:mm");
         now = Calendar.getInstance();
@@ -69,103 +66,71 @@ public class JDoWorker extends SwingWorker<String, Object> {
     protected String doInBackground() throws Exception {
         try {
             switch (this.operation) {
-                
-                case "init" -> {
-                    this.bt.start();//Gestione dei pulsanti
-                    this.file_worker.start();//Avvio FileWorker
-                    this.file_worker.initValues();
-                }
+
+                case "init" ->
+                    this.init();
 
                 case "stop" -> {
-                    JFileWorker.ScriviFileLock(Static.F_STATO, Static.STATO_STOP);
-                    JFileWorker.ScriviFileLock(Static.F_AGGIORNATO_STATO, Static.STATO_STOP);
+                    JFileWorker.scriviFile(Static.F_RICHIESTA, Static.RICHIESTA_STOP);
                 }
 
                 case "pausa" -> {
-                    JFileWorker.ScriviFileLock(Static.F_STATO, Static.STATO_PAUSA);
-                    JFileWorker.ScriviFileLock(Static.F_AGGIORNATO_STATO, Static.STATO_STOP);
+                    JFileWorker.scriviFile(Static.F_RICHIESTA, Static.RICHIESTA_PAUSA);
                 }
-
+                case "riavvio" -> {
+                    JFileWorker.scriviFile(Static.F_RICHIESTA, Static.RICHIESTA_RIAVVIO);
+                }
                 case "start" -> {
-                    JFileWorker.ScriviFileLock(Static.F_STATO, Static.STATO_AVVIATO);
-                    JFileWorker.ScriviFileLock(Static.F_AGGIORNATO_STATO, Static.STATO_STOP);
+                    JFileWorker.scriviFile(Static.F_RICHIESTA, Static.RICHIESTA_AVVIO);
                 }
 
-                case "continua", "accetta", "annulla" -> {
-                    JFileWorker.ScriviFileLock(Static.F_RISPOSTA_TIRO_ERRATO + "_" + this.operation, this.operation);
+                case "continua" -> {
+                    JFileWorker.scriviFile(Static.F_RISPOSTA_TIRO_ERRATO + "_" + this.operation, this.operation);
                 }
-
+                case "accetta" -> {
+                    JFileWorker.scriviFile(Static.F_RISPOSTA_TIRO_ERRATO + "_" + this.operation, this.operation);
+                }
+                case "annulla" -> {
+                    JFileWorker.scriviFile(Static.F_RISPOSTA_TIRO_ERRATO + "_" + this.operation, this.operation);
+                }
                 case "aggiorna_nome_device" -> {
-                    this.NomeDevice = JFileWorker.LeggiFileLock(this.f_nome_device);
+                    this.NomeDevice = JFileWorker.leggiFile(this.f_nome_device);
                     this.Rm.setNomeDevice(this.NomeDevice);
                 }
+                case "aggiorna_nm_list" ->
+                    this.update_status_nm();
 
-                case "risposta_attesa_tiro_errato" -> {
-                    risposta_attesa_tiro_errato();
-                }
-                
-                case Static.F_CURVA -> {
-                    drawGrafico();
-                }
-                
-//                case "lavoro_scelto" -> {
-//                    String lavoro = this.Rm.getLavoroScelto();
-//                    JFileWorker.ScriviFileLock(Static.F_LAVORO_SCELTO, lavoro);
-//                    this.Rm.setInErrore(false);
-//                    //Aggiornare leggendo il DB i campi della ricetta DA FARE IN Control !!
-//                }
+                case "aggiorna_stato_wifi" ->
+                    this.update_status_wifi();
 
-                case "scegli_e_avvia" -> {
-                    String lavoro = this.Rm.getLavoroScelto();
-                    JFileWorker.cancellaFile(Static.F_LAVORO_SCELTO);
-                    JFileWorker.ScriviFileLock(Static.F_LAVORO_SCELTO, lavoro);
-                    this.Rm.setInErrore(false);
-                    JFileWorker.ScriviFileLock(Static.F_STATO, Static.STATO_AVVIATO);
-                    JFileWorker.ScriviFileLock(Static.F_AGGIORNATO_STATO, Static.STATO_AVVIATO);
-                    this.Rm.PanelStarted();
-                }
-                
-                case "aggiorna info" -> {
-                    List<String> lista_info = JFileWorker.LeggiFileElencoLock(Static.F_INFO);
-                    List<String> lista_sensori = JFileWorker.LeggiFileElencoLock(Static.F_SENSORI);
-                    lista_info.add("=========================");
-                    for (String string : lista_sensori) {
-                        lista_info.add(string);
-                    }
-                    this.Rm.setListInfo(lista_info);
-                }
-                
-                case "aggiorna warning" -> {
-                    List<String> warning_file = JFileWorker.LeggiFileElencoLock(Static.F_WARNING);
-                    int livello_warning = 0, livello = 0, posizione_riga = 0;
+                case "aggiorna_stato_lan" ->
+                    this.update_status_lan();
 
-                    for (String string : warning_file) {
-                        String[] warnig_list = string.split("§");
-                        livello = Integer.parseInt(warnig_list[1]);
-                        if (livello > livello_warning) {
-                            livello_warning = livello;
-                        }
-                        warning_file.set(posizione_riga++, string + ", livello -> " + livello);
-                    }
-                    this.Rm.set_warning(livello_warning);//Aggiorna l'immagine warning
-                    this.Rm.AggiornaWarning(warning_file);//Aggiorna lista descizioni warning
-                }
-                
+                case "on_of_nm_device" ->
+                    this.on_of_nm_device();
+
+                case "scegli_e_avvia" ->
+                    this.scegli_e_avvia();
+
+                case "aggiorna info" ->
+                    this.updateInfo();
+
                 case "orario" -> {
-
                     Date orario = now.getTime();
                     //this.dateFormat.setTimeZone(TimeZone.getTimeZone("Europe/London"));
                     this.Rm.set_jLabel_B_L(this.dateFormat.format(orario));
                     this.Rm.repaint();
                 }
-                
+
                 case "grafico" -> {
-                    this.drawGrafico();
+                    this.Rm.repaint();
+
+                    //this.drawGrafico();
                 }
             }
         } catch (NumberFormatException ex) {
             Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
-            throw new UnsupportedOperationException("Errore conversione numerica " + this.operation); 
+            throw new UnsupportedOperationException("Errore conversione numerica " + this.operation);
         }
         return "ok";
     }
@@ -174,54 +139,86 @@ public class JDoWorker extends SwingWorker<String, Object> {
         this.operation = operation;
     }
 
-    private void drawGrafico() {
-//        this.Rm.jLayeredPaneCenter.moveToFront(this.jPanelCanvas);
-        Graphics2D gr = (Graphics2D) this.Rm.getjLayeredPaneCenter().getGraphics();
-        gr.drawString("Java Source", 10, 10);
-        int y = this.Rm.getjLayeredPaneCenter().getHeight();
-        String[] ychar = this.Rm.getCurva().split(",");
-        int nPoints;
-        nPoints = ychar.length;
-        int[] ypoints = new int[nPoints];
-        if (nPoints > 0) {
-            int[] xpoints = new int[nPoints];
-            for (int i = 0; i < nPoints; i++) {
-                xpoints[i] = i * 2;
-                ypoints[i] = y - Integer.parseInt(ychar[i]) / 6;
-            }
-            gr.setStroke(new BasicStroke(3));
-            gr.setColor(Color.GREEN);
-            gr.drawPolyline(xpoints, ypoints, nPoints);
-            this.Rm.getjLayeredPaneCenter().repaint();
-            gr.drawString("Java Source", 10, 10);
+    /**
+     * inizializza diversi stati per prevenire la scheda bianca Avvia l'istanza
+     * della classe FileWorker
+     */
+    void init() {
+        this.bt.start();//Gestione dei pulsanti
+        this.file_worker.start();//Avvio FileWorker
+        this.file_worker.initValues();
+    }
+
+    /**
+     * Imposta lavoro scelto e lo avvia
+     */
+    void scegli_e_avvia() {
+        String lavoro = this.Rm.getLavoroScelto();
+        // Scrivo anche i dettagli del lavoro. Serviranno allo scambio dati tramite webSocket
+        JFileWorker.scriviFile(Static.F_LAVORO_SCELTO, lavoro
+            + "§" + this.Rm.getLimLotti()
+            + "§" + this.Rm.getLimPezzi());
+        JFileWorker.scriviFile(Static.F_RICHIESTA, Static.RICHIESTA_AVVIO);
+        // Lo stato AVVIATO verrà scritto da Control
+    }
+
+    /**
+     * Attiva o disattiva di device di rete
+     */
+    void on_of_nm_device() {
+        String nomeDevice = this.Rm.getListSetupNM().getItem(this.Rm.getListSetupNM().getSelectedIndex());
+        String device;
+        if (nomeDevice.contains(" OFF")) {
+            device = nomeDevice.substring(0, nomeDevice.indexOf(" OFF"));
+        } else {
+            device = nomeDevice.substring(0, nomeDevice.indexOf(" ON"));
         }
-        this.Rm.setCurva(JFileWorker.LeggiFileLock("curva"));
+
+        String[] cmd = {"/home/adminsb/bin/start_stop_NM.sh", device};
+        run_system_bash(cmd);
+        //Dopo aver avviato o spento una con. deve aggiornare il file
+        cmd[0] = "/home/adminsb/bin/nm_list_con.sh";
+        run_system_bash(cmd);
+        this.Rm.set_jLabel_B_L("CON..");
+    }
+
+    /**
+     * Aggiorna lo stato del device ETH0
+     */
+    void update_status_lan() {
+        String[] cmd = {"/home/adminsb/bin/status_lan.sh"};
+        run_system_bash(cmd);
+    }
+
+    /**
+     * Aggiorna lo stato della Wifi. Elenca Access point
+     */
+    void update_status_wifi() {
+        String[] cmd = {"/home/adminsb/bin/status_wifi.sh"};
+        run_system_bash(cmd);
 
     }
 
-    void risposta_attesa_tiro_errato() {
-        // Fabio: la gestione del tiro errato deve essere fatta 
-        // da JControl. Quando i file saranno aggiornati da JControl
-        // stesso l'interfaccia si adeguerà automaticamente
-        switch (JFileWorker.LeggiFileLock(f_risposta_tiro_errato)) {
-            case "1" -> //Continua non devo contare il tiro come ok
-                this.Rm.aggiornaDaErroreTiro();
-            case "4" -> //Annulla
-                this.Rm.setAlertDialogStop("Annullare il Tiro ?");
-            case "2" -> // Estendi
-            {
-                // Estendi
-                this.Rm.aggiornaDaErroreTiro();
-                int t = Integer.parseInt(this.Rm.getjLabelValidi());
-                t++;
-                this.Rm.setjLabelValidi("" + t);
-            }
-            case "3" -> // Accetta, come se fosse stato un tiro ok
-            {
+    /**
+     * Aggiorna la lista dei device per la connesione di rete
+     */
+    void update_status_nm() {
+        String[] cmd = {"/home/adminsb/bin/nm_list_con.sh"};
+        run_system_bash(cmd);
 
-            }
+    }
 
+    /**
+     * Aggiorna la lista che contiene le informazioni del sistema
+     */
+    void updateInfo() {
+        List<String> listaInfo = JFileWorker.leggiFileElenco(Static.F_INFO);
+        List<String> listaSensori = JFileWorker.leggiFileElenco(Static.F_SENSORI);
+        listaInfo.add("=========================");
+        for (String string : listaSensori) {
+            listaInfo.add(string);
         }
+        this.Rm.setListInfo(listaInfo);
     }
 
     /**
@@ -256,4 +253,5 @@ public class JDoWorker extends SwingWorker<String, Object> {
         }
         return line;
     }
+
 }
