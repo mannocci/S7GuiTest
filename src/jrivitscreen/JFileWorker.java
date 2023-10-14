@@ -595,6 +595,7 @@ public class JFileWorker extends Thread {
         this.Rm.setListNmCon(list_nm_con);
         boolean lanIndicator = false;
         boolean vpnIndicator = false;
+        boolean wifiIndicator = false;
         for (String string : list_nm_con) {
             if (string.contains("eth") && string.contains("ON")) {    // la prima riga che contiene "eth" e "ON" accende l'indicatore Lan
                 lanIndicator = true;
@@ -607,8 +608,15 @@ public class JFileWorker extends Thread {
                 break;
             }
         }
+        for (String string : list_nm_con) {
+            if (string.contains("AP_") && string.contains("ON")) {    // la prima riga che contiene "eth" e "ON" accende l'indicatore Lan
+                wifiIndicator = true;
+                break;
+            }
+        }
         this.Rm.setLanIndicator(lanIndicator);
         this.Rm.setVPNIndicator(vpnIndicator);
+        this.Rm.setWiFiIndicator(wifiIndicator);
     }
 
     /**

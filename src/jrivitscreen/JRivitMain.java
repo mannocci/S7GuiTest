@@ -278,6 +278,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelLan = new javax.swing.JLabel();
         jLabelVPN = new javax.swing.JLabel();
         jLabelController = new javax.swing.JLabel();
+        jLabelWiFi = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMaximumSize(new java.awt.Dimension(480, 320));
@@ -494,6 +495,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelSetupLan.setPreferredSize(new java.awt.Dimension(328, 276));
         jPanelSetupLan.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        jTextAreaLan.setEditable(false);
         jTextAreaLan.setColumns(20);
         jTextAreaLan.setRows(5);
         jScrollPaneLan.setViewportView(jTextAreaLan);
@@ -670,18 +672,18 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelBotton.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel_B_L.setBackground(java.awt.Color.lightGray);
-        jLabel_B_L.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel_B_L.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel_B_L.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel_B_L.setText("00:00");
         jLabel_B_L.setOpaque(true);
-        jPanelBotton.add(jLabel_B_L, new org.netbeans.lib.awtextra.AbsoluteConstraints(75, 5, 90, 20));
+        jPanelBotton.add(jLabel_B_L, new org.netbeans.lib.awtextra.AbsoluteConstraints(94, 5, 88, 20));
 
         jLabel_B_R.setBackground(java.awt.Color.lightGray);
         jLabel_B_R.setFont(new java.awt.Font("DejaVu Sans", 1, 14)); // NOI18N
         jLabel_B_R.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel_B_R.setText("Aria Off");
         jLabel_B_R.setOpaque(true);
-        jPanelBotton.add(jLabel_B_R, new org.netbeans.lib.awtextra.AbsoluteConstraints(405, 5, 70, 20));
+        jPanelBotton.add(jLabel_B_R, new org.netbeans.lib.awtextra.AbsoluteConstraints(407, 5, 70, 20));
         jLabel_B_R.getAccessibleContext().setAccessibleDescription("Indicatore dello stato dell'aria");
 
         jLabel_msg.setFont(new java.awt.Font("DejaVu Sans", 1, 14)); // NOI18N
@@ -690,7 +692,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabel_msg.setText("message");
         jLabel_msg.setAlignmentX(0.2F);
         jLabel_msg.setOpaque(true);
-        jPanelBotton.add(jLabel_msg, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 5, 190, 20));
+        jPanelBotton.add(jLabel_msg, new org.netbeans.lib.awtextra.AbsoluteConstraints(185, 5, 190, 20));
 
         jLabelWarning.setFont(new java.awt.Font("DejaVu Sans", 1, 13)); // NOI18N
         jLabelWarning.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -703,7 +705,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 jLabelWarningMouseClicked(evt);
             }
         });
-        jPanelBotton.add(jLabelWarning, new org.netbeans.lib.awtextra.AbsoluteConstraints(368, 5, 30, -1));
+        jPanelBotton.add(jLabelWarning, new org.netbeans.lib.awtextra.AbsoluteConstraints(378, 5, 25, -1));
         jLabelWarning.getAccessibleContext().setAccessibleName("jLabelWarning");
 
         jLabelLan.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Red"));
@@ -718,7 +720,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 jLabelLanMouseClicked(evt);
             }
         });
-        jPanelBotton.add(jLabelLan, new org.netbeans.lib.awtextra.AbsoluteConstraints(3, 5, 20, -1));
+        jPanelBotton.add(jLabelLan, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 5, 20, -1));
 
         jLabelVPN.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Red"));
         jLabelVPN.setFont(new java.awt.Font("DejaVu Sans", 1, 13)); // NOI18N
@@ -732,7 +734,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 jLabelVPNMouseClicked(evt);
             }
         });
-        jPanelBotton.add(jLabelVPN, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 5, 20, -1));
+        jPanelBotton.add(jLabelVPN, new org.netbeans.lib.awtextra.AbsoluteConstraints(48, 5, 20, -1));
 
         jLabelController.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Red"));
         jLabelController.setFont(new java.awt.Font("DejaVu Sans", 1, 13)); // NOI18N
@@ -746,7 +748,22 @@ public class JRivitMain extends javax.swing.JFrame {
                 jLabelControllerMouseClicked(evt);
             }
         });
-        jPanelBotton.add(jLabelController, new org.netbeans.lib.awtextra.AbsoluteConstraints(27, 5, 20, -1));
+        jPanelBotton.add(jLabelController, new org.netbeans.lib.awtextra.AbsoluteConstraints(25, 5, 20, -1));
+
+        jLabelWiFi.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Red"));
+        jLabelWiFi.setFont(new java.awt.Font("DejaVu Sans", 1, 13)); // NOI18N
+        jLabelWiFi.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelWiFi.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/wifi_20.png"))); // NOI18N
+        jLabelWiFi.setToolTipText("");
+        jLabelWiFi.setAlignmentY(0.0F);
+        jLabelWiFi.setOpaque(true);
+        jLabelWiFi.setPreferredSize(new java.awt.Dimension(20, 20));
+        jLabelWiFi.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabelWiFiMouseClicked(evt);
+            }
+        });
+        jPanelBotton.add(jLabelWiFi, new org.netbeans.lib.awtextra.AbsoluteConstraints(71, 5, 20, -1));
 
         getContentPane().add(jPanelBotton, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 290, 480, 30));
 
@@ -1206,6 +1223,10 @@ public class JRivitMain extends javax.swing.JFrame {
     private void jLabelControllerMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelControllerMouseClicked
         // TODO add your handling code here:
     }//GEN-LAST:event_jLabelControllerMouseClicked
+
+    private void jLabelWiFiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelWiFiMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jLabelWiFiMouseClicked
     /**
      * PanelMain Pannello che viene visualizzato all'avvio
      */
@@ -1374,6 +1395,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private javax.swing.JLabel jLabelValidi;
     private javax.swing.JLabel jLabelVersione;
     private javax.swing.JLabel jLabelWarning;
+    private javax.swing.JLabel jLabelWiFi;
     private javax.swing.JLabel jLabel_Annullati;
     private javax.swing.JLabel jLabel_B_L;
     private javax.swing.JLabel jLabel_B_R;
@@ -2724,6 +2746,14 @@ public class JRivitMain extends javax.swing.JFrame {
             jLabelController.setBackground(Color.green);
         } else {
             jLabelController.setBackground(Color.red);
+        }
+    }
+
+    void setWiFiIndicator(boolean stato) {
+        if (stato) {
+            jLabelWiFi.setBackground(Color.green);
+        } else {
+            jLabelWiFi.setBackground(Color.red);
         }
     }
 
