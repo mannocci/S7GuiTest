@@ -617,6 +617,7 @@ public class JFileWorker extends Thread {
         this.Rm.setLanIndicator(lanIndicator);
         this.Rm.setVPNIndicator(vpnIndicator);
         this.Rm.setWiFiIndicator(wifiIndicator);
+        this.Rm.setControllerIndicator(false);
     }
 
     /**
