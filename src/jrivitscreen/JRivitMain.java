@@ -143,7 +143,8 @@ public class JRivitMain extends javax.swing.JFrame {
         this.jLayeredPaneCenter.add(g, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 328, 276));
         this.jLabelDesPezziNoLimits.setVisible(false);
         this.jLabelPezziNoLimits.setVisible(false);
-        this.AlertDialogStop = "Annullare Tiro ?";
+        this.AlertDialogStop = "Cancel traction ?";
+        this.jLabelNomeWL.setText("");
 
         Img_Exit = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/exit.png"));
         Img_Ok = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/ok.png"));
@@ -241,6 +242,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelDesPezziNoLimits = new javax.swing.JLabel();
         jLabelPezziNoLimits = new javax.swing.JLabel();
         jLabelNomeLavoro = new javax.swing.JLabel();
+        jLabelNomeWL = new javax.swing.JLabel();
         jPanelSetup = new javax.swing.JPanel();
         listSetupNM = new java.awt.List();
         jPanelMain = new javax.swing.JPanel();
@@ -422,7 +424,7 @@ public class JRivitMain extends javax.swing.JFrame {
 
         jLabelDesPezziNoLimits.setFont(new java.awt.Font("SansSerif", 0, 24)); // NOI18N
         jLabelDesPezziNoLimits.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabelDesPezziNoLimits.setText("Piece");
+        jLabelDesPezziNoLimits.setText("Pieces");
         jLabelDesPezziNoLimits.setToolTipText("");
         jPanelStarted.add(jLabelDesPezziNoLimits, new org.netbeans.lib.awtextra.AbsoluteConstraints(84, 100, 160, 30));
 
@@ -434,7 +436,12 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelNomeLavoro.setFont(new java.awt.Font("SansSerif", 1, 20)); // NOI18N
         jLabelNomeLavoro.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelNomeLavoro.setText("Nome Lavoro");
-        jPanelStarted.add(jLabelNomeLavoro, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 38, 320, -1));
+        jPanelStarted.add(jLabelNomeLavoro, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 65, 320, -1));
+
+        jLabelNomeWL.setFont(new java.awt.Font("SansSerif", 1, 20)); // NOI18N
+        jLabelNomeWL.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelNomeWL.setText("Nome WL");
+        jPanelStarted.add(jLabelNomeWL, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 35, 320, -1));
 
         jLayeredPaneCenter.add(jPanelStarted, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 328, 276));
 
@@ -584,13 +591,13 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelDialog.setPreferredSize(new java.awt.Dimension(328, 276));
         jPanelDialog.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabelDialog.setFont(new java.awt.Font("DejaVu Sans Condensed", 1, 24)); // NOI18N
+        jLabelDialog.setFont(new java.awt.Font("DejaVu Sans Condensed", 1, 18)); // NOI18N
         jLabelDialog.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabelDialog.setText("Annullare il Tiro ?");
+        jLabelDialog.setText("Confirm cancel traction ?");
         jLabelDialog.setMaximumSize(new java.awt.Dimension(177, 30));
         jLabelDialog.setMinimumSize(new java.awt.Dimension(177, 30));
         jLabelDialog.setPreferredSize(new java.awt.Dimension(177, 30));
-        jPanelDialog.add(jLabelDialog, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 100, 320, 30));
+        jPanelDialog.add(jLabelDialog, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 110, 320, 30));
 
         jLayeredPaneCenter.add(jPanelDialog, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 328, 276));
 
@@ -843,7 +850,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 } else {
                     if (this.isChiediConfermaStop()) {
                         statoPulsanti = Static.STATO_STOP;
-                        this.AlertDialogStop = "Annullare il Lavoro ?";
+                        this.AlertDialogStop = "Confirm work stop ?";
                         this.jLabelDialog.setText(AlertDialogStop);
                         PanelDialog();
                         this.set_jLabel_B_L("Dialog");
@@ -869,7 +876,7 @@ public class JRivitMain extends javax.swing.JFrame {
                     } else {
                         if (this.isChiediConfermaStop()) {
                             statoPulsanti = Static.STATO_STOP;
-                            this.AlertDialogStop = "Annullare il Lavoro ?";
+                            this.AlertDialogStop = "Confirm work stop ?";
                             this.jLabelDialog.setText(AlertDialogStop);
                             PanelDialog();
                             this.set_jLabel_B_L("Dialog");
@@ -1098,7 +1105,7 @@ public class JRivitMain extends javax.swing.JFrame {
 //                    DialogQ = STATO_PAUSA;
                         this.setStatoPulsanti(Static.STATO_PAUSA);
 
-                        this.AlertDialogStop = "Pausa ?";
+                        this.AlertDialogStop = "Confirm work pause ?";
                         this.jLabelDialog.setText(AlertDialogStop);
                         PanelDialog();
                         this.set_jLabel_B_L("Dialog");
@@ -1390,6 +1397,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private javax.swing.JLabel jLabelNomeDeviceCal;
     private javax.swing.JLabel jLabelNomeLavoro;
     private javax.swing.JLabel jLabelNomeLavoroCal;
+    private javax.swing.JLabel jLabelNomeWL;
     private javax.swing.JLabel jLabelPezziNoLimits;
     private javax.swing.JLabel jLabelVPN;
     private javax.swing.JLabel jLabelValidi;

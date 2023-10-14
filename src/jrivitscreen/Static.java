@@ -57,7 +57,6 @@ public class Static {
     final static String F_RISPOSTA_TIRO_ERRATO_CONTINUA = "risposta_tiro_errato_continua";
     final static String F_RISPOSTA_TIRO_ERRATO_ACCETTA = "risposta_tiro_errato_accetta";
     final static String F_RISPOSTA_TIRO_ERRATO_ANNULLA = "risposta_tiro_errato_annulla";
-    final static String F_CHIEDE_CONFERMA_NO = "chiedi_conferma_no";
 
     final static String F_AGGIORNATO_LAVORI = "aggiornato_lavori";
     
