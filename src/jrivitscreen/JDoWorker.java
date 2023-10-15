@@ -71,28 +71,20 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     this.init();
 
                 case "stop" -> {
-                    JFileWorker.scriviFile(Static.F_RICHIESTA, Static.RICHIESTA_STOP);
+                    JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_STOP);
                 }
 
                 case "pausa" -> {
-                    JFileWorker.scriviFile(Static.F_RICHIESTA, Static.RICHIESTA_PAUSA);
+                    JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_PAUSA);
                 }
                 case "riavvio" -> {
-                    JFileWorker.scriviFile(Static.F_RICHIESTA, Static.RICHIESTA_RIAVVIO);
+                    JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_RIAVVIO);
                 }
                 case "start" -> {
-                    JFileWorker.scriviFile(Static.F_RICHIESTA, Static.RICHIESTA_AVVIO);
+                    JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_AVVIO);
                 }
-
-                case "continua" -> {
-                    JFileWorker.scriviFile(Static.F_RISPOSTA_TIRO_ERRATO + "_" + this.operation, this.operation);
-                }
-                case "accetta" -> {
-                    JFileWorker.scriviFile(Static.F_RISPOSTA_TIRO_ERRATO + "_" + this.operation, this.operation);
-                }
-                case "annulla" -> {
-                    JFileWorker.scriviFile(Static.F_RISPOSTA_TIRO_ERRATO + "_" + this.operation, this.operation);
-                }
+                case "continua", "accetta", "annulla" -> 
+                    JFileWorker.scriviFlag(Static.F_RISPOSTA_TIRO_ERRATO + "_" + this.operation);
                 case "aggiorna_nome_device" -> {
                     this.NomeDevice = JFileWorker.leggiFile(this.f_nome_device);
                     this.Rm.setNomeDevice(this.NomeDevice);
@@ -155,10 +147,10 @@ public class JDoWorker extends SwingWorker<String, Object> {
     void scegli_e_avvia() {
         String lavoro = this.Rm.getLavoroScelto();
         // Scrivo anche i dettagli del lavoro. Serviranno allo scambio dati tramite webSocket
-        JFileWorker.scriviFile(Static.F_LAVORO_SCELTO, lavoro
+        JFileWorker.scriviFileConReady(Static.F_LAVORO_SCELTO, lavoro
             + "§" + this.Rm.getLimLotti()
             + "§" + this.Rm.getLimPezzi());
-        JFileWorker.scriviFile(Static.F_RICHIESTA, Static.RICHIESTA_AVVIO);
+        JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_AVVIO);
         // Lo stato AVVIATO verrà scritto da Control
     }
 
