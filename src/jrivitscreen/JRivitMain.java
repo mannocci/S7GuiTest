@@ -838,7 +838,7 @@ public class JRivitMain extends javax.swing.JFrame {
             }
 
             case "start" -> {
-                avviaLavoro();
+                PulsanteSu();
             }
             case "started" -> {//Stop
                 //esiste conferma_no come file in /tmp/CT ?
@@ -1094,7 +1094,7 @@ public class JRivitMain extends javax.swing.JFrame {
 //                PanelStart();
 //            }
             case "start" ->
-                PulsanteSu();
+                PulsanteGiu();
             case "warning", "info", "setup lan", "setup wifi" ->
                 PulsanteGiu();
             case "started", "canvas" -> {//Reload Lavoro appena concluso
@@ -1149,7 +1149,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 this.exit();
 //                per ora uso il pulsante per chiudere;
             case "start" -> {
-                PulsanteGiu();
+                avviaLavoro();
             }
             case "started" -> {
                 g.setInPrimoPiano(true);
@@ -1448,7 +1448,7 @@ public class JRivitMain extends javax.swing.JFrame {
     public void PanelStart() {
         int selezionato = 0, i = 0;
         this.changeButtons(this.Img_Exit, this.Img_Nulla, this.Img_Nulla,
-            this.Img_Ok, this.Img_Freccia_su, this.Img_Freccia_giu);
+            this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Ok);
         // Se sessione non contiene 0
         // vuole dire che da una pausa si vuole riprendere un lavoro
         if (sessione == null) {
@@ -2713,17 +2713,19 @@ public class JRivitMain extends javax.swing.JFrame {
         impostaLabelContatori();
         this.set_jLabel_B_L("Started");
     }
-    
-    public int getLimLotti () {
+
+    public int getLimLotti() {
         return limLotti;
     }
-    public int getLimPezzi () {
+
+    public int getLimPezzi() {
         return limPezzi;
     }
-    
+
     /**
      * Imposta il visualizzatore dello stato della Lan
-     * @param stato 
+     *
+     * @param stato
      */
     public void setLanIndicator(boolean stato) {
         if (stato) {
@@ -2734,9 +2736,10 @@ public class JRivitMain extends javax.swing.JFrame {
     }
 
     /**
-    * Imposta il visualizzatore dello stato della VPN
-    * @param stato 
-    */
+     * Imposta il visualizzatore dello stato della VPN
+     *
+     * @param stato
+     */
     public void setVPNIndicator(boolean stato) {
         if (stato) {
             jLabelVPN.setBackground(Color.green);
@@ -2746,9 +2749,10 @@ public class JRivitMain extends javax.swing.JFrame {
     }
 
     /**
-    * Imposta il visualizzatore dello stato di raggiungibilità del Controller
-    * @param stato 
-    */
+     * Imposta il visualizzatore dello stato di raggiungibilità del Controller
+     *
+     * @param stato
+     */
     public void setControllerIndicator(boolean stato) {
         if (stato) {
             jLabelController.setBackground(Color.green);
