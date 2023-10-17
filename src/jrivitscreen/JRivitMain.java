@@ -451,6 +451,11 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelSetup.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         listSetupNM.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
+        listSetupNM.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                listSetupNMMouseClicked(evt);
+            }
+        });
         jPanelSetup.add(listSetupNM, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 2, 320, 270));
 
         jLayeredPaneCenter.add(jPanelSetup, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 328, 276));
@@ -850,7 +855,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 } else {
                     if (this.isChiediConfermaStop()) {
                         statoPulsanti = Static.STATO_STOP;
-                        this.AlertDialogStop = "Confirm work stop ?";
+                        this.AlertDialogStop = "Confirm stop work ?";
                         this.jLabelDialog.setText(AlertDialogStop);
                         PanelDialog();
                         this.set_jLabel_B_L("Dialog");
@@ -876,7 +881,7 @@ public class JRivitMain extends javax.swing.JFrame {
                     } else {
                         if (this.isChiediConfermaStop()) {
                             statoPulsanti = Static.STATO_STOP;
-                            this.AlertDialogStop = "Confirm work stop ?";
+                            this.AlertDialogStop = "Confirm stop work ?";
                             this.jLabelDialog.setText(AlertDialogStop);
                             PanelDialog();
                             this.set_jLabel_B_L("Dialog");
@@ -1105,7 +1110,7 @@ public class JRivitMain extends javax.swing.JFrame {
 //                    DialogQ = STATO_PAUSA;
                         this.setStatoPulsanti(Static.STATO_PAUSA);
 
-                        this.AlertDialogStop = "Confirm work pause ?";
+                        this.AlertDialogStop = "Confirm pause work ?";
                         this.jLabelDialog.setText(AlertDialogStop);
                         PanelDialog();
                         this.set_jLabel_B_L("Dialog");
@@ -1234,6 +1239,15 @@ public class JRivitMain extends javax.swing.JFrame {
     private void jLabelWiFiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelWiFiMouseClicked
         // TODO add your handling code here:
     }//GEN-LAST:event_jLabelWiFiMouseClicked
+
+    private void listSetupNMMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listSetupNMMouseClicked
+        this.jButtonPR3.setIcon(this.setIconSetup());//aggiorna il tipo di Icona per il pulsante
+        if (evt.getClickCount() == 2) { // doppio click -> cambia stato
+            this.esegui("on_of_nm_device");
+            this.set_jLabel_B_L("CON..");
+        }
+    }//GEN-LAST:event_listSetupNMMouseClicked
+
     /**
      * PanelMain Pannello che viene visualizzato all'avvio
      */

@@ -104,7 +104,6 @@ public class JFileWorker extends Thread {
                                 impostaChiediConfermaStop(true);
                             case Static.F_PULSANTE ->
                                 gestisciPulsante();
-                            // Il file warning.txt viene ricreato ad ogni aggiornamento
                             case Static.F_WARNING + "_ready" ->
                                 readWarning();
                             case Static.F_PRESSIONE_ARIA_IN_MIN + "_ready" ->
