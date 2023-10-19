@@ -80,6 +80,7 @@ public class Static {
     final static String F_IN_PAUSA = "in_pausa";
 
     final static String F_NOME_DEVICE = "nome_device";
+    final static String F_UM = "um";    // Bar o Newton
     final static String F_ARIA = "aria";
     final static String F_ERRORE = "errore";
     final static String F_CURVA = "curva";

@@ -40,6 +40,7 @@ public class JGrafico extends JPanel {
     private int posizionePicco;
     private boolean primoGiro;
     private Font f;
+    private String um;
 
     public JGrafico() {
         picco = 0;
@@ -67,6 +68,8 @@ public class JGrafico extends JPanel {
         if (inPrimoPiano) {
             Graphics2D gr = (Graphics2D) g;
             if (this.curva == null) {
+                this.curva = "";
+/*
                 this.curva = "20,10,20,10,10,30,10,30,30,20,30,30,10,30,20,10,20,"
                     + "0,30,20,10,20,30,20,40,50,70,120,150,240,310,390,480,550,"
                     + "640,690,720,730,710,750,770,770,790,780,760,770,740,710,"
@@ -74,6 +77,7 @@ public class JGrafico extends JPanel {
                     + "490,480,500,490,550,630,730,830,930,1000,1050,1120,1190,"
                     + "1270,1350,1350,1120,910,690,530,340,210,"
                     + "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0";
+*/
             }
             /*
             if (this.curvaDiRiferimento == null) {
@@ -139,13 +143,14 @@ public class JGrafico extends JPanel {
                 f = new Font("Arial", 2, 20);
                 gr.setFont(f);
                 gr.drawString("Green:Ref", 5, 25);
+                gr.setColor(Color.BLACK);
+                if (um.equals("Bar")) {
+                    gr.drawString("" + picco * 10 + "Bar " + ((float) posizionePicco / 100) + "s", 5, 50);
+                } else {
+                    gr.drawString("" + picco * 10 + "N " + ((float) posizionePicco / 100) + "s", 5, 50);
+                }
             }
-            gr.setColor(Color.BLACK);
-            f = new Font("Arial", 2, 20);
-            gr.setFont(f);
-            gr.drawString("" + picco * 10 + "N " + (float) (posizionePicco / 100) + "s", 5, 50);
         }
-
     }
 
     public void setIsInError(boolean isInError) {
@@ -163,6 +168,10 @@ public class JGrafico extends JPanel {
 
     public void setPrimoGiro(boolean primoGiro) {
         this.primoGiro = primoGiro;
+    }
+
+    void setUM(String um) {
+        this.um = um;
     }
 
 }

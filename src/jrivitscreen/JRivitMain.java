@@ -123,6 +123,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private boolean inCalibrazione;
     private Boolean inTest;
     private ArrayList<Object> elencoDesLavoroCompleto;
+    private String um;  // Unità di misura (Bar o Newton)
 
 //
 //Dopo una sospensione
@@ -2781,6 +2782,21 @@ public class JRivitMain extends javax.swing.JFrame {
         } else {
             jLabelWiFi.setBackground(Color.red);
         }
+    }
+
+    /**
+     * Imposta l'unità di misura
+     * @param um 
+     */
+    void setUM(String um) {
+        this.um = um;
+    }
+
+    /**
+     * Restituisce l'unità di misura
+     */
+    String getUM() {
+        return um;
     }
 
 }

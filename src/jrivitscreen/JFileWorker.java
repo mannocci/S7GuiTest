@@ -527,6 +527,7 @@ public class JFileWorker extends Thread {
     private void leggiCurva() {
         this.Rm.setCurva(leggiFile(Static.F_CURVA));
         this.Rm.g.setCurva(this.Rm.getCurva());
+        this.Rm.g.setUM(this.Rm.getUM());
         this.Rm.g.setPicco(100, 45);    // temporaneo !! Il valore reale lo dovrà scrivere Control in qualche file
     }
 
@@ -543,9 +544,11 @@ public class JFileWorker extends Thread {
     /**
      * legge dal file nome_device il nome del ControlRiv SN registrato nel
      * record CT -> sn
+     * Legge anche l'unità di misura.
      */
     private void readNomeDevice() {
         this.Rm.setNomeDevice(leggiFile(Static.F_NOME_DEVICE));
+        this.Rm.setUM(leggiFile(Static.F_UM));
     }
 
     private void lottiOk() {
