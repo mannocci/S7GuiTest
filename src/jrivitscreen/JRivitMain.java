@@ -320,7 +320,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 jButtonPL2ActionPerformed(evt);
             }
         });
-        jPanelLeft.add(jButtonPL2, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 104, -1, -1));
+        jPanelLeft.add(jButtonPL2, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 108, -1, -1));
 
         jButtonPL3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/setup.png"))); // NOI18N
         jButtonPL3.setAlignmentX(0.5F);
@@ -330,7 +330,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 jButtonPL3ActionPerformed(evt);
             }
         });
-        jPanelLeft.add(jButtonPL3, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 200, -1, -1));
+        jPanelLeft.add(jButtonPL3, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 210, -1, -1));
 
         getContentPane().add(jPanelLeft, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 70, 285));
 
@@ -587,7 +587,7 @@ public class JRivitMain extends javax.swing.JFrame {
         JTextAreaDescrizioneLavoro.setRows(5);
         JTextAreaDescrizioneLavoro.setMaximumSize(new java.awt.Dimension(320, 80));
         JTextAreaDescrizioneLavoro.setMinimumSize(new java.awt.Dimension(320, 80));
-        jPanelStart.add(JTextAreaDescrizioneLavoro, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 190, 326, 80));
+        jPanelStart.add(JTextAreaDescrizioneLavoro, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 186, 328, 90));
 
         jLayeredPaneCenter.add(jPanelStart, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 328, 276));
 
@@ -650,7 +650,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 jButtonPR1ActionPerformed(evt);
             }
         });
-        jPanelRight.add(jButtonPR1, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 6, -1, -1));
+        jPanelRight.add(jButtonPR1, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 6, -1, -1));
 
         jButtonPR2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/nulla.png"))); // NOI18N
         jButtonPR2.setMaximumSize(new java.awt.Dimension(67, 67));
@@ -661,7 +661,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 jButtonPR2ActionPerformed(evt);
             }
         });
-        jPanelRight.add(jButtonPR2, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 104, -1, -1));
+        jPanelRight.add(jButtonPR2, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 108, -1, -1));
 
         jButtonPR3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/nulla.png"))); // NOI18N
         jButtonPR3.setMaximumSize(new java.awt.Dimension(67, 67));
@@ -672,7 +672,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 jButtonPR3ActionPerformed(evt);
             }
         });
-        jPanelRight.add(jButtonPR3, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 200, -1, -1));
+        jPanelRight.add(jButtonPR3, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 210, -1, -1));
 
         getContentPane().add(jPanelRight, new org.netbeans.lib.awtextra.AbsoluteConstraints(406, 0, 70, 286));
 
