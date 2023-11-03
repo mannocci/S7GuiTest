@@ -139,10 +139,9 @@ public class JFileWorker extends Thread {
                                 }
                             }
                             case Static.F_LAVORO_PRONTO ->
-                                Rm.lavoroPronto();
+                                lavoroPronto();
                             /*Aggiungere la gestione della curva, contatori, stato con 
-                                * la creazione dei file F_CURVA_READY, F_LAVORO_READY.  
-                                   F_PULSANTE_READY
+                                * la creazione dei file F_CURVA_READY, F_LAVORO_READY. F_PULSANTE_READY
                              */
                         }
                     }
@@ -666,7 +665,7 @@ public class JFileWorker extends Thread {
         leggiCurva();
         this.Rm.repaint();
         //this.Rm.PanelCanvas();
-        //this.Rm.mostraCurva();
+        this.Rm.mostraCurva();
     }
 
     private void stato() {
@@ -720,5 +719,20 @@ public class JFileWorker extends Thread {
     private void gestisciPulsante() {
         String pulsante = leggiFile(Static.F_PULSANTE);
         this.Rm.pulsanteHw(pulsante);
+    }
+
+    /**
+     * Gestisce l'avvio di un lavoro. Il lavoro potrebbe essere stato chiesto da remoto,
+     * quindi leggo prima il file F_LAVORO_SCELTO
+     */
+    private void lavoroPronto() {
+        String lScelto = leggiFile(Static.F_LAVORO_SCELTO);
+        String[] lSceltoArray = lScelto.split("§");
+        if (! lSceltoArray[0].equals(Rm.getLavoroScelto())) {
+            Rm.setLavoroScelto(lSceltoArray[0]);
+            Rm.setLimLotti(lSceltoArray[1]);
+            Rm.setLimPezzi(lSceltoArray[2]);
+        }
+        Rm.lavoroPronto();
     }
 }
