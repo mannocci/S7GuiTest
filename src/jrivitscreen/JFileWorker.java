@@ -665,7 +665,7 @@ public class JFileWorker extends Thread {
         leggiCurva();
         this.Rm.repaint();
         //this.Rm.PanelCanvas();
-        this.Rm.mostraCurva();
+        //this.Rm.mostraCurva();
     }
 
     private void stato() {
