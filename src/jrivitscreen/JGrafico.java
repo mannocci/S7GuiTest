@@ -38,7 +38,6 @@ public class JGrafico extends JPanel {
     int nPoints;
     int[] xpoints, ypoints;
     private boolean isInError;
-    private String stato;
     private int picco;
     private int posizionePicco;
     private boolean primoGiro;
@@ -51,7 +50,6 @@ public class JGrafico extends JPanel {
         this.Rm= Rm;
         posizionePicco = 0;
         primoGiro = false;
-        this.stato = "0";
     }
 
     public void setCurva(String curva) {
@@ -70,7 +68,7 @@ public class JGrafico extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
 
-        if (inPrimoPiano) {
+        if (this.Rm.getPanCur().equals("canvas")) {
             Graphics2D gr = (Graphics2D) g;
             if (this.curva == null) {
                 this.curva = "";
@@ -135,7 +133,7 @@ public class JGrafico extends JPanel {
                 if (this.isInError) {
                     gr.setColor(Color.RED);
                 } else {
-                    if (this.stato.equals(Static.STATO_CALIBRAZIONE)) {
+                    if (this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE)) {
                         gr.setColor(Color.ORANGE);
                     } else {
                         gr.setColor(Color.BLACK);
@@ -160,10 +158,6 @@ public class JGrafico extends JPanel {
 
     public void setIsInError(boolean isInError) {
         this.isInError = isInError;
-    }
-
-    public void setStato(String stato) {
-        this.stato = stato;
     }
 
     public void setPicco(int picco, int posizionePicco) {

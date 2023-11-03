@@ -223,12 +223,10 @@ public class JFileWorker extends Thread {
 //        lavoro che deve essere fatto da JDoWorker
         List<String> warning_file = this.leggiFileElenco(Static.F_WARNING);
         if (warning_file.isEmpty()) {
-            warning_file.add("Manca file Warning o file vuoto");
+            warning_file.add("Warning file not present or empty");
         }
         this.Rm.setListWarning(warning_file);
-        JLayeredPane JLp = this.Rm.getjLayeredPaneCenter();
-        String panelName = JLp.getComponent(0).getName();
-        if (panelName.equals("main")) {
+        if (this.Rm.getPanCur().equals("main")) {
             this.Rm.getjButtonPL1().setIcon(this.Rm.getImageWarning());
         }
         switch (this.Rm.getW_level()) {
@@ -688,7 +686,6 @@ public class JFileWorker extends Thread {
                 } else {
 //                    scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_STOP);
                     this.Rm.PanelStart();
-                    this.Rm.set_jLabel_B_L("Start");
                 }
             }
             case Static.STATO_PAUSA -> {
