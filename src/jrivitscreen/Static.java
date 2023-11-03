@@ -36,10 +36,12 @@ public class Static {
     final static String RICHIESTA_CALIBRAZIONE = "83";
     final static String RICHIESTA_CALIBRAZIONE_TEST = "84";
     final static String RICHIESTA_RIAVVIO = "85";
+    final static String RICHIESTA_SALVA_CALIBRAZIONE = "86";
     final static String STATO_AVVIATO = "91";
     final static String STATO_CONCLUSO = "100";
     final static String STATO_CALIBRAZIONE = "200";
     final static String STATO_CALIBRAZIONE_TEST = "220";
+    final static String STATO_SCELTA_LAVORO = "300";
     final static String STATO_PAUSA = "92";
     final static String STATO_STOP = "93";
     final static String CONTINUA = "51";
