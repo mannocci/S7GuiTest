@@ -44,6 +44,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import org.apache.commons.cli.*;
 import javax.swing.JTextArea;
@@ -104,7 +105,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private Float v_in;
     private Float v_rpi;
     private Float pressione_aria_in;
-    private String PanCur;
+    private String panCur;
     private boolean inErrore = false;
     private boolean in_pausa = false;
     private boolean chiedi_conferma = false;
@@ -129,6 +130,7 @@ public class JRivitMain extends javax.swing.JFrame {
      * Creates new form JRivitMain
      */
     public JRivitMain() {
+        this.panCur = "main";
         initComponents();
         g = new JGrafico(this);
         g.setBackground(new java.awt.Color(255, 255, 255));
@@ -818,8 +820,7 @@ public class JRivitMain extends javax.swing.JFrame {
         // Pulsante R1  - Passare a ?
         // Considerare la variabile Basic nel DB se si deve andare in start o started
         // Qual'è il nome del pannello in primo piano ?
-        this.PanCur = this.jLayeredPaneCenter.getComponent(0).getName();
-        switch (this.PanCur) {
+        switch (this.panCur) {
             case "main" -> {
                 // todo Gestire l'impostazione del lavoro in pausa da far ripartire
                 if (this.inPausa.equals("1")) {
@@ -834,11 +835,9 @@ public class JRivitMain extends javax.swing.JFrame {
                     this.listLavori.select(i);
                     // todo Gestire il caso in cui il lavoro in pausa non viene trovato
                     PanelStarted();
-                    this.set_jLabel_B_L("Started");
                 } else {
                     this.stato = Static.STATO_SCELTA_LAVORO;
                     PanelStart();
-                    this.set_jLabel_B_L("Start");
                 }
             }
 
@@ -848,8 +847,6 @@ public class JRivitMain extends javax.swing.JFrame {
             case "started" -> {//Stop
                 //esiste conferma_no come file in /tmp/CT ?
                 // se esiste non chiede conferma della scelta
-//                DialogQ = STATO_STOP;
-
                 if (this.statoConcluso) {
                     g.setInPrimoPiano(false);
                     PanelStart();
@@ -859,14 +856,12 @@ public class JRivitMain extends javax.swing.JFrame {
                         this.AlertDialogStop = "Confirm stop work ?";
                         this.jLabelDialog.setText(AlertDialogStop);
                         PanelDialog();
-                        this.set_jLabel_B_L("Dialog");
                     } else {
                         try {
                             //passa direttamente ad annullare lavoro
                             this.esegui("stop");
-//                    gestioneDialogRisposte(STATO_STOP);
+                            this.stato = Static.STATO_SCELTA_LAVORO;
                             this.PanelStart();
-                            this.set_jLabel_B_L("Start");
                         } catch (Exception ex) {
                             Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
                         }
@@ -886,15 +881,13 @@ public class JRivitMain extends javax.swing.JFrame {
                             this.AlertDialogStop = "Confirm stop work ?";
                             this.jLabelDialog.setText(AlertDialogStop);
                             PanelDialog();
-                            this.set_jLabel_B_L("Dialog");
                         } else {
                             try {
                                 //passa direttamente ad annullare lavoro
                                 this.esegui("stop");
-//                    gestioneDialogRisposte(STATO_STOP);
+                                this.stato = Static.STATO_SCELTA_LAVORO;
                                 g.setInPrimoPiano(false);
                                 this.PanelStart();
-                                this.set_jLabel_B_L("Start");
                             } catch (Exception ex) {
                                 Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
                             }
@@ -905,14 +898,12 @@ public class JRivitMain extends javax.swing.JFrame {
                         this.AlertDialogStop = "Confirm test Calibration ?";
                         this.jLabelDialog.setText(AlertDialogStop);
                         PanelDialog();
-                        this.set_jLabel_B_L("Dialog");
                     }
                     if (this.getStato().equals(Static.STATO_CALIBRAZIONE_TEST)) {
                         //Salvare la calibrazione ?
                         this.AlertDialogStop = "Confirm calibration rewrite ?";
                         this.jLabelDialog.setText(AlertDialogStop);
                         PanelDialog();
-                        this.set_jLabel_B_L("Dialog");
                     }
                 }
             }
@@ -927,36 +918,32 @@ public class JRivitMain extends javax.swing.JFrame {
                         case Static.ANNULLA -> {
                             this.esegui("annulla");
                             this.PanelStarted();
-                            this.set_jLabel_B_L("Started");
                         }
                         case Static.CONTINUA -> {
                             this.esegui("continua");
                             this.PanelStarted();
-                            this.set_jLabel_B_L("Started");
                         }
                         case Static.ACCETTA -> {
                             this.esegui("accetta");
                             this.PanelStarted();
-                            this.set_jLabel_B_L("Started");
                         }
                         case Static.STATO_STOP -> {
                             this.esegui("stop");
+                            this.stato = Static.STATO_SCELTA_LAVORO;
                             this.PanelStart();
-                            this.set_jLabel_B_L("Start");
                         }
                         case Static.STATO_PAUSA -> {
                             this.esegui("pausa");
                             this.PanelStart();
                             this.statoPausa = true;
-                            this.set_jLabel_B_L("Start");
                         }
-                        case Static.RICHIESTA_CALIBRAZIONE_TEST -> {
+                        case Static.RICHIESTA_CALIBRAZIONE -> {
                             g.setInPrimoPiano(true);
                             this.esegui("calibrazione");
                         }
                         case Static.STATO_CALIBRAZIONE -> {//Ok registra calibrazione
                             esegui("salva_calibrazione");
-                            this.stato = Static.STATO_STOP;
+                            this.stato = Static.STATO_SCELTA_LAVORO;
                             this.PanelStart();
                         }
                         case Static.STATO_CALIBRAZIONE_TEST -> {
@@ -991,14 +978,13 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     private void jButtonPL1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPL1ActionPerformed
         // Qual'è il nome del pannello in primo piano ?
-        switch (this.jLayeredPaneCenter.getComponent(0).getName()) {
+        switch (this.panCur) {
             case "main" -> {
                 PanelWarning();
                 this.jLabel_B_L.setText("Warning");
             }
             case "start" -> {
                 PanelMain();//Exit verso main
-                set_jLabel_B_L("Main");
             }
             case "started" ->//Continua
             {
@@ -1012,7 +998,6 @@ public class JRivitMain extends javax.swing.JFrame {
                     this.setStato(Static.STATO_SCELTA_LAVORO);
                     g.setInPrimoPiano(false);
                     this.esegui("stop");
-                    set_jLabel_B_L("Start");
                     PanelStart();
                 } else {
                     this.setStato(Static.CONTINUA);
@@ -1023,7 +1008,6 @@ public class JRivitMain extends javax.swing.JFrame {
             }
             case "setup", "info" -> {
                 PanelMain();
-                this.set_jLabel_B_L("Main");
             }
             case "warning" -> {
                 switch (this.pannelloPrecedente) {
@@ -1039,7 +1023,6 @@ public class JRivitMain extends javax.swing.JFrame {
             }
             case "setup lan", "setup wifi" -> {
                 PanelSetup();
-                this.set_jLabel_B_L("Setup");
             }
 
         }
@@ -1052,7 +1035,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private void jButtonPL2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPL2ActionPerformed
         //Pulsante L2 Centrale a sx
         // Qual'è il nome del pannello in primo piano ?
-        switch (this.jLayeredPaneCenter.getComponent(0).getName()) {
+        switch (this.panCur) {
             case "main" -> {
                 PanelInfo();
                 this.jLabel_B_L.setText("Info");
@@ -1063,7 +1046,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 rispostaErrore();
             }
             case "canvas" -> {
-                if (! getStato().equals(Static.STATO_CALIBRAZIONE)) {
+                if (!getStato().equals(Static.STATO_CALIBRAZIONE)) {
                     this.setStato(Static.ACCETTA);
                     rispostaErrore();
                     //PanelStarted();
@@ -1074,12 +1057,10 @@ public class JRivitMain extends javax.swing.JFrame {
             case "setup" -> {
                 this.esegui("aggiorna_stato_lan");
                 PanelSetupLan();
-                this.set_jLabel_B_L("Setup Lan");
             }
             case "dialog" -> {
-                if (this.PanCur.contains("started")) {
+                if (this.panCur.contains("started")) {
                     PanelStarted();
-                    this.set_jLabel_B_L("Started");
                 }
             }
         }
@@ -1092,7 +1073,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private void jButtonPL3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPL3ActionPerformed
         //Pulsante L3
         // Qual'è il nome del pannello in primo piano ?
-        switch (this.jLayeredPaneCenter.getComponent(0).getName()) {
+        switch (this.panCur) {
             case "main" -> {
                 this.jLabel_B_L.setText("Setup");
                 this.esegui("aggiorna_nm_list");
@@ -1102,13 +1083,12 @@ public class JRivitMain extends javax.swing.JFrame {
                 this.PulsanteSxDx(1);//Destra
             case "setup" -> {
                 this.esegui("aggiorna_stato_wifi");
-                this.set_jLabel_B_L("Setup Wifi");
                 PanelSetupWifi();
             }
             case "start" -> {
                 this.AlertDialogStop = "Enter re-calibration mode ?";
                 this.jLabelDialog.setText(AlertDialogStop);
-                this.stato = Static.RICHIESTA_CALIBRAZIONE_TEST;
+                this.stato = Static.RICHIESTA_CALIBRAZIONE;
                 PanelDialog();
             }
             case "started" -> {//Annullare il tiro
@@ -1116,7 +1096,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 rispostaErrore();
             }
             case "canvas" -> {
-                if (! getStato().equals(Static.STATO_CALIBRAZIONE)) {
+                if (!getStato().equals(Static.STATO_CALIBRAZIONE)) {
                     this.setStato(Static.ANNULLA);
                     rispostaErrore();
                     //PanelStarted();
@@ -1133,7 +1113,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private void jButtonPR2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPR2ActionPerformed
         //Pulsante R2
         // Qual'è il nome del pannello in primo piano ?
-        switch (this.jLayeredPaneCenter.getComponent(0).getName()) {
+        switch (this.panCur) {
 //            case "main" -> { //fare tutta WebControl
 //                this.inCalibrazione = true;
 //                this.set_jLabel_B_L("Calibration");
@@ -1154,15 +1134,12 @@ public class JRivitMain extends javax.swing.JFrame {
                         this.AlertDialogStop = "Confirm pause work ?";
                         this.jLabelDialog.setText(AlertDialogStop);
                         PanelDialog();
-                        this.set_jLabel_B_L("Dialog");
                     } else {
                         //passa direttamente ad annullare lavoro
                         g.setInPrimoPiano(false);
                         this.PanelStart();
                         this.esegui("pausa");
                         this.statoPausa = true;
-                        this.set_jLabel_B_L("Start");
-
                     }
                 }
 
@@ -1170,21 +1147,23 @@ public class JRivitMain extends javax.swing.JFrame {
             case "setup" -> {
                 PulsanteGiu();
             }
-            case "dialog" -> {//Scelta no alla domanda, ritornare al pannello started, No Salva waveform
-                if (this.stato == Static.RICHIESTA_CALIBRAZIONE_TEST) {
-                    this.stato = Static.STATO_STOP;
-                    g.setInPrimoPiano(false);
-                    PanelStart();
-                } else {
-                    PanelStarted();
-                }
+            case "dialog" -> {//Scelta no alla domanda, ritornare al pannello started, No Salva waveform, No test
+                switch (this.stato) {
+                    case Static.RICHIESTA_CALIBRAZIONE_TEST -> {//Ritorna in calibrazione
+                        this.avviaCalibrazione();
+                    }
+                    case Static.RICHIESTA_CALIBRAZIONE -> {//Ritorna in scelta lavoro
+                        this.stato = Static.STATO_SCELTA_LAVORO;
+                        g.setInPrimoPiano(false);
+                        PanelStart();
+                    }
+                    default ->{
+                        PanelStarted();
+                    }
 
-//                if (this.inErrore) {
-//                    set_errore_tiro();
-//                    this.inErrore = false;
-//                }
-                this.set_jLabel_B_L("Started");
-            }
+                }//End Switch stato
+
+            }//End Switch "dialog
 
         }
     }//GEN-LAST:event_jButtonPR2ActionPerformed
@@ -1198,8 +1177,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private void jButtonPR3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPR3ActionPerformed
         // Pulsante R3
         // Qual'è il nome del pannello in primo piano ?
-        String panelName = this.jLayeredPaneCenter.getComponent(0).getName();
-        switch (panelName) {
+        switch (this.panCur) {
             case "main" ->
                 this.exit();
 //                per ora uso il pulsante per chiudere;
@@ -1221,7 +1199,6 @@ public class JRivitMain extends javax.swing.JFrame {
             }
             case "setup lan", "setup wifi" -> {
                 PanelSetup();
-                this.set_jLabel_B_L("Setup");
             }
         }
     }//GEN-LAST:event_jButtonPR3ActionPerformed
@@ -1244,7 +1221,6 @@ public class JRivitMain extends javax.swing.JFrame {
             this.AlertDialogStop = rispostaErrore + " ?";
             this.jLabelDialog.setText(AlertDialogStop);
             PanelDialog();
-            this.set_jLabel_B_L("Dialog");
         } else {
             try {
                 this.esegui(rispostaErrore);
@@ -1303,8 +1279,7 @@ public class JRivitMain extends javax.swing.JFrame {
     public void PanelMain() {
         this.changeButtons(this.Img_Warning, this.Img_Info, this.Img_Setup,
                 this.Img_Play, this.Img_Nulla, this.Img_Exit);
-        this.jLayeredPaneCenter.moveToFront(this.jPanelMain);
-        this.set_jLabel_B_L("Main");
+        cambiaPannello(this.jPanelMain);
     }
 
     /**
@@ -1375,7 +1350,7 @@ public class JRivitMain extends javax.swing.JFrame {
 //        this.jPanelStarted.setBackground(Color.red);
 //        this.changeButtons(this.Img_Continua, this.Img_Ok, this.Img_Annulla,
 //                this.Img_Stop, this.Img_Pause, this.Img_Grafico);
-//        this.jLayeredPaneCenter.moveToFront(this.jPanelStarted);
+          cambiaPannello(this.jPanelStarted);
 //        this.repaint();
     }
 
@@ -1535,7 +1510,7 @@ public class JRivitMain extends javax.swing.JFrame {
             selezionato = 1;
         }
         this.listLavori.select(selezionato);
-        this.jLayeredPaneCenter.moveToFront(this.jPanelStart);
+        cambiaPannello(this.jPanelStart);
     }
 
     /**
@@ -1568,9 +1543,7 @@ public class JRivitMain extends javax.swing.JFrame {
         if (this.statoConcluso && this.inErrore) {
             this.jPanelStarted.setBackground(Color.ORANGE);
         }
-
-        this.jLayeredPaneCenter.moveToFront(this.jPanelStarted);
-        this.set_jLabel_B_L("Started");
+        cambiaPannello(this.jPanelStarted);
         this.repaint();
     }
 
@@ -1645,10 +1618,10 @@ public class JRivitMain extends javax.swing.JFrame {
      * Pannello che mostra il contenuto del file /tmp/warning.txt
      */
     private void PanelWarning() {
-        this.pannelloPrecedente = this.jLayeredPaneCenter.getComponent(0).getName();
+        this.pannelloPrecedente = this.panCur;
         this.changeButtons(this.Img_Exit, this.Img_Nulla, this.Img_Nulla,
                 this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Nulla);
-        this.jLayeredPaneCenter.moveToFront(this.jPanelWarning);
+        cambiaPannello(this.jPanelWarning);
     }
 
     /**
@@ -1661,11 +1634,9 @@ public class JRivitMain extends javax.swing.JFrame {
         javax.swing.JScrollPane jsp = null;
         boolean isSetup = false;
         // Qual'è il nome del pannello in primo piano ?
-        String panelName = this.jLayeredPaneCenter.getComponent(0).getName();
-        switch (this.jLayeredPaneCenter.getComponent(0).getName()) {
-            case "start" -> {
+        switch (this.panCur) {
+            case "start" -> 
                 lista = this.listLavori;
-            }
             case "setup wifi" ->
                 jsp = this.jScrollPaneWifi;
             case "setup lan" ->
@@ -1693,7 +1664,7 @@ public class JRivitMain extends javax.swing.JFrame {
             lista.select(nrCurItem);
             // rendi visibile l'elemento selezionato
             lista.makeVisible(nrCurItem);
-            if (panelName.equals("start")) {
+            if (this.panCur.equals("start")) {
                 this.JTextAreaDescrizioneLavoro.setText(
                         this.elencoDesLavoro.get(nrCurItem));
             }
@@ -1716,8 +1687,7 @@ public class JRivitMain extends javax.swing.JFrame {
         javax.swing.JScrollPane jsp = null;
         boolean isSetup = false;
         // Qual'è il nome del pannello in primo piano ?
-        String panelName = this.jLayeredPaneCenter.getComponent(0).getName();
-        switch (panelName) {
+        switch (this.panCur) {
             case "start" -> {
                 lista = this.listLavori;
             }
@@ -1748,7 +1718,7 @@ public class JRivitMain extends javax.swing.JFrame {
             lista.select(nrCurItem);
             // rendi visibile l'elemento selezionato
             lista.makeVisible(nrCurItem);
-            if (panelName.equals("start")) {
+            if (this.panCur.equals("start")) {
                 this.JTextAreaDescrizioneLavoro.setText(
                         this.elencoDesLavoro.get(nrCurItem));
             }
@@ -1767,8 +1737,7 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     private void PulsanteSxDx(int sx_dx) {
         javax.swing.JScrollPane jsp = null;
-        String panelName = this.jLayeredPaneCenter.getComponent(0).getName();
-        switch (panelName) {
+        switch (this.panCur) {
             case "setup wifi" ->
                 jsp = this.jScrollPaneWifi;
             case "setup lan" ->
@@ -1798,7 +1767,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private void PanelSetupLan() {
         this.changeButtons(this.Img_Exit, this.Img_Freccia_sx, this.Img_Freccia_dx,
                 this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Ok);
-        this.jLayeredPaneCenter.moveToFront(this.jPanelSetupLan);
+        cambiaPannello(this.jPanelSetupLan);
     }
 
     /**
@@ -1807,7 +1776,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private void PanelSetupWifi() {
         this.changeButtons(this.Img_Exit, this.Img_Freccia_sx, this.Img_Freccia_dx,
                 this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Ok);
-        this.jLayeredPaneCenter.moveToFront(this.jPanelSetupWiFi);
+        cambiaPannello(this.jPanelSetupWiFi);
     }
 
     /**
@@ -1816,7 +1785,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private void PanelInfo() {
         this.changeButtons(this.Img_Exit, this.Img_Nulla, this.Img_Nulla,
                 this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Nulla);
-        this.jLayeredPaneCenter.moveToFront(this.jPanelInfo);
+        cambiaPannello(this.jPanelInfo);
     }
 
     /**
@@ -1828,13 +1797,14 @@ public class JRivitMain extends javax.swing.JFrame {
     private void PanelDialog() {
         this.changeButtons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
                 this.Img_Ok, this.Img_Cancel, this.Img_Nulla);
-        this.jLayeredPaneCenter.moveToFront(this.jPanelDialog);
+        cambiaPannello(this.jPanelDialog);
     }
 
     /**
      * Pannello per disegnare il grafico
      */
     public void PanelCanvas() {
+        cambiaPannello(this.g);
         if (this.getStato().equals(Static.STATO_CALIBRAZIONE)) {
             this.changeButtons(this.Img_Exit, this.Img_Nulla, this.Img_Nulla,
                     this.Img_Ok, this.Img_Nulla, this.Img_Nulla);
@@ -1850,9 +1820,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 this.changeButtons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
                         this.Img_Stop, this.Img_Pause, this.Img_Estende);
             }
-            this.set_jLabel_B_L("Graph");
         }
-        this.jLayeredPaneCenter.moveToFront(this.g);
     }
 
     public int getW_level() {
@@ -2056,7 +2024,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private void PanelSetup() {
         this.changeButtons(this.Img_Exit, this.Img_Lan, this.Img_WiFi,
                 this.Img_Freccia_su, this.Img_Freccia_giu, setIconSetup());
-        this.jLayeredPaneCenter.moveToFront(this.jPanelSetup);
+        cambiaPannello(this.jPanelSetup);
     }
 
     /**
@@ -2270,7 +2238,7 @@ public class JRivitMain extends javax.swing.JFrame {
     }
 
     public void mostraCurva() {
-        this.jLayeredPaneCenter.moveToFront(this.g);
+        cambiaPannello(this.g);
         this.repaint();
         //esegui("curva");
     }
@@ -2705,7 +2673,7 @@ public class JRivitMain extends javax.swing.JFrame {
      * @param inCalibra
      */
     public void setInCalibra(boolean inCalibra) {
-        if(inCalibra){
+        if (inCalibra) {
             setStato(Static.STATO_CALIBRAZIONE);
         }
     }
@@ -2764,16 +2732,15 @@ public class JRivitMain extends javax.swing.JFrame {
     }
 
     /**
-
-
-    /**
+     *
+     *
+     * /**
      * avvia la fase di calibrazione
      */
     void avviaCalibrazione() {
         setStato(Static.STATO_CALIBRAZIONE);
         g.setInPrimoPiano(true);
         g.setPrimoGiro(true);
-        this.set_jLabel_B_L("Calibration");
         PanelCanvas();
         esegui("grafico");
     }
@@ -2794,7 +2761,7 @@ public class JRivitMain extends javax.swing.JFrame {
      * conclude la fase di calibrazione
      */
     void fineCalibrazione() {
-        setStato(Static.STATO_STOP);
+        setStato(Static.STATO_SCELTA_LAVORO);
         PanelMain();
     }
 
@@ -2805,7 +2772,6 @@ public class JRivitMain extends javax.swing.JFrame {
         this.jLabelNomeLavoro.setText(this.lavoroScelto.trim());
         PanelStarted();
         impostaLabelContatori();
-        this.set_jLabel_B_L("Started");
     }
 
     /**
@@ -2926,4 +2892,23 @@ public class JRivitMain extends javax.swing.JFrame {
         return this.stato;
     }
 
+    public String getPanCur() {
+        return panCur;
+    }
+
+    public void setPanCur(String panCur) {
+        this.panCur = panCur;
+    }
+
+    /**
+     * Cambia pannello impostando anche panCur e la label in basso a SX
+     * @param nuovoPannello 
+     */
+    private void cambiaPannello(JPanel nuovoPannello) {
+        this.jLayeredPaneCenter.moveToFront(nuovoPannello);
+        this.panCur = nuovoPannello.getName();
+        this.set_jLabel_B_L(this.panCur);
+        // se dovesse servire conoscere qual'è il pannello in primo piano,
+        // usare this.getjLayeredPaneCenter().getComponent(0).getName();
+    }
 }
