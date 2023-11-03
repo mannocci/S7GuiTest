@@ -69,11 +69,16 @@ public class JDoWorker extends SwingWorker<String, Object> {
 
                 case "init" ->
                     this.init();
-
+                case "calibrazione" -> {
+                    JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_CALIBRAZIONE);
+                    this.Rm.avviaCalibrazione();
+                }
+                case "salva_calibrazione" -> {
+                    JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_SALVA_CALIBRAZIONE);
+                }                
                 case "stop" -> {
                     JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_STOP);
                 }
-
                 case "pausa" -> {
                     JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_PAUSA);
                 }
@@ -113,10 +118,8 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     this.Rm.set_jLabel_B_L(this.dateFormat.format(orario));
                     this.Rm.repaint();
                 }
-
                 case "grafico" -> {
                     this.Rm.repaint();
-
                     //this.drawGrafico();
                 }
             }
