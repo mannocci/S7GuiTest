@@ -13,6 +13,9 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * ci sono due field rererenti alla curva
+    1) Di riferimento
+    2) Tiro appena fatto
  */
 package jrivitscreen;
 
@@ -41,9 +44,11 @@ public class JGrafico extends JPanel {
     private boolean primoGiro;
     private Font f;
     private String um;
+    private JRivitMain Rm;
 
-    public JGrafico() {
+    public JGrafico(JRivitMain Rm) {
         picco = 0;
+        this.Rm= Rm;
         posizionePicco = 0;
         primoGiro = false;
         this.stato = "0";
@@ -93,13 +98,13 @@ public class JGrafico extends JPanel {
             int y = this.getHeight();
             gr.setColor(Color.BLACK);
             gr.drawLine(0, y - 6, this.getWidth(), y - 6);
-            if (this.stato.equals(Static.STATO_CALIBRAZIONE)) {
+            // richiesta di test della nuova calibrazione
+            if (this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE_TEST)) {
                 if (primoGiro) {
                     primoGiro = false;
-                } else {
                     this.curvaDiRiferimento = this.curva;
+                    this.curva = "";
                 }
-                this.curva = "";
             }
             if (this.curvaDiRiferimento != null) {
                 gr.setColor(Color.GREEN);
@@ -131,7 +136,7 @@ public class JGrafico extends JPanel {
                     gr.setColor(Color.RED);
                 } else {
                     if (this.stato.equals(Static.STATO_CALIBRAZIONE)) {
-                        gr.setColor(Color.GREEN);
+                        gr.setColor(Color.ORANGE);
                     } else {
                         gr.setColor(Color.BLACK);
                     }
