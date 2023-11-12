@@ -36,7 +36,8 @@ public class Static {
     final static String RICHIESTA_CALIBRAZIONE = "83";
     final static String RICHIESTA_CALIBRAZIONE_TEST = "84";
     final static String RICHIESTA_RIAVVIO = "85";
-    final static String RICHIESTA_SALVA_CALIBRAZIONE = "86";
+    final static String RICHIESTA_CALIBRAZIONE_SALVA = "86";
+    final static String RICHIESTA_CALIBRAZIONE_ANNULLA = "87";
     final static String STATO_AVVIATO = "91";
     final static String STATO_CONCLUSO = "100";
     final static String STATO_CALIBRAZIONE = "200";
@@ -87,6 +88,7 @@ public class Static {
     final static String F_ERRORE = "errore";
     final static String F_CURVA = "curva";
     final static String F_CURVA_DI_RIFERIMENTO = "curva_di_riferimento";
+    final static String F_PICCO = "picco";
     final static String F_CHIEDI_CONFERMA_NO = "chiedi_conferma_no";
     final static String F_CHIEDI_CONFERMA_STOP = "chiedi_conferma_stop";
     final static String F_LOTTI_OK = "lotti_ok";

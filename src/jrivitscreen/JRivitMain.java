@@ -110,7 +110,6 @@ public class JRivitMain extends javax.swing.JFrame {
     private boolean in_pausa = false;
     private boolean chiedi_conferma = false;
     private boolean statoConcluso = false;
-    private boolean statoPausa = false;
     private boolean chiedi_conferma_stop;
     private List<String> elencoDesLavoro;
     private int w_level;
@@ -123,6 +122,8 @@ public class JRivitMain extends javax.swing.JFrame {
     private String curvaDiRiferimento;
     private ArrayList<Object> elencoDesLavoroCompleto;
     private String um;  // Unità di misura (Bar o Newton)
+    private String richiesta;
+    private String contesto;
 
 //
 //Dopo una sospensione
@@ -836,7 +837,6 @@ public class JRivitMain extends javax.swing.JFrame {
                     // todo Gestire il caso in cui il lavoro in pausa non viene trovato
                     PanelStarted();
                 } else {
-                    this.stato = Static.STATO_SCELTA_LAVORO;
                     PanelStart();
                 }
             }
@@ -848,11 +848,11 @@ public class JRivitMain extends javax.swing.JFrame {
                 //esiste conferma_no come file in /tmp/CT ?
                 // se esiste non chiede conferma della scelta
                 if (this.statoConcluso) {
-                    g.setInPrimoPiano(false);
                     PanelStart();
                 } else {
                     if (this.isChiediConfermaStop()) {
-                        stato = Static.STATO_STOP;
+                        this.setContesto(this.panCur);
+                        richiesta = Static.STATO_STOP;
                         this.AlertDialogStop = "Confirm stop work ?";
                         this.jLabelDialog.setText(AlertDialogStop);
                         PanelDialog();
@@ -860,8 +860,6 @@ public class JRivitMain extends javax.swing.JFrame {
                         try {
                             //passa direttamente ad annullare lavoro
                             this.esegui("stop");
-                            this.stato = Static.STATO_SCELTA_LAVORO;
-                            this.PanelStart();
                         } catch (Exception ex) {
                             Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
                         }
@@ -873,11 +871,10 @@ public class JRivitMain extends javax.swing.JFrame {
                 //Annullare il lavoro
                 if (!this.getStato().equals(Static.STATO_CALIBRAZIONE)) {
                     if (this.statoConcluso) {
-                        g.setInPrimoPiano(false);
                         PanelStart();
                     } else {
                         if (this.isChiediConfermaStop()) {
-                            stato = Static.STATO_STOP;
+                            richiesta = Static.STATO_STOP;
                             this.AlertDialogStop = "Confirm stop work ?";
                             this.jLabelDialog.setText(AlertDialogStop);
                             PanelDialog();
@@ -885,9 +882,6 @@ public class JRivitMain extends javax.swing.JFrame {
                             try {
                                 //passa direttamente ad annullare lavoro
                                 this.esegui("stop");
-                                this.stato = Static.STATO_SCELTA_LAVORO;
-                                g.setInPrimoPiano(false);
-                                this.PanelStart();
                             } catch (Exception ex) {
                                 Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
                             }
@@ -897,12 +891,14 @@ public class JRivitMain extends javax.swing.JFrame {
                     if (this.getStato().equals(Static.STATO_CALIBRAZIONE)) {
                         this.AlertDialogStop = "Confirm test Calibration ?";
                         this.jLabelDialog.setText(AlertDialogStop);
+                        richiesta = Static.RICHIESTA_CALIBRAZIONE_TEST;
                         PanelDialog();
                     }
                     if (this.getStato().equals(Static.STATO_CALIBRAZIONE_TEST)) {
                         //Salvare la calibrazione ?
                         this.AlertDialogStop = "Confirm calibration rewrite ?";
                         this.jLabelDialog.setText(AlertDialogStop);
+                        richiesta = Static.RICHIESTA_CALIBRAZIONE_SALVA;
                         PanelDialog();
                     }
                 }
@@ -913,43 +909,32 @@ public class JRivitMain extends javax.swing.JFrame {
                 try {
                     //Pulsante Sì alla domanda ? Annulla ? Abort ?
                     //passa direttamente ad annullare lavoro
-                    switch (this.stato) {
+                    switch (this.richiesta) {
 
                         case Static.ANNULLA -> {
                             this.esegui("annulla");
-                            this.PanelStarted();
                         }
                         case Static.CONTINUA -> {
                             this.esegui("continua");
-                            this.PanelStarted();
                         }
                         case Static.ACCETTA -> {
                             this.esegui("accetta");
-                            this.PanelStarted();
                         }
                         case Static.STATO_STOP -> {
                             this.esegui("stop");
-                            this.stato = Static.STATO_SCELTA_LAVORO;
-                            this.PanelStart();
                         }
                         case Static.STATO_PAUSA -> {
                             this.esegui("pausa");
-                            this.PanelStart();
-                            this.statoPausa = true;
                         }
                         case Static.RICHIESTA_CALIBRAZIONE -> {
-                            g.setInPrimoPiano(true);
                             this.esegui("calibrazione");
                         }
-                        case Static.STATO_CALIBRAZIONE -> {//Ok registra calibrazione
-                            esegui("salva_calibrazione");
-                            this.stato = Static.STATO_SCELTA_LAVORO;
-                            this.PanelStart();
-                        }
-                        case Static.STATO_CALIBRAZIONE_TEST -> {
+                        case Static.RICHIESTA_CALIBRAZIONE_TEST -> {
                             this.esegui("calibrazione_test");
                             this.set_jLabel_B_L("Test");
-                            this.setStato(Static.STATO_CALIBRAZIONE_TEST);
+                        }
+                        case Static.RICHIESTA_CALIBRAZIONE_SALVA -> {//Ok registra calibrazione
+                            esegui("salva_calibrazione");
                         }
                     }
 
@@ -988,7 +973,8 @@ public class JRivitMain extends javax.swing.JFrame {
             }
             case "started" ->//Continua
             {
-                this.setStato(Static.CONTINUA);
+                this.setContesto(this.panCur);
+                richiesta = Static.CONTINUA;
                 rispostaErrore();
 
             }
@@ -996,7 +982,6 @@ public class JRivitMain extends javax.swing.JFrame {
                 if (this.getStato().equals(Static.STATO_CALIBRAZIONE)) {
                     //Uscita dalla Calibrazione
                     this.setStato(Static.STATO_SCELTA_LAVORO);
-                    g.setInPrimoPiano(false);
                     this.esegui("stop");
                     PanelStart();
                 } else {
@@ -1042,7 +1027,8 @@ public class JRivitMain extends javax.swing.JFrame {
             }
             case "started" ->//Accetta il tiro
             {
-                this.setStato(Static.ACCETTA);
+                this.setContesto(this.panCur);
+                richiesta = Static.ACCETTA;
                 rispostaErrore();
             }
             case "canvas" -> {
@@ -1059,7 +1045,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 PanelSetupLan();
             }
             case "dialog" -> {
-                if (this.panCur.contains("started")) {
+                if (this.contesto.contains("started")) {
                     PanelStarted();
                 }
             }
@@ -1087,12 +1073,13 @@ public class JRivitMain extends javax.swing.JFrame {
             }
             case "start" -> {
                 this.AlertDialogStop = "Enter re-calibration mode ?";
+                richiesta = Static.RICHIESTA_CALIBRAZIONE;
                 this.jLabelDialog.setText(AlertDialogStop);
-                this.stato = Static.RICHIESTA_CALIBRAZIONE;
                 PanelDialog();
             }
             case "started" -> {//Annullare il tiro
-                this.setStato(Static.ANNULLA);
+                this.setContesto(this.panCur);
+                richiesta = Static.ANNULLA;
                 rispostaErrore();
             }
             case "canvas" -> {
@@ -1129,17 +1116,14 @@ public class JRivitMain extends javax.swing.JFrame {
                 } else {
                     if (this.isChiediConfermaStop()) {
 //                    DialogQ = STATO_PAUSA;
-                        this.setStato(Static.STATO_PAUSA);
-
+                        this.setContesto(this.panCur);
+                        richiesta = Static.STATO_PAUSA;
                         this.AlertDialogStop = "Confirm pause work ?";
                         this.jLabelDialog.setText(AlertDialogStop);
                         PanelDialog();
                     } else {
                         //passa direttamente ad annullare lavoro
-                        g.setInPrimoPiano(false);
-                        this.PanelStart();
                         this.esegui("pausa");
-                        this.statoPausa = true;
                     }
                 }
 
@@ -1148,16 +1132,14 @@ public class JRivitMain extends javax.swing.JFrame {
                 PulsanteGiu();
             }
             case "dialog" -> {//Scelta no alla domanda, ritornare al pannello started, No Salva waveform, No test
-                switch (this.stato) {
+                switch (this.richiesta) {
                     case Static.RICHIESTA_CALIBRAZIONE_TEST -> {//Ritorna in calibrazione
                         this.avviaCalibrazione();
                     }
                     case Static.RICHIESTA_CALIBRAZIONE -> {//Ritorna in scelta lavoro
-                        this.stato = Static.STATO_SCELTA_LAVORO;
-                        g.setInPrimoPiano(false);
                         PanelStart();
                     }
-                    default ->{
+                    default -> {
                         PanelStarted();
                     }
 
@@ -1185,12 +1167,10 @@ public class JRivitMain extends javax.swing.JFrame {
                 avviaLavoro();
             }
             case "started" -> {
-                g.setInPrimoPiano(true);
                 this.PanelCanvas();
                 this.esegui("grafico");
             }
             case "canvas" -> {
-                g.setInPrimoPiano(false);
                 PanelStarted();
             }
             case "setup" -> {
@@ -1207,8 +1187,7 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     private void rispostaErrore() {
         String rispostaErrore = "";
-        switch (this.stato) {
-
+        switch (this.richiesta) {
             case Static.CONTINUA ->
                 rispostaErrore = "continua";
             case Static.ANNULLA ->
@@ -1350,7 +1329,7 @@ public class JRivitMain extends javax.swing.JFrame {
 //        this.jPanelStarted.setBackground(Color.red);
 //        this.changeButtons(this.Img_Continua, this.Img_Ok, this.Img_Annulla,
 //                this.Img_Stop, this.Img_Pause, this.Img_Grafico);
-          cambiaPannello(this.jPanelStarted);
+        cambiaPannello(this.jPanelStarted);
 //        this.repaint();
     }
 
@@ -1635,7 +1614,7 @@ public class JRivitMain extends javax.swing.JFrame {
         boolean isSetup = false;
         // Qual'è il nome del pannello in primo piano ?
         switch (this.panCur) {
-            case "start" -> 
+            case "start" ->
                 lista = this.listLavori;
             case "setup wifi" ->
                 jsp = this.jScrollPaneWifi;
@@ -2738,8 +2717,6 @@ public class JRivitMain extends javax.swing.JFrame {
      * avvia la fase di calibrazione
      */
     void avviaCalibrazione() {
-        setStato(Static.STATO_CALIBRAZIONE);
-        g.setInPrimoPiano(true);
         g.setPrimoGiro(true);
         PanelCanvas();
         esegui("grafico");
@@ -2749,8 +2726,6 @@ public class JRivitMain extends javax.swing.JFrame {
      * avvia la fase di calibrazione
      */
     void avviaCalibrazioneTest() {
-        setStato(Static.STATO_CALIBRAZIONE_TEST);
-        g.setInPrimoPiano(true);
         g.setPrimoGiro(false);
         this.set_jLabel_B_L("Cal. Test");
         PanelCanvas();
@@ -2902,7 +2877,8 @@ public class JRivitMain extends javax.swing.JFrame {
 
     /**
      * Cambia pannello impostando anche panCur e la label in basso a SX
-     * @param nuovoPannello 
+     *
+     * @param nuovoPannello
      */
     private void cambiaPannello(JPanel nuovoPannello) {
         this.jLayeredPaneCenter.moveToFront(nuovoPannello);
@@ -2910,5 +2886,9 @@ public class JRivitMain extends javax.swing.JFrame {
         this.set_jLabel_B_L(this.panCur);
         // se dovesse servire conoscere qual'è il pannello in primo piano,
         // usare this.getjLayeredPaneCenter().getComponent(0).getName();
+    }
+
+    private void setContesto(String contesto) {
+        this.contesto = contesto;
     }
 }

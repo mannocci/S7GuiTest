@@ -33,7 +33,6 @@ import javax.swing.JPanel;
 public class JGrafico extends JPanel {
 
     private String curva;
-    private boolean inPrimoPiano = false;
     private String curvaDiRiferimento;
     int nPoints;
     int[] xpoints, ypoints;
@@ -58,10 +57,6 @@ public class JGrafico extends JPanel {
 
     public void setCurvaDiRiferimento(String curvaDiRiferimento) {
         this.curvaDiRiferimento = curvaDiRiferimento;
-    }
-
-    public void setInPrimoPiano(boolean inPrimoPiano) {
-        this.inPrimoPiano = inPrimoPiano;
     }
 
     @Override
@@ -100,7 +95,7 @@ public class JGrafico extends JPanel {
             if (this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE_TEST)) {
                 if (primoGiro) {
                     primoGiro = false;
-                    this.curvaDiRiferimento = this.curva;
+//                    this.curvaDiRiferimento = this.curva;
                     this.curva = "";
                 }
             }

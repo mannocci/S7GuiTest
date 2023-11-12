@@ -55,8 +55,6 @@ public class JFileWorker extends Thread {
     private WatchService watcher;
     private Path fileName;
     private WatchKey key;
-    // se il lavoro è in corso contiene "1"
-    private String stato;
 
     public JFileWorker(JRivitMain mf) throws IOException {
         this.Rm = mf;
@@ -110,7 +108,7 @@ public class JFileWorker extends Thread {
                                 this.leggiAriaInMinMax();
                             case "killScreen" ->
                                 this.Rm.exit();
-                            case Static.F_CURVA + "_ready" ->
+                            case Static.F_PICCO + "_ready" ->
                                 gestisciCurva();
                             case Static.F_CURVA_DI_RIFERIMENTO + "_ready" ->
                                 readCurvaDiRiferimento();
@@ -147,7 +145,7 @@ public class JFileWorker extends Thread {
                     }
                     if (kind == ENTRY_DELETE) {
                         if (!fileName.toString().startsWith(Static.F_SENSORI)) {
-                            Static.debug("Eliminato: " + fileName, 3);
+                            Static.debug("Eliminato: " + fileName, 4);
                         }
                         switch (fileName.toString()) {
                             case Static.F_ARIA ->
@@ -523,9 +521,10 @@ public class JFileWorker extends Thread {
 
     private void leggiCurva() {
         this.Rm.setCurva(leggiFile(Static.F_CURVA));
+        String[] piccoArray = leggiFile(Static.F_CURVA).split(",");
         this.Rm.g.setCurva(this.Rm.getCurva());
         this.Rm.g.setUM(this.Rm.getUM());
-        this.Rm.g.setPicco(100, 45);    // temporaneo !! Il valore reale lo dovrà scrivere Control in qualche file
+        this.Rm.g.setPicco(Integer.parseInt(piccoArray[0]), Integer.parseInt(piccoArray[2]));    // temporaneo !! Il valore reale lo dovrà scrivere Control in qualche file
     }
 
     private void readCurvaDiRiferimento() {
@@ -667,8 +666,8 @@ public class JFileWorker extends Thread {
     }
 
     private void stato() {
-        stato = leggiFile(Static.F_STATO);
-        switch (stato) {
+        this.Rm.setStato(leggiFile(Static.F_STATO));
+        switch (this.Rm.getStato()) {
             case Static.STATO_CONCLUSO -> {
                 this.Rm.setStatoConcluso(true);
                 this.Rm.PanelStarted();
@@ -680,8 +679,11 @@ public class JFileWorker extends Thread {
             case Static.STATO_CALIBRAZIONE -> {
                 this.Rm.avviaCalibrazione();
             }
+            case Static.STATO_CALIBRAZIONE_TEST -> {
+                this.Rm.avviaCalibrazione();
+            }
             case Static.STATO_STOP -> {
-                if (this.stato.equals(Static.STATO_CALIBRAZIONE)) {
+                if (this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE)) {
                     this.Rm.fineCalibrazione();
                 } else {
 //                    scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_STOP);
@@ -693,7 +695,7 @@ public class JFileWorker extends Thread {
                 this.Rm.PanelStart();
             }
             case Static.RICHIESTA_RIAVVIO -> {
-                if (this.stato.equals(Static.STATO_CONCLUSO)) {
+                if (this.Rm.getStato().equals(Static.STATO_CONCLUSO)) {
                     this.Rm.avviaLavoro();
                 }
             }
