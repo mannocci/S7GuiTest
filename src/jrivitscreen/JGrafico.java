@@ -36,7 +36,6 @@ public class JGrafico extends JPanel {
     private String curvaDiRiferimento;
     int nPoints;
     int[] xpoints, ypoints;
-    private boolean isInError;
     private int picco;
     private int posizionePicco;
     private boolean primoGiro;
@@ -125,7 +124,7 @@ public class JGrafico extends JPanel {
                     ypoints[i] = y - 10 - Integer.parseInt(ychar[i]) / 7;
                 }
                 gr.setStroke(new BasicStroke(3));
-                if (this.isInError) {
+                if (this.Rm.getInErrore()) {
                     gr.setColor(Color.RED);
                 } else {
                     if (this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE)) {
@@ -149,10 +148,6 @@ public class JGrafico extends JPanel {
                 }
             }
         }
-    }
-
-    public void setIsInError(boolean isInError) {
-        this.isInError = isInError;
     }
 
     public void setPicco(int picco, int posizionePicco) {

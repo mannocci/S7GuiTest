@@ -265,20 +265,17 @@ public class JFileWorker extends Thread {
     }
 
     /**
-     * Metodo che imposta la variabile booleana <in_errore> di JRivitMain
+     * Metodo che imposta il comportamento dell'interfaccia di JRivitMain
      *
-     *
-     * @param si_o_no
+     * @param inErrore
      */
-    private void errore(boolean si_o_no) {
-        if (si_o_no) {
-//            mostra_curva();
-            this.Rm.set_errore_tiro();
-        } else {
-            this.Rm.setInErrore(false);
-            this.Rm.g.setIsInError(false);
+    private void errore(boolean inErrore) {
+        this.Rm.setInErrore(inErrore);
+        if (inErrore) {
+            if (!this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE_TEST)) {
+                this.Rm.set_errore_tiro();
+            }
         }
-        this.Rm.setInErrore(si_o_no);
     }
 
     /**

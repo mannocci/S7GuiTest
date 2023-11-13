@@ -868,41 +868,41 @@ public class JRivitMain extends javax.swing.JFrame {
 
             }
             case "canvas" -> {
-                //Annullare il lavoro
-                if (!this.getStato().equals(Static.STATO_CALIBRAZIONE)) {
-                    if (this.statoConcluso) {
-                        PanelStart();
-                    } else {
-                        if (this.isChiediConfermaStop()) {
-                            richiesta = Static.STATO_STOP;
-                            this.AlertDialogStop = "Confirm stop work ?";
-                            this.jLabelDialog.setText(AlertDialogStop);
-                            PanelDialog();
-                        } else {
-                            try {
-                                //passa direttamente ad annullare lavoro
-                                this.esegui("stop");
-                            } catch (Exception ex) {
-                                Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-                        }
-                    }
-                } else {
-                    if (this.getStato().equals(Static.STATO_CALIBRAZIONE)) {
+                switch (this.stato) {
+                    case Static.STATO_CALIBRAZIONE:
                         this.AlertDialogStop = "Confirm test Calibration ?";
                         this.jLabelDialog.setText(AlertDialogStop);
                         richiesta = Static.RICHIESTA_CALIBRAZIONE_TEST;
                         PanelDialog();
-                    }
-                    if (this.getStato().equals(Static.STATO_CALIBRAZIONE_TEST)) {
+                        break;
+                    case Static.STATO_CALIBRAZIONE_TEST:
                         //Salvare la calibrazione ?
                         this.AlertDialogStop = "Confirm calibration rewrite ?";
                         this.jLabelDialog.setText(AlertDialogStop);
                         richiesta = Static.RICHIESTA_CALIBRAZIONE_SALVA;
                         PanelDialog();
-                    }
+                        break;
+                    default:
+                        if (this.statoConcluso) {
+                            PanelStart();
+                        } else {
+                            if (this.isChiediConfermaStop()) {
+                                richiesta = Static.STATO_STOP;
+                                this.AlertDialogStop = "Confirm stop work ?";
+                                this.jLabelDialog.setText(AlertDialogStop);
+                                PanelDialog();
+                            } else {
+                                try {
+                                    //passa direttamente ad annullare lavoro
+                                    this.esegui("stop");
+                                } catch (Exception ex) {
+                                    Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
+                                }
+                            }
+                        }
                 }
             }
+
             case "warning", "info", "setup lan", "setup wifi", "setup" ->
                 PulsanteSu();
             case "dialog" -> {
@@ -1324,13 +1324,7 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     public void set_errore_tiro() {
         this.inErrore = true;
-        this.g.setIsInError(true);
         this.PanelStarted();
-//        this.jPanelStarted.setBackground(Color.red);
-//        this.changeButtons(this.Img_Continua, this.Img_Ok, this.Img_Annulla,
-//                this.Img_Stop, this.Img_Pause, this.Img_Grafico);
-        cambiaPannello(this.jPanelStarted);
-//        this.repaint();
     }
 
     /**
@@ -2890,5 +2884,9 @@ public class JRivitMain extends javax.swing.JFrame {
 
     private void setContesto(String contesto) {
         this.contesto = contesto;
+    }
+
+    boolean getInErrore() {
+        return this.inErrore;
     }
 }
