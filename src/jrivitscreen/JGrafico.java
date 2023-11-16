@@ -45,7 +45,7 @@ public class JGrafico extends JPanel {
 
     public JGrafico(JRivitMain Rm) {
         picco = 0;
-        this.Rm= Rm;
+        this.Rm = Rm;
         posizionePicco = 0;
         primoGiro = false;
     }
@@ -66,7 +66,7 @@ public class JGrafico extends JPanel {
             Graphics2D gr = (Graphics2D) g;
             if (this.curva == null) {
                 this.curva = "";
-/*
+                /*
                 this.curva = "20,10,20,10,10,30,10,30,30,20,30,30,10,30,20,10,20,"
                     + "0,30,20,10,20,30,20,40,50,70,120,150,240,310,390,480,550,"
                     + "640,690,720,730,710,750,770,770,790,780,760,770,740,710,"
@@ -74,7 +74,7 @@ public class JGrafico extends JPanel {
                     + "490,480,500,490,550,630,730,830,930,1000,1050,1120,1190,"
                     + "1270,1350,1350,1120,910,690,530,340,210,"
                     + "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0";
-*/
+                 */
             }
             /*
             if (this.curvaDiRiferimento == null) {
@@ -114,6 +114,19 @@ public class JGrafico extends JPanel {
                     //this.Rm.getjLayeredPaneCenter().repaint();
                 }
             }
+            if (this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE)) {
+                gr.setColor(Color.ORANGE);
+                f = new Font("Arial", 2, 20);
+                gr.setFont(f);
+                gr.drawString("Calibration mode", 120, 25);
+            } else {
+                if (this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE_TEST)) {
+                    gr.setColor(Color.BLUE);
+                    f = new Font("Arial", 2, 20);
+                    gr.setFont(f);
+                    gr.drawString("Calibration test", 120, 25);
+                }
+            }
             String[] ychar = curva.split(",");
             nPoints = ychar.length;
             if (nPoints > 1) {
@@ -136,7 +149,7 @@ public class JGrafico extends JPanel {
                 gr.drawPolyline(xpoints, ypoints, nPoints);
                 //this.Rm.getjLayeredPaneCenter().repaint();
 
-                gr.setColor(Color.DARK_GRAY);
+                gr.setColor(Color.GREEN);
                 f = new Font("Arial", 2, 20);
                 gr.setFont(f);
                 gr.drawString("Green:Ref", 5, 25);

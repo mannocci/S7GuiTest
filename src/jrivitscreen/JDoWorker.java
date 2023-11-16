@@ -70,7 +70,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
                 case "init" ->
                     this.init();
                 case "calibrazione" -> {
-                    JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_CALIBRAZIONE);
+                    avviaCalibrazione();
                 }
                 case "calibrazione_test" -> {
                     JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_CALIBRAZIONE_TEST);
@@ -86,9 +86,6 @@ public class JDoWorker extends SwingWorker<String, Object> {
                 }
                 case "riavvio" -> {
                     JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_RIAVVIO);
-                }
-                case "start" -> {
-                    JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_AVVIO);
                 }
                 case "continua", "accetta", "annulla" -> 
                     JFileWorker.scriviFlag(Static.F_RISPOSTA_TIRO_ERRATO + "_" + this.operation);
@@ -108,8 +105,10 @@ public class JDoWorker extends SwingWorker<String, Object> {
                 case "on_of_nm_device" ->
                     this.on_of_nm_device();
 
-                case "scegli_e_avvia" ->
-                    this.scegli_e_avvia();
+                case "scegli_e_avvia" -> {
+                    this.scegliLavoro();
+                    this.avviaLavoro();
+                }
 
                 case "aggiorna info" ->
                     this.updateInfo();
@@ -149,13 +148,31 @@ public class JDoWorker extends SwingWorker<String, Object> {
     /**
      * Imposta lavoro scelto e lo avvia
      */
-    void scegli_e_avvia() {
+    void scegliLavoro() {
         String lavoro = this.Rm.getLavoroScelto();
         // Scrivo anche i dettagli del lavoro. Serviranno allo scambio dati tramite webSocket
         JFileWorker.scriviFileConReady(Static.F_LAVORO_SCELTO, lavoro
             + "§" + this.Rm.getLimLotti()
             + "§" + this.Rm.getLimPezzi());
+    }
+
+    /**
+     * Imposta lavoro scelto e lo avvia
+     */
+    void avviaLavoro() {
         JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_AVVIO);
+    }
+    
+    /**
+     * Imposta lavoro scelto e avvia la calibrazione
+     */
+    void avviaCalibrazione() {
+        String lavoro = this.Rm.getLavoroScelto();
+        // Scrivo anche i dettagli del lavoro. Serviranno allo scambio dati tramite webSocket
+        JFileWorker.scriviFileConReady(Static.F_LAVORO_SCELTO, lavoro
+            + "§" + this.Rm.getLimLotti()
+            + "§" + this.Rm.getLimPezzi());
+        JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_CALIBRAZIONE);
         // Lo stato AVVIATO verrà scritto da Control
     }
 

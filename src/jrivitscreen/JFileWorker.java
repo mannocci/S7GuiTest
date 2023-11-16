@@ -98,6 +98,8 @@ public class JFileWorker extends Thread {
                                 readLavori();
                             case Static.F_CHIEDI_CONFERMA_NO ->
                                 impostaChiediConferma(true);
+                            case Static.F_ABILITA_CALIBRAZIONE ->
+                                this.Rm.abilitaCalibrazione(true);
                             case Static.F_CHIEDI_CONFERMA_STOP ->
                                 impostaChiediConfermaStop(true);
                             case Static.F_PULSANTE ->
@@ -154,6 +156,8 @@ public class JFileWorker extends Thread {
                                 errore(false);
                             case Static.F_CHIEDI_CONFERMA_NO ->
                                 impostaChiediConferma(false);
+                            case Static.F_ABILITA_CALIBRAZIONE ->
+                                this.Rm.abilitaCalibrazione(false);
                             case Static.F_CHIEDI_CONFERMA_STOP ->
                                 impostaChiediConfermaStop(false);
                             case Static.F_RISPOSTA_TIRO_ERRATO_CONTINUA, Static.F_RISPOSTA_TIRO_ERRATO_ACCETTA, Static.F_RISPOSTA_TIRO_ERRATO_ANNULLA -> {
@@ -272,8 +276,9 @@ public class JFileWorker extends Thread {
     private void errore(boolean inErrore) {
         this.Rm.setInErrore(inErrore);
         if (inErrore) {
+            this.Rm.set_errore_tiro();
             if (!this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE_TEST)) {
-                this.Rm.set_errore_tiro();
+                this.Rm.PanelStarted();
             }
         }
     }
@@ -294,6 +299,7 @@ public class JFileWorker extends Thread {
      */
     public void initValues() {
         this.leggiAriaInMinMax();   // Valori scritti nei files da Control
+        this.leggiAbilitaCalibrazione();
         this.aggiornaSensori();// Occorre che vi sia il batch avviato
         this.aggiornaContatori();
         this.readLavori();//Se non esite il file imposta il default
@@ -453,7 +459,7 @@ public class JFileWorker extends Thread {
             File inputFile = new File(Static.PATH_WATCH + NomeFile);
             if (!inputFile.exists()) {
                 Static.debug("Il File " + inputFile.getAbsolutePath()
-                    + " non esiste\n", 2);
+                        + " non esiste\n", 2);
                 ListaRighe.add("errore lettura File " + NomeFile);
                 return ListaRighe;
             }
@@ -484,7 +490,7 @@ public class JFileWorker extends Thread {
             File inputFile = new File(Static.PATH_WATCH + NomeFile);
             if (!inputFile.exists()) {
                 Static.debug("Il File " + inputFile.getAbsolutePath()
-                    + " non esiste\n", 2);
+                        + " non esiste\n", 2);
                 contenutoFile = "errore " + NomeFile;
                 return contenutoFile;
             }
@@ -536,8 +542,7 @@ public class JFileWorker extends Thread {
 
     /**
      * legge dal file nome_device il nome del ControlRiv SN registrato nel
-     * record CT -> sn
-     * Legge anche l'unità di misura.
+     * record CT -> sn Legge anche l'unità di misura.
      */
     private void readNomeDevice() {
         this.Rm.setNomeDevice(leggiFile(Static.F_NOME_DEVICE));
@@ -557,8 +562,8 @@ public class JFileWorker extends Thread {
     }
 
     private void impostaChiediConferma(boolean si_o_no) {
-
         this.Rm.setChiedi_conferma(si_o_no);
+
     }
 
     /**
@@ -662,6 +667,12 @@ public class JFileWorker extends Thread {
         //this.Rm.mostraCurva();
     }
 
+    /**
+     * Gestione del cambio stato. Lo stato viene sempre modificato da Control a
+     * seguito di una richiesta andata a buon fine o ad un cambio di stato del
+     * sistema. Pertanto la modifica dello stato non deve mai essere effettuata
+     * direttamente da screen.
+     */
     private void stato() {
         this.Rm.setStato(leggiFile(Static.F_STATO));
         switch (this.Rm.getStato()) {
@@ -680,12 +691,14 @@ public class JFileWorker extends Thread {
                 this.Rm.avviaCalibrazione();
             }
             case Static.STATO_STOP -> {
+                /*
                 if (this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE)) {
                     this.Rm.fineCalibrazione();
                 } else {
 //                    scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_STOP);
                     this.Rm.PanelStart();
-                }
+                }*/
+                this.Rm.PanelStart();
             }
             case Static.STATO_PAUSA -> {
                 this.Rm.setStatoConcluso(false);
@@ -718,17 +731,29 @@ public class JFileWorker extends Thread {
     }
 
     /**
-     * Gestisce l'avvio di un lavoro. Il lavoro potrebbe essere stato chiesto da remoto,
-     * quindi leggo prima il file F_LAVORO_SCELTO
+     * Gestisce l'avvio di un lavoro. Il lavoro potrebbe essere stato chiesto da
+     * remoto, quindi leggo prima il file F_LAVORO_SCELTO
      */
     private void lavoroPronto() {
         String lScelto = leggiFile(Static.F_LAVORO_SCELTO);
         String[] lSceltoArray = lScelto.split("§");
-        if (! lSceltoArray[0].equals(Rm.getLavoroScelto())) {
+        if (!lSceltoArray[0].equals(Rm.getLavoroScelto())) {
             Rm.setLavoroScelto(lSceltoArray[0]);
-            Rm.setLimLotti(lSceltoArray[1]);
-            Rm.setLimPezzi(lSceltoArray[2]);
+            if (lSceltoArray.length > 1) {
+                Rm.setLimLotti(lSceltoArray[1]);
+                Rm.setLimPezzi(lSceltoArray[2]);
+            }
         }
         Rm.lavoroPronto();
     }
+
+    private void leggiAbilitaCalibrazione() {
+        File inputFile = new File(Static.PATH_WATCH + Static.F_ABILITA_CALIBRAZIONE);
+        if (inputFile.exists()) {
+            this.Rm.abilitaCalibrazione(true);
+        } else {
+            this.Rm.abilitaCalibrazione(false);
+        }
+    }
+
 }
