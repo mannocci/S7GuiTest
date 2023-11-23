@@ -125,6 +125,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private String richiesta;
     private String contesto;
     private boolean abilitaCalibrazione;
+    private String esitoTiro;
 
 //
 //Dopo una sospensione
@@ -2888,5 +2889,13 @@ public class JRivitMain extends javax.swing.JFrame {
     void abilitaCalibrazione(boolean si_o_no) {
         this.abilitaCalibrazione = si_o_no;
         PanelStart();
+    }
+
+    String getEsitoTiro() {
+        return this.esitoTiro;
+    }
+
+    public void setEsitoTiro(String esitoTiro) {
+        this.esitoTiro = esitoTiro;
     }
 }

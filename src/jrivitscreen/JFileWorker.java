@@ -278,7 +278,9 @@ public class JFileWorker extends Thread {
         if (inErrore) {
             this.Rm.set_errore_tiro();
             if (!this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE_TEST)) {
-                this.Rm.PanelStarted();
+                if (this.Rm.getPanCur().equals("started")) {
+                    this.Rm.PanelStarted();
+                }
             }
         }
     }
@@ -524,10 +526,10 @@ public class JFileWorker extends Thread {
 
     private void leggiCurva() {
         this.Rm.setCurva(leggiFile(Static.F_CURVA));
-        String[] piccoArray = leggiFile(Static.F_CURVA).split(",");
+        String[] piccoArray = leggiFile(Static.F_PICCO).split(",");
         this.Rm.g.setCurva(this.Rm.getCurva());
         this.Rm.g.setUM(this.Rm.getUM());
-        this.Rm.g.setPicco(Integer.parseInt(piccoArray[0]), Integer.parseInt(piccoArray[2]));    // temporaneo !! Il valore reale lo dovrà scrivere Control in qualche file
+        this.Rm.g.setPicco(Integer.parseInt(piccoArray[0]), Integer.parseInt(piccoArray[2]));    
     }
 
     private void readCurvaDiRiferimento() {
@@ -662,6 +664,7 @@ public class JFileWorker extends Thread {
      */
     private void gestisciCurva() {
         leggiCurva();
+        this.Rm.setEsitoTiro(leggiFile(Static.F_ESITO_TIRO));
         this.Rm.repaint();
         //this.Rm.PanelCanvas();
         //this.Rm.mostraCurva();
