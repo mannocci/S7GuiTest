@@ -57,21 +57,14 @@ public class JRivitMain extends javax.swing.JFrame {
 
     private String stato;
 
+    private JDoWorker doWorker;
     private ImageIcon Img_Exit, Img_Ok, Img_Nulla, Img_Freccia_su,
             Img_Freccia_giu, Img_Warning, Img_Setup, Img_Play,
             Img_No_Warning, Img_Err_Warning, Img_Med_Warning,
-            Img_Grafico, Img_Calibrazione, Img_reloadWork;
-    private JDoWorker doWorker;
-    private ImageIcon Img_Continua;
-    private ImageIcon Img_Estende;
-    private ImageIcon Img_Stop;
-    private ImageIcon Img_Pause;
-    private ImageIcon Img_Annulla;
-    private ImageIcon Img_Lan;
-    private ImageIcon Img_WiFi;
-    private ImageIcon Img_Freccia_sx;
-    private ImageIcon Img_Freccia_dx;
-    private ImageIcon Img_Cancel;
+            Img_Grafico, Img_Calibrazione, Img_reloadWork,
+            Img_Continua, Img_Estende, Img_Stop,
+            Img_Pause, Img_Annulla, Img_Lan, Img_WiFi,
+            Img_Freccia_sx, Img_Freccia_dx, Img_Cancel;
     private String AlertDialogAnnulla;
     private String AlertDialogWhat;
     private String Lavorodescrizione;
@@ -94,8 +87,8 @@ public class JRivitMain extends javax.swing.JFrame {
     private String lavoroScelto;
     private final SimpleDateFormat formatter;
     private Properties setup;
-    private final String versione;
-    private final String data_release;
+    public final String versione;
+    public final String data_release;
     private final String srvKey;
     private List<String[]> elencoLavori;
     private List<String[]> elencoLavoriCompleto;
@@ -1144,20 +1137,16 @@ public class JRivitMain extends javax.swing.JFrame {
                     default -> {
                         PanelStarted();
                     }
-
                 }//End Switch stato
-
             }//End Switch "dialog
-
         }
     }//GEN-LAST:event_jButtonPR2ActionPerformed
+
     /**
      * Evento click Pulsante 3 in basso a dx
      *
      * @param evt
      */
-
-
     private void jButtonPR3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPR3ActionPerformed
         // Pulsante R3
         // Qual'è il nome del pannello in primo piano ?
@@ -1171,7 +1160,6 @@ public class JRivitMain extends javax.swing.JFrame {
             }
             case "started" -> {
                 this.PanelCanvas();
-                this.esegui("grafico");
             }
             case "canvas" -> {
                 PanelStarted();
@@ -1185,8 +1173,9 @@ public class JRivitMain extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_jButtonPR3ActionPerformed
+
     /**
-     *
+     * Gestione della risposta scelta dall'utente per gestire l'errore
      */
     private void rispostaErrore() {
         String rispostaErrore = "";
@@ -1267,48 +1256,33 @@ public class JRivitMain extends javax.swing.JFrame {
 
     /**
      * Setup dei pulsanti
+     *
+     * @param I1 immagine per il pulsante L1
+     * @param I2 immagine per il pulsante L2
+     * @param I3 immagine per il pulsante L3
+     * @param I4 immagine per il pulsante R1
+     * @param I5 immagine per il pulsante R2
+     * @param I6 immagine per il pulsante R3
      */
-    private void changeButtons(ImageIcon I1, ImageIcon I2, ImageIcon I3,
+    public void changeButtons(ImageIcon I1, ImageIcon I2, ImageIcon I3,
             ImageIcon I4, ImageIcon I5, ImageIcon I6) {
         this.jButtonPL1.setIcon(I1);
-        if (I1.equals(this.Img_Nulla)) {
-            this.jButtonPL1.setEnabled(false);
-        } else {
-            this.jButtonPL1.setEnabled(true);
-        }
+        this.jButtonPL1.setEnabled((!I1.equals(this.Img_Nulla)));
 
         this.jButtonPL2.setIcon(I2);
-        if (I2.equals(this.Img_Nulla)) {
-            this.jButtonPL2.setEnabled(false);
-        } else {
-            this.jButtonPL2.setEnabled(true);
-        }
+        this.jButtonPL2.setEnabled((!I2.equals(this.Img_Nulla)));
 
         this.jButtonPL3.setIcon(I3);
-        if (I3.equals(this.Img_Nulla)) {
-            this.jButtonPL3.setEnabled(false);
-        } else {
-            this.jButtonPL3.setEnabled(true);
-        }
-        this.jButtonPR1.setIcon(I4);
-        if (I4.equals(this.Img_Nulla)) {
-            this.jButtonPR1.setEnabled(false);
-        } else {
-            this.jButtonPR1.setEnabled(true);
-        }
-        this.jButtonPR2.setIcon(I5);
-        if (I5.equals(this.Img_Nulla)) {
-            this.jButtonPR2.setEnabled(false);
-        } else {
-            this.jButtonPR2.setEnabled(true);
-        }
-        this.jButtonPR3.setIcon(I6);
-        if (I6.equals(this.Img_Nulla)) {
-            this.jButtonPR3.setEnabled(false);
-        } else {
-            this.jButtonPR3.setEnabled(true);
-        }
+        this.jButtonPL3.setEnabled((!I3.equals(this.Img_Nulla)));
 
+        this.jButtonPR1.setIcon(I4);
+        this.jButtonPR1.setEnabled((!I4.equals(this.Img_Nulla)));
+
+        this.jButtonPR2.setIcon(I5);
+        this.jButtonPR2.setEnabled((!I5.equals(this.Img_Nulla)));
+
+        this.jButtonPR3.setIcon(I6);
+        this.jButtonPR3.setEnabled((!I6.equals(this.Img_Nulla)));
     }
 
     /**
@@ -1318,16 +1292,6 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     public void set_jLabel_B_L(String msg) {
         this.jLabel_B_L.setText(msg);
-    }
-
-    /**
-     * Imposta il colore rosso come sfondo al pannello e presume che l'aria sia
-     * off Il controllo del tiro viene fatto dall'App JControl, che rimuove il
-     * file aria
-     *
-     */
-    public void set_errore_tiro() {
-        this.inErrore = true;
     }
 
     /**
@@ -1448,12 +1412,6 @@ public class JRivitMain extends javax.swing.JFrame {
     private java.awt.List listSetupNM;
     private java.awt.List listWarning;
     // End of variables declaration//GEN-END:variables
-    /**
-     * Viene chiamato dopo la gestione dell'errore
-     */
-    public void ritornoDaErrore() {
-        PanelStarted();
-    }
 
     /**
      * Show PanelStart da questo pannello si fa la scelta del lavoro dalla lista
@@ -1495,12 +1453,11 @@ public class JRivitMain extends javax.swing.JFrame {
             this.listLavori.select(selezionato);
             cambiaPannello(this.jPanelStart);
         }
-
     }
 
     /**
      * Pannello dopo aver fatto la scelta del Lavoro, tale scelta deve essere
-     * scritta nel file /tmp/lavoro_scelto.txt L'App JControl sollecitato
+     * scritta nel file /tmp/CT/lavoro_scelto.txt L'App JControl sollecitato
      * dall'evento modifica lavoro_scelto o creazione del file, aggiorna il DB
      * Aggiornato metodo per mostrare un colore diverso se è in errore e lavoro
      * con ultimo tiro, Concluso
@@ -1529,7 +1486,6 @@ public class JRivitMain extends javax.swing.JFrame {
             this.jPanelStarted.setBackground(Color.ORANGE);
         }
         cambiaPannello(this.jPanelStarted);
-        this.repaint();
     }
 
     public String getLavorodescrizione() {
@@ -1577,26 +1533,6 @@ public class JRivitMain extends javax.swing.JFrame {
             lavoroScelto = "0";
         }
         this.lavoroScelto = lavoroScelto;
-    }
-
-    public void setjLabelAnnullati(String ta) {
-        this.jLabelAnnullati.setText(ta);
-        this.repaint();
-    }
-
-    public void setjLabelContatoreLotti(String c) {
-        this.jLabelContatoreLotti.setText(c);
-        this.repaint();
-    }
-
-    public void setjLabelErrati(String Errati) {
-        this.jLabelErrati.setText(Errati);
-        this.repaint();
-    }
-
-    public void setjLabelValidi(String Validi) {
-        this.jLabelValidi.setText(Validi);
-        this.repaint();
     }
 
     /**
@@ -2089,7 +2025,7 @@ public class JRivitMain extends javax.swing.JFrame {
      * tiri_errati chiamato da WorkerThread imposta l'interfaccia
      */
     public void tiri_errati() {
-        this.set_errore_tiro();
+        this.setInErrore(true);
         this.repaint();
     }
 
@@ -2252,16 +2188,17 @@ public class JRivitMain extends javax.swing.JFrame {
     /**
      * Aggiorna lista Info
      *
-     * @param Info la lista passata per aggiornare il campo Info
+     * @param info la lista passata per aggiornare il campo Info
      */
-    public void setListInfo(List Info) {
+    public void setListInfo(List info) {
 
         this.listInfo.removeAll();
         if (this.pressione_aria_in == null) {
             listInfo.add("Pressione aria Null");
         }
         try {
-            listInfo.add("Air pressure: " + this.pressione_aria_in.toString() + " bar");
+            DecimalFormat df = new DecimalFormat("0.000");// solo tre cifre decimali
+            listInfo.add("Air pressure: " + df.format(this.pressione_aria_in) + " bar");
             listInfo.add("V CPU: " + this.v_rpi.toString() + " V");
             listInfo.add("V IN: " + this.v_in.toString() + " V");
             listInfo.add("I/O board Temp.: " + this.temp_io_board.toString() + " °C");
@@ -2270,9 +2207,9 @@ public class JRivitMain extends javax.swing.JFrame {
         } catch (Exception e) {
             System.out.printf("errore lettura file info " + e);
         }
-        infoAggiuntive = Info;
-        for (int c = 0; c < Info.size(); c++) {
-            this.listInfo.add(Info.get(c).toString());
+        infoAggiuntive = info;
+        for (int c = 0; c < info.size(); c++) {
+            this.listInfo.add(info.get(c).toString());
         }
         this.listInfo.repaint();
     }
@@ -2707,7 +2644,6 @@ public class JRivitMain extends javax.swing.JFrame {
     void avviaCalibrazione() {
         g.setPrimoGiro(true);
         PanelCanvas();
-        esegui("grafico");
     }
 
     /**
@@ -2717,7 +2653,6 @@ public class JRivitMain extends javax.swing.JFrame {
         g.setPrimoGiro(false);
         this.set_jLabel_B_L("Cal. Test");
         PanelCanvas();
-        esegui("grafico");
     }
 
     /**
@@ -2878,6 +2813,12 @@ public class JRivitMain extends javax.swing.JFrame {
         // usare this.getjLayeredPaneCenter().getComponent(0).getName();
     }
 
+    /**
+     * Il contesto è utilizzato per indirizzare il pannello gestito dai dialoghi
+     * senza dover fare molti switch
+     *
+     * @param contesto
+     */
     private void setContesto(String contesto) {
         this.contesto = contesto;
     }

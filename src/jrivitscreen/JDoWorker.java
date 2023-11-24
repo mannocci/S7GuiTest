@@ -119,10 +119,6 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     this.Rm.set_jLabel_B_L(this.dateFormat.format(orario));
                     this.Rm.repaint();
                 }
-                case "grafico" -> {
-                    this.Rm.repaint();
-                    //this.drawGrafico();
-                }
             }
         } catch (NumberFormatException ex) {
             Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
@@ -228,6 +224,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
     void updateInfo() {
         List<String> listaInfo = JFileWorker.leggiFileElenco(Static.F_INFO);
         List<String> listaSensori = JFileWorker.leggiFileElenco(Static.F_SENSORI);
+        listaInfo.add("JRivitScreen ver. " + this.Rm.versione + " release " + this.Rm.data_release);
         listaInfo.add("=========================");
         for (String string : listaSensori) {
             listaInfo.add(string);

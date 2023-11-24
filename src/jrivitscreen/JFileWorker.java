@@ -66,7 +66,7 @@ public class JFileWorker extends Thread {
         }
         Path dir = Paths.get(Static.PATH_WATCH);
         dir.register(watcher, ENTRY_CREATE, ENTRY_DELETE);
-        Static.debug("Watch Service Modify file registered for dir: " + dir.toString(), 3);
+        Static.debug("Watch service modified file registered for dir: " + dir.toString(), 3);
     }
 
     @Override
@@ -160,17 +160,10 @@ public class JFileWorker extends Thread {
                                 this.Rm.abilitaCalibrazione(false);
                             case Static.F_CHIEDI_CONFERMA_STOP ->
                                 impostaChiediConfermaStop(false);
-                            case Static.F_RISPOSTA_TIRO_ERRATO_CONTINUA, Static.F_RISPOSTA_TIRO_ERRATO_ACCETTA, Static.F_RISPOSTA_TIRO_ERRATO_ANNULLA -> {
-                                this.Rm.setInErrore(false);
-                                //this.Rm.aggiornaDaErroreTiro(); //Non colorava lo sfondo rimosso metodo
-                                this.Rm.PanelStarted();//Ricalcola i contatori e colora in modo corretto
-                            }
                         }
                     }
 
                 }//End For watchevent
-//                //attesa per evitare segnalazioni ripetute
-//                TimeUnit.SECONDS.sleep(1);
 
                 if (!key.reset()) {
                     //Problema non riesce il sistema a controllare il path indicato
@@ -275,12 +268,11 @@ public class JFileWorker extends Thread {
      */
     private void errore(boolean inErrore) {
         this.Rm.setInErrore(inErrore);
-        if (inErrore) {
-            this.Rm.set_errore_tiro();
-            if (!this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE_TEST)) {
-                if (this.Rm.getPanCur().equals("started")) {
-                    this.Rm.PanelStarted();
-                }
+        if (!this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE_TEST)) {
+            if (this.Rm.getPanCur().equals("started")) {
+                this.Rm.PanelStarted();
+            } else if (this.Rm.getPanCur().equals("canvas")) {
+                this.Rm.PanelCanvas();
             }
         }
     }
@@ -666,8 +658,6 @@ public class JFileWorker extends Thread {
         leggiCurva();
         this.Rm.setEsitoTiro(leggiFile(Static.F_ESITO_TIRO));
         this.Rm.repaint();
-        //this.Rm.PanelCanvas();
-        //this.Rm.mostraCurva();
     }
 
     /**

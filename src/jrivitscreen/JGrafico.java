@@ -49,7 +49,14 @@ public class JGrafico extends JPanel {
     private float nPointsMax;
     private int scalaY;
     private int piccoRif;
+    private int y;
     private int yMax;
+    private Graphics2D gr;
+    private String[] yRifchar;
+    private String[] ychar;
+    private int bordoInf;
+    private int bordoSup;
+    private int bordoSx;
 
     public JGrafico(JRivitMain Rm) {
         picco = 0;
@@ -71,7 +78,7 @@ public class JGrafico extends JPanel {
         super.paintComponent(g); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
 
         if (this.Rm.getPanCur().equals("canvas")) {
-            Graphics2D gr = (Graphics2D) g;
+            gr = (Graphics2D) g;
             if (this.curva == null) {
                 this.curva = "";
                 /*
@@ -103,29 +110,12 @@ public class JGrafico extends JPanel {
                     this.curva = "";
                 }
             }
-            int bordoSx = 30, bordoInf = 20, bordoSup = 50;
-            int y = this.getHeight();
-            gr.setColor(Color.BLACK);
-            gr.drawLine(bordoSx, y - bordoInf, this.getWidth(), y - bordoInf);   // Asse X
-            gr.drawLine(bordoSx, y - bordoInf, bordoSx, bordoSup);   // Asse Y
-            String[] yRifchar = curvaDiRiferimento.split(",");
-            nPointsRif = yRifchar.length;
-            String[] ychar = curva.split(",");
-            nPointsCurva = ychar.length;
-            nPointsMax = Math.max(nPointsRif, nPointsCurva);  // Calcolo il nr. di punti del grafico
-            passoX = 320 / nPointsMax;              // Distanza tra due punti sull'asse X
-            piccoRif = trovaPicco(yRifchar);
-            yMax = Math.max(piccoRif, picco);   // Calcolo l'altezza max del grafico
-            scalaY = Math.round(yMax / 180);        // Proporzione del grafico
-            int intervalloX = Math.round(nPointsMax / 100);
-            for (int i = 0; i < nPointsMax - bordoSx; i += 15 * intervalloX) {    // Scala dei tempi
-                gr.drawString(Integer.toString(i), (passoX * i) + bordoSx, (float) (this.getHeight() - bordoInf / 2));
-            }
-            int intervalloY = Math.round(yMax / 1000);
-            for (int i = 0; i <= yMax / 10 + bordoSup; i += 35 * intervalloY) {    // Scala dei tempi
-                gr.drawString(Integer.toString(i), 5, (float) (this.getHeight() - bordoInf) - (i));
-            }
-            if (this.curvaDiRiferimento != null) {
+            bordoSx = 30;
+            bordoInf = 20;
+            bordoSup = 50;
+            y = this.getHeight();
+            disegnaAssi();
+            if (this.curvaDiRiferimento != null) {  // Se esiste la curva di riferimento
                 gr.setColor(Color.GREEN);
                 gr.setStroke(new BasicStroke(3));
                 if (nPointsRif > 1) {
@@ -231,6 +221,37 @@ public class JGrafico extends JPanel {
             }
         }
         return max;
+    }
+
+    private void disegnaAssi() {
+            gr.setColor(Color.BLACK);
+            gr.drawLine(bordoSx, y - bordoInf, this.getWidth(), y - bordoInf);   // Asse X
+            gr.drawLine(bordoSx, y - bordoInf, bordoSx, bordoSup);   // Asse Y
+            yRifchar = curvaDiRiferimento.split(",");
+            nPointsRif = yRifchar.length;
+            ychar = curva.split(",");
+            nPointsCurva = ychar.length;
+            nPointsMax = Math.max(nPointsRif, nPointsCurva);  // Calcolo il nr. di punti del grafico
+            passoX = 320 / nPointsMax;              // Distanza tra due punti sull'asse X
+            piccoRif = trovaPicco(yRifchar);
+            yMax = Math.max(piccoRif, picco);   // Calcolo l'altezza max del grafico
+            scalaY = Math.round(yMax / 180);        // Proporzione del grafico
+            int intervalloX = Math.round(nPointsMax / 100);
+            for (int i = 0; i < nPointsMax - bordoSx; i += 15 * intervalloX) {    // Scala dei tempi
+                gr.drawString(Integer.toString(i), (passoX * i) + bordoSx, (float) (this.getHeight() - bordoInf / 2));
+            }
+            int intervalloY = Math.round(yMax / 1000);
+            String valore;
+            for (int i = 0; i <= yMax / 10 + bordoSup; i += 35 * intervalloY) {    // Scala delle pressioni
+                if (i < 10) {   //  Aggiungo gli spazi per allineare a destra i numeri
+                    valore = "    " + i;
+                } else if (i < 100) {
+                    valore = "  " + i;
+                } else {
+                    valore = Integer.toString(i);
+                }
+                gr.drawString(valore, 5, (float) (this.getHeight() - bordoInf) - (i));
+            }
     }
 
 }
