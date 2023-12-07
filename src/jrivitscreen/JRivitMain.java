@@ -1048,8 +1048,6 @@ public class JRivitMain extends javax.swing.JFrame {
         // Qual'è il nome del pannello in primo piano ?
         switch (this.panCur) {
             case "main" -> {
-                this.jLabel_B_L.setText("Setup");
-                this.esegui("aggiorna_nm_list");
                 PanelSetup();
             }
             case "setup lan", "setup wifi" ->
@@ -1944,6 +1942,7 @@ public class JRivitMain extends javax.swing.JFrame {
      * Pannello di Setup l'utente deve scegliere tra setup Lan o WiFi
      */
     private void PanelSetup() {
+        this.esegui("aggiorna_nm_list");
         this.changeButtons(this.Img_Exit, this.Img_Lan, this.Img_WiFi,
                 this.Img_Freccia_su, this.Img_Freccia_giu, setIconSetup());
         cambiaPannello(this.jPanelSetup);
@@ -2145,7 +2144,7 @@ public class JRivitMain extends javax.swing.JFrame {
     /**
      * getjLabelValidi Get Label tiri Validi
      *
-     * @return la stringa con ilvalore dei tiri validi
+     * @return la stringa con il valore dei tiri validi
      */
     public String getjLabelValidi() {
         return this.jLabelValidi.getText();
