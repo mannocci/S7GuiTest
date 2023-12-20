@@ -82,10 +82,12 @@ public class Static {
             F_STATUS_WIFI = "status_wifi",
             F_IN_PAUSA = "in_pausa";
 
-    final static String F_NOME_DEVICE = "nome_device",
+    final static String 
+            F_NOME_DEVICE = "nome_device",
             F_UM = "um",    // Bar o Newton
             F_ARIA = "aria",
             F_ERRORE = "errore",
+            F_POSIZIONE_ERRORI = "posizione_errore",
             F_CURVA = "curva",
             F_ESITO_TIRO = "esito_tiro",
             F_CURVA_DI_RIFERIMENTO = "curva_di_riferimento",

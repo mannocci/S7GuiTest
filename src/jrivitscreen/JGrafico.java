@@ -21,11 +21,9 @@ package jrivitscreen;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Composite;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.util.Arrays;
 import javax.swing.JPanel;
 
 /**
@@ -49,7 +47,7 @@ public class JGrafico extends JPanel {
     private float nPointsMax;
     private int scalaY;
     private int piccoRif;
-    private int y;
+    private int altezza;
     private int yMax;
     private Graphics2D gr;
     private String[] yRifchar;
@@ -113,7 +111,7 @@ public class JGrafico extends JPanel {
             bordoSx = 30;
             bordoInf = 20;
             bordoSup = 50;
-            y = this.getHeight();
+            altezza = this.getHeight();
             disegnaAssi();
             if (this.curvaDiRiferimento != null) {  // Se esiste la curva di riferimento
                 gr.setColor(Color.GREEN);
@@ -123,7 +121,7 @@ public class JGrafico extends JPanel {
                     yPoints = new int[nPointsRif];
                     for (int i = 0; i < nPointsRif; i++) {
                         xPoints[i] = Math.round(i * passoX) + bordoSx;
-                        yPoints[i] = y - bordoInf - 5 - Integer.parseInt(yRifchar[i]) / scalaY;
+                        yPoints[i] = altezza - bordoInf - 5 - Integer.parseInt(yRifchar[i]) / scalaY;
                     }
                     gr.drawPolyline(xPoints, yPoints, nPointsRif);
                     //this.Rm.getjLayeredPaneCenter().repaint();
@@ -147,28 +145,37 @@ public class JGrafico extends JPanel {
                 yPoints = new int[nPointsCurva];
                 for (int i = 0; i < nPointsCurva; i++) {
                     xPoints[i] = Math.round(i * passoX) + bordoSx;
-                    yPoints[i] = y - bordoInf - Integer.parseInt(ychar[i]) / scalaY;
+                    yPoints[i] = altezza - bordoInf - Integer.parseInt(ychar[i]) / scalaY;
                 }
                 gr.setStroke(new BasicStroke(3));
                 if (this.Rm.getInErrore()) {
                     // ffff
                     String[] errValues = this.Rm.getEsitoTiro().split(",");
+                    String[] posErrValues = this.Rm.getPosizioneErrori().split(",");
                     int alpha = 127; // 50% transparent
-                    Color myColour = new Color(200, 0, 0, alpha);
+                    Color myColour = new Color(0, 0, 200, alpha);
                     gr.setColor(myColour);
                     //gr.setXORMode(Color.GRAY);
                     int nPunti = (errValues.length - 4) / 5;    // es.: 0,0,0,0,15,0,10,0,0
-                    int xP = picco, yP = 0;
+                    int xP = posizionePicco, yP = 0;
                     int i = 0;
-                    for (String errValue : errValues) {
+                    int indice = 0;
+                    for (String errValue : posErrValues) {
+/*
                         if ((i + 1) % 5 == 0) {   // istanti dei test
                             xP = Integer.parseInt(errValue);
                             yP = yPoints[xP];
                             i++;
                             continue;
                         }
-                        if (!errValue.equals("0")) { // verificare i valori da disegnare
-                            // gr.fillOval(xP, yP, Integer.parseInt(errValue), Integer.parseInt(errValue));
+*/
+//                        gr.fillOval(xP, yP, Integer.parseInt(errValue), Integer.parseInt(errValue));
+                        if (i % 2 == 0) {   // istanti dei test
+                            indice = Integer.parseInt(errValue);
+                            xP = Math.round(indice * passoX) + bordoSx - 10;
+                        } else {
+                            yP = altezza - bordoInf - Integer.parseInt(ychar[indice]) / scalaY - 10;
+                            gr.drawOval(xP, yP, 20, 20);
                         }
                         i++;
                     }
@@ -225,8 +232,8 @@ public class JGrafico extends JPanel {
 
     private void disegnaAssi() {
             gr.setColor(Color.BLACK);
-            gr.drawLine(bordoSx, y - bordoInf, this.getWidth(), y - bordoInf);   // Asse X
-            gr.drawLine(bordoSx, y - bordoInf, bordoSx, bordoSup);   // Asse Y
+            gr.drawLine(bordoSx, altezza - bordoInf, this.getWidth(), altezza - bordoInf);   // Asse X
+            gr.drawLine(bordoSx, altezza - bordoInf, bordoSx, bordoSup);   // Asse Y
             yRifchar = curvaDiRiferimento.split(",");
             nPointsRif = yRifchar.length;
             ychar = curva.split(",");

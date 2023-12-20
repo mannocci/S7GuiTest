@@ -94,6 +94,8 @@ public class JFileWorker extends Thread {
                                 aggiornaSensori();
                             case Static.F_ERRORE ->
                                 errore(true);
+                            case Static.F_POSIZIONE_ERRORI + "_ready" ->
+                                readPosizioneErrori();
                             case Static.F_LAVORI + "_ready" ->
                                 readLavori();
                             case Static.F_CHIEDI_CONFERMA_NO ->
@@ -747,6 +749,10 @@ public class JFileWorker extends Thread {
         } else {
             this.Rm.abilitaCalibrazione(false);
         }
+    }
+
+    private void readPosizioneErrori() {
+        this.Rm.setPosizioneErrori(leggiFile(Static.F_POSIZIONE_ERRORI));
     }
 
 }

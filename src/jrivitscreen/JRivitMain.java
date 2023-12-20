@@ -119,6 +119,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private String contesto;
     private boolean abilitaCalibrazione;
     private String esitoTiro;
+    private String posizioneErrori;
 
 //
 //Dopo una sospensione
@@ -2838,4 +2839,13 @@ public class JRivitMain extends javax.swing.JFrame {
     public void setEsitoTiro(String esitoTiro) {
         this.esitoTiro = esitoTiro;
     }
+
+    public String getPosizioneErrori() {
+        return posizioneErrori;
+    }
+
+    public void setPosizioneErrori(String posizioneErrori) {
+        this.posizioneErrori = posizioneErrori;
+    }
+
 }
