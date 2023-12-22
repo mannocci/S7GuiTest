@@ -519,11 +519,15 @@ public class JFileWorker extends Thread {
     }
 
     private void leggiCurva() {
-        this.Rm.setCurva(leggiFile(Static.F_CURVA));
-        String[] piccoArray = leggiFile(Static.F_PICCO).split(",");
-        this.Rm.g.setCurva(this.Rm.getCurva());
-        this.Rm.g.setUM(this.Rm.getUM());
-        this.Rm.g.setPicco(Integer.parseInt(piccoArray[0]), Integer.parseInt(piccoArray[2]));    
+        try {
+            this.Rm.setCurva(leggiFile(Static.F_CURVA));
+            String[] piccoArray = leggiFile(Static.F_PICCO).split(",");
+            this.Rm.g.setCurva(this.Rm.getCurva());
+            this.Rm.g.setUM(this.Rm.getUM());
+            this.Rm.g.setPicco(Integer.parseInt(piccoArray[0]), Integer.parseInt(piccoArray[2]));    
+        } catch (Exception e) {
+            Static.debug("Error while reading curve ", 2);
+        }
     }
 
     private void readCurvaDiRiferimento() {
