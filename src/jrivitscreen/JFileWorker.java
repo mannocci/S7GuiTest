@@ -96,19 +96,25 @@ public class JFileWorker extends Thread {
                                 errore(true);
                             case Static.F_POSIZIONE_ERRORI + "_ready" ->
                                 readPosizioneErrori();
-                            case Static.F_LAVORI + "_ready" ->
+                            case Static.F_W + "_ready" ->
                                 readLavori();
+                            case Static.F_WL + "_ready" ->
+                                readWl();
                             case Static.F_CHIEDI_CONFERMA_NO ->
                                 impostaChiediConferma(true);
-                            case Static.F_ABILITA_CALIBRAZIONE ->
+                            case Static.F_ABILITA_CALIBRAZIONE -> {
                                 this.Rm.abilitaCalibrazione(true);
+                                if (this.Rm.getPanCur().equals("start")) {
+                                    this.Rm.PanelStart();
+                                }
+                            }
                             case Static.F_CHIEDI_CONFERMA_STOP ->
                                 impostaChiediConfermaStop(true);
                             case Static.F_PULSANTE ->
                                 gestisciPulsante();
                             case Static.F_WARNING + "_ready" ->
                                 readWarning();
-                            case Static.F_PRESSIONE_ARIA_IN_MIN + "_ready" ->
+                            case Static.F_PRESSIONE_ARIA_IN_MIN + "_ready", Static.F_PRESSIONE_ARIA_IN_MAX + "_ready" ->
                                 this.leggiAriaInMinMax();
                             case "killScreen" ->
                                 this.Rm.exit();
@@ -131,8 +137,12 @@ public class JFileWorker extends Thread {
                                 Rm.getjLabelDeviceName().setText("POWER OFF");
                                 Rm.PanelMain();
                             }
-                            case (Static.F_NOME_DEVICE + "_ready") ->
+                            case (Static.F_NOME_DEVICE + "_ready") -> {
                                 readNomeDevice();
+                                if (this.Rm.getPanCur().equals("main")) {
+                                    this.Rm.PanelMain();
+                                }
+                            }
                             case (Static.F_INFO + "_ready") ->
                                 readInfo();
                             case Static.F_RELOAD -> {
@@ -158,8 +168,12 @@ public class JFileWorker extends Thread {
                                 errore(false);
                             case Static.F_CHIEDI_CONFERMA_NO ->
                                 impostaChiediConferma(false);
-                            case Static.F_ABILITA_CALIBRAZIONE ->
+                            case Static.F_ABILITA_CALIBRAZIONE -> {
                                 this.Rm.abilitaCalibrazione(false);
+                                if (this.Rm.getPanCur().equals("start")) {
+                                    this.Rm.PanelStart();
+                                }
+                            }
                             case Static.F_CHIEDI_CONFERMA_STOP ->
                                 impostaChiediConfermaStop(false);
                         }
@@ -199,7 +213,14 @@ public class JFileWorker extends Thread {
      * Legge il file con la descrizione dei lavori
      */
     private void readLavori() {
-        this.Rm.aggiornaLavori(leggiFileElenco(Static.F_LAVORI));
+        this.Rm.aggiornaLavori(leggiFileElenco(Static.F_W));
+    }
+
+    /**
+     * Legge il file con la descrizione delle WorkList
+     */
+    private void readWl() {
+        this.Rm.aggiornaWl(leggiFileElenco(Static.F_WL));
     }
 
     /**
@@ -299,6 +320,7 @@ public class JFileWorker extends Thread {
         this.aggiornaSensori();// Occorre che vi sia il batch avviato
         this.aggiornaContatori();
         this.readLavori();//Se non esite il file imposta il default
+        this.readWl();//Se non esiste il file ?
         this.readInfo();// Se non esiste il file imposta a stringa info
         this.readWarning();// Se non esiste il file imposta a sringa warning
         this.readCurvaDiRiferimento();//Se non esiste il file imposta a 0
@@ -524,7 +546,7 @@ public class JFileWorker extends Thread {
             String[] piccoArray = leggiFile(Static.F_PICCO).split(",");
             this.Rm.g.setCurva(this.Rm.getCurva());
             this.Rm.g.setUM(this.Rm.getUM());
-            this.Rm.g.setPicco(Integer.parseInt(piccoArray[0]), Integer.parseInt(piccoArray[2]));    
+            this.Rm.g.setPicco(Integer.parseInt(piccoArray[0]), Integer.parseInt(piccoArray[2]));
         } catch (Exception e) {
             Static.debug("Error while reading curve ", 2);
         }
@@ -563,7 +585,6 @@ public class JFileWorker extends Thread {
 
     private void impostaChiediConferma(boolean si_o_no) {
         this.Rm.setChiedi_conferma(si_o_no);
-
     }
 
     /**
@@ -731,10 +752,10 @@ public class JFileWorker extends Thread {
 
     /**
      * Gestisce l'avvio di un lavoro. Il lavoro potrebbe essere stato chiesto da
-     * remoto, quindi leggo prima il file F_LAVORO_SCELTO
+     * remoto, quindi leggo prima il file F_W_SCELTO
      */
     private void lavoroPronto() {
-        String lScelto = leggiFile(Static.F_LAVORO_SCELTO);
+        String lScelto = leggiFile(Static.F_W_SCELTO);
         String[] lSceltoArray = lScelto.split("§");
         if (!lSceltoArray[0].equals(Rm.getLavoroScelto())) {
             Rm.setLavoroScelto(lSceltoArray[0]);
