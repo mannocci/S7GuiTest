@@ -84,9 +84,8 @@ public class JDoWorker extends SwingWorker<String, Object> {
                 case "pausa" -> {
                     JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_PAUSA);
                 }
-                case "riavvio" -> {
-                    JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_RIAVVIO);
-                }
+                case "riavvio" -> 
+                    riavviaLavoro();
                 case "continua", "accetta", "annulla" -> 
                     JFileWorker.scriviFlag(Static.F_RISPOSTA_TIRO_ERRATO + "_" + this.operation);
                 case "aggiorna_nome_device" -> {
@@ -148,25 +147,34 @@ public class JDoWorker extends SwingWorker<String, Object> {
     void scegliLavoro() {
         String lavoro = this.Rm.getLavoroScelto();
         // Scrivo anche i dettagli del lavoro. Serviranno allo scambio dati tramite webSocket
-        JFileWorker.scriviFileConReady(Static.F_LAVORO_SCELTO, lavoro
+        JFileWorker.scriviFileConReady(Static.F_W_SCELTO, lavoro
             + "§" + this.Rm.getLimLotti()
             + "§" + this.Rm.getLimPezzi());
     }
 
     /**
-     * Imposta lavoro scelto e lo avvia
+     * Avvia il lavoro scelto
      */
     void avviaLavoro() {
         JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_AVVIO);
+        this.Rm.g.setCurva("");
     }
-    
+
+
+    /**
+     * Riavvia il lavoro scelto
+     */
+    void riavviaLavoro() {
+        JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_RIAVVIO);
+        this.Rm.g.setCurva("");
+    }    
     /**
      * Imposta lavoro scelto e avvia la calibrazione
      */
     void avviaCalibrazione() {
         String lavoro = this.Rm.getLavoroScelto();
         // Scrivo anche i dettagli del lavoro. Serviranno allo scambio dati tramite webSocket
-        JFileWorker.scriviFileConReady(Static.F_LAVORO_SCELTO, lavoro
+        JFileWorker.scriviFileConReady(Static.F_W_SCELTO, lavoro
             + "§" + this.Rm.getLimLotti()
             + "§" + this.Rm.getLimPezzi());
         JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_CALIBRAZIONE);
