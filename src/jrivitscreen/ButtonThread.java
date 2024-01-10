@@ -45,6 +45,8 @@ public class ButtonThread extends Thread {
 
         // create gpio controller
         final GpioController gpio = GpioFactory.getInstance();
+
+        // Vecchia configurazione
         final GpioPinDigitalInput[] pulsanti = {
             gpio.provisionDigitalInputPin(RaspiPin.GPIO_29, "PL1", PinPullResistance.PULL_UP),
             gpio.provisionDigitalInputPin(RaspiPin.GPIO_28, "PL2", PinPullResistance.PULL_UP),
@@ -53,6 +55,22 @@ public class ButtonThread extends Thread {
             gpio.provisionDigitalInputPin(RaspiPin.GPIO_24, "PR2", PinPullResistance.PULL_UP),
             gpio.provisionDigitalInputPin(RaspiPin.GPIO_26, "PR3", PinPullResistance.PULL_UP)
         };
+
+        // Nuova configurazione
+        /*
+        final GpioPinDigitalInput[] pulsanti = {
+            
+            gpio.provisionDigitalInputPin(RaspiPin.GPIO_9, "SW", PinPullResistance.PULL_UP),    // Pin  5 Switch ON/OFF
+            gpio.provisionDigitalInputPin(RaspiPin.GPIO_29, "LED", PinPullResistance.PULL_UP),  // Pin 40 LED ON/OFF
+            gpio.provisionDigitalInputPin(RaspiPin.GPIO_23, "PL1", PinPullResistance.PULL_UP),  // Pin 33
+            gpio.provisionDigitalInputPin(RaspiPin.GPIO_24, "PL2", PinPullResistance.PULL_UP),  // Pin 35
+            gpio.provisionDigitalInputPin(RaspiPin.GPIO_25, "PL3", PinPullResistance.PULL_UP),  // Pin 37
+            gpio.provisionDigitalInputPin(RaspiPin.GPIO_28, "PR1", PinPullResistance.PULL_UP),  // Pin 38
+            gpio.provisionDigitalInputPin(RaspiPin.GPIO_27, "PR2", PinPullResistance.PULL_UP),  // Pin 36
+            gpio.provisionDigitalInputPin(RaspiPin.GPIO_26, "PR3", PinPullResistance.PULL_UP)   // Pin 32
+        };
+        */
+        
         // gpio pin #02 as an input pin with its internal pull down resistor enabled
 //        final GpioPinDigitalInput myButton = gpio.provisionDigitalInputPin(RaspiPin.GPIO_02, PinPullResistance.PULL_DOWN);
         // create and register gpio pin listener
