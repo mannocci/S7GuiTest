@@ -64,7 +64,7 @@ public class JRivitMain extends javax.swing.JFrame {
             Img_Grafico, Img_Calibrazione, Img_reloadWork,
             Img_Continua, Img_Estende, Img_Stop,
             Img_Pause, Img_Annulla, Img_Lan, Img_WiFi,
-            Img_Freccia_sx, Img_Freccia_dx, Img_Cancel;
+            Img_Freccia_sx, Img_Freccia_dx, Img_Cancel, Img_W, Img_WL;
     private String AlertDialogAnnulla;
     private String AlertDialogWhat;
     private String Lavorodescrizione;
@@ -91,7 +91,9 @@ public class JRivitMain extends javax.swing.JFrame {
     public final String data_release;
     private final String srvKey;
     private List<String[]> elencoLavori;
+    private List<String[]> elencoWl;
     private List<String[]> elencoLavoriCompleto;
+    private List<String[]> elencoWlCompleto;
     private String inPausa;
     private Float temp_rpi;
     private Float temp_io_board;
@@ -120,6 +122,10 @@ public class JRivitMain extends javax.swing.JFrame {
     private boolean abilitaCalibrazione;
     private String esitoTiro;
     private String posizioneErrori;
+    private ArrayList<Object> elencoDesWl;
+    private Object listWl;
+    private Object listaWl;
+    private boolean inWl;
 
 //
 //Dopo una sospensione
@@ -169,7 +175,11 @@ public class JRivitMain extends javax.swing.JFrame {
         Img_Grafico = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/grafico.png"));
         Img_Calibrazione = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/calibrazione.png"));
         Img_reloadWork = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/autorenew.png"));
+        Img_W = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/w.png"));
+        Img_WL = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/wl.png"));
+
         elencoLavori = new ArrayList<>();
+        elencoWl = new ArrayList<>();
         infoAggiuntive = new ArrayList<>();
 
         try {
@@ -260,6 +270,7 @@ public class JRivitMain extends javax.swing.JFrame {
         listWarning = new java.awt.List();
         jPanelStart = new javax.swing.JPanel();
         listLavori = new java.awt.List();
+        listWLavori = new java.awt.List();
         JTextAreaDescrizioneLavoro = new javax.swing.JTextArea();
         jPanelDialog = new javax.swing.JPanel();
         jLabelDialog = new javax.swing.JLabel();
@@ -471,7 +482,6 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelLogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/logori2.png"))); // NOI18N
         jLabelLogo.setAlignmentY(0.0F);
         jLabelLogo.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jLabelLogo.setIconTextGap(0);
         jLabelLogo.setMaximumSize(new java.awt.Dimension(250, 250));
         jLabelLogo.setMinimumSize(new java.awt.Dimension(250, 250));
         jLabelLogo.setPreferredSize(new java.awt.Dimension(250, 250));
@@ -484,7 +494,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelDeviceName.setMaximumSize(new java.awt.Dimension(320, 30));
         jLabelDeviceName.setMinimumSize(new java.awt.Dimension(320, 30));
         jLabelDeviceName.setPreferredSize(new java.awt.Dimension(322, 32));
-        jPanelMain.add(jLabelDeviceName, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 242, -1, -1));
+        jPanelMain.add(jLabelDeviceName, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 254, -1, 20));
         jLabelDeviceName.getAccessibleContext().setAccessibleName("DeviceName");
         jLabelDeviceName.getAccessibleContext().setAccessibleDescription("Nome del RivitControl");
 
@@ -496,7 +506,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelVersione.setMaximumSize(new java.awt.Dimension(320, 30));
         jLabelVersione.setMinimumSize(new java.awt.Dimension(320, 30));
         jLabelVersione.setPreferredSize(new java.awt.Dimension(322, 32));
-        jPanelMain.add(jLabelVersione, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 0, -1, -1));
+        jPanelMain.add(jLabelVersione, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 0, -1, 20));
 
         jLayeredPaneCenter.add(jPanelMain, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 328, 276));
 
@@ -572,12 +582,25 @@ public class JRivitMain extends javax.swing.JFrame {
                 listLavoriMouseClicked(evt);
             }
         });
-        listLavori.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                listLavoriActionPerformed(evt);
+        listLavori.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                listLavoriItemStateChanged(evt);
             }
         });
         jPanelStart.add(listLavori, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 2, 326, 180));
+
+        listWLavori.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        listWLavori.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                listWLavoriMouseClicked(evt);
+            }
+        });
+        listWLavori.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                listWLavoriItemStateChanged(evt);
+            }
+        });
+        jPanelStart.add(listWLavori, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 2, 326, 180));
 
         JTextAreaDescrizioneLavoro.setEditable(false);
         JTextAreaDescrizioneLavoro.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
@@ -596,12 +619,15 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelDialog.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabelDialog.setFont(new java.awt.Font("DejaVu Sans Condensed", 1, 18)); // NOI18N
+        jLabelDialog.setForeground(new java.awt.Color(0, 51, 204));
         jLabelDialog.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelDialog.setText("Confirm cancel traction ?");
+        jLabelDialog.setAutoscrolls(true);
+        jLabelDialog.setFocusable(false);
         jLabelDialog.setMaximumSize(new java.awt.Dimension(177, 30));
         jLabelDialog.setMinimumSize(new java.awt.Dimension(177, 30));
         jLabelDialog.setPreferredSize(new java.awt.Dimension(177, 30));
-        jPanelDialog.add(jLabelDialog, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 110, 320, 30));
+        jPanelDialog.add(jLabelDialog, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 110, 300, 30));
 
         jLayeredPaneCenter.add(jPanelDialog, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 328, 276));
 
@@ -726,11 +752,6 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelLan.setToolTipText("");
         jLabelLan.setOpaque(true);
         jLabelLan.setPreferredSize(new java.awt.Dimension(15, 20));
-        jLabelLan.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabelLanMouseClicked(evt);
-            }
-        });
         jPanelBotton.add(jLabelLan, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 5, 20, -1));
 
         jLabelVPN.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Red"));
@@ -740,11 +761,6 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelVPN.setToolTipText("");
         jLabelVPN.setOpaque(true);
         jLabelVPN.setPreferredSize(new java.awt.Dimension(15, 20));
-        jLabelVPN.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabelVPNMouseClicked(evt);
-            }
-        });
         jPanelBotton.add(jLabelVPN, new org.netbeans.lib.awtextra.AbsoluteConstraints(48, 5, 20, -1));
 
         jLabelController.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Red"));
@@ -754,11 +770,6 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelController.setToolTipText("");
         jLabelController.setOpaque(true);
         jLabelController.setPreferredSize(new java.awt.Dimension(15, 20));
-        jLabelController.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabelControllerMouseClicked(evt);
-            }
-        });
         jPanelBotton.add(jLabelController, new org.netbeans.lib.awtextra.AbsoluteConstraints(25, 5, 20, -1));
 
         jLabelWiFi.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Red"));
@@ -769,11 +780,6 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelWiFi.setAlignmentY(0.0F);
         jLabelWiFi.setOpaque(true);
         jLabelWiFi.setPreferredSize(new java.awt.Dimension(20, 20));
-        jLabelWiFi.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jLabelWiFiMouseClicked(evt);
-            }
-        });
         jPanelBotton.add(jLabelWiFi, new org.netbeans.lib.awtextra.AbsoluteConstraints(71, 5, 20, -1));
 
         getContentPane().add(jPanelBotton, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 290, 480, 30));
@@ -821,6 +827,9 @@ public class JRivitMain extends javax.swing.JFrame {
         switch (this.panCur) {
             case "main" -> {
                 // todo Gestire l'impostazione del lavoro in pausa da far ripartire
+                this.inWl = false;
+                this.listLavori.setVisible(true);
+                this.listWLavori.setVisible(false);
                 if (this.inPausa.equals("1")) {
 //                   List<String> elencoTxt =  new ArrayList<>();
                     int quanti = this.listLavori.getItemCount();
@@ -831,9 +840,11 @@ public class JRivitMain extends javax.swing.JFrame {
                         }
                     }
                     this.listLavori.select(i);
+                    this.JTextAreaDescrizioneLavoro.setText(this.elencoDesLavoro.get(i));
                     // todo Gestire il caso in cui il lavoro in pausa non viene trovato
                     PanelStarted();
                 } else {
+                    this.JTextAreaDescrizioneLavoro.setText(this.elencoDesLavoro.get(0));
                     PanelStart();
                 }
             }
@@ -867,7 +878,7 @@ public class JRivitMain extends javax.swing.JFrame {
             case "canvas" -> {
                 switch (this.stato) {
                     case Static.STATO_CALIBRAZIONE:
-                        this.AlertDialogWhat = "Confirm test Calibration ?";
+                        this.AlertDialogWhat = "Proceed with calibration test ?";
                         this.jLabelDialog.setText(AlertDialogWhat);
                         richiesta = Static.RICHIESTA_CALIBRAZIONE_TEST;
                         PanelDialog();
@@ -1087,11 +1098,14 @@ public class JRivitMain extends javax.swing.JFrame {
         //Pulsante R2
         // Qual'è il nome del pannello in primo piano ?
         switch (this.panCur) {
-//            case "main" -> { //fare tutta WebControl
-//                this.inCalibrazione = true;
-//                this.set_jLabel_B_L("Calibration");
-//                PanelStart();
-//            }
+            case "main" -> { //fare tutta WebControl
+                this.inWl = true;
+                this.set_jLabel_B_L("WL");
+                this.listLavori.setVisible(false);
+                this.listWLavori.setVisible(true);
+                this.JTextAreaDescrizioneLavoro.setText(this.elencoDesWl.get(0).toString());
+                PanelStart();
+            }
             case "start" ->
                 PulsanteGiu();
 
@@ -1131,6 +1145,9 @@ public class JRivitMain extends javax.swing.JFrame {
                         this.avviaCalibrazione();
                     }
                     case Static.RICHIESTA_CALIBRAZIONE -> {//Ritorna in scelta lavoro
+                        PanelStart();
+                    }
+                    case Static.RICHIESTA_CALIBRAZIONE_SALVA -> {//Ritorna in scelta lavoro
                         PanelStart();
                     }
                     default -> {
@@ -1199,10 +1216,6 @@ public class JRivitMain extends javax.swing.JFrame {
             }
         }
     }
-    private void listLavoriActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listLavoriActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_listLavoriActionPerformed
-
     private void listLavoriMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listLavoriMouseClicked
         this.JTextAreaDescrizioneLavoro.setText(
                 this.elencoDesLavoro.get(this.listLavori.getSelectedIndex()));
@@ -1220,22 +1233,6 @@ public class JRivitMain extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jLabelWarningMouseClicked
 
-    private void jLabelLanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelLanMouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jLabelLanMouseClicked
-
-    private void jLabelVPNMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelVPNMouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jLabelVPNMouseClicked
-
-    private void jLabelControllerMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelControllerMouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jLabelControllerMouseClicked
-
-    private void jLabelWiFiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelWiFiMouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jLabelWiFiMouseClicked
-
     private void listSetupNMMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listSetupNMMouseClicked
         this.jButtonPR3.setIcon(this.setIconSetup());//aggiorna il tipo di Icona per il pulsante
         if (evt.getClickCount() == 2) { // doppio click -> cambia stato
@@ -1244,12 +1241,36 @@ public class JRivitMain extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_listSetupNMMouseClicked
 
+    private void listLavoriItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_listLavoriItemStateChanged
+        java.awt.List l = (java.awt.List) evt.getSource();
+        int elementoSelezionato = l.getSelectedIndexes()[0];
+        this.JTextAreaDescrizioneLavoro.setText(
+                this.elencoDesLavoro.get(elementoSelezionato));
+        if (this.elencoLavoriCompleto.get(elementoSelezionato)[4].equals("0")) {
+            this.JTextAreaDescrizioneLavoro.setBackground(Color.yellow);
+            this.jButtonPR3.setIcon(this.Img_Nulla);//aggiorna il tipo di Icona per il pulsante
+            this.jButtonPR3.setEnabled(false);
+        } else {
+            this.JTextAreaDescrizioneLavoro.setBackground(Color.white);
+            this.jButtonPR3.setIcon(this.Img_Ok);//aggiorna il tipo di Icona per il pulsante
+            this.jButtonPR3.setEnabled(true);
+        }
+    }//GEN-LAST:event_listLavoriItemStateChanged
+
+    private void listWLavoriMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listWLavoriMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_listWLavoriMouseClicked
+
+    private void listWLavoriItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_listWLavoriItemStateChanged
+        // TODO add your handling code here:
+    }//GEN-LAST:event_listWLavoriItemStateChanged
+
     /**
      * PanelMain Pannello che viene visualizzato all'avvio
      */
     public void PanelMain() {
         this.changeButtons(this.Img_Warning, this.Img_Info, this.Img_Setup,
-                this.Img_Play, this.Img_Nulla, this.Img_Exit);
+                this.Img_W, this.Img_WL, this.Img_Exit);
         cambiaPannello(this.jPanelMain);
     }
 
@@ -1409,6 +1430,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private java.awt.List listInfo;
     private java.awt.List listLavori;
     private java.awt.List listSetupNM;
+    private java.awt.List listWLavori;
     private java.awt.List listWarning;
     // End of variables declaration//GEN-END:variables
 
@@ -1456,10 +1478,10 @@ public class JRivitMain extends javax.swing.JFrame {
 
     /**
      * Pannello dopo aver fatto la scelta del Lavoro, tale scelta deve essere
-     * scritta nel file /tmp/CT/lavoro_scelto.txt L'App JControl sollecitato
-     * dall'evento modifica lavoro_scelto o creazione del file, aggiorna il DB
-     * Aggiornato metodo per mostrare un colore diverso se è in errore e lavoro
-     * con ultimo tiro, Concluso
+     * scritta nel file /tmp/CT/w_scelto L'App JControl sollecitato dall'evento
+     * modifica w_scelto o creazione del file, aggiorna il DB Aggiornato metodo
+     * per mostrare un colore diverso se è in errore e lavoro con ultimo tiro,
+     * Concluso
      */
     public void PanelStarted() {
         this.aggiornaContatori();
@@ -1555,8 +1577,13 @@ public class JRivitMain extends javax.swing.JFrame {
         boolean isSetup = false;
         // Qual'è il nome del pannello in primo piano ?
         switch (this.panCur) {
-            case "start" ->
-                lista = this.listLavori;
+            case "start" -> {
+                if (this.inWl == false) {
+                    lista = this.listLavori;
+                } else {
+                    lista = this.listWLavori;
+                }
+            }
             case "setup wifi" ->
                 jsp = this.jScrollPaneWifi;
             case "setup lan" ->
@@ -1585,8 +1612,24 @@ public class JRivitMain extends javax.swing.JFrame {
             // rendi visibile l'elemento selezionato
             lista.makeVisible(nrCurItem);
             if (this.panCur.equals("start")) {
-                this.JTextAreaDescrizioneLavoro.setText(
-                        this.elencoDesLavoro.get(nrCurItem));
+                if (this.inWl == false) {
+                    this.JTextAreaDescrizioneLavoro.setText(
+                            this.elencoDesLavoro.get(nrCurItem));
+                    if (this.elencoLavoriCompleto.get(nrCurItem)[4].equals("0")) {
+                        this.JTextAreaDescrizioneLavoro.setBackground(Color.yellow);
+                        this.jButtonPR3.setIcon(this.Img_Nulla);//aggiorna il tipo di Icona per il pulsante
+                        this.jButtonPR3.setEnabled(false);
+                    } else {
+                        this.JTextAreaDescrizioneLavoro.setBackground(Color.white);
+                        this.jButtonPR3.setIcon(this.Img_Ok);//aggiorna il tipo di Icona per il pulsante
+                        this.jButtonPR3.setEnabled(true);
+                    }
+                } else {
+                    this.JTextAreaDescrizioneLavoro.setText(this.elencoDesWl.get(nrCurItem).toString());
+                    this.JTextAreaDescrizioneLavoro.setBackground(Color.white);
+                    this.jButtonPR3.setIcon(this.Img_Ok);//aggiorna il tipo di Icona per il pulsante
+                    this.jButtonPR3.setEnabled(true);
+                }
             }
             if (isSetup) {
                 this.jButtonPR3.setIcon(this.setIconSetup());//aggiorna il tipo di Icona per il pulsante
@@ -1607,9 +1650,14 @@ public class JRivitMain extends javax.swing.JFrame {
         javax.swing.JScrollPane jsp = null;
         boolean isSetup = false;
         // Qual'è il nome del pannello in primo piano ?
+
         switch (this.panCur) {
             case "start" -> {
-                lista = this.listLavori;
+                if (this.inWl == false) {
+                    lista = this.listLavori;
+                } else {
+                    lista = this.listWLavori;
+                }
             }
             case "setup wifi" ->
                 jsp = this.jScrollPaneWifi;
@@ -1638,14 +1686,32 @@ public class JRivitMain extends javax.swing.JFrame {
             lista.select(nrCurItem);
             // rendi visibile l'elemento selezionato
             lista.makeVisible(nrCurItem);
+
             if (this.panCur.equals("start")) {
-                this.JTextAreaDescrizioneLavoro.setText(
-                        this.elencoDesLavoro.get(nrCurItem));
+                if (this.inWl == false) {
+                    this.JTextAreaDescrizioneLavoro.setText(this.elencoDesLavoro.get(nrCurItem));
+                    if (this.elencoLavoriCompleto.get(nrCurItem)[4].equals("0")) {
+                        this.JTextAreaDescrizioneLavoro.setBackground(Color.yellow);
+                        this.jButtonPR3.setIcon(this.Img_Nulla);//aggiorna il tipo di Icona per il pulsante
+                        this.jButtonPR3.setEnabled(false);
+                    } else {
+                        this.JTextAreaDescrizioneLavoro.setBackground(Color.white);
+                        this.jButtonPR3.setIcon(this.Img_Ok);//aggiorna il tipo di Icona per il pulsante
+                        this.jButtonPR3.setEnabled(true);
+                    }
+                } else {
+                    this.JTextAreaDescrizioneLavoro.setText(this.elencoDesWl.get(nrCurItem).toString());
+                    this.JTextAreaDescrizioneLavoro.setBackground(Color.white);
+                    this.jButtonPR3.setIcon(this.Img_Ok);//aggiorna il tipo di Icona per il pulsante
+                    this.jButtonPR3.setEnabled(true);
+
+                }
             }
             if (isSetup) {
                 this.jButtonPR3.setIcon(this.setIconSetup());//aggiorna il tipo di Icona per il pulsante
             }
         }//End LIsta not NULL
+
         if (jsp != null) {
             jsp.getVerticalScrollBar().getBlockIncrement(1);
         }
@@ -1825,20 +1891,54 @@ public class JRivitMain extends javax.swing.JFrame {
             String limLotti = lavoroSplit[1];
             String limPezzi = lavoroSplit[2];
             String descrizione = lavoroSplit[3];
-            this.elencoDesLavoroCompleto.add(descrizione);
+
             String canStart = lavoroSplit[4];
 
-            if (canStart.equals("1")) { // elenco solo i lavori avviabili
-                if (limLotti.equals("-1")) { // Lavoro senza limiti -> visualizzo solo il nome
-                    elencoTxt.add(nomeLavoro);
-                } else {
-                    elencoTxt.add(nomeLavoro + " Lots=" + limLotti + " Pieces=" + limPezzi);
-                }
-                this.elencoLavori.add(lavoroSplit);
-                this.elencoDesLavoro.add(descrizione);
+            if (limLotti.equals("-1")) { // Lavoro senza limiti -> visualizzo solo il nome
+                elencoTxt.add(nomeLavoro);
+            } else {
+                elencoTxt.add(nomeLavoro + " Lots=" + limLotti + " Pieces=" + limPezzi);
             }
+            this.elencoLavori.add(lavoroSplit);
+            if (canStart.equals("0")) { // lavoro non avviabile
+                descrizione = "Not calibrated -> " + descrizione;
+            }
+            this.elencoDesLavoroCompleto.add(descrizione);
+            this.elencoDesLavoro.add(descrizione);
         }
         RefreshList(listLavori, elencoTxt);
+    }//End aggiornaLavori
+
+    /**
+     * aggiornaLavori
+     *
+     * @param lista
+     */
+    public void aggiornaWl(List<String> lista) {
+        this.listWLavori.removeAll();
+        this.elencoWl.clear();
+        if (lista.isEmpty() || lista.contains("errore")) {  //
+            lista.add("Empty !");
+            return;
+        }
+        List<String> elencoTxt = new ArrayList<>();
+        elencoDesWl = new ArrayList<>();
+        elencoWl = new ArrayList<>();
+        elencoWlCompleto = new ArrayList<>();
+        elencoWlCompleto = new ArrayList<>();
+
+        for (String riga : lista) {
+            String[] WLSplit = riga.split("§"); //nomeWl, nrcicli 
+            this.elencoWlCompleto.add(WLSplit);
+            String nomeWl = WLSplit[0];
+            String nrCicli = WLSplit[1];
+            String descrizione = WLSplit[2];
+            elencoTxt.add(nomeWl + " Cycles =" + nrCicli);
+            this.elencoWl.add(WLSplit);
+            //this.elencoWlCompleto.add(WLSplit[2]);
+            this.elencoDesWl.add(descrizione);
+        }
+        RefreshList(listWLavori, elencoTxt);
     }//End aggiornaLavori
 
     /**
@@ -2669,8 +2769,11 @@ public class JRivitMain extends javax.swing.JFrame {
     public void lavoroPronto() { // e' qui....
         if (this.stato.equals(Static.STATO_AVVIATO)) {
             this.jLabelNomeLavoro.setText(this.lavoroScelto.trim());
-            PanelStarted();
-            impostaLabelContatori();
+            if (this.panCur.equals("started")) {
+                PanelStarted();
+                impostaLabelContatori();
+            }
+
         }
     }
 
@@ -2829,7 +2932,6 @@ public class JRivitMain extends javax.swing.JFrame {
 
     void abilitaCalibrazione(boolean si_o_no) {
         this.abilitaCalibrazione = si_o_no;
-        PanelStart();
     }
 
     String getEsitoTiro() {
