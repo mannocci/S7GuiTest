@@ -30,21 +30,23 @@ import java.time.format.DateTimeFormatter;
 public class Static {
 
     //Variabili final (non modificabili)
-    final static String RICHIESTA_AVVIO = "80";
-    final static String RICHIESTA_PAUSA = "81";
-    final static String RICHIESTA_STOP = "82";
-    final static String RICHIESTA_CALIBRAZIONE = "83";
-    final static String RICHIESTA_CALIBRAZIONE_TEST = "84";
-    final static String RICHIESTA_RIAVVIO = "85";
-    final static String RICHIESTA_CALIBRAZIONE_SALVA = "86";
-    final static String RICHIESTA_CALIBRAZIONE_ANNULLA = "87";
-    final static String STATO_AVVIATO = "91";
-    final static String STATO_CONCLUSO = "100";
-    final static String STATO_CALIBRAZIONE = "200";
-    final static String STATO_CALIBRAZIONE_TEST = "220";
-    final static String STATO_SCELTA_LAVORO = "300";
-    final static String STATO_PAUSA = "92";
-    final static String STATO_STOP = "93";
+    final static String RICHIESTA_AVVIO = "80",
+            RICHIESTA_PAUSA = "81",
+            RICHIESTA_STOP = "82",
+            RICHIESTA_CALIBRAZIONE = "83",
+            RICHIESTA_CALIBRAZIONE_TEST = "84",
+            RICHIESTA_RIAVVIO = "85",
+            RICHIESTA_CALIBRAZIONE_SALVA = "86",
+            RICHIESTA_CALIBRAZIONE_ANNULLA = "87";
+
+    final static String STATO_AVVIATO = "91",
+            STATO_CONCLUSO = "100",
+            STATO_CALIBRAZIONE = "200",
+            STATO_CALIBRAZIONE_TEST = "220",
+            STATO_SCELTA_LAVORO = "300",
+            STATO_PAUSA = "92",
+            STATO_STOP = "93";
+    
     final static String CONTINUA = "51";
     final static String ACCETTA = "52";
     final static String ANNULLA = "53";
@@ -52,18 +54,18 @@ public class Static {
     final static String ARIA_APERTA = "1";
 
     // Nomi dei file
-    final static String F_STATO = "stato";
-    final static String F_RICHIESTA = "richiesta";
-    final static String F_PULSANTE = "pulsante";
-    final static String F_LAVORO_SCELTO = "lavoro_scelto";
-    final static String F_RISPOSTA_TIRO_ERRATO = "risposta_tiro_errato";
-    final static String F_RISPOSTA_TIRO_ERRATO_CONTINUA = "risposta_tiro_errato_continua";
-    final static String F_RISPOSTA_TIRO_ERRATO_ACCETTA = "risposta_tiro_errato_accetta";
-    final static String F_RISPOSTA_TIRO_ERRATO_ANNULLA = "risposta_tiro_errato_annulla";
-
-    final static String F_AGGIORNATO_LAVORI = "aggiornato_lavori";
-    
-    final static String F_LAVORI = "lavori.txt",
+    final static String F_STATO = "stato",
+            F_RICHIESTA = "richiesta",
+            F_PULSANTE = "pulsante",
+            F_W = "w.txt",
+            F_W_SCELTO = "w_scelto",
+            F_WL     = "wl.txt",
+            F_WL_SCELTA = "wl_scelta",
+            F_RISPOSTA_TIRO_ERRATO = "risposta_tiro_errato",
+            F_RISPOSTA_TIRO_ERRATO_CONTINUA = "risposta_tiro_errato_continua",
+            F_RISPOSTA_TIRO_ERRATO_ACCETTA = "risposta_tiro_errato_accetta",
+            F_RISPOSTA_TIRO_ERRATO_ANNULLA = "risposta_tiro_errato_annulla",
+            F_AGGIORNATO_LAVORI = "aggiornato_lavori",
             F_RELOAD = "reload",
             F_LAVORO_AVVIATO = "lavoro_avviato",
             F_LAVORO_PRONTO = "lavoro_pronto",
@@ -80,9 +82,7 @@ public class Static {
             F_WARNING = "warning.txt",
             F_STATUS_LAN = "status_lan",
             F_STATUS_WIFI = "status_wifi",
-            F_IN_PAUSA = "in_pausa";
-
-    final static String 
+            F_IN_PAUSA = "in_pausa",
             F_NOME_DEVICE = "nome_device",
             F_UM = "um",    // Bar o Newton
             F_ARIA = "aria",
