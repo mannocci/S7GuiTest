@@ -131,13 +131,15 @@ public class JGrafico extends JPanel {
                 gr.setColor(Color.ORANGE);
                 f = new Font("Arial", 2, 20);
                 gr.setFont(f);
-                gr.drawString("Calibration mode", 120, 25);
+                gr.drawString("Calibration", 210, 25);
+                gr.drawString("mode", 260, 42);
             } else {
                 if (this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE_TEST)) {
                     gr.setColor(Color.BLUE);
                     f = new Font("Arial", 2, 20);
                     gr.setFont(f);
-                    gr.drawString("Calibration test", 120, 25);
+                    gr.drawString("Calibration", 210, 25);
+                    gr.drawString("test", 280, 42);
                 }
             }
             if (nPointsCurva > 1) {
@@ -145,11 +147,10 @@ public class JGrafico extends JPanel {
                 yPoints = new int[nPointsCurva];
                 for (int i = 0; i < nPointsCurva; i++) {
                     xPoints[i] = Math.round(i * passoX) + bordoSx;
-                    yPoints[i] = altezza - bordoInf - Integer.parseInt(ychar[i]) / scalaY;
+                    yPoints[i] = altezza - bordoInf - 5 - Integer.parseInt(ychar[i]) / scalaY;
                 }
                 gr.setStroke(new BasicStroke(3));
                 if (this.Rm.getInErrore()) {
-                    // ffff
                     String[] errValues = this.Rm.getEsitoTiro().split(",");
                     String[] posErrValues = this.Rm.getPosizioneErrori().split(",");
                     int alpha = 127; // 50% transparent
@@ -160,21 +161,13 @@ public class JGrafico extends JPanel {
                     int xP = posizionePicco, yP = 0;
                     int i = 0;
                     int indice = 0;
+                    // Disegno delle zone errate. Il vettore delleposizioni contiene x e y intervallate
                     for (String errValue : posErrValues) {
-/*
-                        if ((i + 1) % 5 == 0) {   // istanti dei test
-                            xP = Integer.parseInt(errValue);
-                            yP = yPoints[xP];
-                            i++;
-                            continue;
-                        }
-*/
-//                        gr.fillOval(xP, yP, Integer.parseInt(errValue), Integer.parseInt(errValue));
                         if (i % 2 == 0) {   // istanti dei test
                             indice = Integer.parseInt(errValue);
                             xP = Math.round(indice * passoX) + bordoSx - 10;
                         } else {
-                            yP = altezza - bordoInf - Integer.parseInt(ychar[indice]) / scalaY - 10;
+                            yP = altezza - bordoInf - 5 - Integer.parseInt(ychar[indice]) / scalaY - 10;
                             gr.drawOval(xP, yP, 20, 20);
                         }
                         i++;
@@ -198,9 +191,9 @@ public class JGrafico extends JPanel {
                 gr.setFont(f);
                 gr.setColor(Color.BLACK);
                 if (um.equals("Bar")) {
-                    gr.drawString("" + picco / 10 + " Bar " + ((float) posizionePicco / 100) + "s", bordoSx, 30);
+                    gr.drawString("" + picco / 10 + " Bar " + ((float) posizionePicco / 100) + "s", 5, 25);
                 } else {
-                    gr.drawString("" + picco * 10 + " N " + ((float) posizionePicco / 100) + "s", bordoSx, 30);
+                    gr.drawString("" + picco * 10 + " N " + ((float) posizionePicco / 100) + "s", 5, 25);
                 }
             }
         }
