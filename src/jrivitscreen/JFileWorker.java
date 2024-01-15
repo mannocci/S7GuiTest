@@ -155,6 +155,8 @@ public class JFileWorker extends Thread {
                             /*Aggiungere la gestione della curva, contatori, stato con 
                                 * la creazione dei file F_CURVA_READY, F_LAVORO_READY. F_PULSANTE_READY
                              */
+                            case Static.F_WL_PRONTA ->
+                                WlPronta();
                         }
                     }
                     if (kind == ENTRY_DELETE) {
@@ -766,7 +768,21 @@ public class JFileWorker extends Thread {
         }
         Rm.lavoroPronto();
     }
-
+    /**
+     * Gestisce l'avvio di un lavoro. Il lavoro potrebbe essere stato chiesto da
+     * remoto, quindi leggo prima il file F_W_SCELTO
+     */
+    private void WlPronta() {
+        String lScelto = leggiFile(Static.F_WL_SCELTA);
+        String[] lSceltoArray = lScelto.split("§");
+        if (!lSceltoArray[0].equals(Rm.getWLscelta())) {
+            Rm.setWLscelta(lSceltoArray[0]);
+            if (lSceltoArray.length > 1) {
+                Rm.setWLnrCicli(Integer.parseInt(lSceltoArray[1]));
+            }
+        }
+        Rm.lavoroPronto();
+    }
     private void leggiAbilitaCalibrazione() {
         File inputFile = new File(Static.PATH_WATCH + Static.F_ABILITA_CALIBRAZIONE);
         if (inputFile.exists()) {
