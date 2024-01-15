@@ -69,6 +69,7 @@ public class Static {
             F_RELOAD = "reload",
             F_LAVORO_AVVIATO = "lavoro_avviato",
             F_LAVORO_PRONTO = "lavoro_pronto",
+            F_WL_PRONTA = "wl_pronta",
             F_PRESSIONE_ARIA_IN_MIN = "pressione_aria_in_min",
             F_PRESSIONE_ARIA_IN_MAX = "pressione_aria_in_max",
             F_NO_SENSORE = "no_sensore",
