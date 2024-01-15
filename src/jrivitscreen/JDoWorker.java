@@ -109,6 +109,11 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     this.avviaLavoro();
                 }
 
+                case "scegli_e_avvia_wl" -> {
+                    this.scegliWL();
+                    this.avviaWL();
+                }
+
                 case "aggiorna info" ->
                     this.updateInfo();
 
@@ -151,7 +156,6 @@ public class JDoWorker extends SwingWorker<String, Object> {
             + "§" + this.Rm.getLimLotti()
             + "§" + this.Rm.getLimPezzi());
     }
-
     /**
      * Avvia il lavoro scelto
      */
@@ -159,6 +163,23 @@ public class JDoWorker extends SwingWorker<String, Object> {
         JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_AVVIO);
         this.Rm.g.setCurva("");
     }
+    /**
+     * Imposta WL scelta
+     */
+    void scegliWL() {
+        String Wlista = this.Rm.getWLscelta();
+        // Scrivo anche i dettagli del lavoro. Serviranno allo scambio dati tramite webSocket
+        JFileWorker.scriviFileConReady(Static.F_WL_SCELTA, Wlista
+            + "§" + this.Rm.getWLnrCicli());
+    }
+      /**
+     * Avvia la WorkList
+     */
+    void avviaWL() {
+        JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_AVVIO);
+        this.Rm.g.setCurva("");
+    }
+
 
 
     /**
