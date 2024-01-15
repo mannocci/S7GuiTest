@@ -123,9 +123,10 @@ public class JRivitMain extends javax.swing.JFrame {
     private String esitoTiro;
     private String posizioneErrori;
     private ArrayList<Object> elencoDesWl;
-    private Object listWl;
     private Object listaWl;
     private boolean inWl;
+    private String WLscelta;
+    private int WLnrCicli;
 
 //
 //Dopo una sospensione
@@ -1171,8 +1172,14 @@ public class JRivitMain extends javax.swing.JFrame {
                 this.exit();
 //                per ora uso il pulsante per chiudere;
             case "start" -> {
-                scegliLavoro();
-                avviaLavoro();
+                if (this.inWl) {
+                    scegliWL();
+                    avviaWL();
+                } else {
+                    scegliLavoro();
+                    avviaLavoro();
+                }
+
             }
             case "started" -> {
                 this.PanelCanvas();
@@ -1555,7 +1562,12 @@ public class JRivitMain extends javax.swing.JFrame {
         }
         this.lavoroScelto = lavoroScelto;
     }
-
+    public void setWLScelta(String wlScelta) {
+        if (wlScelta.contains("Errore")) {
+            wlScelta = "0";
+        }
+        this.WLscelta = wlScelta;
+    }
     /**
      * Pannello che mostra il contenuto del file /tmp/warning.txt
      */
@@ -2614,6 +2626,35 @@ public class JRivitMain extends javax.swing.JFrame {
     }
 
     /**
+     * Sceglie la WorkList
+     */
+    public void scegliWL() {
+        int idWL = this.listWLavori.getSelectedIndex();
+        try {
+            this.WLscelta = this.elencoWl.get(idWL)[0];
+            this.WLnrCicli = Integer.parseInt(this.elencoWl.get(idWL)[1]);
+        } catch (NumberFormatException e) {
+            Static.debug("nome WLCicli null !\n", 2);
+            this.WLnrCicli = 1;
+        }
+    }
+
+    /**
+     * Avviare la WorkList
+     */
+    public void avviaWL() {
+        try {
+            this.jLabelNomeWL.setText(this.WLscelta.trim());
+            setStatoConcluso(false);
+            setInErrore(false);
+            azzeraContatori();
+            this.esegui("scegli_e_avvia");
+        } catch (Exception ex) {
+            Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    /**
      * Serve per fare il refresh dell'icona che cambia colore in base al livello
      * di Warning
      *
@@ -2767,16 +2808,22 @@ public class JRivitMain extends javax.swing.JFrame {
      * Control una volta preparato l'"ambiente" per il lavoro consente l'avvio
      */
     public void lavoroPronto() { // e' qui....
-        if (this.stato.equals(Static.STATO_AVVIATO)) {
-            this.jLabelNomeLavoro.setText(this.lavoroScelto.trim());
-            if (this.panCur.equals("started")) {
-                PanelStarted();
-                impostaLabelContatori();
-            }
-
+        this.jLabelNomeLavoro.setText(this.lavoroScelto.trim());
+        if (this.panCur.equals("started")) {
+            PanelStarted();
         }
+        impostaLabelContatori();
     }
-
+    /**
+     * Control una volta preparato l'"ambiente" per il lavoro consente l'avvio
+     */
+    public void wlPronta() { // e' qui....Manca il nome del lavoro
+        this.jLabelNomeWL.setText(this.WLscelta.trim());
+        if (this.panCur.equals("started")) {
+            PanelStarted();
+        }
+        impostaLabelContatori();
+    }
     /**
      * Limite dei Lotti
      *
@@ -2950,4 +2997,22 @@ public class JRivitMain extends javax.swing.JFrame {
         this.posizioneErrori = posizioneErrori;
     }
 
+    public String getWLscelta() {
+        return WLscelta;
+    }
+
+    public void setWLscelta(String WLscelta) {
+        this.WLscelta = WLscelta;
+    }
+
+    public int getWLnrCicli() {
+        return WLnrCicli;
+    }
+
+    public void setWLnrCicli(int WLnrCicli) {
+        this.WLnrCicli = WLnrCicli;
+    }
+
+    
+    
 }
