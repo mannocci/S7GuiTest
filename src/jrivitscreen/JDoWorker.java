@@ -164,19 +164,21 @@ public class JDoWorker extends SwingWorker<String, Object> {
         this.Rm.g.setCurva("");
     }
     /**
-     * Imposta WL scelta
+     * Riferisce a Control la scelta della Work List
      */
     void scegliWL() {
         String Wlista = this.Rm.getWLscelta();
-        // Scrivo anche i dettagli del lavoro. Serviranno allo scambio dati tramite webSocket
         JFileWorker.scriviFileConReady(Static.F_WL_SCELTA, Wlista
             + "§" + this.Rm.getWLnrCicli());
     }
       /**
-     * Avvia la WorkList
+     * Avvia la richiesta a Control per la WorkList
+     * Questo implica di dover andare a leggere la lista dei lavori e scriverli in un file
+     * con indice§nome lavoro. ogni volta che screen inizia un lavoro viene rimosso dal file che
+     * inizierà con l'indica§nome lavoro successivo
      */
     void avviaWL() {
-        JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_AVVIO);
+        JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_AVVIO_WL);
         this.Rm.g.setCurva("");
     }
 
