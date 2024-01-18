@@ -30,7 +30,8 @@ import java.time.format.DateTimeFormatter;
 public class Static {
 
     //Variabili final (non modificabili)
-    final static String RICHIESTA_AVVIO = "80",
+    final static String RICHIESTA_AVVIO_WL = "79",
+            RICHIESTA_AVVIO = "80",
             RICHIESTA_PAUSA = "81",
             RICHIESTA_STOP = "82",
             RICHIESTA_CALIBRAZIONE = "83",
@@ -38,6 +39,7 @@ public class Static {
             RICHIESTA_RIAVVIO = "85",
             RICHIESTA_CALIBRAZIONE_SALVA = "86",
             RICHIESTA_CALIBRAZIONE_ANNULLA = "87";
+            
 
     final static String STATO_AVVIATO = "91",
             STATO_CONCLUSO = "100",
@@ -61,6 +63,7 @@ public class Static {
             F_W_SCELTO = "w_scelto",
             F_WL     = "wl.txt",
             F_WL_SCELTA = "wl_scelta",
+            F_WL_RUNNING = "wl_running",//Contiene il lavoro avviato e l'indice dell'elenco "nome lavoro§n"
             F_RISPOSTA_TIRO_ERRATO = "risposta_tiro_errato",
             F_RISPOSTA_TIRO_ERRATO_CONTINUA = "risposta_tiro_errato_continua",
             F_RISPOSTA_TIRO_ERRATO_ACCETTA = "risposta_tiro_errato_accetta",
@@ -109,6 +112,7 @@ public class Static {
     static float MAX_VARIAZIONE_PRESSIONE = 6.0f;   // Massima variazione di pressione ammessa da una lettura all'altra
 
     final private static DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yy HH:mm:ss.SSS");  // per i messaggi di log
+    
     
 
     /**
