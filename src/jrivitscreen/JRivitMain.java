@@ -123,7 +123,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private String esitoTiro;
     private String posizioneErrori;
     private ArrayList<Object> elencoDesWl;
-    private Object listaWl;
+    private List listaWl;
     private boolean inWl;
     private String WLscelta;
     private int WLnrCicli;
@@ -276,7 +276,6 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelDialog = new javax.swing.JPanel();
         jLabelDialog = new javax.swing.JLabel();
         jPanelCalibrazione = new javax.swing.JPanel();
-        jLabelNomeDeviceCal = new javax.swing.JLabel();
         jLabelNomeLavoroCal = new javax.swing.JLabel();
         jLabelAvvisoCalibrazione = new javax.swing.JLabel();
         jPanelRight = new javax.swing.JPanel();
@@ -447,6 +446,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelNomeLavoro.setFont(new java.awt.Font("SansSerif", 1, 20)); // NOI18N
         jLabelNomeLavoro.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelNomeLavoro.setText("Nome Lavoro");
+        jLabelNomeLavoro.setFocusable(false);
         jPanelStarted.add(jLabelNomeLavoro, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 65, 320, -1));
 
         jLabelNomeWL.setFont(new java.awt.Font("SansSerif", 1, 20)); // NOI18N
@@ -640,15 +640,10 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelCalibrazione.setPreferredSize(new java.awt.Dimension(338, 238));
         jPanelCalibrazione.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabelNomeDeviceCal.setFont(new java.awt.Font("DejaVu Sans Condensed", 1, 18)); // NOI18N
-        jLabelNomeDeviceCal.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabelNomeDeviceCal.setText("Nome Device");
-        jPanelCalibrazione.add(jLabelNomeDeviceCal, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 8, 315, 30));
-
-        jLabelNomeLavoroCal.setFont(new java.awt.Font("DejaVu Sans Condensed", 1, 24)); // NOI18N
+        jLabelNomeLavoroCal.setFont(new java.awt.Font("DejaVu Sans Condensed", 1, 12)); // NOI18N
         jLabelNomeLavoroCal.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelNomeLavoroCal.setText("Calibrazione");
-        jPanelCalibrazione.add(jLabelNomeLavoroCal, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 110, 315, 40));
+        jPanelCalibrazione.add(jLabelNomeLavoroCal, new org.netbeans.lib.awtextra.AbsoluteConstraints(232, 220, 90, 13));
 
         jLabelAvvisoCalibrazione.setFont(new java.awt.Font("DejaVu Sans Condensed", 1, 18)); // NOI18N
         jLabelAvvisoCalibrazione.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -1224,12 +1219,12 @@ public class JRivitMain extends javax.swing.JFrame {
         }
     }
     private void listLavoriMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listLavoriMouseClicked
-        this.JTextAreaDescrizioneLavoro.setText(
-                this.elencoDesLavoro.get(this.listLavori.getSelectedIndex()));
-        if (evt.getClickCount() == 2) { // doppio click -> avvio lavoro
-            scegliLavoro();
-            avviaLavoro();
-        }
+            this.JTextAreaDescrizioneLavoro.setText(
+                    this.elencoDesLavoro.get(this.listLavori.getSelectedIndex()));
+            if (evt.getClickCount() == 2) { // doppio click -> avvio lavoro
+                scegliLavoro();
+                avviaLavoro();
+            }
     }//GEN-LAST:event_listLavoriMouseClicked
 
     private void jLabelWarningMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelWarningMouseClicked
@@ -1265,11 +1260,30 @@ public class JRivitMain extends javax.swing.JFrame {
     }//GEN-LAST:event_listLavoriItemStateChanged
 
     private void listWLavoriMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listWLavoriMouseClicked
-        // TODO add your handling code here:
+            this.JTextAreaDescrizioneLavoro.setText(
+                    this.elencoDesWl.get(this.listWLavori.getSelectedIndex()).toString());
+            if (evt.getClickCount() == 2) { // doppio click -> avvio work list
+                scegliWL();
+                avviaWL();
+            }
     }//GEN-LAST:event_listWLavoriMouseClicked
 
     private void listWLavoriItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_listWLavoriItemStateChanged
-        // TODO add your handling code here:
+        java.awt.List l = (java.awt.List) evt.getSource();
+        int elementoSelezionato = l.getSelectedIndexes()[0];
+        /*
+        this.JTextAreaDescrizioneLavoro.setText(
+                this.elencoDesLavoro.get(elementoSelezionato));
+        if (this.elencoLavoriCompleto.get(elementoSelezionato)[4].equals("0")) {
+            this.JTextAreaDescrizioneLavoro.setBackground(Color.yellow);
+            this.jButtonPR3.setIcon(this.Img_Nulla);//aggiorna il tipo di Icona per il pulsante
+            this.jButtonPR3.setEnabled(false);
+        } else {
+            this.JTextAreaDescrizioneLavoro.setBackground(Color.white);
+            this.jButtonPR3.setIcon(this.Img_Ok);//aggiorna il tipo di Icona per il pulsante
+            this.jButtonPR3.setEnabled(true);
+        }
+        */
     }//GEN-LAST:event_listWLavoriItemStateChanged
 
     /**
@@ -1399,7 +1413,6 @@ public class JRivitMain extends javax.swing.JFrame {
     private javax.swing.JLabel jLabelLan;
     private javax.swing.JLabel jLabelLogo;
     private javax.swing.JLabel jLabelNomeDevice;
-    private javax.swing.JLabel jLabelNomeDeviceCal;
     private javax.swing.JLabel jLabelNomeLavoro;
     private javax.swing.JLabel jLabelNomeLavoroCal;
     private javax.swing.JLabel jLabelNomeWL;
@@ -1562,12 +1575,8 @@ public class JRivitMain extends javax.swing.JFrame {
         }
         this.lavoroScelto = lavoroScelto;
     }
-    public void setWLScelta(String wlScelta) {
-        if (wlScelta.contains("Errore")) {
-            wlScelta = "0";
-        }
-        this.WLscelta = wlScelta;
-    }
+
+
     /**
      * Pannello che mostra il contenuto del file /tmp/warning.txt
      */
@@ -1650,6 +1659,9 @@ public class JRivitMain extends javax.swing.JFrame {
         }//End LIsta not NULL
         if (jsp != null) {
             jsp.getVerticalScrollBar().getBlockIncrement(-1);
+            jsp.getVerticalScrollBar().grabFocus();
+            robot.keyPress(KeyEvent.VK_UP);
+            robot.keyRelease(KeyEvent.VK_UP);
         }
         repaint();
     }//End PulsanteSu
@@ -1726,6 +1738,9 @@ public class JRivitMain extends javax.swing.JFrame {
 
         if (jsp != null) {
             jsp.getVerticalScrollBar().getBlockIncrement(1);
+            jsp.getVerticalScrollBar().grabFocus();
+            robot.keyPress(KeyEvent.VK_DOWN);
+            robot.keyRelease(KeyEvent.VK_DOWN);
         }
         repaint();
     }//End PulsanteSu
@@ -2429,7 +2444,7 @@ public class JRivitMain extends javax.swing.JFrame {
             }
         }
     }
-
+  
     /**
      *
      * @return se è stato impostato lo stato in pausa
@@ -2626,16 +2641,17 @@ public class JRivitMain extends javax.swing.JFrame {
     }
 
     /**
-     * Sceglie la WorkList
+     * Scelta della WL tramite Screen 
      */
     public void scegliWL() {
         int idWL = this.listWLavori.getSelectedIndex();
+        this.WLscelta ="";
+        this.WLnrCicli = 1;
         try {
             this.WLscelta = this.elencoWl.get(idWL)[0];
             this.WLnrCicli = Integer.parseInt(this.elencoWl.get(idWL)[1]);
         } catch (NumberFormatException e) {
             Static.debug("nome WLCicli null !\n", 2);
-            this.WLnrCicli = 1;
         }
     }
 
@@ -2648,7 +2664,7 @@ public class JRivitMain extends javax.swing.JFrame {
             setStatoConcluso(false);
             setInErrore(false);
             azzeraContatori();
-            this.esegui("scegli_e_avvia");
+            this.esegui("scegli_e_avvia_wl");
         } catch (Exception ex) {
             Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -2808,12 +2824,13 @@ public class JRivitMain extends javax.swing.JFrame {
      * Control una volta preparato l'"ambiente" per il lavoro consente l'avvio
      */
     public void lavoroPronto() { // e' qui....
-        this.jLabelNomeLavoro.setText(this.lavoroScelto.trim());
         if (this.panCur.equals("started")) {
+            this.jLabelNomeLavoro.setText(this.lavoroScelto.trim());
             PanelStarted();
         }
         impostaLabelContatori();
     }
+
     /**
      * Control una volta preparato l'"ambiente" per il lavoro consente l'avvio
      */
@@ -2824,6 +2841,7 @@ public class JRivitMain extends javax.swing.JFrame {
         }
         impostaLabelContatori();
     }
+
     /**
      * Limite dei Lotti
      *
@@ -3000,10 +3018,30 @@ public class JRivitMain extends javax.swing.JFrame {
     public String getWLscelta() {
         return WLscelta;
     }
-
+ 
+    /**
+     * 
+     * Se esternamente viene impostato l'avvio di una WL
+     * deve essere cooerente con la lista di scelta dell WL
+     * in Screen
+     * @param lavoro work list,
+     *
+     */
     public void setWLscelta(String WLscelta) {
+        String wll="";
+        if (WLscelta.contains("Errore")) {
+            WLscelta = "0";
+        }        
         this.WLscelta = WLscelta;
-    }
+        for (int i = 0; i < this.listWLavori.getRows(); i++) {
+            wll = this.listWLavori.getItem(i);
+            if (wll.contains(WLscelta)) {
+                this.listWLavori.select(i);
+                break;
+            }
+        }
+    }        
+    
 
     public int getWLnrCicli() {
         return WLnrCicli;
@@ -3013,6 +3051,4 @@ public class JRivitMain extends javax.swing.JFrame {
         this.WLnrCicli = WLnrCicli;
     }
 
-    
-    
 }
