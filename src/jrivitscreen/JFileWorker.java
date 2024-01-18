@@ -134,8 +134,10 @@ public class JFileWorker extends Thread {
                             // e se riusciamo anche ad uscire su internet
                             // Verificare se si può usare "nmcli monitor" per tenere sotto controllo la rete e avvisare in caso di cambiamenti
                             case Static.F_POWEROFF -> {
-                                Rm.getjLabelDeviceName().setText("POWER OFF");
+                                Rm.getjLabelDeviceName().setText("POWERING OFF");
                                 Rm.PanelMain();
+                                Thread.sleep(2000);
+                               // System.exit(0);
                             }
                             case (Static.F_NOME_DEVICE + "_ready") -> {
                                 readNomeDevice();
@@ -322,7 +324,9 @@ public class JFileWorker extends Thread {
         this.aggiornaSensori();// Occorre che vi sia il batch avviato
         this.aggiornaContatori();
         this.readLavori();//Se non esite il file imposta il default
+        this.lavoroPronto();
         this.readWl();//Se non esiste il file ?
+        this.WlPronta();
         this.readInfo();// Se non esiste il file imposta a stringa info
         this.readWarning();// Se non esiste il file imposta a sringa warning
         this.readCurvaDiRiferimento();//Se non esiste il file imposta a 0
@@ -629,7 +633,7 @@ public class JFileWorker extends Thread {
     private void aggiornaContatori() {
         String testo = leggiFile(Static.F_CONTATORI);
         String[] contatori = testo.split(",");
-        if (contatori.length == 6) {
+        if (contatori.length > 1) {
             try {
                 this.Rm.setLotto(Integer.parseInt(contatori[0]));
                 this.Rm.setTiriNelLotto(Integer.parseInt(contatori[1]));
@@ -769,16 +773,17 @@ public class JFileWorker extends Thread {
         Rm.lavoroPronto();
     }
     /**
-     * Gestisce l'avvio di un lavoro. Il lavoro potrebbe essere stato chiesto da
-     * remoto, quindi leggo prima il file F_W_SCELTO
+     * Gestisce l'avvio di una Work List.
+     * La WL potrebbe essere stata chiesta da
+     * remoto, quindi leggo prima il file F_WL_SCELTA
      */
     private void WlPronta() {
-        String lScelto = leggiFile(Static.F_WL_SCELTA);
-        String[] lSceltoArray = lScelto.split("§");
-        if (!lSceltoArray[0].equals(Rm.getWLscelta())) {
-            Rm.setWLscelta(lSceltoArray[0]);
-            if (lSceltoArray.length > 1) {
-                Rm.setWLnrCicli(Integer.parseInt(lSceltoArray[1]));
+        String wlScelta = leggiFile(Static.F_WL_SCELTA);
+        String[] WLSceltaArray = wlScelta.split("§");
+        if (!WLSceltaArray[0].equals(Rm.getWLscelta())) {
+            Rm.setWLscelta(WLSceltaArray[0]);
+            if (WLSceltaArray.length > 1) {
+                Rm.setWLnrCicli(Integer.parseInt(WLSceltaArray[1]));
             }
         }
         Rm.lavoroPronto();
