@@ -128,18 +128,20 @@ public class JGrafico extends JPanel {
                 }
             }
             if (this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE)) {
-                gr.setColor(Color.ORANGE);
                 f = new Font("Arial", 2, 20);
                 gr.setFont(f);
-                gr.drawString("Calibration", 210, 25);
-                gr.drawString("mode", 260, 42);
+                gr.setColor(Color.BLACK);
+                gr.drawString(this.Rm.getLavoroScelto(), 200, 25);
+                gr.setColor(Color.ORANGE);
+                gr.drawString("Calib.mode", 200, 43);
             } else {
                 if (this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE_TEST)) {
-                    gr.setColor(Color.BLUE);
                     f = new Font("Arial", 2, 20);
                     gr.setFont(f);
-                    gr.drawString("Calibration", 210, 25);
-                    gr.drawString("test", 280, 42);
+                    gr.setColor(Color.BLACK);
+                    gr.drawString(this.Rm.getLavoroScelto(), 200, 25);
+                    gr.setColor(Color.BLUE);
+                    gr.drawString("Calib.test", 200, 43);
                 }
             }
             if (nPointsCurva > 1) {
