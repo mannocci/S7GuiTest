@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 adminsb
+ * Copyright (C) 2023 Fabio, Luca
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,77 +18,130 @@
  * repository Privato, visibile da personale della Rivit, oltre a Luca Mannocci,
  * Fabio Fragapane, Mannocci Enrico
  * @versione 1.0 maggio/giugno 2023
+ * @versione 1.2 gennaio 2024
  */
 package jrivitscreen;
 
 /**
  *
- * @author adminsb
+ * @author Fabio, Luca
  */
-import com.pi4j.io.gpio.GpioController;
-import com.pi4j.io.gpio.GpioFactory;
-import com.pi4j.io.gpio.GpioPinDigitalInput;
-import com.pi4j.io.gpio.PinPullResistance;
-import com.pi4j.io.gpio.RaspiPin;
-import com.pi4j.io.gpio.event.GpioPinDigitalStateChangeEvent;
-import com.pi4j.io.gpio.event.GpioPinListenerDigital;
+import com.pi4j.Pi4J;
+import com.pi4j.io.gpio.digital.DigitalInput;
+import com.pi4j.io.gpio.digital.DigitalState;
+import com.pi4j.io.gpio.digital.PullResistance;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ButtonThread extends Thread {
+
+public class ButtonThread {
 
     private JRivitMain mf;
+
+    private static final HashMap<String, Integer> pulsanti = new HashMap<String, Integer>() {
+        {   // Vecchia configurazione
+            put("PL1", 21); // Prima era RaspiPin.GPIO_29
+            put("PL2", 20); // Prima era RaspiPin.GPIO_28
+            put("PL3", 26); // Prima era RaspiPin.GPIO_25
+            put("PR1", 16); // Prima era RaspiPin.GPIO_27
+            put("PR2", 19); // Prima era RaspiPin.GPIO_24
+            put("PR3", 12); // Prima era RaspiPin.GPIO_26
+            /*
+            // Nuova configurazione
+            put("SW", 21);  // Prima era RaspiPin.GPIO_9    // Pin  5 Switch ON/OFF
+            put("LED", 20); // Prima era RaspiPin.GPIO_29   // Pin 40 LED ON/OFF
+            put("PL1", 21); // Prima era RaspiPin.GPIO_23   // Pin 33
+            put("PL2", 20); // Prima era RaspiPin.GPIO_24   // Pin 35
+            put("PL3", 26); // Prima era RaspiPin.GPIO_25   // Pin 37
+            put("PL1", 16); // Prima era RaspiPin.GPIO_28   // Pin 38
+            put("PL2", 19); // Prima era RaspiPin.GPIO_27   // Pin 36
+            put("PL3", 12); // Prima era RaspiPin.GPIO_26   // Pin 32
+             */
+        }
+    };
 
     public ButtonThread(JRivitMain mf) {
         this.mf = mf;
         Static.debug("Push button Thread started", 3);
 
-        // create gpio controller
-        final GpioController gpio = GpioFactory.getInstance();
+        var pi4j = Pi4J.newAutoContext();
+        pulsanti.forEach((key, value) -> {  // Per ogni pulsante
 
-        // Vecchia configurazione
-        final GpioPinDigitalInput[] pulsanti = {
-            gpio.provisionDigitalInputPin(RaspiPin.GPIO_29, "PL1", PinPullResistance.PULL_UP),
-            gpio.provisionDigitalInputPin(RaspiPin.GPIO_28, "PL2", PinPullResistance.PULL_UP),
-            gpio.provisionDigitalInputPin(RaspiPin.GPIO_25, "PL3", PinPullResistance.PULL_UP),
-            gpio.provisionDigitalInputPin(RaspiPin.GPIO_27, "PR1", PinPullResistance.PULL_UP),
-            gpio.provisionDigitalInputPin(RaspiPin.GPIO_24, "PR2", PinPullResistance.PULL_UP),
-            gpio.provisionDigitalInputPin(RaspiPin.GPIO_26, "PR3", PinPullResistance.PULL_UP)
-        };
+            var buttonConfig = DigitalInput.newConfigBuilder(pi4j)
+                    .id(key)
+                    .name(key)
+                    .address(value)
+                    .pull(PullResistance.PULL_UP)
+                    .debounce(3000L)
+                    .provider("pigpio-digital-input");
 
-        // Nuova configurazione
-        /*
-        final GpioPinDigitalInput[] pulsanti = {
-            
-            gpio.provisionDigitalInputPin(RaspiPin.GPIO_9, "SW", PinPullResistance.PULL_UP),    // Pin  5 Switch ON/OFF
-            gpio.provisionDigitalInputPin(RaspiPin.GPIO_29, "LED", PinPullResistance.PULL_UP),  // Pin 40 LED ON/OFF
-            gpio.provisionDigitalInputPin(RaspiPin.GPIO_23, "PL1", PinPullResistance.PULL_UP),  // Pin 33
-            gpio.provisionDigitalInputPin(RaspiPin.GPIO_24, "PL2", PinPullResistance.PULL_UP),  // Pin 35
-            gpio.provisionDigitalInputPin(RaspiPin.GPIO_25, "PL3", PinPullResistance.PULL_UP),  // Pin 37
-            gpio.provisionDigitalInputPin(RaspiPin.GPIO_28, "PR1", PinPullResistance.PULL_UP),  // Pin 38
-            gpio.provisionDigitalInputPin(RaspiPin.GPIO_27, "PR2", PinPullResistance.PULL_UP),  // Pin 36
-            gpio.provisionDigitalInputPin(RaspiPin.GPIO_26, "PR3", PinPullResistance.PULL_UP)   // Pin 32
-        };
-        */
-        
-        // gpio pin #02 as an input pin with its internal pull down resistor enabled
-//        final GpioPinDigitalInput myButton = gpio.provisionDigitalInputPin(RaspiPin.GPIO_02, PinPullResistance.PULL_DOWN);
-        // create and register gpio pin listener
-        gpio.addListener(new GpioPinListenerDigital() {
-            @Override
-            public void handleGpioPinDigitalStateChangeEvent(GpioPinDigitalStateChangeEvent event) {
-                // display pin state on console
-                String NomePulsante = event.getPin().getName().substring(0, 3);
-                read_pulsane_premuto(NomePulsante, "" + event.getState());
-                Static.debug(" Premuto: " + NomePulsante+ " = " + event.getState(), 4);
-            }
+            var button = pi4j.create(buttonConfig);
 
-        }, pulsanti);
-
+            button.addListener(e -> {
+                if (e.state() == DigitalState.LOW) {
+                    this.mf.pulsanteHw(e.source().id());
+                    Static.debug(" Premuto: " + e.source().id() + " = " + e.state(), 4);
+                }
+            });
+        });
     }
+}
 
-    private void send_p(String sp) {
-        this.mf.pulsanteHw(sp);
+/*
+
+public class ButtonThread extends Thread {
+
+    private JRivitMain mf;
+
+    private static final HashMap<String, Integer> pulsanti = new HashMap<String, Integer>() {
+        {   // Vecchia configurazione
+            put("PL1", 21); // Prima era RaspiPin.GPIO_29
+            put("PL2", 20); // Prima era RaspiPin.GPIO_28
+            put("PL3", 26); // Prima era RaspiPin.GPIO_25
+            put("PL1", 16); // Prima era RaspiPin.GPIO_27
+            put("PL2", 19); // Prima era RaspiPin.GPIO_24
+            put("PL3", 12); // Prima era RaspiPin.GPIO_26
+            /*
+            // Nuova configurazione
+            put("SW", 21);  // Prima era RaspiPin.GPIO_9    // Pin  5 Switch ON/OFF
+            put("LED", 20); // Prima era RaspiPin.GPIO_29   // Pin 40 LED ON/OFF
+            put("PL1", 21); // Prima era RaspiPin.GPIO_23   // Pin 33
+            put("PL2", 20); // Prima era RaspiPin.GPIO_24   // Pin 35
+            put("PL3", 26); // Prima era RaspiPin.GPIO_25   // Pin 37
+            put("PL1", 16); // Prima era RaspiPin.GPIO_28   // Pin 38
+            put("PL2", 19); // Prima era RaspiPin.GPIO_27   // Pin 36
+            put("PL3", 12); // Prima era RaspiPin.GPIO_26   // Pin 32
+        }
+    };
+
+    public ButtonThread(JRivitMain mf) {
+        this.mf = mf;
+        Static.debug("Push button Thread started", 3);
+
+        var pi4j = Pi4J.newAutoContext();
+        pulsanti.forEach((key, value) -> {  // Per ogni pulsante
+            System.out.println(key + " = " + value);
+
+            var buttonConfig = DigitalInput.newConfigBuilder(pi4j)
+                    .id(key)
+                    .name("Press button")
+                    .address(value)
+                    .pull(PullResistance.PULL_UP)
+                    .debounce(3000L)
+                    .provider("pigpio-digital-input");
+
+            var button = pi4j.create(buttonConfig);
+
+            button.addListener(e -> {
+                if (e.state() == DigitalState.LOW) {
+                    this.mf.pulsanteHw(e.source().id());
+                    Static.debug(" Premuto: " + e.source().id() + " = " + e.state(), 4);
+                }
+            });
+        });
+        
+        
     }
 
     @Override
@@ -102,11 +155,6 @@ public class ButtonThread extends Thread {
             }
         }
     }
-
-    private void read_pulsane_premuto(String nomeFile, String Stato) {
-        if (Stato.equalsIgnoreCase("LOW")) {
-            //System.out.printf("il pulsante %s è stato premuto\n", fileName);
-            this.send_p(nomeFile);
-        }
-    }
 }
+
+*/

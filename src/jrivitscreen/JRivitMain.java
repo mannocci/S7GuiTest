@@ -2014,7 +2014,7 @@ public class JRivitMain extends javax.swing.JFrame {
             case 4 -> {
                 pulsanteHw("PR1");
             }
-        }
+        } 
     }
 
     /**

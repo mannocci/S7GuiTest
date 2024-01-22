@@ -140,7 +140,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
      * della classe FileWorker
      */
     void init() {
-        this.bt.start();//Gestione dei pulsanti
+// ffff        this.bt.start();//Gestione dei pulsanti
         this.file_worker.start();//Avvio FileWorker
         this.file_worker.initValues();
         this.update_status_nm();
