@@ -42,7 +42,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
 
     JRivitMain Rm;
     JFileWorker file_worker;
-    ButtonThread bt;
+    JButton bt;
     private String operation = "";
     private DateFormat dateFormat;
     private Calendar now;
@@ -57,7 +57,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
     JDoWorker(JRivitMain mf, JFileWorker fw) {
         this.Rm = mf;
         this.file_worker = fw;
-        this.bt = new ButtonThread(this.Rm);
+        this.bt = new JButton(this.Rm);
         dateFormat = new SimpleDateFormat("HH:mm");
         now = Calendar.getInstance();
     }
