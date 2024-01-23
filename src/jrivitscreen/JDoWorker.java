@@ -41,8 +41,8 @@ import java.util.logging.Logger;
 public class JDoWorker extends SwingWorker<String, Object> {
 
     JRivitMain Rm;
-    JFileWorker file_worker;
-    ButtonThread bt;
+    JFileWorker fileWorker;
+    JButton bt;
     private String operation = "";
     private DateFormat dateFormat;
     private Calendar now;
@@ -56,8 +56,8 @@ public class JDoWorker extends SwingWorker<String, Object> {
 
     JDoWorker(JRivitMain mf, JFileWorker fw) {
         this.Rm = mf;
-        this.file_worker = fw;
-        this.bt = new ButtonThread(this.Rm);
+        this.fileWorker = fw;
+        this.bt = new JButton(this.Rm);
         dateFormat = new SimpleDateFormat("HH:mm");
         now = Calendar.getInstance();
     }
@@ -140,9 +140,9 @@ public class JDoWorker extends SwingWorker<String, Object> {
      * della classe FileWorker
      */
     void init() {
-// ffff        this.bt.start();//Gestione dei pulsanti
-        this.file_worker.start();//Avvio FileWorker
-        this.file_worker.initValues();
+// ffff non è più un thread. Ora basta che esista l'oggetto        this.bt.start();//Gestione dei pulsanti
+        this.fileWorker.start();//Avvio FileWorker
+        this.fileWorker.initValues();
         this.update_status_nm();
     }
 
