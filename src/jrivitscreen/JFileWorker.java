@@ -724,7 +724,9 @@ public class JFileWorker extends Thread {
 //                    scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_STOP);
                     this.Rm.PanelStart();
                 }*/
-                this.Rm.PanelStart();
+                if( Rm.getPanCur().equals("started") ||Rm.getPanCur().equals("canvas") || Rm.getPanCur().equals("dialog")){
+                    this.Rm.PanelStart();
+                }
             }
             case Static.STATO_PAUSA -> {
                 this.Rm.setStatoConcluso(false);
