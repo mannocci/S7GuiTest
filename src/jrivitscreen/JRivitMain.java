@@ -311,6 +311,8 @@ public class JRivitMain extends javax.swing.JFrame {
 
         jButtonPL1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/no_warning.png"))); // NOI18N
         jButtonPL1.setAlignmentX(0.5F);
+        jButtonPL1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButtonPL1.setContentAreaFilled(false);
         jButtonPL1.setMaximumSize(new java.awt.Dimension(65, 65));
         jButtonPL1.setMinimumSize(new java.awt.Dimension(65, 65));
         jButtonPL1.setPreferredSize(new java.awt.Dimension(65, 65));
@@ -322,6 +324,8 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelLeft.add(jButtonPL1, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 6, -1, -1));
 
         jButtonPL2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/info.png"))); // NOI18N
+        jButtonPL2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButtonPL2.setContentAreaFilled(false);
         jButtonPL2.setMargin(new java.awt.Insets(4, 14, 4, 14));
         jButtonPL2.setPreferredSize(new java.awt.Dimension(65, 65));
         jButtonPL2.addActionListener(new java.awt.event.ActionListener() {
@@ -333,6 +337,8 @@ public class JRivitMain extends javax.swing.JFrame {
 
         jButtonPL3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/setup.png"))); // NOI18N
         jButtonPL3.setAlignmentX(0.5F);
+        jButtonPL3.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButtonPL3.setContentAreaFilled(false);
         jButtonPL3.setPreferredSize(new java.awt.Dimension(65, 65));
         jButtonPL3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -662,6 +668,8 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelRight.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jButtonPR1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/play_circle.png"))); // NOI18N
+        jButtonPR1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButtonPR1.setContentAreaFilled(false);
         jButtonPR1.setMaximumSize(new java.awt.Dimension(67, 67));
         jButtonPR1.setMinimumSize(new java.awt.Dimension(67, 67));
         jButtonPR1.setPreferredSize(new java.awt.Dimension(65, 65));
@@ -672,7 +680,8 @@ public class JRivitMain extends javax.swing.JFrame {
         });
         jPanelRight.add(jButtonPR1, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 6, -1, -1));
 
-        jButtonPR2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/nulla.png"))); // NOI18N
+        jButtonPR2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButtonPR2.setContentAreaFilled(false);
         jButtonPR2.setMaximumSize(new java.awt.Dimension(67, 67));
         jButtonPR2.setMinimumSize(new java.awt.Dimension(67, 67));
         jButtonPR2.setPreferredSize(new java.awt.Dimension(65, 65));
@@ -684,6 +693,8 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelRight.add(jButtonPR2, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 108, -1, -1));
 
         jButtonPR3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/nulla.png"))); // NOI18N
+        jButtonPR3.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButtonPR3.setContentAreaFilled(false);
         jButtonPR3.setMaximumSize(new java.awt.Dimension(67, 67));
         jButtonPR3.setMinimumSize(new java.awt.Dimension(67, 67));
         jButtonPR3.setPreferredSize(new java.awt.Dimension(65, 65));
@@ -1904,7 +1915,6 @@ public class JRivitMain extends javax.swing.JFrame {
             lista.add(" no count limits§-1§-1§work without counting limits§0");
             // todo verificare se in caso di file lavori.txt vuoto occore fermarsi
         }
-
         List<String> elencoTxt = new ArrayList<>();
         elencoDesLavoro = new ArrayList<>();
         elencoLavori = new ArrayList<>();
