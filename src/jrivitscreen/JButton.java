@@ -38,15 +38,15 @@ public class JButton {
 
     private static final HashMap<String, Integer> pulsanti = new HashMap<String, Integer>() {
         {   // Vecchia configurazione
-
+  /*
             put("PL1", 21); // Prima era RaspiPin.GPIO_29   // Pin 40
             put("PL2", 20); // Prima era RaspiPin.GPIO_28   // Pin 38
             put("PL3", 26); // Prima era RaspiPin.GPIO_25   // Pin 37
             put("PR1", 16); // Prima era RaspiPin.GPIO_27   // Pin 36
             put("PR2", 19); // Prima era RaspiPin.GPIO_24   // Pin 35
             put("PR3", 12); // Prima era RaspiPin.GPIO_26   // Pin 32
-
-            /*
+             */
+          
             // Nuova configurazione (PCB 1.0 con piedinatura scambiata pari/dispari)
             // Switch ON/OFF Pin 31 GPIO 6 
             // GND lato PL - Piazzola superiore di PL1
@@ -67,7 +67,7 @@ public class JButton {
             put("PR1", 26); // Prima era RaspiPin.GPIO_28   // Pin 37 PL3 ?
             put("PR2", 19); // Prima era RaspiPin.GPIO_27   // Pin 35 OK
             put("PR3", 5);  // Prima era RaspiPin.GPIO_26   // Pin 29
-             */
+
         }
     };
 
