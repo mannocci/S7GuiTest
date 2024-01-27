@@ -291,6 +291,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelVPN = new javax.swing.JLabel();
         jLabelController = new javax.swing.JLabel();
         jLabelWiFi = new javax.swing.JLabel();
+        jLabelInternet = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMaximumSize(new java.awt.Dimension(480, 320));
@@ -716,11 +717,11 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelBotton.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel_B_L.setBackground(java.awt.Color.lightGray);
-        jLabel_B_L.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel_B_L.setFont(new java.awt.Font("Segoe UI", 1, 10)); // NOI18N
         jLabel_B_L.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel_B_L.setText("00:00");
         jLabel_B_L.setOpaque(true);
-        jPanelBotton.add(jLabel_B_L, new org.netbeans.lib.awtextra.AbsoluteConstraints(94, 5, 88, 20));
+        jPanelBotton.add(jLabel_B_L, new org.netbeans.lib.awtextra.AbsoluteConstraints(108, 5, 80, 20));
 
         jLabel_B_R.setBackground(java.awt.Color.lightGray);
         jLabel_B_R.setFont(new java.awt.Font("DejaVu Sans", 1, 14)); // NOI18N
@@ -736,7 +737,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabel_msg.setText("message");
         jLabel_msg.setAlignmentX(0.2F);
         jLabel_msg.setOpaque(true);
-        jPanelBotton.add(jLabel_msg, new org.netbeans.lib.awtextra.AbsoluteConstraints(185, 5, 190, 20));
+        jPanelBotton.add(jLabel_msg, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 5, 187, 20));
 
         jLabelWarning.setFont(new java.awt.Font("DejaVu Sans", 1, 13)); // NOI18N
         jLabelWarning.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -749,7 +750,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 jLabelWarningMouseClicked(evt);
             }
         });
-        jPanelBotton.add(jLabelWarning, new org.netbeans.lib.awtextra.AbsoluteConstraints(378, 5, 25, -1));
+        jPanelBotton.add(jLabelWarning, new org.netbeans.lib.awtextra.AbsoluteConstraints(379, 5, 25, 20));
         jLabelWarning.getAccessibleContext().setAccessibleName("jLabelWarning");
 
         jLabelLan.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Red"));
@@ -759,7 +760,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelLan.setToolTipText("");
         jLabelLan.setOpaque(true);
         jLabelLan.setPreferredSize(new java.awt.Dimension(15, 20));
-        jPanelBotton.add(jLabelLan, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 5, 20, -1));
+        jPanelBotton.add(jLabelLan, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 5, 20, 20));
 
         jLabelVPN.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Red"));
         jLabelVPN.setFont(new java.awt.Font("DejaVu Sans", 1, 13)); // NOI18N
@@ -768,7 +769,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelVPN.setToolTipText("");
         jLabelVPN.setOpaque(true);
         jLabelVPN.setPreferredSize(new java.awt.Dimension(15, 20));
-        jPanelBotton.add(jLabelVPN, new org.netbeans.lib.awtextra.AbsoluteConstraints(48, 5, 20, -1));
+        jPanelBotton.add(jLabelVPN, new org.netbeans.lib.awtextra.AbsoluteConstraints(44, 5, 20, 20));
 
         jLabelController.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Red"));
         jLabelController.setFont(new java.awt.Font("DejaVu Sans", 1, 13)); // NOI18N
@@ -777,7 +778,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelController.setToolTipText("");
         jLabelController.setOpaque(true);
         jLabelController.setPreferredSize(new java.awt.Dimension(15, 20));
-        jPanelBotton.add(jLabelController, new org.netbeans.lib.awtextra.AbsoluteConstraints(25, 5, 20, -1));
+        jPanelBotton.add(jLabelController, new org.netbeans.lib.awtextra.AbsoluteConstraints(65, 5, 20, 20));
 
         jLabelWiFi.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Red"));
         jLabelWiFi.setFont(new java.awt.Font("DejaVu Sans", 1, 13)); // NOI18N
@@ -787,7 +788,16 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelWiFi.setAlignmentY(0.0F);
         jLabelWiFi.setOpaque(true);
         jLabelWiFi.setPreferredSize(new java.awt.Dimension(20, 20));
-        jPanelBotton.add(jLabelWiFi, new org.netbeans.lib.awtextra.AbsoluteConstraints(71, 5, 20, -1));
+        jPanelBotton.add(jLabelWiFi, new org.netbeans.lib.awtextra.AbsoluteConstraints(86, 5, 20, 20));
+
+        jLabelInternet.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Red"));
+        jLabelInternet.setFont(new java.awt.Font("DejaVu Sans", 1, 13)); // NOI18N
+        jLabelInternet.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelInternet.setText("I");
+        jLabelInternet.setToolTipText("");
+        jLabelInternet.setOpaque(true);
+        jLabelInternet.setPreferredSize(new java.awt.Dimension(15, 20));
+        jPanelBotton.add(jLabelInternet, new org.netbeans.lib.awtextra.AbsoluteConstraints(23, 5, 20, 20));
 
         getContentPane().add(jPanelBotton, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 290, 480, 30));
 
@@ -1421,6 +1431,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private javax.swing.JLabel jLabelDeviceName;
     private javax.swing.JLabel jLabelDialog;
     private javax.swing.JLabel jLabelErrati;
+    private javax.swing.JLabel jLabelInternet;
     private javax.swing.JLabel jLabelLan;
     private javax.swing.JLabel jLabelLogo;
     private javax.swing.JLabel jLabelNomeDevice;
@@ -2883,6 +2894,20 @@ public class JRivitMain extends javax.swing.JFrame {
         }
     }
 
+
+    /**
+     * Imposta il visualizzatore dello stato della raggiungibilità di internet
+     *
+     * @param stato
+     */
+    public void setInternetIndicator(boolean stato) {
+        if (stato) {
+            jLabelInternet.setBackground(Color.green);
+        } else {
+            jLabelInternet.setBackground(Color.red);
+        }
+    }
+    
     /**
      * Imposta il visualizzatore dello stato della VPN
      *
