@@ -102,6 +102,7 @@ public class Static {
             F_LOTTI_OK = "lotti_ok",
             F_SESSIONE = "sessione",
             F_LISTA_NM_CON = "lista_nm_con",
+            F_CONTROLLER_ONLINE = "controller_online",
             F_POWEROFF = "poweroff";
     static String PATH_WATCH = "/tmp/CT/";
     static String PATH_LCK = "/tmp/CTLock/";
