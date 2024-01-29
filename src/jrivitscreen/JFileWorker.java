@@ -128,6 +128,9 @@ public class JFileWorker extends Thread {
                             case Static.F_STATUS_WIFI + "_ready" -> {
                                 readSetupWifi();
                             }
+                            case Static.F_CONTROLLER_ONLINE -> {
+                                this.Rm.setControllerIndicator(true);
+                            }
                             case (Static.F_LISTA_NM_CON + "_ready") ->
                                 readListaNMdevice();
                             // Per accendere gli indicatori  sarebbe meglio usare il comando "nmcli networking connectivity" che indica se siamo in lan 
@@ -137,7 +140,7 @@ public class JFileWorker extends Thread {
                                 Rm.getjLabelDeviceName().setText("POWERING OFF");
                                 Rm.PanelMain();
                                 Thread.sleep(2000);
-                               // System.exit(0);
+                                // System.exit(0);
                             }
                             case (Static.F_NOME_DEVICE + "_ready") -> {
                                 readNomeDevice();
@@ -180,6 +183,10 @@ public class JFileWorker extends Thread {
                             }
                             case Static.F_CHIEDI_CONFERMA_STOP ->
                                 impostaChiediConfermaStop(false);
+                            case Static.F_CONTROLLER_ONLINE -> {
+                                this.Rm.setControllerIndicator(false);
+                            }
+
                         }
                     }
 
@@ -321,12 +328,13 @@ public class JFileWorker extends Thread {
     public void initValues() {
         this.leggiAriaInMinMax();   // Valori scritti nei files da Control
         this.leggiAbilitaCalibrazione();
+        this.leggiControllerOnline();
         this.aggiornaSensori();// Occorre che vi sia il batch avviato
         this.aggiornaContatori();
         this.readLavori();//Se non esite il file imposta il default
-        this.lavoroPronto();
+        //this.lavoroPronto(); il lavoro pronto deve essere comandato da Control
         this.readWl();//Se non esiste il file ?
-        this.WlPronta();
+       // this.WlPronta(); la WL pronta deve essere comandata da Control
         this.readInfo();// Se non esiste il file imposta a stringa info
         this.readWarning();// Se non esiste il file imposta a sringa warning
         this.readCurvaDiRiferimento();//Se non esiste il file imposta a 0
@@ -660,28 +668,26 @@ public class JFileWorker extends Thread {
         boolean lanIndicator = false;
         boolean vpnIndicator = false;
         boolean wifiIndicator = false;
+        boolean internetIndicator = false;
         for (String string : list_nm_con) {
-            if (string.contains("eth") && string.contains("ON")) {    // la prima riga che contiene "eth" e "ON" accende l'indicatore Lan
+            if (string.contains("eth") && string.contains("ON")
+                    || string.contains("rasp4") && string.contains("ON")) {    // la prima riga che contiene "eth" e "ON" accende l'indicatore Lan
                 lanIndicator = true;
-                break;
             }
-        }
-        for (String string : list_nm_con) {
+            if (string.contains("full")) {    // se l'ultima riga contiene "full" accende l'indicatore Internet
+                internetIndicator = true;
+            }
             if (string.contains("tun") && string.contains("ON")) {    // la prima riga che contiene "tun" e "ON" accende l'indicatore VPN
                 vpnIndicator = true;
-                break;
             }
-        }
-        for (String string : list_nm_con) {
             if (string.contains("AP_") && string.contains("ON")) {    // la prima riga che contiene "eth" e "ON" accende l'indicatore Lan
                 wifiIndicator = true;
-                break;
             }
         }
         this.Rm.setLanIndicator(lanIndicator);
+        this.Rm.setInternetIndicator(internetIndicator);
         this.Rm.setVPNIndicator(vpnIndicator);
         this.Rm.setWiFiIndicator(wifiIndicator);
-        this.Rm.setControllerIndicator(false);
     }
 
     /**
@@ -724,7 +730,7 @@ public class JFileWorker extends Thread {
 //                    scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_STOP);
                     this.Rm.PanelStart();
                 }*/
-                if( Rm.getPanCur().equals("started") ||Rm.getPanCur().equals("canvas") || Rm.getPanCur().equals("dialog")){
+                if (Rm.getPanCur().equals("started") || Rm.getPanCur().equals("canvas") || Rm.getPanCur().equals("dialog")) {
                     this.Rm.PanelStart();
                 }
             }
@@ -774,9 +780,9 @@ public class JFileWorker extends Thread {
         }
         Rm.lavoroPronto();
     }
+
     /**
-     * Gestisce l'avvio di una Work List.
-     * La WL potrebbe essere stata chiesta da
+     * Gestisce l'avvio di una Work List. La WL potrebbe essere stata chiesta da
      * remoto, quindi leggo prima il file F_WL_SCELTA
      */
     private void WlPronta() {
@@ -790,6 +796,7 @@ public class JFileWorker extends Thread {
         }
         Rm.lavoroPronto();
     }
+
     private void leggiAbilitaCalibrazione() {
         File inputFile = new File(Static.PATH_WATCH + Static.F_ABILITA_CALIBRAZIONE);
         if (inputFile.exists()) {
@@ -799,6 +806,16 @@ public class JFileWorker extends Thread {
         }
     }
 
+        private void leggiControllerOnline() {
+        File inputFile = new File(Static.PATH_WATCH + Static.F_CONTROLLER_ONLINE);
+        if (inputFile.exists()) {
+            this.Rm.setControllerIndicator(true);
+        } else {
+            this.Rm.setControllerIndicator(false);
+        }
+    }
+
+    
     private void readPosizioneErrori() {
         this.Rm.setPosizioneErrori(leggiFile(Static.F_POSIZIONE_ERRORI));
     }
