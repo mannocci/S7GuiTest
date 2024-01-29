@@ -861,7 +861,7 @@ public class JRivitMain extends javax.swing.JFrame {
                     // todo Gestire il caso in cui il lavoro in pausa non viene trovato
                     PanelStarted();
                 } else {
-                    this.JTextAreaDescrizioneLavoro.setText(this.elencoDesLavoro.get(0));
+                    //this.JTextAreaDescrizioneLavoro.setText(this.elencoDesLavoro.get(0));
                     PanelStart();
                 }
             }
@@ -1240,12 +1240,12 @@ public class JRivitMain extends javax.swing.JFrame {
         }
     }
     private void listLavoriMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listLavoriMouseClicked
-            this.JTextAreaDescrizioneLavoro.setText(
-                    this.elencoDesLavoro.get(this.listLavori.getSelectedIndex()));
-            if (evt.getClickCount() == 2) { // doppio click -> avvio lavoro
-                scegliLavoro();
-                avviaLavoro();
-            }
+        this.JTextAreaDescrizioneLavoro.setText(
+                this.elencoDesLavoro.get(this.listLavori.getSelectedIndex()));
+        if (evt.getClickCount() == 2) { // doppio click -> avvio lavoro
+            scegliLavoro();
+            avviaLavoro();
+        }
     }//GEN-LAST:event_listLavoriMouseClicked
 
     private void jLabelWarningMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabelWarningMouseClicked
@@ -1281,12 +1281,12 @@ public class JRivitMain extends javax.swing.JFrame {
     }//GEN-LAST:event_listLavoriItemStateChanged
 
     private void listWLavoriMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listWLavoriMouseClicked
-            this.JTextAreaDescrizioneLavoro.setText(
-                    this.elencoDesWl.get(this.listWLavori.getSelectedIndex()).toString());
-            if (evt.getClickCount() == 2) { // doppio click -> avvio work list
-                scegliWL();
-                avviaWL();
-            }
+        this.JTextAreaDescrizioneLavoro.setText(
+                this.elencoDesWl.get(this.listWLavori.getSelectedIndex()).toString());
+        if (evt.getClickCount() == 2) { // doppio click -> avvio work list
+            scegliWL();
+            avviaWL();
+        }
     }//GEN-LAST:event_listWLavoriMouseClicked
 
     private void listWLavoriItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_listWLavoriItemStateChanged
@@ -1304,7 +1304,7 @@ public class JRivitMain extends javax.swing.JFrame {
             this.jButtonPR3.setIcon(this.Img_Ok);//aggiorna il tipo di Icona per il pulsante
             this.jButtonPR3.setEnabled(true);
         }
-        */
+         */
     }//GEN-LAST:event_listWLavoriItemStateChanged
 
     /**
@@ -1482,6 +1482,12 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     public void PanelStart() {
         int selezionato = 0, i = 0;
+        java.awt.List lista;
+        if (this.inWl) {
+            lista = this.listWLavori;
+        } else {
+            lista = this.listLavori;
+        }
         if (this.abilitaCalibrazione) {
             this.changeButtons(this.Img_Exit, this.Img_Nulla, this.Img_Calibrazione,
                     this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Ok);
@@ -1497,27 +1503,30 @@ public class JRivitMain extends javax.swing.JFrame {
                 sessione = "0";
             }
             switch (sessione) {
-                case "0" ->
-                    selezionato = this.listLavori.getSelectedIndex();
+                case "0" -> {
+                    selezionato = lista.getSelectedIndex();
+                }
                 default -> {
-                    String[] items = this.listLavori.getSelectedItems();
+                    String[] items = lista.getSelectedItems();
                     for (i = 0; i < items.length; i++) {
                         if (items[i].startsWith(sessione + ",")) {
                             break;
                         }
                     }
                     selezionato = i;
-                    //Ripristina i valori dei tiri
                 }
             }
             if (selezionato == -1) {
                 selezionato = 1;
             }
-            this.listLavori.select(selezionato);
+            lista.select(selezionato);
+            this.setButtonDesc(selezionato);
             cambiaPannello(this.jPanelStart);
         }
     }
 
+    
+  
     /**
      * Pannello dopo aver fatto la scelta del Lavoro, tale scelta deve essere
      * scritta nel file /tmp/CT/w_scelto L'App JControl sollecitato dall'evento
@@ -1597,7 +1606,6 @@ public class JRivitMain extends javax.swing.JFrame {
         }
         this.lavoroScelto = lavoroScelto;
     }
-
 
     /**
      * Pannello che mostra il contenuto del file /tmp/warning.txt
@@ -1734,24 +1742,7 @@ public class JRivitMain extends javax.swing.JFrame {
             lista.makeVisible(nrCurItem);
 
             if (this.panCur.equals("start")) {
-                if (this.inWl == false) {
-                    this.JTextAreaDescrizioneLavoro.setText(this.elencoDesLavoro.get(nrCurItem));
-                    if (this.elencoLavoriCompleto.get(nrCurItem)[4].equals("0")) {
-                        this.JTextAreaDescrizioneLavoro.setBackground(Color.yellow);
-                        this.jButtonPR3.setIcon(this.Img_Nulla);//aggiorna il tipo di Icona per il pulsante
-                        this.jButtonPR3.setEnabled(false);
-                    } else {
-                        this.JTextAreaDescrizioneLavoro.setBackground(Color.white);
-                        this.jButtonPR3.setIcon(this.Img_Ok);//aggiorna il tipo di Icona per il pulsante
-                        this.jButtonPR3.setEnabled(true);
-                    }
-                } else {
-                    this.JTextAreaDescrizioneLavoro.setText(this.elencoDesWl.get(nrCurItem).toString());
-                    this.JTextAreaDescrizioneLavoro.setBackground(Color.white);
-                    this.jButtonPR3.setIcon(this.Img_Ok);//aggiorna il tipo di Icona per il pulsante
-                    this.jButtonPR3.setEnabled(true);
-
-                }
+                setButtonDesc(nrCurItem);
             }
             if (isSetup) {
                 this.jButtonPR3.setIcon(this.setIconSetup());//aggiorna il tipo di Icona per il pulsante
@@ -2035,7 +2026,7 @@ public class JRivitMain extends javax.swing.JFrame {
             case 4 -> {
                 pulsanteHw("PR1");
             }
-        } 
+        }
     }
 
     /**
@@ -2465,7 +2456,7 @@ public class JRivitMain extends javax.swing.JFrame {
             }
         }
     }
-  
+
     /**
      *
      * @return se è stato impostato lo stato in pausa
@@ -2662,11 +2653,11 @@ public class JRivitMain extends javax.swing.JFrame {
     }
 
     /**
-     * Scelta della WL tramite Screen 
+     * Scelta della WL tramite Screen
      */
     public void scegliWL() {
         int idWL = this.listWLavori.getSelectedIndex();
-        this.WLscelta ="";
+        this.WLscelta = "";
         this.WLnrCicli = 1;
         try {
             this.WLscelta = this.elencoWl.get(idWL)[0];
@@ -2894,7 +2885,6 @@ public class JRivitMain extends javax.swing.JFrame {
         }
     }
 
-
     /**
      * Imposta il visualizzatore dello stato della raggiungibilità di internet
      *
@@ -2907,7 +2897,7 @@ public class JRivitMain extends javax.swing.JFrame {
             jLabelInternet.setBackground(Color.red);
         }
     }
-    
+
     /**
      * Imposta il visualizzatore dello stato della VPN
      *
@@ -3053,20 +3043,20 @@ public class JRivitMain extends javax.swing.JFrame {
     public String getWLscelta() {
         return WLscelta;
     }
- 
+
     /**
-     * 
-     * Se esternamente viene impostato l'avvio di una WL
-     * deve essere cooerente con la lista di scelta dell WL
-     * in Screen
+     *
+     * Se esternamente viene impostato l'avvio di una WL deve essere cooerente
+     * con la lista di scelta dell WL in Screen
+     *
      * @param lavoro work list,
      *
      */
     public void setWLscelta(String WLscelta) {
-        String wll="";
+        String wll = "";
         if (WLscelta.contains("Errore")) {
             WLscelta = "0";
-        }        
+        }
         this.WLscelta = WLscelta;
         for (int i = 0; i < this.listWLavori.getRows(); i++) {
             wll = this.listWLavori.getItem(i);
@@ -3075,8 +3065,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 break;
             }
         }
-    }        
-    
+    }
 
     public int getWLnrCicli() {
         return WLnrCicli;
@@ -3084,6 +3073,27 @@ public class JRivitMain extends javax.swing.JFrame {
 
     public void setWLnrCicli(int WLnrCicli) {
         this.WLnrCicli = WLnrCicli;
+    }
+
+    private void setButtonDesc(int nrCurItem) {
+        if (this.inWl == false) {
+            this.JTextAreaDescrizioneLavoro.setText(this.elencoDesLavoro.get(nrCurItem));
+            if (this.elencoLavoriCompleto.get(nrCurItem)[4].equals("0")) {
+                this.JTextAreaDescrizioneLavoro.setBackground(Color.yellow);
+                this.jButtonPR3.setIcon(this.Img_Nulla);//aggiorna il tipo di Icona per il pulsante
+                this.jButtonPR3.setEnabled(false);
+            } else {
+                this.JTextAreaDescrizioneLavoro.setBackground(Color.white);
+                this.jButtonPR3.setIcon(this.Img_Ok);//aggiorna il tipo di Icona per il pulsante
+                this.jButtonPR3.setEnabled(true);
+            }
+        } else {
+            this.JTextAreaDescrizioneLavoro.setText(this.elencoDesWl.get(nrCurItem).toString());
+            this.JTextAreaDescrizioneLavoro.setBackground(Color.white);
+            this.jButtonPR3.setIcon(this.Img_Ok);//aggiorna il tipo di Icona per il pulsante
+            this.jButtonPR3.setEnabled(true);
+
+        }
     }
 
 }
