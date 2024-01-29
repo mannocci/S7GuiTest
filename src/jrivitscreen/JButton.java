@@ -39,11 +39,11 @@ public class JButton {
     private static final HashMap<String, Integer> pulsanti = new HashMap<String, Integer>() {
         {   // Vecchia configurazione
             /*
-            put("PL1", 21); // Prima era RaspiPin.GPIO_29   // Pin 40
-            put("PL2", 20); // Prima era RaspiPin.GPIO_28   // Pin 38
-            put("PL3", 26); // Prima era RaspiPin.GPIO_25   // Pin 37
-            put("PR1", 16); // Prima era RaspiPin.GPIO_27   // Pin 36
-            put("PR2", 19); // Prima era RaspiPin.GPIO_24   // Pin 35
+            put("PL1", 21); // Prima era RaspiPin.GPIO_29   // Pin 40/
+            put("PL2", 20); // Prima era RaspiPin.GPIO_28   // Pin 38/
+            put("PL3", 26); // Prima era RaspiPin.GPIO_25   // Pin 37/
+            put("PR1", 16); // Prima era RaspiPin.GPIO_27   // Pin 36/
+            put("PR2", 19); // Prima era RaspiPin.GPIO_24   // Pin 35/
             put("PR3", 12); // Prima era RaspiPin.GPIO_26   // Pin 32
              */
 
@@ -66,7 +66,8 @@ public class JButton {
             put("PL3", 20); // Prima era RaspiPin.GPIO_25   // Pin 38 PL2 ?
             put("PR1", 26); // Prima era RaspiPin.GPIO_28   // Pin 37 PL3 ?
             put("PR2", 19); // Prima era RaspiPin.GPIO_27   // Pin 35 OK
-            put("PR3", 5);  // Prima era RaspiPin.GPIO_26   // Pin 29
+            put("PR3", 12);  // Prima era RaspiPin.GPIO_26   // Pin 29
+//            put("PR3", 5);  // Prima era RaspiPin.GPIO_26   // Pin 29
 
         }
     };
