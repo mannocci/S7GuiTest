@@ -355,6 +355,7 @@ public class JFileWorker extends Thread {
 //        cancellaFile(Static.PATH_WATCH + "errore"); // Dovrebbe farlo COntrol
         this.Rm.set_jLabel_B_L("Main");
         this.Rm.repaint();
+        this.Rm.esegui("aggiorna_nm_list");
     }
 
     /**

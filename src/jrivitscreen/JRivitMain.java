@@ -717,9 +717,11 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelBotton.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel_B_L.setBackground(java.awt.Color.lightGray);
-        jLabel_B_L.setFont(new java.awt.Font("Segoe UI", 1, 10)); // NOI18N
+        jLabel_B_L.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        jLabel_B_L.setForeground(new java.awt.Color(0, 0, 0));
         jLabel_B_L.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel_B_L.setText("00:00");
+        jLabel_B_L.setToolTipText("");
         jLabel_B_L.setOpaque(true);
         jPanelBotton.add(jLabel_B_L, new org.netbeans.lib.awtextra.AbsoluteConstraints(108, 5, 80, 20));
 
@@ -1368,7 +1370,7 @@ public class JRivitMain extends javax.swing.JFrame {
         CommandLine cmd = null;
         Options opzioni = new Options();
         Option pathW = new Option("pw", "pathWork", true, "Work path");
-        pathW.setRequired(true);
+        pathW.setRequired(false);
         opzioni.addOption(pathW);
         Option pathL = new Option("pl", "pathLock", true, "Lock path");
         pathL.setRequired(false);
@@ -1380,12 +1382,11 @@ public class JRivitMain extends javax.swing.JFrame {
             cmd = parser.parse(opzioni, args);
             if (cmd.hasOption("pw")) {
                 Static.setPATH_WATCH(cmd.getOptionValue("pathWork"));
-                Static.debug("Impostato Path per Work " + Static.PATH_WATCH, 2);
-
+                Static.debug("Impostato Path per Work " + Static.PATH_WATCH, 3);
             }
             if (cmd.hasOption("pl")) {
                 Static.setPATH_LCK(cmd.getOptionValue("pathLock"));
-                Static.debug("Impostato Path per Lock " + Static.PATH_LCK, 2);
+                Static.debug("Impostato Path per Lock " + Static.PATH_LCK, 3);
             }
         } catch (ParseException e) {
             System.out.println(e.getMessage());
@@ -2406,7 +2407,7 @@ public class JRivitMain extends javax.swing.JFrame {
      *
      * @param operazione
      */
-    private void esegui(String operazione) {
+    public void esegui(String operazione) {
         this.doWorker.set_operation(operazione);
         try {
             this.doWorker.doInBackground();
