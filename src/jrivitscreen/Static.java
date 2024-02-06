@@ -61,6 +61,7 @@ public class Static {
             F_PULSANTE = "pulsante",
             F_W = "w.txt",
             F_W_SCELTO = "w_scelto",
+            F_WL_LISTA = "wl_lista.txt",
             F_WL     = "wl.txt",
             F_WL_SCELTA = "wl_scelta",
             F_WL_RUNNING = "wl_running",//Contiene il lavoro avviato e l'indice dell'elenco "nome lavoro§n"
