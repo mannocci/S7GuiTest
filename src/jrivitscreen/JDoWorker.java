@@ -74,6 +74,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
                 }
                 case "calibrazione_test" -> {
                     JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_CALIBRAZIONE_TEST);
+                
                 }
                 case "salva_calibrazione" -> {
                     JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_CALIBRAZIONE_SALVA);
