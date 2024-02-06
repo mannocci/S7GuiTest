@@ -56,7 +56,7 @@ import javax.swing.JTextArea;
 public class JRivitMain extends javax.swing.JFrame {
 
     private String stato;
-
+    private String richiesta;
     private JDoWorker doWorker;
     private ImageIcon Img_Exit, Img_Ok, Img_Nulla, Img_Freccia_su,
             Img_Freccia_giu, Img_Warning, Img_Setup, Img_Play,
@@ -92,6 +92,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private final String srvKey;
     private List<String[]> elencoLavori;
     private List<String[]> elencoWl;
+    private List<String[]> elencoWlLavori;
     private List<String[]> elencoLavoriCompleto;
     private List<String[]> elencoWlCompleto;
     private String inPausa;
@@ -117,13 +118,12 @@ public class JRivitMain extends javax.swing.JFrame {
     private String curvaDiRiferimento;
     private ArrayList<Object> elencoDesLavoroCompleto;
     private String um;  // Unità di misura (Bar o Newton)
-    private String richiesta;
     private String contesto;
     private boolean abilitaCalibrazione;
     private String esitoTiro;
     private String posizioneErrori;
-    private ArrayList<Object> elencoDesWl;
-    private List listaWl;
+    private List<String> elencoDesWl;
+    //private List listaWl;
     private boolean inWl;
     private String WLscelta;
     private int WLnrCicli;
@@ -181,6 +181,7 @@ public class JRivitMain extends javax.swing.JFrame {
 
         elencoLavori = new ArrayList<>();
         elencoWl = new ArrayList<>();
+        elencoWlLavori = new ArrayList<>();
         infoAggiuntive = new ArrayList<>();
 
         try {
@@ -1269,17 +1270,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private void listLavoriItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_listLavoriItemStateChanged
         java.awt.List l = (java.awt.List) evt.getSource();
         int elementoSelezionato = l.getSelectedIndexes()[0];
-        this.JTextAreaDescrizioneLavoro.setText(
-                this.elencoDesLavoro.get(elementoSelezionato));
-        if (this.elencoLavoriCompleto.get(elementoSelezionato)[4].equals("0")) {
-            this.JTextAreaDescrizioneLavoro.setBackground(Color.yellow);
-            this.jButtonPR3.setIcon(this.Img_Nulla);//aggiorna il tipo di Icona per il pulsante
-            this.jButtonPR3.setEnabled(false);
-        } else {
-            this.JTextAreaDescrizioneLavoro.setBackground(Color.white);
-            this.jButtonPR3.setIcon(this.Img_Ok);//aggiorna il tipo di Icona per il pulsante
-            this.jButtonPR3.setEnabled(true);
-        }
+        updateDescription(elementoSelezionato);
     }//GEN-LAST:event_listLavoriItemStateChanged
 
     private void listWLavoriMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listWLavoriMouseClicked
@@ -1294,19 +1285,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private void listWLavoriItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_listWLavoriItemStateChanged
         java.awt.List l = (java.awt.List) evt.getSource();
         int elementoSelezionato = l.getSelectedIndexes()[0];
-        /*
-        this.JTextAreaDescrizioneLavoro.setText(
-                this.elencoDesLavoro.get(elementoSelezionato));
-        if (this.elencoLavoriCompleto.get(elementoSelezionato)[4].equals("0")) {
-            this.JTextAreaDescrizioneLavoro.setBackground(Color.yellow);
-            this.jButtonPR3.setIcon(this.Img_Nulla);//aggiorna il tipo di Icona per il pulsante
-            this.jButtonPR3.setEnabled(false);
-        } else {
-            this.JTextAreaDescrizioneLavoro.setBackground(Color.white);
-            this.jButtonPR3.setIcon(this.Img_Ok);//aggiorna il tipo di Icona per il pulsante
-            this.jButtonPR3.setEnabled(true);
-        }
-         */
+        updateDescription(elementoSelezionato);
     }//GEN-LAST:event_listWLavoriItemStateChanged
 
     /**
@@ -1521,13 +1500,11 @@ public class JRivitMain extends javax.swing.JFrame {
                 selezionato = 1;
             }
             lista.select(selezionato);
-            this.setButtonDesc(selezionato);
+            this.updateDescription(selezionato);
             cambiaPannello(this.jPanelStart);
         }
     }
 
-    
-  
     /**
      * Pannello dopo aver fatto la scelta del Lavoro, tale scelta deve essere
      * scritta nel file /tmp/CT/w_scelto L'App JControl sollecitato dall'evento
@@ -1664,6 +1641,8 @@ public class JRivitMain extends javax.swing.JFrame {
             // rendi visibile l'elemento selezionato
             lista.makeVisible(nrCurItem);
             if (this.panCur.equals("start")) {
+                updateDescription(nrCurItem);
+                /*
                 if (this.inWl == false) {
                     this.JTextAreaDescrizioneLavoro.setText(
                             this.elencoDesLavoro.get(nrCurItem));
@@ -1682,6 +1661,7 @@ public class JRivitMain extends javax.swing.JFrame {
                     this.jButtonPR3.setIcon(this.Img_Ok);//aggiorna il tipo di Icona per il pulsante
                     this.jButtonPR3.setEnabled(true);
                 }
+                 */
             }
             if (isSetup) {
                 this.jButtonPR3.setIcon(this.setIconSetup());//aggiorna il tipo di Icona per il pulsante
@@ -1743,7 +1723,7 @@ public class JRivitMain extends javax.swing.JFrame {
             lista.makeVisible(nrCurItem);
 
             if (this.panCur.equals("start")) {
-                setButtonDesc(nrCurItem);
+                updateDescription(nrCurItem);
             }
             if (isSetup) {
                 this.jButtonPR3.setIcon(this.setIconSetup());//aggiorna il tipo di Icona per il pulsante
@@ -1831,6 +1811,7 @@ public class JRivitMain extends javax.swing.JFrame {
      * Pannello per disegnare il grafico
      */
     public void PanelCanvas() {
+        this.jProgressBar.setVisible(false);
         cambiaPannello(this.g);
         if (this.stato.equals(Static.STATO_CALIBRAZIONE) || this.stato.equals(Static.STATO_CALIBRAZIONE_TEST)) {
             this.changeButtons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
@@ -1913,9 +1894,16 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     public void aggiornaLavori(List<String> lista) {
         this.listLavori.removeAll();
+        String nomeLavoroRiga;
+        String limLottiRiga;
+        String limPezziRiga;
+        String descrizioneRiga;
+        String canStart;
+        String[] lavoroSplit;
 
         if (lista.isEmpty() || lista.contains("errore")) {  // sintassi nomelavoro, lotti, pezzi, descrizione, canStart
             lista.add(" no count limits§-1§-1§work without counting limits§0");
+            Static.debug("ERROR: Emply work list", 2);
             // todo verificare se in caso di file lavori.txt vuoto occore fermarsi
         }
         List<String> elencoTxt = new ArrayList<>();
@@ -1925,38 +1913,42 @@ public class JRivitMain extends javax.swing.JFrame {
         elencoDesLavoroCompleto = new ArrayList<>();
         this.elencoLavori.clear();
         for (String riga : lista) {
-            String[] lavoroSplit = riga.split("§"); // nomeLavoro, limLotti, limPezzi, descrizione, canStart
+            lavoroSplit = riga.split("§"); // nomeLavoro, limLotti, limPezzi, descrizione, canStart
             this.elencoLavoriCompleto.add(lavoroSplit);
-            String nomeLavoro = lavoroSplit[0];
-            String limLotti = lavoroSplit[1];
-            String limPezzi = lavoroSplit[2];
-            String descrizione = lavoroSplit[3];
+            nomeLavoroRiga = lavoroSplit[0];
+            limLottiRiga = lavoroSplit[1];
+            limPezziRiga = lavoroSplit[2];
+            descrizioneRiga = lavoroSplit[3];
+            canStart = lavoroSplit[4];
 
-            String canStart = lavoroSplit[4];
-
-            if (limLotti.equals("-1")) { // Lavoro senza limiti -> visualizzo solo il nome
-                elencoTxt.add(nomeLavoro);
+            if (limLottiRiga.equals("-1")) { // Lavoro senza limiti -> visualizzo solo il nome
+                elencoTxt.add(nomeLavoroRiga);
             } else {
-                elencoTxt.add(nomeLavoro + " Lots=" + limLotti + " Pieces=" + limPezzi);
+                elencoTxt.add(nomeLavoroRiga + " Lots=" + limLottiRiga + " Pieces=" + limPezziRiga);
             }
             this.elencoLavori.add(lavoroSplit);
             if (canStart.equals("0")) { // lavoro non avviabile
-                descrizione = "Not calibrated -> " + descrizione;
+                descrizioneRiga = "Not calibrated -> " + descrizioneRiga;
             }
-            this.elencoDesLavoroCompleto.add(descrizione);
-            this.elencoDesLavoro.add(descrizione);
+            this.elencoDesLavoroCompleto.add(descrizioneRiga);
+            this.elencoDesLavoro.add(descrizioneRiga);
         }
         RefreshList(listLavori, elencoTxt);
     }//End aggiornaLavori
 
     /**
-     * aggiornaLavori
+     * aggiorna Lista lavori
      *
      * @param lista
      */
     public void aggiornaWl(List<String> lista) {
         this.listWLavori.removeAll();
         this.elencoWl.clear();
+        String nomeWl;
+        String nrCicli;
+        String descrizione;
+        String[] WLSplit;
+
         if (lista.isEmpty() || lista.contains("errore")) {  //
             lista.add("Empty !");
             return;
@@ -1965,21 +1957,23 @@ public class JRivitMain extends javax.swing.JFrame {
         elencoDesWl = new ArrayList<>();
         elencoWl = new ArrayList<>();
         elencoWlCompleto = new ArrayList<>();
-        elencoWlCompleto = new ArrayList<>();
 
         for (String riga : lista) {
-            String[] WLSplit = riga.split("§"); //nomeWl, nrcicli 
-            this.elencoWlCompleto.add(WLSplit);
-            String nomeWl = WLSplit[0];
-            String nrCicli = WLSplit[1];
-            String descrizione = WLSplit[2];
+            WLSplit = riga.split("§"); //nomeWl, nrcicli 
+            this.elencoWlCompleto.add(WLSplit);//elenco di Array di stringhe
+            nomeWl = WLSplit[0];
+            nrCicli = WLSplit[1];
+            descrizione = WLSplit[2];
             elencoTxt.add(nomeWl + " Cycles =" + nrCicli);
-            this.elencoWl.add(WLSplit);
+            this.elencoWl.add(WLSplit);//Elenco di stringhe da visualizzare
             //this.elencoWlCompleto.add(WLSplit[2]);
+            if (WLSplit[3].equals("0")) { // lavoro non avviabile
+                descrizione = "Empty Work List -> " + descrizione;
+            }
             this.elencoDesWl.add(descrizione);
         }
         RefreshList(listWLavori, elencoTxt);
-    }//End aggiornaLavori
+    }//End aggiornaWLavori
 
     /**
      * aggiornaSessione
@@ -2837,8 +2831,8 @@ public class JRivitMain extends javax.swing.JFrame {
      * Control una volta preparato l'"ambiente" per il lavoro consente l'avvio
      */
     public void lavoroPronto() { // e' qui....
+        this.jLabelNomeLavoro.setText(this.lavoroScelto.trim());
         if (this.panCur.equals("started")) {
-            this.jLabelNomeLavoro.setText(this.lavoroScelto.trim());
             PanelStarted();
         }
         impostaLabelContatori();
@@ -3076,24 +3070,51 @@ public class JRivitMain extends javax.swing.JFrame {
         this.WLnrCicli = WLnrCicli;
     }
 
-    private void setButtonDesc(int nrCurItem) {
-        if (this.inWl == false) {
-            this.JTextAreaDescrizioneLavoro.setText(this.elencoDesLavoro.get(nrCurItem));
-            if (this.elencoLavoriCompleto.get(nrCurItem)[4].equals("0")) {
-                this.JTextAreaDescrizioneLavoro.setBackground(Color.yellow);
-                this.jButtonPR3.setIcon(this.Img_Nulla);//aggiorna il tipo di Icona per il pulsante
-                this.jButtonPR3.setEnabled(false);
-            } else {
-                this.JTextAreaDescrizioneLavoro.setBackground(Color.white);
-                this.jButtonPR3.setIcon(this.Img_Ok);//aggiorna il tipo di Icona per il pulsante
-                this.jButtonPR3.setEnabled(true);
+    /**
+     * Aggiorna l'area inferiore contenente la descrizione dell'elemento
+     * selezionato
+     *
+     * @param nrCurItem Indice dell'elemento selezionato
+     */
+    private void updateDescription(int nrCurItem) {
+        if (this.inWl) {
+            if (nrCurItem < this.elencoWlCompleto.size()) { // Per prevenire eventuali errori
+                this.JTextAreaDescrizioneLavoro.setText(this.elencoDesWl.get(nrCurItem).toString());
+                if (this.elencoWlCompleto.get(nrCurItem)[3].equals("0")) {
+                    this.JTextAreaDescrizioneLavoro.setBackground(Color.yellow);
+                    this.jButtonPR3.setIcon(this.Img_Nulla);//aggiorna il tipo di Icona per il pulsante
+                    this.jButtonPR3.setEnabled(false);
+                } else {
+                    this.JTextAreaDescrizioneLavoro.setBackground(Color.white);
+                    this.jButtonPR3.setIcon(this.Img_Ok);//aggiorna il tipo di Icona per il pulsante
+                    this.jButtonPR3.setEnabled(true);
+                }
+
             }
         } else {
-            this.JTextAreaDescrizioneLavoro.setText(this.elencoDesWl.get(nrCurItem).toString());
-            this.JTextAreaDescrizioneLavoro.setBackground(Color.white);
-            this.jButtonPR3.setIcon(this.Img_Ok);//aggiorna il tipo di Icona per il pulsante
-            this.jButtonPR3.setEnabled(true);
+            if (nrCurItem < this.elencoLavoriCompleto.size()) { // Per prevenire eventuali errori
+                this.JTextAreaDescrizioneLavoro.setText(this.elencoDesLavoro.get(nrCurItem));
+                // Se il lavoro non è avviabile
+                if (this.elencoLavoriCompleto.get(nrCurItem)[4].equals("0")) {
+                    this.JTextAreaDescrizioneLavoro.setBackground(Color.yellow);
+                    this.jButtonPR3.setIcon(this.Img_Nulla);//aggiorna il tipo di Icona per il pulsante
+                    this.jButtonPR3.setEnabled(false);
+                } else {
+                    this.JTextAreaDescrizioneLavoro.setBackground(Color.white);
+                    this.jButtonPR3.setIcon(this.Img_Ok);//aggiorna il tipo di Icona per il pulsante
+                    this.jButtonPR3.setEnabled(true);
+                }
+            }
+        }
+    }
 
+    void aggiornaWlLavori(List<String> lista) {
+        String[] lavoroSplit;
+
+        elencoWlLavori = new ArrayList<>();
+        for (String riga : lista) {
+            lavoroSplit = riga.split("§"); // ordine, NomeLavoro, limLotti, limPezzi
+            this.elencoWlLavori.add(lavoroSplit);
         }
     }
 
