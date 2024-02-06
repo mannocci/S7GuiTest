@@ -55,6 +55,7 @@ public class JFileWorker extends Thread {
     private WatchService watcher;
     private Path fileName;
     private WatchKey key;
+    private String richiesta;
 
     public JFileWorker(JRivitMain mf) throws IOException {
         this.Rm = mf;
@@ -162,6 +163,10 @@ public class JFileWorker extends Thread {
                              */
                             case Static.F_WL_PRONTA ->
                                 WlPronta();
+                            case Static.F_WL_LISTA ->
+                                WlListaPronta();
+                            case Static.F_RICHIESTA + "_ready" ->
+                                this.richiesta = leggiFile(Static.F_RICHIESTA);
                         }
                     }
                     if (kind == ENTRY_DELETE) {
@@ -232,6 +237,13 @@ public class JFileWorker extends Thread {
      */
     private void readWl() {
         this.Rm.aggiornaWl(leggiFileElenco(Static.F_WL));
+    }
+
+    /**
+     * Legge il file con l'elenco dei lavori contenuti della WorkList
+     */
+    private void readWlLavori() {
+        this.Rm.aggiornaWlLavori(leggiFileElenco(Static.F_WL_LISTA));
     }
 
     /**
@@ -779,7 +791,10 @@ public class JFileWorker extends Thread {
                 Rm.setLimPezzi(lSceltoArray[2]);
             }
         }
-        Rm.lavoroPronto();
+        if(this.richiesta.equals(Static.RICHIESTA_AVVIO)){
+            Rm.lavoroPronto();
+        }
+        
     }
 
     /**
@@ -795,7 +810,7 @@ public class JFileWorker extends Thread {
                 Rm.setWLnrCicli(Integer.parseInt(WLSceltaArray[1]));
             }
         }
-        Rm.lavoroPronto();
+        Rm.wlPronta();
     }
 
     private void leggiAbilitaCalibrazione() {
@@ -819,6 +834,10 @@ public class JFileWorker extends Thread {
     
     private void readPosizioneErrori() {
         this.Rm.setPosizioneErrori(leggiFile(Static.F_POSIZIONE_ERRORI));
+    }
+
+    private void WlListaPronta() {
+        Rm.aggiornaWlLavori(leggiFileElenco(Static.F_WL_LISTA));
     }
 
 }
