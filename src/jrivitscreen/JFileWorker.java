@@ -58,6 +58,7 @@ public class JFileWorker extends Thread {
     private String richiesta;
 
     public JFileWorker(JRivitMain mf) throws IOException {
+        this.richiesta = "";
         this.Rm = mf;
         // create gpio controller by file (run bash script before !)     
         try {
@@ -367,7 +368,7 @@ public class JFileWorker extends Thread {
 //        cancellaFile(Static.PATH_WATCH + "errore"); // Dovrebbe farlo COntrol
         this.Rm.set_jLabel_B_L("Main");
         this.Rm.repaint();
-        this.Rm.esegui("aggiorna_nm_list");
+//        this.Rm.esegui("aggiorna_nm_list");
     }
 
     /**
@@ -492,7 +493,7 @@ public class JFileWorker extends Thread {
     }
 
     /**
-     * Metodo che utilizza il controllo del Lock per leggere una riga dal file
+     * Metodo che utilizza il controllo del Lock per leggere righe multiple da un file
      *
      * @param NomeFile
      * @return La riga letta del file
@@ -650,11 +651,19 @@ public class JFileWorker extends Thread {
     private void impostaChiediConfermaStop(boolean si_o_no) {
         this.Rm.setChiedi_conferma_stop(si_o_no);
     }
-
+/**
+ * Aggiorna i contatori da mostrare allo schermo
+ * occorre discriminare se occorre fare il Count Down ?
+ */
     private void aggiornaContatori() {
         String testo = leggiFile(Static.F_CONTATORI);
         String[] contatori = testo.split(",");
         if (contatori.length > 1) {
+            //Se devo fare il Count Down
+            //TiriNelLotto sono = Integer.parseInt(contatori[0] - Integer.parseInt(contatori[1])
+            //
+            //Lotto
+            //Altrimenti devono essere decrementati
             try {
                 this.Rm.setLotto(Integer.parseInt(contatori[0]));
                 this.Rm.setTiriNelLotto(Integer.parseInt(contatori[1]));
@@ -778,8 +787,8 @@ public class JFileWorker extends Thread {
     }
 
     /**
-     * Gestisce l'avvio di un lavoro. Il lavoro potrebbe essere stato chiesto da
-     * remoto, quindi leggo prima il file F_W_SCELTO
+     * Gestisce l'avvenuta selezione di un lavoro. Il lavoro potrebbe essere stato chiesto da
+     * remoto, quindi leggo prima il file F_W_SCELTO, nel formato "lav 1§1§0§+§+"
      */
     private void lavoroPronto() {
         String lScelto = leggiFile(Static.F_W_SCELTO);
@@ -789,12 +798,16 @@ public class JFileWorker extends Thread {
             if (lSceltoArray.length > 1) {
                 Rm.setLimLotti(lSceltoArray[1]);
                 Rm.setLimPezzi(lSceltoArray[2]);
+                Rm.setUDLotti(lSceltoArray[3]);
+                Rm.setUDPezzi(lSceltoArray[4]);
             }
         }
+        Rm.lavoroPronto();
+        /*
         if(this.richiesta.equals(Static.RICHIESTA_AVVIO)){
             Rm.lavoroPronto();
         }
-        
+        */
     }
 
     /**
