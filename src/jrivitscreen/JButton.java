@@ -92,7 +92,7 @@ public class JButton {
                 button.addListener(e -> {
                     if (e.state() == DigitalState.LOW) {
                         this.mf.pulsanteHw(e.source().id());
-                        Static.debug(" Premuto: " + e.source().id() + " = " + e.state(), 4);
+                        Static.debug(" Premuto: " + e.source().id() + " = " + e.state(), 3);
                     }
                 });
             });

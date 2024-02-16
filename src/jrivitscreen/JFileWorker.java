@@ -94,6 +94,8 @@ public class JFileWorker extends Thread {
                                 aggiornaContatori();
                             case Static.F_SENSORI + "_ready" ->
                                 aggiornaSensori();
+                            case Static.F_NO_SENSORE ->
+                                this.Rm.setSensoreCollegato(false);
                             case Static.F_ERRORE ->
                                 errore(true);
                             case Static.F_POSIZIONE_ERRORI + "_ready" ->
@@ -177,6 +179,8 @@ public class JFileWorker extends Thread {
                         switch (fileName.toString()) {
                             case Static.F_ARIA ->
                                 this.Rm.ariaChiusa();
+                            case Static.F_NO_SENSORE ->
+                                this.Rm.setSensoreCollegato(true);
                             case Static.F_ERRORE ->
                                 errore(false);
                             case Static.F_CHIEDI_CONFERMA_NO ->

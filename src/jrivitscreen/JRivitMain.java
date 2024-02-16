@@ -129,6 +129,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private int WLnrCicli;
     private String UDLotti;
     private String UDPezzi;
+    private boolean sensoreCollegato;
 
 //
 //Dopo una sospensione
@@ -185,6 +186,7 @@ public class JRivitMain extends javax.swing.JFrame {
         elencoWl = new ArrayList<>();
         elencoWlLavori = new ArrayList<>();
         infoAggiuntive = new ArrayList<>();
+        this.sensoreCollegato = true;
         this.lavoroScelto = "";
         this.UDLotti = "+";
         this.UDPezzi = "+";
@@ -2212,7 +2214,11 @@ public class JRivitMain extends javax.swing.JFrame {
 
                 if (!(this.pressione_aria_in == null)) {
                     DecimalFormat df = new DecimalFormat("0.00");// solo due cifre decimali
-                    if (pressione_aria_in <= this.sogliaMin) {
+                    if (pressione_aria_in <= 2) { // aria in ingresso non collegata
+                        this.jLabel_msg.setBackground(java.awt.Color.BLACK);
+                        this.jLabel_msg.setForeground(java.awt.Color.WHITE);
+                        this.jLabel_msg.setText("INC.AIR NOT PRESENT ");
+                    } else if (pressione_aria_in <= this.sogliaMin) {
                         this.jLabel_msg.setBackground(java.awt.Color.RED);
                         this.jLabel_msg.setForeground(java.awt.Color.WHITE);
                         this.jLabel_msg.setText("INC.AIR LOW: " + df.format(pressione_aria_in) + " Bar");
@@ -3161,6 +3167,14 @@ public class JRivitMain extends javax.swing.JFrame {
 
     void setUDPezzi(String UDPezzi) {
         this.UDPezzi = UDPezzi;
+    }
+
+    void setSensoreCollegato(boolean sensoreCollegato) {
+        this.sensoreCollegato = sensoreCollegato;
+    }
+
+    boolean getSensoreCollegato() {
+        return this.sensoreCollegato;
     }
 
 }
