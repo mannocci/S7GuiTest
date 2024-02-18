@@ -130,6 +130,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private String UDLotti;
     private String UDPezzi;
     private boolean sensoreCollegato;
+    private final JButtons bt;
 
 //
 //Dopo una sospensione
@@ -211,7 +212,11 @@ public class JRivitMain extends javax.swing.JFrame {
         this.pannelloPrecedente = "main";   // Server per gestire il ritorno dal pannello di warning
         this.chiedi_conferma_stop = true;
         this.chiedi_conferma = false;
-        this.pressione_aria_in = 0f;
+        this.temp_rpi = 0F;
+        this.temp_io_board = 0F;
+        this.v_in = 0F;
+        this.v_rpi = 0F;
+        this.pressione_aria_in = 0F;
         this.inPausa = "0";
 
         try {
@@ -219,8 +224,10 @@ public class JRivitMain extends javax.swing.JFrame {
         } catch (IOException ex) {
             Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
         }
+        this.bt = new JButtons(this);
         doWorker = new JDoWorker(this, fileWorker);
         this.esegui("init");
+        this.esegui("aggiorna_nm_list");
 //        try {
 //            TimeUnit.SECONDS.sleep(2);//Attesa della fine del metodo init di JDoWorker
 //        } catch (InterruptedException ex) {
@@ -958,6 +965,7 @@ public class JRivitMain extends javax.swing.JFrame {
                             this.esegui("pausa");
                         }
                         case Static.RICHIESTA_CALIBRAZIONE -> {
+                            this.impostaLavoro();
                             this.esegui("calibrazione");
                         }
                         case Static.RICHIESTA_CALIBRAZIONE_TEST -> {
@@ -1092,7 +1100,6 @@ public class JRivitMain extends javax.swing.JFrame {
                 PanelSetupWifi();
             }
             case "start" -> {
-                this.impostaLavoro();
                 this.AlertDialogWhat = "Enter re-calibration mode ?";
                 this.richiesta = Static.RICHIESTA_CALIBRAZIONE;
                 this.jLabelDialog.setText(AlertDialogWhat);
@@ -1190,8 +1197,10 @@ public class JRivitMain extends javax.swing.JFrame {
         // Pulsante R3
         // Qual'è il nome del pannello in primo piano ?
         switch (this.panCur) {
-            case "main" ->
+            case "main" ->{
+                bt.pi4j.shutdown();
                 this.exit();
+            }
 //                per ora uso il pulsante per chiudere;
             case "start" -> {
                 if (this.inWl) {
@@ -2208,9 +2217,9 @@ public class JRivitMain extends javax.swing.JFrame {
                 float nuovoValorePressione = (Float.parseFloat(arrayValori[4]) - 1) * 10 / 4;
 
                 this.precPressioneAria = this.pressione_aria_in;
-                if (this.precPressioneAria - nuovoValorePressione < Static.MAX_VARIAZIONE_PRESSIONE) {
+//                if (Math.abs(this.precPressioneAria - nuovoValorePressione) < Static.MAX_VARIAZIONE_PRESSIONE) {
                     this.pressione_aria_in = nuovoValorePressione;
-                }
+//                }
 
                 if (!(this.pressione_aria_in == null)) {
                     DecimalFormat df = new DecimalFormat("0.00");// solo due cifre decimali
@@ -2870,7 +2879,7 @@ public class JRivitMain extends javax.swing.JFrame {
         if (this.panCur.equals("started")) {
             PanelStarted();
         }
-        impostaLabelContatori();
+//        impostaLabelContatori();
     }
 
     /**
@@ -2881,7 +2890,7 @@ public class JRivitMain extends javax.swing.JFrame {
         if (this.panCur.equals("started")) {
             PanelStarted();
         }
-        impostaLabelContatori();
+//        impostaLabelContatori();
     }
 
     /**
@@ -3088,7 +3097,7 @@ public class JRivitMain extends javax.swing.JFrame {
             WLscelta = "0";
         }
         this.WLscelta = WLscelta;
-        for (int i = 0; i < this.listWLavori.getRows(); i++) {
+        for (int i = 0; i < this.listWLavori.getItemCount(); i++) {
             wll = this.listWLavori.getItem(i);
             if (wll.contains(WLscelta)) {
                 this.listWLavori.select(i);

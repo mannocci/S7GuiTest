@@ -111,7 +111,7 @@ public class Static {
     // da utilizzare per impostare il livello di debug
     // 0:debug disattivato 1:errore 2:warning 3:info 4:verbose
     final private static int DEBUGLEVEL = 3;
-    static float MAX_VARIAZIONE_PRESSIONE = 6.0f;   // Massima variazione di pressione ammessa da una lettura all'altra
+    static float MAX_VARIAZIONE_PRESSIONE = 9.0f;   // Massima variazione di pressione ammessa da una lettura all'altra
 
     final private static DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yy HH:mm:ss.SSS");  // per i messaggi di log
     

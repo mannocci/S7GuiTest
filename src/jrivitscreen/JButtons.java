@@ -27,26 +27,18 @@ package jrivitscreen;
  * @author Fabio, Luca
  */
 import com.pi4j.Pi4J;
+import com.pi4j.context.Context;
 import com.pi4j.io.gpio.digital.DigitalInput;
 import com.pi4j.io.gpio.digital.DigitalState;
 import com.pi4j.io.gpio.digital.PullResistance;
 import java.util.HashMap;
 
-public class JButton {
+public class JButtons {
 
     private JRivitMain mf;
 
     private static final HashMap<String, Integer> pulsanti = new HashMap<String, Integer>() {
-        {   // Vecchia configurazione
-            /*
-            put("PL1", 21); // Prima era RaspiPin.GPIO_29   // Pin 40/
-            put("PL2", 20); // Prima era RaspiPin.GPIO_28   // Pin 38/
-            put("PL3", 26); // Prima era RaspiPin.GPIO_25   // Pin 37/
-            put("PR1", 16); // Prima era RaspiPin.GPIO_27   // Pin 36/
-            put("PR2", 19); // Prima era RaspiPin.GPIO_24   // Pin 35/
-            put("PR3", 12); // Prima era RaspiPin.GPIO_26   // Pin 32
-             */
-
+        {   
             // Nuova configurazione (PCB 1.0 con piedinatura scambiata pari/dispari)
             // Switch ON/OFF Pin 31 GPIO 6 
             // GND lato PL - Piazzola superiore di PL1
@@ -56,27 +48,27 @@ public class JButton {
             // GND lato PR - Pin 30 unito al Pin 29 (GPIO05) da configurare in pulldown in modo da non interferire
             // PR1 Pin 37 GPIO 26
             // PR2 Pin 35 GPIO 19
-            // PR3 Pin 31 GPIO 06
+            // PR3 Pin 31 GPIO 12
             // I pin denominato sul PCB come  +LED e SW sono entrambi a massa, 
             // e si possono usare per i PL o altro.
-            put("SW", 6);  // Prima era RaspiPin.GPIO_9    // Pin 31 Switch ON/OFF
-            // put("LED", 12); // Pin 32 LED ON/OFF (DA CONFIGURARE IN OUT) (ora collegato alla sequent)
-            put("PL1", 21); // Prima era RaspiPin.GPIO_23   // Pin 40 OK
-            put("PL2", 16); // Prima era RaspiPin.GPIO_24   // Pin 36 UP ?
-            put("PL3", 20); // Prima era RaspiPin.GPIO_25   // Pin 38 PL2 ?
-            put("PR1", 26); // Prima era RaspiPin.GPIO_28   // Pin 37 PL3 ?
-            put("PR2", 19); // Prima era RaspiPin.GPIO_27   // Pin 35 OK
-            put("PR3", 12);  // Prima era RaspiPin.GPIO_26   // Pin 29
-//            put("PR3", 5);  // Prima era RaspiPin.GPIO_26   // Pin 29
-
+            // put("LED", xx); // Pin xx LED ON/OFF (DA CONFIGURARE IN OUT) (ora collegato alla sequent)
+            put("SW", 6);   // Pin 31 Switch ON/OFF
+            put("PL1", 21); // Pin 40
+            put("PL2", 16); // Pin 36
+            put("PL3", 20); // Pin 38
+            put("PR1", 26); // Pin 37
+            put("PR2", 19); // Pin 35
+            put("PR3", 12); // Pin 31
+//            put("PR3", 5);  // Pin 29
         }
     };
+    public Context pi4j;
 
-    public JButton(JRivitMain mf) {
+    public JButtons(JRivitMain mf) {
         this.mf = mf;
         Static.debug("Push button Thread started", 3);
         try {
-            var pi4j = Pi4J.newAutoContext();
+            pi4j = Pi4J.newAutoContext();
             pulsanti.forEach((key, value) -> {  // Per ogni pulsante
 
                 var buttonConfig = DigitalInput.newConfigBuilder(pi4j)
@@ -92,13 +84,12 @@ public class JButton {
                 button.addListener(e -> {
                     if (e.state() == DigitalState.LOW) {
                         this.mf.pulsanteHw(e.source().id());
-                        Static.debug(" Premuto: " + e.source().id() + " = " + e.state(), 3);
+                        Static.debug("Premuto: " + e.source().id() + " = " + e.state(), 4);
                     }
                 });
             });
-
         } catch (Exception e) {
+            Static.debug("Error configuring pushbutton listener: " + e.toString(), 2);
         }
-
     }
 }

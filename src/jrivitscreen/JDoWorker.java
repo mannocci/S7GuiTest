@@ -42,7 +42,6 @@ public class JDoWorker extends SwingWorker<String, Object> {
 
     JRivitMain Rm;
     JFileWorker fileWorker;
-    JButton bt;
     private String operation = "";
     private DateFormat dateFormat;
     private Calendar now;
@@ -57,7 +56,6 @@ public class JDoWorker extends SwingWorker<String, Object> {
     JDoWorker(JRivitMain mf, JFileWorker fw) {
         this.Rm = mf;
         this.fileWorker = fw;
-        this.bt = new JButton(this.Rm);
         dateFormat = new SimpleDateFormat("HH:mm");
         now = Calendar.getInstance();
     }
@@ -106,7 +104,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     this.on_of_nm_device();
 
                 case "scegli_e_avvia" -> {
-                    this.scegliLavoro();
+                    this.impostaLavoro();
                     this.richiestaAvviaLavoro();
                 }
 
@@ -144,13 +142,12 @@ public class JDoWorker extends SwingWorker<String, Object> {
 // ffff non è più un thread. Ora basta che esista l'oggetto        this.bt.start();//Gestione dei pulsanti
         this.fileWorker.start();//Avvio FileWorker
         this.fileWorker.initValues();
-        this.update_status_nm();
     }
 
     /**
-     * Imposta lavoro scelto e lo avvia
+     * Imposta lavoro scelto
      */
-    void scegliLavoro() {
+    void impostaLavoro() {
         String lavoro = this.Rm.getLavoroScelto();
         // Scrivo anche i dettagli del lavoro. Serviranno allo scambio dati tramite webSocket
         JFileWorker.scriviFileConReady(Static.F_W_SCELTO, lavoro
@@ -199,13 +196,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
      * Imposta lavoro scelto e avvia la calibrazione
      */
     void avviaCalibrazione() {
-        String lavoro = this.Rm.getLavoroScelto();
-        // Scrivo anche i dettagli del lavoro. Serviranno allo scambio dati tramite webSocket
-        JFileWorker.scriviFileConReady(Static.F_W_SCELTO, lavoro
-            + "§" + this.Rm.getLimLotti()
-            + "§" + this.Rm.getLimPezzi());
         JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_CALIBRAZIONE);
-        // Lo stato AVVIATO verrà scritto da Control
     }
 
     /**

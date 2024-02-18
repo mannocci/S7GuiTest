@@ -343,15 +343,15 @@ public class JFileWorker extends Thread {
      *
      */
     public void initValues() {
+        this.leggiNoSensore();
         this.leggiAriaInMinMax();   // Valori scritti nei files da Control
         this.leggiAbilitaCalibrazione();
         this.leggiControllerOnline();
-        this.aggiornaSensori();// Occorre che vi sia il batch avviato
         this.aggiornaContatori();
         this.readLavori();//Se non esite il file imposta il default
         //this.lavoroPronto(); il lavoro pronto deve essere comandato da Control
         this.readWl();//Se non esiste il file ?
-       // this.WlPronta(); la WL pronta deve essere comandata da Control
+        // this.WlPronta(); la WL pronta deve essere comandata da Control
         this.readInfo();// Se non esiste il file imposta a stringa info
         this.readWarning();// Se non esiste il file imposta a sringa warning
         this.readCurvaDiRiferimento();//Se non esiste il file imposta a 0
@@ -497,7 +497,8 @@ public class JFileWorker extends Thread {
     }
 
     /**
-     * Metodo che utilizza il controllo del Lock per leggere righe multiple da un file
+     * Metodo che utilizza il controllo del Lock per leggere righe multiple da
+     * un file
      *
      * @param NomeFile
      * @return La riga letta del file
@@ -508,8 +509,8 @@ public class JFileWorker extends Thread {
         try {
             File inputFile = new File(Static.PATH_WATCH + NomeFile);
             if (!inputFile.exists()) {
-                Static.debug("Il File " + inputFile.getAbsolutePath()
-                        + " non esiste\n", 2);
+                Static.debug("File " + inputFile.getAbsolutePath()
+                        + " does not exists\n", 2);
                 ListaRighe.add("errore lettura File " + NomeFile);
                 return ListaRighe;
             }
@@ -539,8 +540,8 @@ public class JFileWorker extends Thread {
         try {
             File inputFile = new File(Static.PATH_WATCH + NomeFile);
             if (!inputFile.exists()) {
-                Static.debug("Il File " + inputFile.getAbsolutePath()
-                        + " non esiste\n", 2);
+                Static.debug("File " + inputFile.getAbsolutePath()
+                        + " does not exists\n", 2);
                 contenutoFile = "errore " + NomeFile;
                 return contenutoFile;
             }
@@ -559,6 +560,11 @@ public class JFileWorker extends Thread {
         }
         unLock(NomeFile);
         return contenutoFile;
+    }
+
+    private void leggiNoSensore() {
+        File noSensore = new File(Static.F_NO_SENSORE);
+        this.Rm.setSensoreCollegato(!noSensore.exists());
     }
 
     private void leggiAriaInMinMax() {
@@ -655,10 +661,11 @@ public class JFileWorker extends Thread {
     private void impostaChiediConfermaStop(boolean si_o_no) {
         this.Rm.setChiedi_conferma_stop(si_o_no);
     }
-/**
- * Aggiorna i contatori da mostrare allo schermo
- * occorre discriminare se occorre fare il Count Down ?
- */
+
+    /**
+     * Aggiorna i contatori da mostrare allo schermo occorre discriminare se
+     * occorre fare il Count Down ?
+     */
     private void aggiornaContatori() {
         String testo = leggiFile(Static.F_CONTATORI);
         String[] contatori = testo.split(",");
@@ -700,8 +707,13 @@ public class JFileWorker extends Thread {
                     || string.contains("rasp4") && string.contains("ON")) {    // la prima riga che contiene "eth" e "ON" accende l'indicatore Lan
                 lanIndicator = true;
             }
-            if (string.contains("full")) {    // se l'ultima riga contiene "full" accende l'indicatore Internet
-                internetIndicator = true;
+            if (string.contains("Internet")) {    // se l'ultima riga contiene "full" accende l'indicatore Internet
+                if (string.contains("full")) {    // se l'ultima riga contiene "full" accende l'indicatore Internet
+                    lanIndicator = true;
+                    internetIndicator = true;
+                } else if (string.contains("limited") || string.contains("portal")) {
+                    lanIndicator = true;
+                }
             }
             if (string.contains("tun") && string.contains("ON")) {    // la prima riga che contiene "tun" e "ON" accende l'indicatore VPN
                 vpnIndicator = true;
@@ -791,27 +803,32 @@ public class JFileWorker extends Thread {
     }
 
     /**
-     * Gestisce l'avvenuta selezione di un lavoro. Il lavoro potrebbe essere stato chiesto da
-     * remoto, quindi leggo prima il file F_W_SCELTO, nel formato "lav 1§1§0§+§+"
+     * Gestisce l'avvenuta selezione di un lavoro. Il lavoro potrebbe essere
+     * stato chiesto da remoto, quindi leggo prima il file F_W_SCELTO, nel
+     * formato "lav 1§1§0§+§+"
      */
     private void lavoroPronto() {
-        String lScelto = leggiFile(Static.F_W_SCELTO);
-        String[] lSceltoArray = lScelto.split("§");
-        if (!lSceltoArray[0].equals(Rm.getLavoroScelto())) {
-            Rm.setLavoroScelto(lSceltoArray[0]);
-            if (lSceltoArray.length > 1) {
-                Rm.setLimLotti(lSceltoArray[1]);
-                Rm.setLimPezzi(lSceltoArray[2]);
-                Rm.setUDLotti(lSceltoArray[3]);
-                Rm.setUDPezzi(lSceltoArray[4]);
+        try {
+            String lScelto = leggiFile(Static.F_W_SCELTO);
+            String[] lSceltoArray = lScelto.split("§");
+            if (!lSceltoArray[0].equals(Rm.getLavoroScelto())) {
+                Rm.setLavoroScelto(lSceltoArray[0]);
+                if (lSceltoArray.length > 1) {
+                    Rm.setLimLotti(lSceltoArray[1]);
+                    Rm.setLimPezzi(lSceltoArray[2]);
+                    Rm.setUDLotti(lSceltoArray[3]);
+                    Rm.setUDPezzi(lSceltoArray[4]);
+                }
             }
+            Rm.lavoroPronto();
+        } catch (Exception e) {
+            Static.debug("w_scelto -> wrong parameters count", 2);
         }
-        Rm.lavoroPronto();
         /*
         if(this.richiesta.equals(Static.RICHIESTA_AVVIO)){
             Rm.lavoroPronto();
         }
-        */
+         */
     }
 
     /**
@@ -839,7 +856,7 @@ public class JFileWorker extends Thread {
         }
     }
 
-        private void leggiControllerOnline() {
+    private void leggiControllerOnline() {
         File inputFile = new File(Static.PATH_WATCH + Static.F_CONTROLLER_ONLINE);
         if (inputFile.exists()) {
             this.Rm.setControllerIndicator(true);
@@ -848,7 +865,6 @@ public class JFileWorker extends Thread {
         }
     }
 
-    
     private void readPosizioneErrori() {
         this.Rm.setPosizioneErrori(leggiFile(Static.F_POSIZIONE_ERRORI));
     }
