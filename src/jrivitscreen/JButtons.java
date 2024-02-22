@@ -48,7 +48,7 @@ public class JButtons {
             // GND lato PR - Pin 30 unito al Pin 29 (GPIO05) da configurare in pulldown in modo da non interferire
             // PR1 Pin 37 GPIO 26
             // PR2 Pin 35 GPIO 19
-            // PR3 Pin 31 GPIO 12
+            // PR3 Pin 32 GPIO 12
             // I pin denominato sul PCB come  +LED e SW sono entrambi a massa, 
             // e si possono usare per i PL o altro.
             // put("LED", xx); // Pin xx LED ON/OFF (DA CONFIGURARE IN OUT) (ora collegato alla sequent)
@@ -58,7 +58,7 @@ public class JButtons {
             put("PL3", 20); // Pin 38
             put("PR1", 26); // Pin 37
             put("PR2", 19); // Pin 35
-            put("PR3", 12); // Pin 31
+            put("PR3", 12); // Pin 32
 //            put("PR3", 5);  // Pin 29
         }
     };
