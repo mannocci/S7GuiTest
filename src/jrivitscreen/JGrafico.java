@@ -16,6 +16,49 @@
  * ci sono due field rererenti alla curva
     1) Di riferimento
     2) Tiro appena fatto
+Per impostare il grafico lineare occorre fare riferimento alla curva di calibrazione
+Questa curva ha un suo tempo di sviluppo nel tempo; asse X con un incipit e un epilogo 
+che viene deciso in percentuale sul valore del tempo
+Se in tempo è 1 secondo e 10 1010 millesimi avremo per esempio un 101 millesimi prima e dopo con la coda
+L'asse X sarà così ideata sul tempo di 1010 + 202 = 1212 millesimi
+il panel è largo 328 pixel meno lo spazio da dedicare alla descrizione dell'asse Y
+Per semplificare poniamo di utilizzare 25 pixel per la descrizione quindi rimangano
+da sfruttare 303 pixel
+Quindi 1212/303 = 4 è il fattore di scala
+Se per esempio il picco è accaduto al tempo 800 millesimi
+la nostra x sarà 800/4 = 200° pixel 
+Sulla Y il picco possiamo ipotizzare, per esempio, che sia 1531
+L'asse Y è alto 276 pixel meno lo spazio per scrivere i valori della X che ipotizziamo
+abbiano lo stesso spazio della X 25 pixel abbiamo da utilizzare 276-25=251 pixel
+Quindi 1531/251= 6.09 che arrotondiamo a 6.1 come  fattore di scala 
+il pixel del picco sarà 1531/6.1 = 250.98
+il pixel prima del picco 1453 sarà 238.19 
+Quello dopo il picco 1518 sarà 248.85
+la base di sx 86 sarà 14.09 pixel
+Le variabili static necessarie sono:
+1) la percentuale da considerare come spazio superiore al picco
+2) lo spazio/pixel per la numerazione asse Y
+3) lo spazio/pixel per la numerazione asse X 
+Se si vuole centrare il grafico nel rimanente spazio occorre calcolare quanti pixel dedicare
+alla parte iniziale del grafico e alla coda
+spazioNrY
+spazioNrX
+spazioInizioX
+spazioFineX
+spazioSopraPicco
+inizioCurva
+fineCurva
+spazioCurvaSuX = fineCurva-inizioCurva
+spazioGraficoX = larghezzaPanel-spazioNrY
+spazioInizioX, spazioFineX = (spazioGraficoX-spazioCurvaSuX)/2
+spazioGraficoY = altezzaPanel-spazioNrY-spazioSopraPicco
+Il ciclo per disegnare la curva si muoverà con le seguenti variabili
+contaPixelX = 0; contaPixelX <= spazioGraficoX; contaPixelX++
+    x = spazioInizioX+contaPixelX
+    y = curva[contaPixelX]
+    disegnaY(x,y,x,y)//Punto per punto
+    
+    
  */
 package jrivitscreen;
 
@@ -34,7 +77,7 @@ public class JGrafico extends JPanel {
 
     private String curva;
     private String curvaDiRiferimento;
-    int nPointsRif;
+    int nPointsRifChar;
     int[] xPoints, yPoints;
     private int picco;
     private int posizionePicco;
@@ -43,24 +86,33 @@ public class JGrafico extends JPanel {
     private String um;
     private JRivitMain Rm;
     private float passoX;
-    private int nPointsCurva;
+    private int nPointsCurvaChar;
     private float nPointsMax;
     private int scalaY;
     private int piccoRif;
-    private int altezza;
+    private int posizionePiccoRif;
     private int yMax;
     private Graphics2D gr;
     private String[] yRifchar;
-    private String[] ychar;
-    private int bordoInf;
-    private int bordoSup;
-    private int bordoSx;
+    private String[] yCurvaChar;
+
+    private final int bordoInf = 20;
+    private final int bordoSup = 50;
+    private final int bordoSx = 30;
+
+    private final int jPanelWidth = 328;
+    private final int jPanelHeight = 276;
+    private int y0;
 
     public JGrafico(JRivitMain Rm) {
         picco = 0;
         this.Rm = Rm;
         posizionePicco = 0;
         primoGiro = false;
+        this.um = "Bar";
+        this.setSize(jPanelWidth, jPanelHeight);
+        y0 = this.getHeight() - bordoInf;
+//Aggiornata impostazione grandezza JPanel come gli altri
     }
 
     public void setCurva(String curva) {
@@ -108,22 +160,20 @@ public class JGrafico extends JPanel {
                     this.curva = "";
                 }
             }
-            bordoSx = 30;
-            bordoInf = 20;
-            bordoSup = 50;
-            altezza = this.getHeight();
+
             disegnaAssi();
             if (this.curvaDiRiferimento != null) {  // Se esiste la curva di riferimento
                 gr.setColor(Color.GREEN);
                 gr.setStroke(new BasicStroke(3));
-                if (nPointsRif > 1) {
-                    xPoints = new int[nPointsRif];
-                    yPoints = new int[nPointsRif];
-                    for (int i = 0; i < nPointsRif; i++) {
+                if (nPointsRifChar > 1) {
+                    xPoints = new int[nPointsRifChar];
+                    yPoints = new int[nPointsRifChar];
+                    for (int i = 0; i < nPointsRifChar; i++) {
                         xPoints[i] = Math.round(i * passoX) + bordoSx;
-                        yPoints[i] = altezza - bordoInf - 5 - Integer.parseInt(yRifchar[i]) / scalaY;
+                        yPoints[i] = y0 - 2 - Integer.parseInt(yRifchar[i]) / scalaY;
                     }
-                    gr.drawPolyline(xPoints, yPoints, nPointsRif);
+                    gr.drawPolyline(xPoints, yPoints, nPointsRifChar);
+
                     //this.Rm.getjLayeredPaneCenter().repaint();
                 }
             }
@@ -144,12 +194,12 @@ public class JGrafico extends JPanel {
                     gr.drawString("Calib.test", 200, 43);
                 }
             }
-            if (nPointsCurva > 1) {
-                xPoints = new int[nPointsCurva];
-                yPoints = new int[nPointsCurva];
-                for (int i = 0; i < nPointsCurva; i++) {
+            if (nPointsCurvaChar > 1) {
+                xPoints = new int[nPointsCurvaChar];
+                yPoints = new int[nPointsCurvaChar];
+                for (int i = 0; i < nPointsCurvaChar; i++) {
                     xPoints[i] = Math.round(i * passoX) + bordoSx;
-                    yPoints[i] = altezza - bordoInf - 5 - Integer.parseInt(ychar[i]) / scalaY;
+                    yPoints[i] = y0 - 2 - Integer.parseInt(yCurvaChar[i]) / scalaY;
                 }
                 gr.setStroke(new BasicStroke(3));
                 if (this.Rm.getInErrore()) {
@@ -169,7 +219,7 @@ public class JGrafico extends JPanel {
                             indice = Integer.parseInt(errValue);
                             xP = Math.round(indice * passoX) + bordoSx - 10;
                         } else {
-                            yP = altezza - bordoInf - 5 - Integer.parseInt(ychar[indice]) / scalaY - 10;
+                            yP = jPanelHeight - bordoInf - 5 - Integer.parseInt(yCurvaChar[indice]) / scalaY - 10;
                             gr.drawOval(xP, yP, 20, 20);
                         }
                         i++;
@@ -182,28 +232,38 @@ public class JGrafico extends JPanel {
                         gr.setColor(Color.BLACK);
                     }
                 }
-                gr.drawPolyline(xPoints, yPoints, nPointsCurva);
+                gr.drawPolyline(xPoints, yPoints, nPointsCurvaChar);
                 //this.Rm.getjLayeredPaneCenter().repaint();
 
-                /*
-                gr.setColor(Color.GREEN);
-                gr.drawString("Green:Ref", 5, 25);
-                 */
-                f = new Font("Arial", 1, 20);
-                gr.setFont(f);
-                gr.setColor(Color.BLACK);
-                if (um.equals("Bar")) {
-                    gr.drawString("" + picco / 10 + " Bar " + ((float) posizionePicco / 100) + "s", 5, 25);
-                } else {
-                    gr.drawString("" + picco * 10 + " N " + ((float) posizionePicco / 100) + "s", 5, 25);
-                }
+                scriviPicco(picco, posizionePicco);
+            } else {
+                scriviPicco(piccoRif, posizionePiccoRif);
             }
         }
     }
 
+    /**
+     * Imposta i valori del picco e di posizione picco per il dimensionamento
+     * del grafico
+     *
+     * @param picco
+     * @param posizionePicco
+     */
     public void setPicco(int picco, int posizionePicco) {
         this.picco = picco;
         this.posizionePicco = posizionePicco;
+    }
+
+    /**
+     * Imposta i valori del picco e di posizione picco di riferimento per il
+     * dimensionamento del grafico
+     *
+     * @param piccoRif
+     * @param posizionePiccoRif
+     */
+    public void setPiccoRif(int piccoRif, int posizionePiccoRif) {
+        this.piccoRif = piccoRif;
+        this.posizionePiccoRif = posizionePiccoRif;
     }
 
     public void setPrimoGiro(boolean primoGiro) {
@@ -214,46 +274,55 @@ public class JGrafico extends JPanel {
         this.um = um;
     }
 
-    private int trovaPicco(String[] arr) {
-        int n, max = 0;
-        for (String string : arr) {
-            n = Integer.parseInt(string);
-            if (n > max) {
-                max = n;
-            }
+    private void disegnaAssi() {
+        gr.setColor(Color.BLACK);
+        gr.drawLine(bordoSx, this.jPanelHeight - bordoInf, this.jPanelWidth, this.jPanelHeight - bordoInf);   // Asse X
+        gr.drawLine(bordoSx, this.jPanelHeight - bordoInf, bordoSx, bordoSup);   // Asse Y
+        yRifchar = curvaDiRiferimento.split(",");
+        nPointsRifChar = yRifchar.length;
+
+        yCurvaChar = curva.split(",");
+        nPointsCurvaChar = yCurvaChar.length;
+        nPointsMax = Math.max(nPointsRifChar, nPointsCurvaChar);  // Calcolo il nr. di punti del grafico
+        passoX = this.jPanelWidth / nPointsMax;              // Distanza tra due punti sull'asse X
+        int intervalloX = Math.round(nPointsMax / 100);
+        for (int i = 0; i < nPointsMax; i += 15 * intervalloX) {    // Scala dei tempi
+            gr.drawString(Integer.toString(i), (passoX * i) + bordoSx, (float) (y0 + bordoInf - 3));
         }
-        return max;
+
+        // Scala delle pressioni
+        yMax = Math.max(piccoRif, picco);   // Calcolo l'altezza max del grafico
+        scalaY = Math.round(yMax / (y0 - bordoSup));        // Proporzione del grafico
+        if (um.equals("Bar")) {
+            yMax = yMax / 10;
+        } else {
+            yMax = yMax * 10;
+        }
+        int valore;
+        String strValore;
+        float passoY = (float) (y0 / 8);    // Otte suddivisioni
+        for (int i = 0; i < 7; i++) {       // Ce ne tanno solo 7 nel grafico
+            valore = (yMax / 8) * i;
+            if (valore < 10) {   //  Aggiungo gli spazi per allineare a destra i numeri
+                strValore = "    " + valore;
+            } else if (valore < 100) {
+                strValore = "  " + valore;
+            } else {
+                strValore = "" + valore;
+            }
+            gr.drawString(strValore, 1f, y0 - (i * passoY) + 5);
+        }
     }
 
-    private void disegnaAssi() {
-            gr.setColor(Color.BLACK);
-            gr.drawLine(bordoSx, altezza - bordoInf, this.getWidth(), altezza - bordoInf);   // Asse X
-            gr.drawLine(bordoSx, altezza - bordoInf, bordoSx, bordoSup);   // Asse Y
-            yRifchar = curvaDiRiferimento.split(",");
-            nPointsRif = yRifchar.length;
-            ychar = curva.split(",");
-            nPointsCurva = ychar.length;
-            nPointsMax = Math.max(nPointsRif, nPointsCurva);  // Calcolo il nr. di punti del grafico
-            passoX = 320 / nPointsMax;              // Distanza tra due punti sull'asse X
-            piccoRif = trovaPicco(yRifchar);
-            yMax = Math.max(piccoRif, picco);   // Calcolo l'altezza max del grafico
-            scalaY = Math.round(yMax / 180);        // Proporzione del grafico
-            int intervalloX = Math.round(nPointsMax / 100);
-            for (int i = 0; i < nPointsMax - bordoSx; i += 15 * intervalloX) {    // Scala dei tempi
-                gr.drawString(Integer.toString(i), (passoX * i) + bordoSx, (float) (this.getHeight() - bordoInf / 2));
-            }
-            int intervalloY = Math.round(yMax / 1000);
-            String valore;
-            for (int i = 0; i <= yMax / 10 + bordoSup; i += 35 * intervalloY) {    // Scala delle pressioni
-                if (i < 10) {   //  Aggiungo gli spazi per allineare a destra i numeri
-                    valore = "    " + i;
-                } else if (i < 100) {
-                    valore = "  " + i;
-                } else {
-                    valore = Integer.toString(i);
-                }
-                gr.drawString(valore, 5, (float) (this.getHeight() - bordoInf) - (i));
-            }
+    private void scriviPicco(int picco, int posizionePicco) {
+        f = new Font("Arial", 1, 20);
+        gr.setFont(f);
+        gr.setColor(Color.BLACK);
+        if (um.equals("Bar")) {
+            gr.drawString("" + picco / 10 + " Bar " + ((float) posizionePicco / 100) + "s", 5, 25);
+        } else {
+            gr.drawString("" + picco * 10 + " N " + ((float) posizionePicco / 100) + "s", 5, 25);
+        }
     }
 
 }
