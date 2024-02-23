@@ -126,6 +126,8 @@ public class JFileWorker extends Thread {
                                 gestisciCurva();
                             case Static.F_CURVA_DI_RIFERIMENTO + "_ready" ->
                                 readCurvaDiRiferimento();
+                            case Static.F_PICCORIF + "_ready" ->
+                                readPiccoRiferimento();
                             case Static.F_STATUS_LAN + "_ready" -> {
                                 readSetupLan();
                             }
@@ -564,7 +566,7 @@ public class JFileWorker extends Thread {
 
     private void leggiNoSensore() {
         File noSensore = new File(Static.F_NO_SENSORE);
-        this.Rm.setSensoreCollegato(!noSensore.exists());
+        this.Rm.setSensoreCollegato(! noSensore.exists());
     }
 
     private void leggiAriaInMinMax() {
@@ -715,7 +717,7 @@ public class JFileWorker extends Thread {
                     lanIndicator = true;
                 }
             }
-            if (string.contains("tun") && string.contains("ON")) {    // la prima riga che contiene "tun" e "ON" accende l'indicatore VPN
+            if ((string.contains("tun") || string.startsWith("VPN")) && string.contains("ON")) {    // la prima riga che contiene "tun" e "ON" accende l'indicatore VPN
                 vpnIndicator = true;
             }
             if (string.contains("AP_") && string.contains("ON")) {    // la prima riga che contiene "eth" e "ON" accende l'indicatore Lan
@@ -813,12 +815,12 @@ public class JFileWorker extends Thread {
             String[] lSceltoArray = lScelto.split("§");
             if (!lSceltoArray[0].equals(Rm.getLavoroScelto())) {
                 Rm.setLavoroScelto(lSceltoArray[0]);
-                if (lSceltoArray.length > 1) {
-                    Rm.setLimLotti(lSceltoArray[1]);
-                    Rm.setLimPezzi(lSceltoArray[2]);
-                    Rm.setUDLotti(lSceltoArray[3]);
-                    Rm.setUDPezzi(lSceltoArray[4]);
-                }
+            }
+            if (lSceltoArray.length > 1) {
+                Rm.setLimLotti(lSceltoArray[1]);
+                Rm.setLimPezzi(lSceltoArray[2]);
+                Rm.setUDLotti(lSceltoArray[3]);
+                Rm.setUDPezzi(lSceltoArray[4]);
             }
             Rm.lavoroPronto();
         } catch (Exception e) {
@@ -871,6 +873,16 @@ public class JFileWorker extends Thread {
 
     private void WlListaPronta() {
         Rm.aggiornaWlLavori(leggiFileElenco(Static.F_WL_LISTA));
+    }
+
+    private void readPiccoRiferimento() {
+        String piccoStr = leggiFile(Static.F_PICCORIF);
+        String[] piccoArray = piccoStr.split(",");
+        this.Rm.g.setUM(this.Rm.getUM());
+        this.Rm.g.setPiccoRif(
+                Integer.parseInt(piccoArray[0]),
+                Integer.parseInt(piccoArray[2]));
+        this.Rm.g.setCurva("");
     }
 
 }
