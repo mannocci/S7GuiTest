@@ -1871,11 +1871,15 @@ public class JRivitMain extends javax.swing.JFrame {
         this.jLabelWarning = jLabelWarning;
     }
 
+    /**
+     * Aggiorna la lista dei warning
+     * @param lista 
+     */
     public void aggiornaWarning(List<String> lista) {
         this.listWarning.removeAll();
         RefreshList(this.listWarning, lista);
         this.listWarning.repaint();
-    } //End AggiornaInfo
+    } //End AggiornaWarning
 
     /**
      * aggiornaSetupLan carica eventuali Informazioni dal file
@@ -2879,7 +2883,7 @@ public class JRivitMain extends javax.swing.JFrame {
         if (this.panCur.equals("started")) {
             PanelStarted();
         }
-//        impostaLabelContatori();
+        impostaLabelContatori();
     }
 
     /**
