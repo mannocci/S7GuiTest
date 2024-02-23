@@ -97,6 +97,7 @@ public class Static {
             F_ESITO_TIRO = "esito_tiro",
             F_CURVA_DI_RIFERIMENTO = "curva_di_riferimento",
             F_PICCO = "picco",
+            F_PICCORIF = "piccorif",
             F_ABILITA_CALIBRAZIONE = "abilita_calibrazione",
             F_CHIEDI_CONFERMA_NO = "chiedi_conferma_no",
             F_CHIEDI_CONFERMA_STOP = "chiedi_conferma_stop",
