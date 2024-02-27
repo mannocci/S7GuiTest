@@ -350,6 +350,7 @@ public class JFileWorker extends Thread {
         this.leggiAbilitaCalibrazione();
         this.leggiControllerOnline();
         this.aggiornaContatori();
+        this.aggiornaSensori();
         this.readLavori();//Se non esite il file imposta il default
         //this.lavoroPronto(); il lavoro pronto deve essere comandato da Control
         this.readWl();//Se non esiste il file ?
