@@ -114,7 +114,6 @@ public class JRivitMain extends javax.swing.JFrame {
     private Robot robot = null;
     private String pannelloPrecedente;
     private List infoAggiuntive;
-    private Float precPressioneAria;
     private String curvaDiRiferimento;
     private ArrayList<Object> elencoDesLavoroCompleto;
     private String um;  // Unità di misura (Bar o Newton)
@@ -970,7 +969,7 @@ public class JRivitMain extends javax.swing.JFrame {
                         }
                         case Static.RICHIESTA_CALIBRAZIONE_TEST -> {
                             this.esegui("calibrazione_test");
-                            this.set_jLabel_B_L("Test");
+                            //this.set_jLabel_B_L("Test");
                         }
                         case Static.RICHIESTA_CALIBRAZIONE_SALVA -> {//Ok registra calibrazione
                             esegui("salva_calibrazione");
@@ -1834,7 +1833,13 @@ public class JRivitMain extends javax.swing.JFrame {
         if (this.stato.equals(Static.STATO_CALIBRAZIONE) || this.stato.equals(Static.STATO_CALIBRAZIONE_TEST)) {
             this.changeButtons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
                     this.Img_Ok, this.Img_Cancel, this.Img_Nulla);
-            this.set_jLabel_B_L("Calibration");
+            if(this.stato.equals(Static.STATO_CALIBRAZIONE)){
+                this.set_jLabel_B_L("Calib.mode");
+            }else{
+                this.set_jLabel_B_L("Calib.test");
+            }
+            
+                
         } else {
 
             if (this.inErrore) {
@@ -2212,20 +2217,16 @@ public class JRivitMain extends javax.swing.JFrame {
         } else {
             arrayValori = Valori.split(",");
             try {
+                // Calcolo esatto della pressione in base al grafico di risposta del sensore emc
+                this.pressione_aria_in = (Float.parseFloat(arrayValori[4]) - 1) * 10 / 4;
                 this.temp_rpi = Float.valueOf(arrayValori[0]);
                 this.temp_io_board = Float.valueOf(arrayValori[1]);
                 this.v_in = Float.valueOf(arrayValori[2]);
                 this.v_rpi = Float.valueOf(arrayValori[3]);
-                this.setListInfo(infoAggiuntive);
-                // Calcolo esatto della pressione in base al grafico di risposta del sensore emc
-                float nuovoValorePressione = (Float.parseFloat(arrayValori[4]) - 1) * 10 / 4;
-
-                this.precPressioneAria = this.pressione_aria_in;
-//                if (Math.abs(this.precPressioneAria - nuovoValorePressione) < Static.MAX_VARIAZIONE_PRESSIONE) {
-                    this.pressione_aria_in = nuovoValorePressione;
-//                }
-
                 if (!(this.pressione_aria_in == null)) {
+                    if (this.pressione_aria_in < 0) {
+                        this.pressione_aria_in = 0f;
+                    }
                     DecimalFormat df = new DecimalFormat("0.00");// solo due cifre decimali
                     if (pressione_aria_in <= 2) { // aria in ingresso non collegata
                         this.jLabel_msg.setBackground(java.awt.Color.BLACK);
@@ -2245,6 +2246,7 @@ public class JRivitMain extends javax.swing.JFrame {
                         this.jLabel_msg.setText("INC.AIR OK: " + df.format(pressione_aria_in) + " Bar");
                     }
                 }
+                this.setListInfo(infoAggiuntive);
             } catch (NumberFormatException e) {
                 Static.debug("jrivitscreen.JRivitMain.update_sensori() - \n" + e.getMessage(), 2);
             }
@@ -2373,7 +2375,7 @@ public class JRivitMain extends javax.swing.JFrame {
             listInfo.add("Pressione aria Null");
         }
         try {
-            DecimalFormat df = new DecimalFormat("0.000");// solo tre cifre decimali
+            DecimalFormat df = new DecimalFormat("0.00");// solo due cifre decimali
             listInfo.add("Air pressure: " + df.format(this.pressione_aria_in) + " bar");
             listInfo.add("V CPU: " + this.v_rpi.toString() + " V");
             listInfo.add("V IN: " + this.v_in.toString() + " V");
@@ -2676,6 +2678,7 @@ public class JRivitMain extends javax.swing.JFrame {
             limLotti = 1;
             limPezzi = 1;
         }
+        this.esegui("scegli");
     }
 
     /**
