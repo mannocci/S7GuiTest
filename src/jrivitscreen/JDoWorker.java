@@ -102,7 +102,11 @@ public class JDoWorker extends SwingWorker<String, Object> {
 
                 case "on_of_nm_device" ->
                     this.on_of_nm_device();
-
+                    
+                case "scegli" -> {
+                    this.impostaLavoro();
+                }                
+                
                 case "scegli_e_avvia" -> {
                     this.impostaLavoro();
                     this.richiestaAvviaLavoro();
