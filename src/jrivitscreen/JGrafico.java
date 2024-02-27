@@ -181,17 +181,17 @@ public class JGrafico extends JPanel {
                 f = new Font("Arial", 2, 20);
                 gr.setFont(f);
                 gr.setColor(Color.BLACK);
-                gr.drawString(this.Rm.getLavoroScelto(), 200, 25);
+                gr.drawString(this.Rm.getLavoroScelto(), 200, 20);
                 gr.setColor(Color.ORANGE);
-                gr.drawString("Calib.mode", 200, 43);
+                //gr.drawString("Calib.mode", 200, 43);
             } else {
                 if (this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE_TEST)) {
                     f = new Font("Arial", 2, 20);
                     gr.setFont(f);
                     gr.setColor(Color.BLACK);
-                    gr.drawString(this.Rm.getLavoroScelto(), 200, 25);
+                    gr.drawString(this.Rm.getLavoroScelto(), 200, 20);
                     gr.setColor(Color.BLUE);
-                    gr.drawString("Calib.test", 200, 43);
+                   // gr.drawString("Calib.test", 200, 43);
                 }
             }
             if (nPointsCurvaChar > 1) {
@@ -277,7 +277,7 @@ public class JGrafico extends JPanel {
     private void disegnaAssi() {
         gr.setColor(Color.BLACK);
         gr.drawLine(bordoSx, this.jPanelHeight - bordoInf, this.jPanelWidth, this.jPanelHeight - bordoInf);   // Asse X
-        gr.drawLine(bordoSx, this.jPanelHeight - bordoInf, bordoSx, bordoSup);   // Asse Y
+        gr.drawLine(bordoSx, this.jPanelHeight - bordoInf, bordoSx, bordoSup - 20);   // Asse Y
         yRifchar = curvaDiRiferimento.split(",");
         nPointsRifChar = yRifchar.length;
 
@@ -301,15 +301,23 @@ public class JGrafico extends JPanel {
         int valore;
         String strValore;
         float passoY = (float) (y0 / 8);    // Otte suddivisioni
-        for (int i = 0; i < 7; i++) {       // Ce ne tanno solo 7 nel grafico
+        for (int i = 0; i < 8; i++) {       // Ce ne tanno solo 7 nel grafico
             valore = (yMax / 8) * i;
             if (valore < 10) {   //  Aggiungo gli spazi per allineare a destra i numeri
                 strValore = "    " + valore;
             } else if (valore < 100) {
                 strValore = "  " + valore;
-            } else {
+            } else if (valore > 999) {
+                int tmpValore = Math.round(valore / 1000);
+                if (tmpValore < 10) {
+                    strValore = "  " + tmpValore + "K";
+                } else {
+                    strValore = "" + tmpValore + "K";
+                }
+            } else{
                 strValore = "" + valore;
             }
+           
             gr.drawString(strValore, 1f, y0 - (i * passoY) + 5);
         }
     }
@@ -319,9 +327,9 @@ public class JGrafico extends JPanel {
         gr.setFont(f);
         gr.setColor(Color.BLACK);
         if (um.equals("Bar")) {
-            gr.drawString("" + picco / 10 + " Bar " + ((float) posizionePicco / 100) + "s", 5, 25);
+            gr.drawString("" + picco / 10 + " Bar " + ((float) posizionePicco / 100) + "s", 5, 20);
         } else {
-            gr.drawString("" + picco * 10 + " N " + ((float) posizionePicco / 100) + "s", 5, 25);
+            gr.drawString("" + picco * 10 + " N " + ((float) posizionePicco / 100) + "s", 5, 20);
         }
     }
 
