@@ -110,7 +110,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private List<String> elencoDesLavoro;
     private int w_level;
     private JFileWorker fileWorker = null;
-    public JGrafico g;
+    public JGrafico gr;
     private Robot robot = null;
     private String pannelloPrecedente;
     private List infoAggiuntive;
@@ -130,6 +130,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private String UDPezzi;
     private boolean sensoreCollegato;
     private final JButtons bt;
+    private int conversion;
 
 //
 //Dopo una sospensione
@@ -139,16 +140,16 @@ public class JRivitMain extends javax.swing.JFrame {
     public JRivitMain() {
         this.panCur = "main";
         initComponents();
-        g = new JGrafico(this);
-        g.setBackground(new java.awt.Color(255, 255, 255));
-        g.setAlignmentX(0.0F);
-        g.setAlignmentY(0.0F);
-        g.setMaximumSize(new java.awt.Dimension(328, 276));
-        g.setMinimumSize(new java.awt.Dimension(328, 276));
-        g.setName("canvas");
-        g.setPreferredSize(new java.awt.Dimension(328, 276));
-        g.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-        this.jLayeredPaneCenter.add(g, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 328, 276));
+        gr = new JGrafico(this);
+        gr.setBackground(new java.awt.Color(255, 255, 255));
+        gr.setAlignmentX(0.0F);
+        gr.setAlignmentY(0.0F);
+        gr.setMaximumSize(new java.awt.Dimension(328, 276));
+        gr.setMinimumSize(new java.awt.Dimension(328, 276));
+        gr.setName("canvas");
+        gr.setPreferredSize(new java.awt.Dimension(328, 276));
+        gr.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        this.jLayeredPaneCenter.add(gr, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 328, 276));
         this.jLabelDesPezziNoLimits.setVisible(false);
         this.jLabelPezziNoLimits.setVisible(false);
         this.AlertDialogWhat = "Cancel traction ?";
@@ -972,14 +973,17 @@ public class JRivitMain extends javax.swing.JFrame {
                             //this.set_jLabel_B_L("Test");
                         }
                         case Static.RICHIESTA_CALIBRAZIONE_SALVA -> {//Ok registra calibrazione
+                            this.gr.setPrimoGiro(true);
                             esegui("salva_calibrazione");
                         }
+
                     }
 
                 } catch (Exception ex) {
                     Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
+
 
         }
     }//GEN-LAST:event_jButtonPR1ActionPerformed
@@ -1177,6 +1181,7 @@ public class JRivitMain extends javax.swing.JFrame {
                         PanelStart();
                     }
                     case Static.RICHIESTA_CALIBRAZIONE_SALVA -> {//Ritorna in scelta lavoro
+                        this.gr.setPrimoGiro(true);
                         PanelStart();
                     }
                     default -> {
@@ -1196,7 +1201,7 @@ public class JRivitMain extends javax.swing.JFrame {
         // Pulsante R3
         // Qual'è il nome del pannello in primo piano ?
         switch (this.panCur) {
-            case "main" ->{
+            case "main" -> {
                 bt.pi4j.shutdown();
                 this.exit();
             }
@@ -1551,7 +1556,13 @@ public class JRivitMain extends javax.swing.JFrame {
         if (this.statoConcluso && this.inErrore) {
             this.jPanelStarted.setBackground(Color.ORANGE);
         }
-        jLabelNomeWL.setVisible(this.inWl); // Mostro la label della worklist solo se necessario
+        jLabelNomeLavoro.setVisible(true); 
+        if (this.inWl) {
+            jLabelNomeWL.setVisible(true); // Mostro la label della worklist solo se necessario
+            jLabelNomeWL.setText(this.WLscelta + " (1/" + this.elencoWlLavori.size() + ")");
+        } else {
+            jLabelNomeWL.setVisible(false); // Mostro la label della worklist solo se necessario
+        }
         cambiaPannello(this.jPanelStarted);
     }
 
@@ -1829,17 +1840,16 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     public void PanelCanvas() {
 //        this.jProgressBar.setVisible(false);
-        cambiaPannello(this.g);
+        cambiaPannello(this.gr);
         if (this.stato.equals(Static.STATO_CALIBRAZIONE) || this.stato.equals(Static.STATO_CALIBRAZIONE_TEST)) {
             this.changeButtons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
                     this.Img_Ok, this.Img_Cancel, this.Img_Nulla);
-            if(this.stato.equals(Static.STATO_CALIBRAZIONE)){
+            if (this.stato.equals(Static.STATO_CALIBRAZIONE)) {
                 this.set_jLabel_B_L("Calib.mode");
-            }else{
+            } else {
                 this.set_jLabel_B_L("Calib.test");
             }
-            
-                
+
         } else {
 
             if (this.inErrore) {
@@ -1878,7 +1888,8 @@ public class JRivitMain extends javax.swing.JFrame {
 
     /**
      * Aggiorna la lista dei warning
-     * @param lista 
+     *
+     * @param lista
      */
     public void aggiornaWarning(List<String> lista) {
         this.listWarning.removeAll();
@@ -1906,12 +1917,13 @@ public class JRivitMain extends javax.swing.JFrame {
      * @param lista
      */
     public void aggiornaSetupWiFi(List<String> lista) {
-        this.jTextAreaWifi.setText("");
-        for (String string : lista) {
-            this.jTextAreaWifi.append(string + "\n");
-            Static.debug(string, 3);
+        if (panCur.equals("setup wifi")) {
+            this.jTextAreaWifi.setText("");
+            for (String string : lista) {
+                this.jTextAreaWifi.append(string + "\n");
+                Static.debug(string, 3);
+            }
         }
-
     }//End aggiornaSetupWiFi
 
     /**
@@ -2338,7 +2350,7 @@ public class JRivitMain extends javax.swing.JFrame {
     }
 
     public void mostraCurva() {
-        cambiaPannello(this.g);
+        cambiaPannello(this.gr);
         this.repaint();
         //esegui("curva");
     }
@@ -2686,13 +2698,14 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     public void avviaLavoro() {
         try {
+            impostaLabelContatori();
             this.jLabelNomeLavoro.setText(this.lavoroScelto.trim());
             setStatoConcluso(false);
             setInErrore(false);
             azzeraContatori();
             this.esegui("scegli_e_avvia");
         } catch (Exception ex) {
-            Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
+            Static.debug("Error starting work " + lavoroScelto + " ! " + ex.toString(), 2);
         }
     }
 
@@ -2706,6 +2719,7 @@ public class JRivitMain extends javax.swing.JFrame {
         try {
             this.WLscelta = this.elencoWl.get(idWL)[0];
             this.WLnrCicli = Integer.parseInt(this.elencoWl.get(idWL)[1]);
+            this.esegui("scegli_wl");
         } catch (NumberFormatException e) {
             Static.debug("nome WLCicli null !\n", 2);
         }
@@ -2716,13 +2730,16 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     public void avviaWL() {
         try {
-            this.jLabelNomeWL.setText(this.WLscelta.trim());
+            impostaLabelContatori();
+            this.jLabelNomeWL.setText(this.WLscelta);
+            this.lavoroScelto = this.elencoWlLavori.get(0)[1];
+            this.jLabelNomeLavoro.setText(this.lavoroScelto);
             setStatoConcluso(false);
             setInErrore(false);
             azzeraContatori();
             this.esegui("scegli_e_avvia_wl");
         } catch (Exception ex) {
-            Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
+            Static.debug("Error starting WorkList " + this.WLscelta + " ! " + ex.toString(), 2);
         }
     }
 
@@ -2857,7 +2874,7 @@ public class JRivitMain extends javax.swing.JFrame {
      * avvia la fase di calibrazione
      */
     void avviaCalibrazione() {
-        g.setPrimoGiro(true);
+        gr.setPrimoGiro(true);
         PanelCanvas();
     }
 
@@ -2865,7 +2882,7 @@ public class JRivitMain extends javax.swing.JFrame {
      * avvia la fase di calibrazione
      */
     void avviaCalibrazioneTest() {
-        g.setPrimoGiro(false);
+        gr.setPrimoGiro(false);
         this.set_jLabel_B_L("Cal. Test");
         PanelCanvas();
     }
@@ -2882,22 +2899,18 @@ public class JRivitMain extends javax.swing.JFrame {
      * Control una volta preparato l'"ambiente" per il lavoro consente l'avvio
      */
     public void lavoroPronto() { // e' qui....
-        this.jLabelNomeLavoro.setText(this.lavoroScelto.trim());
         if (this.panCur.equals("started")) {
             PanelStarted();
         }
-        impostaLabelContatori();
     }
 
     /**
      * Control una volta preparato l'"ambiente" per il lavoro consente l'avvio
      */
     public void wlPronta() { // e' qui....Manca il nome del lavoro
-        this.jLabelNomeWL.setText(this.WLscelta.trim());
         if (this.panCur.equals("started")) {
             PanelStarted();
         }
-//        impostaLabelContatori();
     }
 
     /**
@@ -2998,7 +3011,23 @@ public class JRivitMain extends javax.swing.JFrame {
     String getUM() {
         return um;
     }
+    /**
+     * Imposta il fattore di conversione
+     *
+     * @param um
+     */
+    void setConversion(int conversion) {
+        this.conversion = conversion;
+    }
 
+    /**
+     * Restituisce il fattore di conversione
+     */
+    int getConversion() {
+        return this.conversion;
+    }
+
+    
     /**
      *
      * @param limLotti
@@ -3169,6 +3198,10 @@ public class JRivitMain extends javax.swing.JFrame {
         }
     }
 
+    public List<String[]> getElencoWlLavori() {
+        return elencoWlLavori;
+    }
+
     String getUDLotti() {
         return this.UDLotti;
     }
@@ -3191,6 +3224,10 @@ public class JRivitMain extends javax.swing.JFrame {
 
     boolean getSensoreCollegato() {
         return this.sensoreCollegato;
+    }
+
+    void setConversion(String get) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
 }
