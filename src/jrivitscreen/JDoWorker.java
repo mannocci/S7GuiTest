@@ -72,7 +72,6 @@ public class JDoWorker extends SwingWorker<String, Object> {
                 }
                 case "calibrazione_test" -> {
                     JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_CALIBRAZIONE_TEST);
-                
                 }
                 case "salva_calibrazione" -> {
                     JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_CALIBRAZIONE_SALVA);
@@ -107,6 +106,11 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     this.impostaLavoro();
                 }                
                 
+                case "scegli_wl" -> {
+                    this.scegliWL();
+                    this.fileWorker.WlListaPronta();    // Lettura elenco lavori della lista. Da rivedere se si può chiamare in modo più "pulito"
+                }                
+
                 case "scegli_e_avvia" -> {
                     this.impostaLavoro();
                     this.richiestaAvviaLavoro();
@@ -114,6 +118,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
 
                 case "scegli_e_avvia_wl" -> {
                     this.scegliWL();
+                    this.fileWorker.WlListaPronta();    // Lettura elenco lavori della lista. Da rivedere se si può chiamare in modo più "pulito"
                     this.avviaWL();
                 }
 
@@ -166,7 +171,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
      */
     void richiestaAvviaLavoro() {
         JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_AVVIO);
-        this.Rm.g.setCurva("");
+        this.Rm.gr.setCurva("");
     }
     /**
      * Riferisce a Control la scelta della Work List
@@ -184,17 +189,15 @@ public class JDoWorker extends SwingWorker<String, Object> {
      */
     void avviaWL() {
         JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_AVVIO_WL);
-        this.Rm.g.setCurva("");
+        this.Rm.gr.setCurva("");
     }
-
-
 
     /**
      * Riavvia il lavoro scelto
      */
     void riavviaLavoro() {
         JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_RIAVVIO);
-        this.Rm.g.setCurva("");
+        this.Rm.gr.setCurva("");
     }    
     /**
      * Imposta lavoro scelto e avvia la calibrazione
@@ -235,9 +238,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
      * Aggiorna lo stato della Wifi. Elenca Access point
      */
     void update_status_wifi() {
-        String[] cmd = {"/home/adminsb/bin/status_wifi.sh"};
-        run_system_bash(cmd);
-
+        JFileWorker.scriviFlag(Static.F_AGGIORNA_WIFI);
     }
 
     /**
