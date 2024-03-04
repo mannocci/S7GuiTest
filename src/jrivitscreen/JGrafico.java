@@ -152,6 +152,16 @@ public class JGrafico extends JPanel {
                         + "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0";
             }
              */
+            if (this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE)) {
+                if (!primoGiro) {
+                    this.curvaDiRiferimento = this.curva;
+                    this.piccoRif = this.picco;
+                    this.posizionePiccoRif = this.posizionePicco;
+                    this.curva = "";
+                } else {
+                    primoGiro = false;
+                }
+            }
             // richiesta di test della nuova calibrazione
             if (this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE_TEST)) {
                 if (primoGiro) {
@@ -161,8 +171,8 @@ public class JGrafico extends JPanel {
                 }
             }
 
-            disegnaAssi();
-            if (this.curvaDiRiferimento != null) {  // Se esiste la curva di riferimento
+            if (this.curvaDiRiferimento != null && !this.curvaDiRiferimento.equals("0")) {  // Se esiste la curva di riferimento
+                disegnaAssi();
                 gr.setColor(Color.GREEN);
                 gr.setStroke(new BasicStroke(3));
                 if (nPointsRifChar > 1) {
@@ -176,68 +186,69 @@ public class JGrafico extends JPanel {
 
                     //this.Rm.getjLayeredPaneCenter().repaint();
                 }
-            }
-            if (this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE)) {
-                f = new Font("Arial", 2, 20);
-                gr.setFont(f);
-                gr.setColor(Color.BLACK);
-                gr.drawString(this.Rm.getLavoroScelto(), 200, 20);
-                gr.setColor(Color.ORANGE);
-                //gr.drawString("Calib.mode", 200, 43);
-            } else {
-                if (this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE_TEST)) {
+
+                if (this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE)) {
                     f = new Font("Arial", 2, 20);
                     gr.setFont(f);
                     gr.setColor(Color.BLACK);
                     gr.drawString(this.Rm.getLavoroScelto(), 200, 20);
-                    gr.setColor(Color.BLUE);
-                   // gr.drawString("Calib.test", 200, 43);
-                }
-            }
-            if (nPointsCurvaChar > 1) {
-                xPoints = new int[nPointsCurvaChar];
-                yPoints = new int[nPointsCurvaChar];
-                for (int i = 0; i < nPointsCurvaChar; i++) {
-                    xPoints[i] = Math.round(i * passoX) + bordoSx;
-                    yPoints[i] = y0 - 2 - Integer.parseInt(yCurvaChar[i]) / scalaY;
-                }
-                gr.setStroke(new BasicStroke(3));
-                if (this.Rm.getInErrore()) {
-                    String[] errValues = this.Rm.getEsitoTiro().split(",");
-                    String[] posErrValues = this.Rm.getPosizioneErrori().split(",");
-                    int alpha = 127; // 50% transparent
-                    Color myColour = new Color(0, 0, 200, alpha);
-                    gr.setColor(myColour);
-                    //gr.setXORMode(Color.GRAY);
-                    int nPunti = (errValues.length - 4) / 5;    // es.: 0,0,0,0,15,0,10,0,0
-                    int xP = posizionePicco, yP = 0;
-                    int i = 0;
-                    int indice = 0;
-                    // Disegno delle zone errate. Il vettore delleposizioni contiene x e y intervallate
-                    for (String errValue : posErrValues) {
-                        if (i % 2 == 0) {   // istanti dei test
-                            indice = Integer.parseInt(errValue);
-                            xP = Math.round(indice * passoX) + bordoSx - 10;
-                        } else {
-                            yP = jPanelHeight - bordoInf - 5 - Integer.parseInt(yCurvaChar[indice]) / scalaY - 10;
-                            gr.drawOval(xP, yP, 20, 20);
-                        }
-                        i++;
-                    }
-                    gr.setColor(Color.RED);
+                    gr.setColor(Color.ORANGE);
+                    //gr.drawString("Calib.mode", 200, 43);
                 } else {
-                    if (this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE)) {
-                        gr.setColor(Color.ORANGE);
-                    } else {
+                    if (this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE_TEST)) {
+                        f = new Font("Arial", 2, 20);
+                        gr.setFont(f);
                         gr.setColor(Color.BLACK);
+                        gr.drawString(this.Rm.getLavoroScelto(), 200, 20);
+                        gr.setColor(Color.BLUE);
+                        // gr.drawString("Calib.test", 200, 43);
                     }
                 }
-                gr.drawPolyline(xPoints, yPoints, nPointsCurvaChar);
-                //this.Rm.getjLayeredPaneCenter().repaint();
+                if (nPointsCurvaChar > 1) {
+                    xPoints = new int[nPointsCurvaChar];
+                    yPoints = new int[nPointsCurvaChar];
+                    for (int i = 0; i < nPointsCurvaChar; i++) {
+                        xPoints[i] = Math.round(i * passoX) + bordoSx;
+                        yPoints[i] = y0 - 2 - Integer.parseInt(yCurvaChar[i]) / scalaY;
+                    }
+                    gr.setStroke(new BasicStroke(3));
+                    if (this.Rm.getInErrore()) {
+                        String[] errValues = this.Rm.getEsitoTiro().split(",");
+                        String[] posErrValues = this.Rm.getPosizioneErrori().split(",");
+                        int alpha = 127; // 50% transparent
+                        Color myColour = new Color(0, 0, 200, alpha);
+                        gr.setColor(myColour);
+                        //gr.setXORMode(Color.GRAY);
+                        int nPunti = (errValues.length - 4) / 5;    // es.: 0,0,0,0,15,0,10,0,0
+                        int xP = posizionePicco, yP = 0;
+                        int i = 0;
+                        int indice = 0;
+                        // Disegno delle zone errate. Il vettore delleposizioni contiene x e y intervallate
+                        for (String errValue : posErrValues) {
+                            if (i % 2 == 0) {   // istanti dei test
+                                indice = Integer.parseInt(errValue);
+                                xP = Math.round(indice * passoX) + bordoSx - 10;
+                            } else {
+                                yP = jPanelHeight - bordoInf - 5 - Integer.parseInt(yCurvaChar[indice]) / scalaY - 10;
+                                gr.drawOval(xP, yP, 20, 20);
+                            }
+                            i++;
+                        }
+                        gr.setColor(Color.RED);
+                    } else {
+                        if (this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE)) {
+                            gr.setColor(Color.ORANGE);
+                        } else {
+                            gr.setColor(Color.BLACK);
+                        }
+                    }
+                    gr.drawPolyline(xPoints, yPoints, nPointsCurvaChar);
+                    //this.Rm.getjLayeredPaneCenter().repaint();
 
-                scriviPicco(picco, posizionePicco);
-            } else {
-                scriviPicco(piccoRif, posizionePiccoRif);
+                    scriviPicco(picco, posizionePicco);
+                } else {
+                    scriviPicco(piccoRif, posizionePiccoRif);
+                }
             }
         }
     }
@@ -296,12 +307,12 @@ public class JGrafico extends JPanel {
         if (um.equals("Bar")) {
             yMax = yMax / 10;
         } else {
-            yMax = yMax * 10;
+            yMax = yMax * this.Rm.getConversion() / 10000;
         }
         int valore;
         String strValore;
-        float passoY = (float) (y0 / 8);    // Otte suddivisioni
-        for (int i = 0; i < 8; i++) {       // Ce ne tanno solo 7 nel grafico
+        float passoY = (float) (y0 / 8);    // Otto suddivisioni
+        for (int i = 0; i < 8; i++) {       // Ce ne stanno 8 nel grafico
             valore = (yMax / 8) * i;
             if (valore < 10) {   //  Aggiungo gli spazi per allineare a destra i numeri
                 strValore = "    " + valore;
@@ -314,11 +325,11 @@ public class JGrafico extends JPanel {
                 } else {
                     strValore = "" + tmpValore + "K";
                 }
-            } else{
+            } else {
                 strValore = "" + valore;
             }
-           
-            gr.drawString(strValore, 1f, y0 - (i * passoY) + 5);
+
+            gr.drawString(strValore, 1f, y0 - (i * passoY) + 10);
         }
     }
 
@@ -329,7 +340,7 @@ public class JGrafico extends JPanel {
         if (um.equals("Bar")) {
             gr.drawString("" + picco / 10 + " Bar " + ((float) posizionePicco / 100) + "s", 5, 20);
         } else {
-            gr.drawString("" + picco * 10 + " N " + ((float) posizionePicco / 100) + "s", 5, 20);
+            gr.drawString("" + picco * this.Rm.getConversion() / 10000 + " N " + ((float) posizionePicco / 100) + "s", 5, 20);
         }
     }
 
