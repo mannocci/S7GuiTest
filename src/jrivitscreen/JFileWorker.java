@@ -168,7 +168,7 @@ public class JFileWorker extends Thread {
                              */
                             case Static.F_WL_PRONTA ->
                                 WlPronta();
-                            case Static.F_WL_LISTA ->
+                            case Static.F_WL_LISTA + "_ready" ->
                                 WlListaPronta();
                             case Static.F_RICHIESTA + "_ready" ->
                                 this.richiesta = leggiFile(Static.F_RICHIESTA);
@@ -244,13 +244,6 @@ public class JFileWorker extends Thread {
      */
     private void readWl() {
         this.Rm.aggiornaWl(leggiFileElenco(Static.F_WL));
-    }
-
-    /**
-     * Legge il file con l'elenco dei lavori contenuti della WorkList
-     */
-    private void readWlLavori() {
-        this.Rm.aggiornaWlLavori(leggiFileElenco(Static.F_WL_LISTA));
     }
 
     /**
@@ -567,7 +560,7 @@ public class JFileWorker extends Thread {
 
     private void leggiNoSensore() {
         File noSensore = new File(Static.F_NO_SENSORE);
-        this.Rm.setSensoreCollegato(! noSensore.exists());
+        this.Rm.setSensoreCollegato(!noSensore.exists());
     }
 
     private void leggiAriaInMinMax() {
@@ -585,9 +578,9 @@ public class JFileWorker extends Thread {
         try {
             this.Rm.setCurva(leggiFile(Static.F_CURVA));
             String[] piccoArray = leggiFile(Static.F_PICCO).split(",");
-            this.Rm.g.setCurva(this.Rm.getCurva());
-            this.Rm.g.setUM(this.Rm.getUM());
-            this.Rm.g.setPicco(Integer.parseInt(piccoArray[0]), Integer.parseInt(piccoArray[2]));
+            this.Rm.gr.setCurva(this.Rm.getCurva());
+            this.Rm.gr.setUM(this.Rm.getUM());
+            this.Rm.gr.setPicco(Integer.parseInt(piccoArray[0]), Integer.parseInt(piccoArray[2]));
         } catch (Exception e) {
             Static.debug("Error while reading curve ", 2);
         }
@@ -600,16 +593,23 @@ public class JFileWorker extends Thread {
         } else {
             this.Rm.setCurvaDiRiferimento(curvaRifStr);
         }
-        this.Rm.g.setCurvaDiRiferimento(this.Rm.getCurvaDiRiferimento());
+        this.Rm.gr.setCurvaDiRiferimento(this.Rm.getCurvaDiRiferimento());
     }
 
     /**
-     * legge dal file nome_device il nome del ControlRiv SN registrato nel
-     * record CT -> sn Legge anche l'unità di misura.
+     * legge unità di misura, fattore di conversione e nome_device registrato
+     * nel record CT -> sn.
      */
     private void readNomeDevice() {
-        this.Rm.setNomeDevice(leggiFile(Static.F_NOME_DEVICE));
-        this.Rm.setUM(leggiFile(Static.F_UM));
+        try {
+            this.Rm.setNomeDevice(leggiFile(Static.F_NOME_DEVICE));
+            String umString = leggiFile(Static.F_UM);
+            String[] umArray = umString.split(",");
+            this.Rm.setUM(umArray[0]);
+            this.Rm.setConversion(Integer.parseInt(umArray[1]));
+        } catch (Exception ex) {
+            Static.debug("Error reading UM", 2);
+        }
     }
 
     private void lottiOk() {
@@ -689,7 +689,7 @@ public class JFileWorker extends Thread {
                 // aggiorna la visualizzazione dei contatori nel pannello
                 this.Rm.aggiornaContatori();
             } catch (NumberFormatException e) {
-                Static.debug("File contatori contiene valori non numerici\n" + e.getMessage(), 2);
+                Static.debug("File contatori contains non numeric values\n" + e.getMessage(), 2);
             }
         }
     }
@@ -872,18 +872,28 @@ public class JFileWorker extends Thread {
         this.Rm.setPosizioneErrori(leggiFile(Static.F_POSIZIONE_ERRORI));
     }
 
-    private void WlListaPronta() {
-        Rm.aggiornaWlLavori(leggiFileElenco(Static.F_WL_LISTA));
+    public void WlListaPronta() {
+        try {
+            Rm.aggiornaWlLavori(leggiFileElenco(Static.F_WL_LISTA));
+            if (Rm.getElencoWlLavori().size() > 1) {
+                Rm.setLimLotti(Rm.getElencoWlLavori().get(0)[2]);
+                Rm.setLimPezzi(Rm.getElencoWlLavori().get(0)[3]);
+                Rm.setUDLotti(Rm.getElencoWlLavori().get(0)[4]);
+                Rm.setUDPezzi(Rm.getElencoWlLavori().get(0)[5]);
+            }
+        } catch (Exception ex) {
+            Static.debug("Error preparing WorkList " + Rm.getWLscelta() + " ! " + ex, 2);
+        }
     }
 
     private void readPiccoRiferimento() {
         String piccoStr = leggiFile(Static.F_PICCORIF);
         String[] piccoArray = piccoStr.split(",");
-        this.Rm.g.setUM(this.Rm.getUM());
-        this.Rm.g.setPiccoRif(
+        this.Rm.gr.setUM(this.Rm.getUM());
+        this.Rm.gr.setPiccoRif(
                 Integer.parseInt(piccoArray[0]),
                 Integer.parseInt(piccoArray[2]));
-        this.Rm.g.setCurva("");
+        this.Rm.gr.setCurva("");
     }
 
 }
