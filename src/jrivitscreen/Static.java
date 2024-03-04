@@ -70,6 +70,7 @@ public class Static {
             F_RISPOSTA_TIRO_ERRATO_ACCETTA = "risposta_tiro_errato_accetta",
             F_RISPOSTA_TIRO_ERRATO_ANNULLA = "risposta_tiro_errato_annulla",
             F_AGGIORNATO_LAVORI = "aggiornato_lavori",
+            F_AGGIORNA_WIFI = "aggiorna_wifi",
             F_RELOAD = "reload",
             F_LAVORO_AVVIATO = "lavoro_avviato",
             F_LAVORO_PRONTO = "lavoro_pronto",
