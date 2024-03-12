@@ -94,8 +94,12 @@ public class JFileWorker extends Thread {
                                 aggiornaContatori();
                             case Static.F_SENSORI + "_ready" ->
                                 aggiornaSensori();
-                            case Static.F_NO_SENSORE ->
-                                this.Rm.setSensoreCollegato(false);
+                            case Static.F_NO_SENSORE -> {
+                                //Da riguardare
+                                if (this.Rm.getStato().equals(Static.STATO_STOP)) {
+                                    this.Rm.setSensoreCollegato(false);
+                                }
+                            }
                             case Static.F_ERRORE ->
                                 errore(true);
                             case Static.F_POSIZIONE_ERRORI + "_ready" ->
@@ -120,8 +124,6 @@ public class JFileWorker extends Thread {
                                 readWarning();
                             case Static.F_PRESSIONE_ARIA_IN_MIN + "_ready", Static.F_PRESSIONE_ARIA_IN_MAX + "_ready" ->
                                 this.leggiAriaInMinMax();
-                            case "killScreen" ->
-                                this.Rm.exit();
                             case Static.F_PICCO + "_ready" ->
                                 gestisciCurva();
                             case Static.F_CURVA_DI_RIFERIMENTO + "_ready" ->
@@ -139,14 +141,15 @@ public class JFileWorker extends Thread {
                             }
                             case (Static.F_LISTA_NM_CON + "_ready") ->
                                 readListaNMdevice();
-                            // Per accendere gli indicatori  sarebbe meglio usare il comando "nmcli networking connectivity" che indica se siamo in lan 
-                            // e se riusciamo anche ad uscire su internet
                             // Verificare se si può usare "nmcli monitor" per tenere sotto controllo la rete e avvisare in caso di cambiamenti
+                            case (Static.F_INTERNET_STATUS + "_ready") ->
+                                readInternetStatus();
                             case Static.F_POWEROFF -> {
                                 Rm.getjLabelDeviceName().setText("POWERING OFF");
                                 Rm.PanelMain();
+                                Rm.bt.pi4j.shutdown();
                                 Thread.sleep(2000);
-                                // System.exit(0);
+                                System.exit(0);
                             }
                             case (Static.F_NOME_DEVICE + "_ready") -> {
                                 readNomeDevice();
@@ -732,6 +735,24 @@ public class JFileWorker extends Thread {
     }
 
     /**
+     * networkmanager crea una lista dei device Questo metodo la legge, è stato
+     * avviato un bash prima che ha creato il file con la lista
+     */
+    private void readInternetStatus() {
+        String inetStatus = leggiFile(Static.F_INTERNET_STATUS);
+        boolean internetIndicator = false;
+        boolean lanIndicator = false;
+        if (inetStatus.contains("full")) {    // se l'ultima riga contiene "full" accende l'indicatore Internet
+            lanIndicator = true;
+            internetIndicator = true;
+        } else if (inetStatus.contains("limited") || inetStatus.contains("portal")) {
+            lanIndicator = true;
+        }
+        this.Rm.setLanIndicator(lanIndicator);
+        this.Rm.setInternetIndicator(internetIndicator);
+    }
+
+    /**
      * legge il file curva per costruire il grafico mostrato nel Pannello Canvas
      */
     private void gestisciCurva() {
@@ -814,9 +835,9 @@ public class JFileWorker extends Thread {
         try {
             String lScelto = leggiFile(Static.F_W_SCELTO);
             String[] lSceltoArray = lScelto.split("§");
-            if (!lSceltoArray[0].equals(Rm.getLavoroScelto())) {
-                Rm.setLavoroScelto(lSceltoArray[0]);
-            }
+            // if (!lSceltoArray[0].equals(Rm.getLavoroScelto())) {
+            Rm.setLavoroScelto(lSceltoArray[0]);
+            //}
             if (lSceltoArray.length > 1) {
                 Rm.setLimLotti(lSceltoArray[1]);
                 Rm.setLimPezzi(lSceltoArray[2]);
@@ -827,11 +848,6 @@ public class JFileWorker extends Thread {
         } catch (Exception e) {
             Static.debug("w_scelto -> wrong parameters count", 2);
         }
-        /*
-        if(this.richiesta.equals(Static.RICHIESTA_AVVIO)){
-            Rm.lavoroPronto();
-        }
-         */
     }
 
     /**
