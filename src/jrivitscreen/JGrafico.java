@@ -79,7 +79,7 @@ public class JGrafico extends JPanel {
     private String curvaDiRiferimento;
     int nPointsRifChar;
     int[] xPoints, yPoints;
-    private int picco;
+    private int picco = 0;
     private int posizionePicco;
     private boolean primoGiro;
     private Font f;
@@ -89,7 +89,7 @@ public class JGrafico extends JPanel {
     private int nPointsCurvaChar;
     private float nPointsMax;
     private int scalaY;
-    private int piccoRif;
+    private int piccoRif = 1;
     private int posizionePiccoRif;
     private int yMax;
     private Graphics2D gr;
@@ -100,8 +100,10 @@ public class JGrafico extends JPanel {
     private final int bordoSup = 50;
     private final int bordoSx = 30;
 
-    private final int jPanelWidth = 328;
-    private final int jPanelHeight = 276;
+    private final int jPanelPosX = 1;
+    private final int jPanelPosY = 1;
+    private final int jPanelWidth = 330;
+    private final int jPanelHeight = 277;
     private int y0;
 
     public JGrafico(JRivitMain Rm) {
@@ -110,7 +112,7 @@ public class JGrafico extends JPanel {
         posizionePicco = 0;
         primoGiro = false;
         this.um = "Bar";
-        this.setSize(jPanelWidth, jPanelHeight);
+        this.setBounds(jPanelPosX, jPanelPosY, jPanelWidth, jPanelHeight);
         y0 = this.getHeight() - bordoInf;
 //Aggiornata impostazione grandezza JPanel come gli altri
     }
@@ -125,131 +127,120 @@ public class JGrafico extends JPanel {
 
     @Override
     protected void paintComponent(Graphics g) {
-        super.paintComponent(g); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
+        try {
 
-        if (this.Rm.getPanCur().equals("canvas")) {
-            gr = (Graphics2D) g;
-            if (this.curva == null) {
-                this.curva = "";
-                /*
-                this.curva = "20,10,20,10,10,30,10,30,30,20,30,30,10,30,20,10,20,"
-                    + "0,30,20,10,20,30,20,40,50,70,120,150,240,310,390,480,550,"
-                    + "640,690,720,730,710,750,770,770,790,780,760,770,740,710,"
-                    + "680,650,650,625,585,575,555,550,550,550,525,520,500,490,"
-                    + "490,480,500,490,550,630,730,830,930,1000,1050,1120,1190,"
-                    + "1270,1350,1350,1120,910,690,530,340,210,"
-                    + "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0";
-                 */
-            }
-            /*
-            if (this.curvaDiRiferimento == null) {
-                this.curvaDiRiferimento = "10,30,10,30,30,20,30,30,10,30,20,10,20,"
-                        + "0,30,20,10,20,30,20,40,50,70,120,150,240,310,390,480,550,"
-                        + "640,690,720,730,710,750,770,770,790,780,760,770,740,710,"
-                        + "680,650,650,625,585,575,555,550,550,550,525,520,500,490,"
-                        + "490,480,500,490,550,630,730,830,930,1000,1050,1120,1190,"
-                        + "1270,1350,1350,1120,910,690,530,340,210,"
-                        + "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0";
-            }
-             */
-            if (this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE)) {
-                if (!primoGiro) {
-                    this.curvaDiRiferimento = this.curva;
-                    this.piccoRif = this.picco;
-                    this.posizionePiccoRif = this.posizionePicco;
-                    this.curva = "";
-                } else {
-                    primoGiro = false;
-                }
-            }
-            // richiesta di test della nuova calibrazione
-            if (this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE_TEST)) {
-                if (primoGiro) {
-                    primoGiro = false;
-//                    this.curvaDiRiferimento = this.curva;
+            super.paintComponent(g); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
+
+            if (this.Rm.getPanCur().equals("canvas")) {
+                if (this.curva == null) {
                     this.curva = "";
                 }
-            }
+                if (this.curva.length() > 1 || this.curvaDiRiferimento.length() > 1) {
+                    gr = (Graphics2D) g;
 
-            if (this.curvaDiRiferimento != null && !this.curvaDiRiferimento.equals("0")) {  // Se esiste la curva di riferimento
-                disegnaAssi();
-                gr.setColor(Color.GREEN);
-                gr.setStroke(new BasicStroke(3));
-                if (nPointsRifChar > 1) {
-                    xPoints = new int[nPointsRifChar];
-                    yPoints = new int[nPointsRifChar];
-                    for (int i = 0; i < nPointsRifChar; i++) {
-                        xPoints[i] = Math.round(i * passoX) + bordoSx;
-                        yPoints[i] = y0 - 2 - Integer.parseInt(yRifchar[i]) / scalaY;
-                    }
-                    gr.drawPolyline(xPoints, yPoints, nPointsRifChar);
-
-                    //this.Rm.getjLayeredPaneCenter().repaint();
-                }
-
-                if (this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE)) {
-                    f = new Font("Arial", 2, 20);
-                    gr.setFont(f);
-                    gr.setColor(Color.BLACK);
-                    gr.drawString(this.Rm.getLavoroScelto(), 200, 20);
-                    gr.setColor(Color.ORANGE);
-                    //gr.drawString("Calib.mode", 200, 43);
-                } else {
-                    if (this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE_TEST)) {
-                        f = new Font("Arial", 2, 20);
-                        gr.setFont(f);
-                        gr.setColor(Color.BLACK);
-                        gr.drawString(this.Rm.getLavoroScelto(), 200, 20);
-                        gr.setColor(Color.BLUE);
-                        // gr.drawString("Calib.test", 200, 43);
-                    }
-                }
-                if (nPointsCurvaChar > 1) {
-                    xPoints = new int[nPointsCurvaChar];
-                    yPoints = new int[nPointsCurvaChar];
-                    for (int i = 0; i < nPointsCurvaChar; i++) {
-                        xPoints[i] = Math.round(i * passoX) + bordoSx;
-                        yPoints[i] = y0 - 2 - Integer.parseInt(yCurvaChar[i]) / scalaY;
-                    }
-                    gr.setStroke(new BasicStroke(3));
-                    if (this.Rm.getInErrore()) {
-                        String[] errValues = this.Rm.getEsitoTiro().split(",");
-                        String[] posErrValues = this.Rm.getPosizioneErrori().split(",");
-                        int alpha = 127; // 50% transparent
-                        Color myColour = new Color(0, 0, 200, alpha);
-                        gr.setColor(myColour);
-                        //gr.setXORMode(Color.GRAY);
-                        int nPunti = (errValues.length - 4) / 5;    // es.: 0,0,0,0,15,0,10,0,0
-                        int xP = posizionePicco, yP = 0;
-                        int i = 0;
-                        int indice = 0;
-                        // Disegno delle zone errate. Il vettore delleposizioni contiene x e y intervallate
-                        for (String errValue : posErrValues) {
-                            if (i % 2 == 0) {   // istanti dei test
-                                indice = Integer.parseInt(errValue);
-                                xP = Math.round(indice * passoX) + bordoSx - 10;
-                            } else {
-                                yP = jPanelHeight - bordoInf - 5 - Integer.parseInt(yCurvaChar[indice]) / scalaY - 10;
-                                gr.drawOval(xP, yP, 20, 20);
+                    if (this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE)) {
+                        if (!(this.curvaDiRiferimento.length() > 1)) {
+                            if (this.curva.length() > 1) {
+                                this.curvaDiRiferimento = this.curva;
+                                this.piccoRif = this.picco;
+                                this.posizionePiccoRif = this.posizionePicco;
+                                this.curva = "";
                             }
-                            i++;
-                        }
-                        gr.setColor(Color.RED);
-                    } else {
-                        if (this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE)) {
-                            gr.setColor(Color.ORANGE);
-                        } else {
-                            gr.setColor(Color.BLACK);
                         }
                     }
-                    gr.drawPolyline(xPoints, yPoints, nPointsCurvaChar);
-                    //this.Rm.getjLayeredPaneCenter().repaint();
 
-                    scriviPicco(picco, posizionePicco);
-                } else {
-                    scriviPicco(piccoRif, posizionePiccoRif);
+                    // richiesta di test della nuova calibrazione
+                    if (this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE_TEST)) {
+//                    if (primoGiro) {
+//                        primoGiro = false;
+////                    this.curvaDiRiferimento = this.curva;
+//                        this.curva = "";
+//                    }
+                    }
+
+                    if (this.curvaDiRiferimento != null && !this.curvaDiRiferimento.equals("0")) {  // Se esiste la curva di riferimento
+                        disegnaAssi();
+                        gr.setColor(Color.GREEN);
+                        gr.setStroke(new BasicStroke(3));
+                        if (nPointsRifChar > 1) {
+                            xPoints = new int[nPointsRifChar];
+                            yPoints = new int[nPointsRifChar];
+                            for (int i = 0; i < nPointsRifChar; i++) {
+                                xPoints[i] = Math.round(i * passoX) + bordoSx;
+                                yPoints[i] = y0 - 2 - Integer.parseInt(yRifchar[i]) / scalaY;
+                            }
+                            gr.drawPolyline(xPoints, yPoints, nPointsRifChar);
+
+                            //this.Rm.getjLayeredPaneCenter().repaint();
+                        }
+
+                        if (this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE)) {
+                            f = new Font("Arial", 2, 20);
+                            gr.setFont(f);
+                            gr.setColor(Color.BLACK);
+                            gr.drawString(this.Rm.getLavoroScelto(), 200, 20);
+                            gr.setColor(Color.ORANGE);
+                            //gr.drawString("Calib.mode", 200, 43);
+                        } else {
+                            if (this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE_TEST)) {
+                                f = new Font("Arial", 2, 20);
+                                gr.setFont(f);
+                                gr.setColor(Color.BLACK);
+                                gr.drawString(this.Rm.getLavoroScelto(), 200, 20);
+                                gr.setColor(Color.BLUE);
+                                // gr.drawString("Calib.test", 200, 43);
+                            }
+                        }
+                        if (nPointsCurvaChar > 1) {
+                            xPoints = new int[nPointsCurvaChar];
+                            yPoints = new int[nPointsCurvaChar];
+                            for (int i = 0; i < nPointsCurvaChar; i++) {
+                                xPoints[i] = Math.round(i * passoX) + bordoSx;
+                                yPoints[i] = y0 - 2 - Integer.parseInt(yCurvaChar[i]) / scalaY;
+                            }
+                            gr.setStroke(new BasicStroke(3));
+                            if (this.Rm.getInErrore()) {
+                                String[] errValues = this.Rm.getEsitoTiro().split(",");
+                                String[] posErrValues = this.Rm.getPosizioneErrori().split(",");
+                                int alpha = 127; // 50% transparent
+                                Color myColour = new Color(0, 0, 200, alpha);
+                                gr.setColor(myColour);
+                                //gr.setXORMode(Color.GRAY);
+                                int nPunti = (errValues.length - 4) / 5;    // es.: 0,0,0,0,15,0,10,0,0
+                                int xP = posizionePicco, yP = 0;
+                                int i = 0;
+                                int indice = 0;
+                                // Disegno delle zone errate. Il vettore delleposizioni contiene x e y intervallate
+                                for (String errValue : posErrValues) {
+                                    if (i % 2 == 0) {   // istanti dei test
+                                        indice = Integer.parseInt(errValue);
+                                        xP = Math.round(indice * passoX) + bordoSx - 10;
+                                    } else {
+                                        yP = jPanelHeight - bordoInf - 5 - Integer.parseInt(yCurvaChar[indice]) / scalaY - 10;
+                                        gr.drawOval(xP, yP, 20, 20);
+                                    }
+                                    i++;
+                                }
+                                gr.setColor(Color.RED);
+                            } else {
+                                if (this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE)) {
+                                    gr.setColor(Color.ORANGE);
+                                } else {
+                                    gr.setColor(Color.BLACK);
+                                }
+                            }
+                            gr.drawPolyline(xPoints, yPoints, nPointsCurvaChar);
+                            //this.Rm.getjLayeredPaneCenter().repaint();
+
+                            scriviPicco(picco, posizionePicco);
+                        } else {
+                            scriviPicco(piccoRif, posizionePiccoRif);
+                        }
+                    }
                 }
             }
+        } catch (Exception e) {
+            Static.debug("Error Graphic repaint\npiccoRif: " + piccoRif + " picco: " + picco + "\n" + e.toString(), 2);
         }
     }
 
@@ -298,12 +289,19 @@ public class JGrafico extends JPanel {
         passoX = this.jPanelWidth / nPointsMax;              // Distanza tra due punti sull'asse X
         int intervalloX = Math.round(nPointsMax / 100);
         for (int i = 0; i < nPointsMax; i += 15 * intervalloX) {    // Scala dei tempi
-            gr.drawString(Integer.toString(i), (passoX * i) + bordoSx, (float) (y0 + bordoInf - 3));
+            try {
+                gr.drawString(Integer.toString(i), (passoX * i) + bordoSx, (float) (y0 + bordoInf - 3));
+            } catch (Exception e) {
+                Static.debug("Errore Integer toString\n" + e.toString(), 2);
+            }
         }
 
         // Scala delle pressioni
         yMax = Math.max(piccoRif, picco);   // Calcolo l'altezza max del grafico
         scalaY = Math.round(yMax / (y0 - bordoSup));        // Proporzione del grafico
+        if (scalaY == 0) {
+            scalaY = 1;
+        }
         if (um.equals("Bar")) {
             yMax = yMax / 10;
         } else {
