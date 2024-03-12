@@ -105,6 +105,7 @@ public class Static {
             F_LOTTI_OK = "lotti_ok",
             F_SESSIONE = "sessione",
             F_LISTA_NM_CON = "lista_nm_con",
+            F_INTERNET_STATUS = "internet_status",
             F_CONTROLLER_ONLINE = "controller_online",
             F_POWEROFF = "poweroff";
     static String PATH_WATCH = "/tmp/CT/";
@@ -115,9 +116,8 @@ public class Static {
     final private static int DEBUGLEVEL = 3;
     static float MAX_VARIAZIONE_PRESSIONE = 9.0f;   // Massima variazione di pressione ammessa da una lettura all'altra
 
-    final private static DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yy HH:mm:ss.SSS");  // per i messaggi di log
-    
-    
+//    final public static DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yy HH:mm:ss.SSS");  // per i messaggi di log
+    final public static DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yy HH:mm:ss");  // per i messaggi di log
 
     /**
      * Visualizza informazioni di debug.
