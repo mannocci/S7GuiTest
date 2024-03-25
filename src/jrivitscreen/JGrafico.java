@@ -158,20 +158,23 @@ public class JGrafico extends JPanel {
 //                    }
                     }
 
-                    if (this.curvaDiRiferimento != null && !this.curvaDiRiferimento.equals("0")) {  // Se esiste la curva di riferimento
+                    if (this.curvaDiRiferimento != null
+                            && !this.curvaDiRiferimento.equals("0")) {  // Se esiste la curva di riferimento
                         disegnaAssi();
-                        gr.setColor(Color.GREEN);
-                        gr.setStroke(new BasicStroke(3));
-                        if (nPointsRifChar > 1) {
-                            xPoints = new int[nPointsRifChar];
-                            yPoints = new int[nPointsRifChar];
-                            for (int i = 0; i < nPointsRifChar; i++) {
-                                xPoints[i] = Math.round(i * passoX) + bordoSx;
-                                yPoints[i] = y0 - 2 - Integer.parseInt(yRifchar[i]) / scalaY;
+                        // Non disegno la curva di calibrazione se ne è stata avviata una nuova
+                        if (!this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE)) { 
+                            gr.setColor(Color.BLUE);
+                            gr.setStroke(new BasicStroke(3));
+                            if (nPointsRifChar > 1) {
+                                xPoints = new int[nPointsRifChar];
+                                yPoints = new int[nPointsRifChar];
+                                for (int i = 0; i < nPointsRifChar; i++) {
+                                    xPoints[i] = Math.round(i * passoX) + bordoSx;
+                                    yPoints[i] = y0 - 2 - Integer.parseInt(yRifchar[i]) / scalaY;
+                                }
+                                gr.drawPolyline(xPoints, yPoints, nPointsRifChar);
+                                //this.Rm.getjLayeredPaneCenter().repaint();
                             }
-                            gr.drawPolyline(xPoints, yPoints, nPointsRifChar);
-
-                            //this.Rm.getjLayeredPaneCenter().repaint();
                         }
 
                         if (this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE)) {
@@ -224,9 +227,9 @@ public class JGrafico extends JPanel {
                                 gr.setColor(Color.RED);
                             } else {
                                 if (this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE)) {
-                                    gr.setColor(Color.ORANGE);
+                                    gr.setColor(Color.BLUE);
                                 } else {
-                                    gr.setColor(Color.BLACK);
+                                    gr.setColor(Color.GREEN);
                                 }
                             }
                             gr.drawPolyline(xPoints, yPoints, nPointsCurvaChar);
@@ -302,10 +305,13 @@ public class JGrafico extends JPanel {
         if (scalaY == 0) {
             scalaY = 1;
         }
+        if (yMax < 0) {
+            yMax = 0;
+        }
         if (um.equals("Bar")) {
-            yMax = yMax / 10;
+            yMax = (yMax) / 10;
         } else {
-            yMax = yMax * this.Rm.getConversion() / 10000;
+            yMax = (yMax) * this.Rm.getConversion() / 10000;
         }
         int valore;
         String strValore;
@@ -335,11 +341,16 @@ public class JGrafico extends JPanel {
         f = new Font("Arial", 1, 20);
         gr.setFont(f);
         gr.setColor(Color.BLACK);
-        if (um.equals("Bar")) {
-            gr.drawString("" + picco / 10 + " Bar " + ((float) posizionePicco / 100) + "s", 5, 20);
-        } else {
-            gr.drawString("" + picco * this.Rm.getConversion() / 10000 + " N " + ((float) posizionePicco / 100) + "s", 5, 20);
+        String piccoStr;
+        if (picco < 0) {
+            picco = 0;
         }
+        if (um.equals("Bar")) {
+            piccoStr = Math.round((float) picco / 10) + " Bar ";
+        } else {
+            piccoStr = Math.round((float) picco * this.Rm.getConversion() / 10000) + " N ";
+        }
+        gr.drawString(piccoStr + ((float) posizionePicco / 100) + "s", 5, 20);
     }
 
 }
