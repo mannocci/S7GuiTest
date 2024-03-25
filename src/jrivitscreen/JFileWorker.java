@@ -147,11 +147,11 @@ public class JFileWorker extends Thread {
                             case Static.F_POWEROFF -> {
                                 Rm.getjLabelDeviceName().setText("POWERING OFF");
                                 Rm.PanelMain();
-                                Rm.bt.pi4j.shutdown();
+                                
                                 Thread.sleep(2000);
                                 System.exit(0);
                             }
-                            case (Static.F_NOME_DEVICE + "_ready") -> {
+                            case (Static.F_UM + "_ready") -> {  // Il file F_UM viene creato dopo aver letto tutti i dati del CT
                                 readNomeDevice();
                                 if (this.Rm.getPanCur().equals("main")) {
                                     this.Rm.PanelMain();
@@ -732,6 +732,7 @@ public class JFileWorker extends Thread {
         this.Rm.setInternetIndicator(internetIndicator);
         this.Rm.setVPNIndicator(vpnIndicator);
         this.Rm.setWiFiIndicator(wifiIndicator);
+        this.Rm.updateNmButtons();
     }
 
     /**
