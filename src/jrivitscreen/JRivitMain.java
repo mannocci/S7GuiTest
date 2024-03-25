@@ -132,7 +132,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private String UDLotti;
     private String UDPezzi;
     private boolean sensoreCollegato;
-    public final JButtons bt;
+    public final JButtonsDio bt;
     private int conversion;
     public static final int MAX_Y = 320;
     public static final int MAX_X = 480;
@@ -233,7 +233,7 @@ public class JRivitMain extends javax.swing.JFrame {
         } catch (IOException ex) {
             Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
         }
-        this.bt = new JButtons(this);
+        this.bt = new JButtonsDio(this);
         doWorker = new JDoWorker(this, fileWorker);
         this.esegui("init");
         this.esegui("aggiorna_nm_list");
@@ -284,11 +284,9 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelDeviceName = new javax.swing.JLabel();
         jLabelVersione = new javax.swing.JLabel();
         jPanelSetupLan = new javax.swing.JPanel();
-        jScrollPaneLan = new javax.swing.JScrollPane();
-        jTextAreaLan = new javax.swing.JTextArea();
+        listLan = new java.awt.List();
         jPanelSetupWiFi = new javax.swing.JPanel();
-        jScrollPaneWifi = new javax.swing.JScrollPane();
-        jTextAreaWifi = new javax.swing.JTextArea();
+        listWifi = new java.awt.List();
         jPanelInfo = new javax.swing.JPanel();
         listInfo = new java.awt.List();
         jPanelWarning = new javax.swing.JPanel();
@@ -550,16 +548,8 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelSetupLan.setPreferredSize(new java.awt.Dimension(330, 277));
         jPanelSetupLan.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jScrollPaneLan.setMaximumSize(new java.awt.Dimension(326, 273));
-        jScrollPaneLan.setMinimumSize(new java.awt.Dimension(326, 273));
-        jScrollPaneLan.setPreferredSize(new java.awt.Dimension(326, 273));
-
-        jTextAreaLan.setEditable(false);
-        jTextAreaLan.setColumns(20);
-        jTextAreaLan.setRows(5);
-        jScrollPaneLan.setViewportView(jTextAreaLan);
-
-        jPanelSetupLan.add(jScrollPaneLan, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 2, 326, 273));
+        listLan.setMaximumSize(new java.awt.Dimension(326, 273));
+        jPanelSetupLan.add(listLan, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 2, 326, 273));
 
         jLayeredPaneCenter.add(jPanelSetupLan, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 330, 277));
 
@@ -570,16 +560,8 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelSetupWiFi.setRequestFocusEnabled(false);
         jPanelSetupWiFi.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jScrollPaneWifi.setMaximumSize(new java.awt.Dimension(326, 273));
-        jScrollPaneWifi.setMinimumSize(new java.awt.Dimension(326, 273));
-        jScrollPaneWifi.setPreferredSize(new java.awt.Dimension(326, 273));
-
-        jTextAreaWifi.setColumns(20);
-        jTextAreaWifi.setRows(5);
-        jTextAreaWifi.setPreferredSize(new java.awt.Dimension(306, 253));
-        jScrollPaneWifi.setViewportView(jTextAreaWifi);
-
-        jPanelSetupWiFi.add(jScrollPaneWifi, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 2, 326, 273));
+        listWifi.setMaximumSize(new java.awt.Dimension(326, 273));
+        jPanelSetupWiFi.add(listWifi, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 2, 326, 273));
 
         jLayeredPaneCenter.add(jPanelSetupWiFi, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 328, 276));
 
@@ -970,15 +952,18 @@ public class JRivitMain extends javax.swing.JFrame {
                         }
                         case Static.RICHIESTA_CALIBRAZIONE_TEST -> {
                             this.esegui("calibrazione_test");
-                            //this.set_jLabel_B_L("Test");
                         }
                         case Static.RICHIESTA_CALIBRAZIONE_SALVA -> {//Ok registra calibrazione
                             this.gr.setPrimoGiro(true);
+                            this.updateDescription(this.listLavori.getSelectedIndex());
                             esegui("salva_calibrazione");
+
                         }
 
                     }
-
+                    if (this.pannelloPrecedente.equals("start")) {
+                        PanelStart();
+                    }
                 } catch (Exception ex) {
                     Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -1201,7 +1186,7 @@ public class JRivitMain extends javax.swing.JFrame {
         // Qual'è il nome del pannello in primo piano ?
         switch (this.panCur) {
             case "main" -> {
-                bt.pi4j.shutdown();
+                
                 this.exit();
             }
 //                per ora uso il pulsante per chiudere;
@@ -1462,15 +1447,13 @@ public class JRivitMain extends javax.swing.JFrame {
     private javax.swing.JPanel jPanelStarted;
     private javax.swing.JPanel jPanelWarning;
     private javax.swing.JProgressBar jProgressBar;
-    private javax.swing.JScrollPane jScrollPaneLan;
-    private javax.swing.JScrollPane jScrollPaneWifi;
-    private javax.swing.JTextArea jTextAreaLan;
-    private javax.swing.JTextArea jTextAreaWifi;
     private java.awt.List listInfo;
+    private java.awt.List listLan;
     private java.awt.List listLavori;
     private java.awt.List listSetupNM;
     private java.awt.List listWLavori;
     private java.awt.List listWarning;
+    private java.awt.List listWifi;
     // End of variables declaration//GEN-END:variables
 
     /**
@@ -1576,14 +1559,6 @@ public class JRivitMain extends javax.swing.JFrame {
         return listLavori;
     }
 
-    public JScrollPane getJScrollPaneSetupLan() {
-        return this.jScrollPaneLan;
-    }
-
-    public JScrollPane getJScrollPaneSetupWiFi() {
-        return this.jScrollPaneWifi;
-    }
-
     public java.awt.List getListWarning() {
         return this.listWarning;
     }
@@ -1615,8 +1590,8 @@ public class JRivitMain extends javax.swing.JFrame {
      * Pannello che mostra il contenuto del file /tmp/warning.txt
      */
     private void PanelWarning() {
-        this.pannelloPrecedente = this.panCur;
-        this.changeButtons(this.Img_Exit, this.Img_Nulla, this.Img_Nulla,
+
+        this.changeButtons(this.Img_Exit, this.Img_Freccia_sx, this.Img_Freccia_dx,
                 this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Nulla);
         cambiaPannello(this.jPanelWarning);
     }
@@ -1628,7 +1603,6 @@ public class JRivitMain extends javax.swing.JFrame {
     private void PulsanteSu() {
         int nrItem, nrCurItem;
         java.awt.List lista = null;
-        javax.swing.JScrollPane jsp = null;
         boolean isSetup = false;
         // Qual'è il nome del pannello in primo piano ?
         switch (this.panCur) {
@@ -1640,9 +1614,9 @@ public class JRivitMain extends javax.swing.JFrame {
                 }
             }
             case "setup wifi" ->
-                jsp = this.jScrollPaneWifi;
+                lista = this.listWifi;
             case "setup lan" ->
-                jsp = this.jScrollPaneLan;
+                lista = this.listLan;
             case "info" ->
                 lista = this.listInfo;
             case "warning" ->
@@ -1694,12 +1668,9 @@ public class JRivitMain extends javax.swing.JFrame {
             }
 
         }//End LIsta not NULL
-        if (jsp != null) {
-            jsp.getVerticalScrollBar().getBlockIncrement(-1);
-            jsp.getVerticalScrollBar().grabFocus();
-            robot.keyPress(KeyEvent.VK_UP);
-            robot.keyRelease(KeyEvent.VK_UP);
-        }
+
+        robot.keyPress(KeyEvent.VK_UP);
+        robot.keyRelease(KeyEvent.VK_UP);
         repaint();
     }//End PulsanteSu
 
@@ -1708,7 +1679,6 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     private void PulsanteGiu() {
         java.awt.List lista = null;
-        javax.swing.JScrollPane jsp = null;
         boolean isSetup = false;
         // Qual'è il nome del pannello in primo piano ?
 
@@ -1721,9 +1691,9 @@ public class JRivitMain extends javax.swing.JFrame {
                 }
             }
             case "setup wifi" ->
-                jsp = this.jScrollPaneWifi;
+                lista = this.listWifi;
             case "setup lan" ->
-                jsp = this.jScrollPaneLan;
+                lista = this.listLan;
             case "info" ->
                 lista = this.listInfo;
             case "warning" ->
@@ -1755,13 +1725,8 @@ public class JRivitMain extends javax.swing.JFrame {
                 this.jButtonPR3.setIcon(this.setIconSetup());//aggiorna il tipo di Icona per il pulsante
             }
         }//End LIsta not NULL
-
-        if (jsp != null) {
-            jsp.getVerticalScrollBar().getBlockIncrement(1);
-            jsp.getVerticalScrollBar().grabFocus();
-            robot.keyPress(KeyEvent.VK_DOWN);
-            robot.keyRelease(KeyEvent.VK_DOWN);
-        }
+        robot.keyPress(KeyEvent.VK_DOWN);
+        robot.keyRelease(KeyEvent.VK_DOWN);
         repaint();
     }//End PulsanteSu
 
@@ -1769,19 +1734,17 @@ public class JRivitMain extends javax.swing.JFrame {
      * Simula la pressione del pulsante per scorrere la lista in giù
      */
     private void PulsanteSxDx(int sx_dx) {
-        javax.swing.JScrollPane jsp = null;
         switch (this.panCur) {
-            case "info" -> {
+            case "info" ->
                 this.listInfo.requestFocus();
-            }
             case "setup wifi" ->
-                jsp = this.jScrollPaneWifi;
+                this.listWifi.requestFocus();
             case "setup lan" ->
-                jsp = this.jScrollPaneLan;
+                this.listLan.requestFocus();
+            case "warning" ->
+                this.listWarning.requestFocus();
         }//EndSwitch
-        if (jsp != null) {
-            jsp.getHorizontalScrollBar().grabFocus();
-        }//End LJScrollPanel
+
         switch (sx_dx) {
             case -1 -> {
                 robot.keyPress(KeyEvent.VK_LEFT);
@@ -1812,6 +1775,10 @@ public class JRivitMain extends javax.swing.JFrame {
     private void PanelSetupWifi() {
         this.changeButtons(this.Img_Exit, this.Img_Freccia_sx, this.Img_Freccia_dx,
                 this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Ok);
+        this.listWifi.removeAll();
+        this.listWifi.add("");
+        this.listWifi.add("");
+        this.listWifi.add("Searching for WiFi networks...");
         cambiaPannello(this.jPanelSetupWiFi);
     }
 
@@ -1905,11 +1872,9 @@ public class JRivitMain extends javax.swing.JFrame {
      * @param lista
      */
     public void aggiornaSetupLan(List<String> lista) {
-        this.jTextAreaLan.setText("");
-        for (String string : lista) {
-            this.jTextAreaLan.append(string + "\n");
-            Static.debug(string, 3);
-        }
+        this.listLan.removeAll();
+        RefreshList(this.listLan, lista);
+        this.listLan.repaint();
     }//End aggiornaSetupLan
 
     /**
@@ -1919,11 +1884,9 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     public void aggiornaSetupWiFi(List<String> lista) {
         if (panCur.equals("setup wifi")) {
-            this.jTextAreaWifi.setText("");
-            for (String string : lista) {
-                this.jTextAreaWifi.append(string + "\n");
-                Static.debug(string, 3);
-            }
+            this.listWifi.removeAll();
+            RefreshList(this.listWifi, lista);
+            this.listWifi.repaint();
         }
     }//End aggiornaSetupWiFi
 
@@ -1968,7 +1931,7 @@ public class JRivitMain extends javax.swing.JFrame {
             if (limLottiRiga.equals("-1")) { // Lavoro senza limiti -> visualizzo solo il nome
                 elencoTxt.add(nomeLavoroRiga);
             } else {
-                elencoTxt.add(nomeLavoroRiga + " Lots=" + limLottiRiga + " Pieces=" + limPezziRiga);
+                elencoTxt.add(nomeLavoroRiga + " L=" + limLottiRiga + " T=" + limPezziRiga);
             }
             this.elencoLavori.add(lavoroSplit);
             if (canStart.equals("0")) { // lavoro non avviabile
@@ -1978,6 +1941,9 @@ public class JRivitMain extends javax.swing.JFrame {
             this.elencoDesLavoro.add(descrizioneRiga);
         }
         RefreshList(listLavori, elencoTxt);
+        if (panCur.equals("work")) {
+            updateDescription(0);
+        }
     }//End aggiornaLavori
 
     /**
@@ -2017,6 +1983,9 @@ public class JRivitMain extends javax.swing.JFrame {
             this.elencoDesWl.add(descrizione);
         }
         RefreshList(listWLavori, elencoTxt);
+        if (panCur.equals("work")) {
+            updateDescription(0);
+        }
     }//End aggiornaWLavori
 
     /**
@@ -2231,7 +2200,10 @@ public class JRivitMain extends javax.swing.JFrame {
             arrayValori = Valori.split(",");
             try {
                 // Calcolo esatto della pressione in base al grafico di risposta del sensore emc
-                this.pressione_aria_in = (Float.parseFloat(arrayValori[4]) - 1) * 10 / 4;
+                // dalle specifiche il fattore di riduzione doveva essere 4, ma confrontando i valori
+                // con un pressostato già tarato si è individuato un fattore di 3.85
+                float correzionePressione = 0.20f;
+                this.pressione_aria_in = ((Float.parseFloat(arrayValori[4]) - 1) * 10 / 3.85f);
                 this.temp_rpi = Float.valueOf(arrayValori[0]);
                 this.temp_io_board = Float.valueOf(arrayValori[1]);
                 this.v_in = Float.valueOf(arrayValori[2]);
@@ -3074,6 +3046,7 @@ public class JRivitMain extends javax.swing.JFrame {
      * @param nuovoPannello
      */
     private void cambiaPannello(JPanel nuovoPannello) {
+        this.pannelloPrecedente = this.panCur;
         this.jLayeredPaneCenter.moveToFront(nuovoPannello);
         this.panCur = nuovoPannello.getName();
         this.set_jLabel_B_L(this.panCur);
@@ -3157,9 +3130,10 @@ public class JRivitMain extends javax.swing.JFrame {
      * @param nrCurItem Indice dell'elemento selezionato
      */
     private void updateDescription(int nrCurItem) {
+        String nomeContatori;
         if (this.inWl) {
             if (nrCurItem < this.elencoWlCompleto.size()) { // Per prevenire eventuali errori
-                this.JTextAreaDescrizioneLavoro.setText(this.elencoDesWl.get(nrCurItem).toString());
+                this.JTextAreaDescrizioneLavoro.setText(this.elencoWl.get(nrCurItem)[0].toString() + " - " + this.elencoDesWl.get(nrCurItem).toString());
                 if (this.elencoWlCompleto.get(nrCurItem)[3].equals("0")) {
                     this.JTextAreaDescrizioneLavoro.setBackground(Color.yellow);
                     this.jButtonPR3.setIcon(this.Img_Nulla);//aggiorna il tipo di Icona per il pulsante
@@ -3169,11 +3143,20 @@ public class JRivitMain extends javax.swing.JFrame {
                     this.jButtonPR3.setIcon(this.Img_Ok);//aggiorna il tipo di Icona per il pulsante
                     this.jButtonPR3.setEnabled(true);
                 }
-
             }
         } else {
             if (nrCurItem < this.elencoLavoriCompleto.size()) { // Per prevenire eventuali errori
-                this.JTextAreaDescrizioneLavoro.setText(this.elencoDesLavoro.get(nrCurItem));
+                //+ " L=" + limLottiRiga + " T=" + limPezziRiga
+                if (this.elencoLavori.get(nrCurItem)[1].equals("-1")) {
+                    nomeContatori = this.elencoLavori.get(nrCurItem)[0];
+                } else {
+                    nomeContatori = this.elencoLavori.get(nrCurItem)[0].toString()
+                            + " L="
+                            + this.elencoLavori.get(nrCurItem)[1].toString()
+                            + " T="
+                            + this.elencoLavori.get(nrCurItem)[2].toString();
+                }
+                this.JTextAreaDescrizioneLavoro.setText(nomeContatori + " - " + this.elencoDesLavoro.get(nrCurItem));
                 // Se il lavoro non è avviabile
                 if (this.elencoLavoriCompleto.get(nrCurItem)[4].equals("0")) {
                     this.JTextAreaDescrizioneLavoro.setBackground(Color.yellow);
@@ -3228,6 +3211,11 @@ public class JRivitMain extends javax.swing.JFrame {
 
     void setConversion(String get) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    void updateNmButtons() {
+        this.changeButtons(this.Img_Exit, this.Img_Lan, this.Img_WiFi,
+                this.Img_Freccia_su, this.Img_Freccia_giu, setIconSetup());
     }
 
 }
