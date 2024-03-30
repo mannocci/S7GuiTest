@@ -151,7 +151,7 @@ public class JFileWorker extends Thread {
                                 Thread.sleep(2000);
                                 System.exit(0);
                             }
-                            case (Static.F_UM + "_ready") -> {  // Il file F_UM viene creato dopo aver letto tutti i dati del CT
+                            case (Static.F_NOME_DEVICE + "_ready") -> {  // Il file F_UM viene creato dopo aver letto tutti i dati del CT
                                 readNomeDevice();
                                 if (this.Rm.getPanCur().equals("main")) {
                                     this.Rm.PanelMain();
@@ -164,8 +164,13 @@ public class JFileWorker extends Thread {
                                     Rm.lavoroPronto();
                                 }
                             }
-                            case Static.F_LAVORO_PRONTO ->
-                                lavoroPronto();
+                            case Static.F_LAVORO_PRONTO ->{
+                                lavoroPronto();//Imposta Lavoro Pronto
+                                if( this.Rm.getRichiesta().equals(Static.RICHIESTA_AVVIO)){
+                                     richiestaAvviaLavoro();//Crea richiesta_avvio
+                                }
+                            }
+                                
                             /*Aggiungere la gestione della curva, contatori, stato con 
                                 * la creazione dei file F_CURVA_READY, F_LAVORO_READY. F_PULSANTE_READY
                              */
@@ -606,10 +611,6 @@ public class JFileWorker extends Thread {
     private void readNomeDevice() {
         try {
             this.Rm.setNomeDevice(leggiFile(Static.F_NOME_DEVICE));
-            String umString = leggiFile(Static.F_UM);
-            String[] umArray = umString.split(",");
-            this.Rm.setUM(umArray[0]);
-            this.Rm.setConversion(Integer.parseInt(umArray[1]));
         } catch (Exception ex) {
             Static.debug("Error reading UM", 2);
         }
@@ -845,7 +846,11 @@ public class JFileWorker extends Thread {
                 Rm.setUDLotti(lSceltoArray[3]);
                 Rm.setUDPezzi(lSceltoArray[4]);
             }
-            Rm.lavoroPronto();
+            String umString = leggiFile(Static.F_UM);
+            String[] umArray = umString.split(",");
+            this.Rm.setUM(umArray[0]);
+            this.Rm.setConversion(Integer.parseInt(umArray[1]));
+            this.Rm.lavoroPronto();
         } catch (Exception e) {
             Static.debug("w_scelto -> wrong parameters count", 2);
         }
@@ -912,5 +917,11 @@ public class JFileWorker extends Thread {
                 Integer.parseInt(piccoArray[2]));
         this.Rm.gr.setCurva("");
     }
-
+    /**
+     * Avvia il lavoro scelto
+     */
+    void richiestaAvviaLavoro() {
+        JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_AVVIO);
+        this.Rm.gr.setCurva("");
+    }
 }
