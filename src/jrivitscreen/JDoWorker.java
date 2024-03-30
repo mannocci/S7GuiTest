@@ -69,18 +69,23 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     this.init();
                 case "calibrazione" -> {
                     avviaCalibrazione();
+                    this.Rm.setRichiesta(Static.RICHIESTA_CALIBRAZIONE);
                 }
                 case "calibrazione_test" -> {
                     JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_CALIBRAZIONE_TEST);
+                     this.Rm.setRichiesta(Static.RICHIESTA_CALIBRAZIONE_TEST);
                 }
                 case "salva_calibrazione" -> {
                     JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_CALIBRAZIONE_SALVA);
+                     this.Rm.setRichiesta(Static.RICHIESTA_CALIBRAZIONE_SALVA);
                 }                
                 case "stop" -> {
                     JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_STOP);
+                    this.Rm.setRichiesta(Static.RICHIESTA_STOP);
                 }
                 case "pausa" -> {
                     JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_PAUSA);
+                     this.Rm.setRichiesta(Static.RICHIESTA_PAUSA);
                 }
                 case "riavvio" -> 
                     riavviaLavoro();
@@ -112,8 +117,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
                 }                
 
                 case "scegli_e_avvia" -> {
-                    this.impostaLavoro();
-                    this.richiestaAvviaLavoro();
+                    this.impostaLavoro();//Crea w_scelto
                 }
 
                 case "scegli_e_avvia_wl" -> {
@@ -166,13 +170,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
             + "§" + this.Rm.geUDPezzi()
          );
     }
-    /**
-     * Avvia il lavoro scelto
-     */
-    void richiestaAvviaLavoro() {
-        JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_AVVIO);
-        this.Rm.gr.setCurva("");
-    }
+
     /**
      * Riferisce a Control la scelta della Work List
      */
