@@ -80,6 +80,7 @@ public class JGrafico extends JPanel {
     int nPointsRifChar;
     int[] xPoints, yPoints;
     private int picco = 0;
+    private int piccoRif = 1;
     private int posizionePicco;
     private boolean primoGiro;
     private Font f;
@@ -89,7 +90,6 @@ public class JGrafico extends JPanel {
     private int nPointsCurvaChar;
     private float nPointsMax;
     private int scalaY;
-    private int piccoRif = 1;
     private int posizionePiccoRif;
     private int yMax;
     private Graphics2D gr;
@@ -288,12 +288,14 @@ public class JGrafico extends JPanel {
 
         yCurvaChar = curva.split(",");
         nPointsCurvaChar = yCurvaChar.length;
-        nPointsMax = Math.max(nPointsRifChar, nPointsCurvaChar);  // Calcolo il nr. di punti del grafico
-        passoX = this.jPanelWidth / nPointsMax;              // Distanza tra due punti sull'asse X
-        int intervalloX = Math.round(nPointsMax / 100);
-        for (int i = 0; i < nPointsMax; i += 15 * intervalloX) {    // Scala dei tempi
+        nPointsMax = Math.max(nPointsRifChar, nPointsCurvaChar);// Calcolo il nr. di punti del grafico
+        passoX = (this.jPanelWidth - bordoSx) / nPointsMax;
+        float distanzaX = (this.jPanelWidth - bordoSx) / 6; // Distanza tra le etichette sull'asse X
+        int intervalloX = Math.round(nPointsMax / 6);       // Tempo tra le etichette
+        float posY = (float) (y0 + bordoInf - 3);           // Posizione inferiore delle etichette
+        for (int i = 0; i < 6; i ++) {    // Scala dei tempi
             try {
-                gr.drawString(Integer.toString(i), (passoX * i) + bordoSx, (float) (y0 + bordoInf - 3));
+                gr.drawString(Integer.toString(intervalloX * i), (distanzaX * i) + bordoSx, posY);
             } catch (Exception e) {
                 Static.debug("Errore Integer toString\n" + e.toString(), 2);
             }
@@ -315,9 +317,11 @@ public class JGrafico extends JPanel {
         }
         int valore;
         String strValore;
-        float passoY = (float) (y0 / 8);    // Otto suddivisioni
-        for (int i = 0; i < 8; i++) {       // Ce ne stanno 8 nel grafico
-            valore = (yMax / 8) * i;
+        int altezzaGraf = (y0 - bordoSup);
+        float distanzaY = (float) altezzaGraf / 8;    // Distanza tra le etichette sull'asse Y
+        int intervalloY = Math.round(yMax / 8);         // Pressione tra le etichette
+        for (int i = 0; i < 8; i++) {           // Ce ne stanno 8 nel grafico
+            valore = intervalloY * i;
             if (valore < 10) {   //  Aggiungo gli spazi per allineare a destra i numeri
                 strValore = "    " + valore;
             } else if (valore < 100) {
@@ -332,8 +336,7 @@ public class JGrafico extends JPanel {
             } else {
                 strValore = "" + valore;
             }
-
-            gr.drawString(strValore, 1f, y0 - (i * passoY) + 10);
+            gr.drawString(strValore, 1f, y0 - (i * distanzaY) + 10);
         }
     }
 
