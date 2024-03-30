@@ -245,7 +245,6 @@ public class JDoWorker extends SwingWorker<String, Object> {
     void update_status_nm() {
         String[] cmd = {"/home/adminsb/bin/nm_list_con.sh"};
         run_system_bash(cmd);
-
     }
 
     /**
