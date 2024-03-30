@@ -138,6 +138,7 @@ public class JRivitMain extends javax.swing.JFrame {
     public static final int MAX_X = 480;
     private DateFormat dateFormat;
     private Calendar now;
+    private String scelta;
 
 //
 //Dopo una sospensione
@@ -227,6 +228,7 @@ public class JRivitMain extends javax.swing.JFrame {
         this.v_rpi = 0F;
         this.pressione_aria_in = 0F;
         this.inPausa = "0";
+        this.richiesta = "";
 
         try {
             fileWorker = new JFileWorker(this);
@@ -255,11 +257,15 @@ public class JRivitMain extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanelLeft = new javax.swing.JPanel();
-        jButtonPL1 = new javax.swing.JButton();
-        jButtonPL2 = new javax.swing.JButton();
-        jButtonPL3 = new javax.swing.JButton();
         jLayeredPaneCenter = new javax.swing.JLayeredPane();
+        jPanelMain = new javax.swing.JPanel();
+        jLabelLogo = new javax.swing.JLabel();
+        jLabelDeviceName = new javax.swing.JLabel();
+        jLabelVersione = new javax.swing.JLabel();
+        jPanelStart = new javax.swing.JPanel();
+        listLavori = new java.awt.List();
+        listWLavori = new java.awt.List();
+        JTextAreaDescrizioneLavoro = new javax.swing.JTextArea();
         jPanelStarted = new javax.swing.JPanel();
         jLabelContatoreLotti = new javax.swing.JLabel();
         jLabelNomeDevice = new javax.swing.JLabel();
@@ -279,10 +285,6 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelNomeWL = new javax.swing.JLabel();
         jPanelSetup = new javax.swing.JPanel();
         listSetupNM = new java.awt.List();
-        jPanelMain = new javax.swing.JPanel();
-        jLabelLogo = new javax.swing.JLabel();
-        jLabelDeviceName = new javax.swing.JLabel();
-        jLabelVersione = new javax.swing.JLabel();
         jPanelSetupLan = new javax.swing.JPanel();
         listLan = new java.awt.List();
         jPanelSetupWiFi = new javax.swing.JPanel();
@@ -291,16 +293,16 @@ public class JRivitMain extends javax.swing.JFrame {
         listInfo = new java.awt.List();
         jPanelWarning = new javax.swing.JPanel();
         listWarning = new java.awt.List();
-        jPanelStart = new javax.swing.JPanel();
-        listLavori = new java.awt.List();
-        listWLavori = new java.awt.List();
-        JTextAreaDescrizioneLavoro = new javax.swing.JTextArea();
         jPanelDialog = new javax.swing.JPanel();
         jLabelDialog = new javax.swing.JLabel();
         jPanelRight = new javax.swing.JPanel();
         jButtonPR1 = new javax.swing.JButton();
         jButtonPR2 = new javax.swing.JButton();
         jButtonPR3 = new javax.swing.JButton();
+        jPanelLeft = new javax.swing.JPanel();
+        jButtonPL1 = new javax.swing.JButton();
+        jButtonPL2 = new javax.swing.JButton();
+        jButtonPL3 = new javax.swing.JButton();
         jPanelBotton = new javax.swing.JPanel();
         jLabel_B_L = new javax.swing.JLabel();
         jLabel_B_R = new javax.swing.JLabel();
@@ -322,59 +324,98 @@ public class JRivitMain extends javax.swing.JFrame {
         setType(java.awt.Window.Type.UTILITY);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jPanelLeft.setAlignmentX(0.1F);
-        jPanelLeft.setAlignmentY(0.1F);
-        jPanelLeft.setMaximumSize(new java.awt.Dimension(70, 286));
-        jPanelLeft.setMinimumSize(new java.awt.Dimension(70, 286));
-        jPanelLeft.setPreferredSize(new java.awt.Dimension(70, 286));
-        jPanelLeft.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        jButtonPL1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/no_warning.png"))); // NOI18N
-        jButtonPL1.setAlignmentX(0.5F);
-        jButtonPL1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        jButtonPL1.setContentAreaFilled(false);
-        jButtonPL1.setMaximumSize(new java.awt.Dimension(65, 65));
-        jButtonPL1.setMinimumSize(new java.awt.Dimension(65, 65));
-        jButtonPL1.setPreferredSize(new java.awt.Dimension(65, 65));
-        jButtonPL1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonPL1ActionPerformed(evt);
-            }
-        });
-        jPanelLeft.add(jButtonPL1, new org.netbeans.lib.awtextra.AbsoluteConstraints(4, 6, -1, -1));
-
-        jButtonPL2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/info.png"))); // NOI18N
-        jButtonPL2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        jButtonPL2.setContentAreaFilled(false);
-        jButtonPL2.setMargin(new java.awt.Insets(4, 14, 4, 14));
-        jButtonPL2.setPreferredSize(new java.awt.Dimension(65, 65));
-        jButtonPL2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonPL2ActionPerformed(evt);
-            }
-        });
-        jPanelLeft.add(jButtonPL2, new org.netbeans.lib.awtextra.AbsoluteConstraints(4, 108, -1, -1));
-
-        jButtonPL3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/setup.png"))); // NOI18N
-        jButtonPL3.setAlignmentX(0.5F);
-        jButtonPL3.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        jButtonPL3.setContentAreaFilled(false);
-        jButtonPL3.setPreferredSize(new java.awt.Dimension(65, 65));
-        jButtonPL3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonPL3ActionPerformed(evt);
-            }
-        });
-        jPanelLeft.add(jButtonPL3, new org.netbeans.lib.awtextra.AbsoluteConstraints(4, 210, -1, -1));
-
-        getContentPane().add(jPanelLeft, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 70, 286));
-
         jLayeredPaneCenter.setBackground(new java.awt.Color(0, 0, 255));
         jLayeredPaneCenter.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         jLayeredPaneCenter.setMaximumSize(new java.awt.Dimension(330, 277));
         jLayeredPaneCenter.setMinimumSize(new java.awt.Dimension(330, 277));
         jLayeredPaneCenter.setOpaque(true);
         jLayeredPaneCenter.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jPanelMain.setBackground(new java.awt.Color(255, 255, 255));
+        jPanelMain.setMaximumSize(new java.awt.Dimension(330, 277));
+        jPanelMain.setMinimumSize(new java.awt.Dimension(330, 277));
+        jPanelMain.setName("main"); // NOI18N
+        jPanelMain.setPreferredSize(new java.awt.Dimension(330, 277));
+        jPanelMain.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLabelLogo.setBackground(new java.awt.Color(255, 255, 255));
+        jLabelLogo.setForeground(new java.awt.Color(0, 0, 0));
+        jLabelLogo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelLogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/logori2.png"))); // NOI18N
+        jLabelLogo.setAlignmentY(0.0F);
+        jLabelLogo.setFocusable(false);
+        jLabelLogo.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jLabelLogo.setMaximumSize(new java.awt.Dimension(250, 250));
+        jLabelLogo.setMinimumSize(new java.awt.Dimension(250, 250));
+        jLabelLogo.setPreferredSize(new java.awt.Dimension(250, 250));
+        jPanelMain.add(jLabelLogo, new org.netbeans.lib.awtextra.AbsoluteConstraints(54, 23, 220, 230));
+        jLabelLogo.getAccessibleContext().setAccessibleName("Pannello principale");
+
+        jLabelDeviceName.setFont(new java.awt.Font("Ubuntu Light", 3, 18)); // NOI18N
+        jLabelDeviceName.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelDeviceName.setText("Device Name");
+        jLabelDeviceName.setMaximumSize(new java.awt.Dimension(320, 30));
+        jLabelDeviceName.setMinimumSize(new java.awt.Dimension(320, 30));
+        jLabelDeviceName.setPreferredSize(new java.awt.Dimension(322, 32));
+        jPanelMain.add(jLabelDeviceName, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 255, 328, 20));
+        jLabelDeviceName.getAccessibleContext().setAccessibleName("DeviceName");
+        jLabelDeviceName.getAccessibleContext().setAccessibleDescription("Nome del RivitControl");
+
+        jLabelVersione.setFont(new java.awt.Font("Ubuntu Light", 1, 14)); // NOI18N
+        jLabelVersione.setForeground(java.awt.Color.blue);
+        jLabelVersione.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelVersione.setText("Ver.");
+        jLabelVersione.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        jLabelVersione.setMaximumSize(new java.awt.Dimension(320, 30));
+        jLabelVersione.setMinimumSize(new java.awt.Dimension(320, 30));
+        jLabelVersione.setPreferredSize(new java.awt.Dimension(322, 32));
+        jPanelMain.add(jLabelVersione, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 0, 328, 20));
+
+        jLayeredPaneCenter.add(jPanelMain, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 330, 277));
+
+        jPanelStart.setAlignmentX(1.0F);
+        jPanelStart.setAlignmentY(1.0F);
+        jPanelStart.setMaximumSize(new java.awt.Dimension(330, 277));
+        jPanelStart.setMinimumSize(new java.awt.Dimension(330, 277));
+        jPanelStart.setName("start"); // NOI18N
+        jPanelStart.setPreferredSize(new java.awt.Dimension(330, 277));
+        jPanelStart.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        listLavori.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        listLavori.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                listLavoriMouseClicked(evt);
+            }
+        });
+        listLavori.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                listLavoriItemStateChanged(evt);
+            }
+        });
+        jPanelStart.add(listLavori, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 2, 326, 180));
+
+        listWLavori.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        listWLavori.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                listWLavoriMouseClicked(evt);
+            }
+        });
+        listWLavori.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                listWLavoriItemStateChanged(evt);
+            }
+        });
+        jPanelStart.add(listWLavori, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 2, 326, 180));
+
+        JTextAreaDescrizioneLavoro.setEditable(false);
+        JTextAreaDescrizioneLavoro.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
+        JTextAreaDescrizioneLavoro.setLineWrap(true);
+        JTextAreaDescrizioneLavoro.setRows(5);
+        JTextAreaDescrizioneLavoro.setMaximumSize(new java.awt.Dimension(320, 80));
+        JTextAreaDescrizioneLavoro.setMinimumSize(new java.awt.Dimension(320, 80));
+        jPanelStart.add(JTextAreaDescrizioneLavoro, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 186, 328, 90));
+
+        jLayeredPaneCenter.add(jPanelStart, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 330, 277));
 
         jPanelStarted.setBackground(new java.awt.Color(204, 204, 255));
         jPanelStarted.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -500,48 +541,6 @@ public class JRivitMain extends javax.swing.JFrame {
 
         jLayeredPaneCenter.add(jPanelSetup, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 330, 277));
 
-        jPanelMain.setBackground(new java.awt.Color(255, 255, 255));
-        jPanelMain.setMaximumSize(new java.awt.Dimension(330, 277));
-        jPanelMain.setMinimumSize(new java.awt.Dimension(330, 277));
-        jPanelMain.setName("main"); // NOI18N
-        jPanelMain.setPreferredSize(new java.awt.Dimension(330, 277));
-        jPanelMain.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        jLabelLogo.setBackground(new java.awt.Color(255, 255, 255));
-        jLabelLogo.setForeground(new java.awt.Color(0, 0, 0));
-        jLabelLogo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabelLogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/logori2.png"))); // NOI18N
-        jLabelLogo.setAlignmentY(0.0F);
-        jLabelLogo.setFocusable(false);
-        jLabelLogo.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jLabelLogo.setMaximumSize(new java.awt.Dimension(250, 250));
-        jLabelLogo.setMinimumSize(new java.awt.Dimension(250, 250));
-        jLabelLogo.setPreferredSize(new java.awt.Dimension(250, 250));
-        jPanelMain.add(jLabelLogo, new org.netbeans.lib.awtextra.AbsoluteConstraints(54, 23, 220, 230));
-        jLabelLogo.getAccessibleContext().setAccessibleName("Pannello principale");
-
-        jLabelDeviceName.setFont(new java.awt.Font("Ubuntu Light", 3, 18)); // NOI18N
-        jLabelDeviceName.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabelDeviceName.setText("Device Name");
-        jLabelDeviceName.setMaximumSize(new java.awt.Dimension(320, 30));
-        jLabelDeviceName.setMinimumSize(new java.awt.Dimension(320, 30));
-        jLabelDeviceName.setPreferredSize(new java.awt.Dimension(322, 32));
-        jPanelMain.add(jLabelDeviceName, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 255, 328, 20));
-        jLabelDeviceName.getAccessibleContext().setAccessibleName("DeviceName");
-        jLabelDeviceName.getAccessibleContext().setAccessibleDescription("Nome del RivitControl");
-
-        jLabelVersione.setFont(new java.awt.Font("Ubuntu Light", 1, 14)); // NOI18N
-        jLabelVersione.setForeground(java.awt.Color.blue);
-        jLabelVersione.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabelVersione.setText("Ver.");
-        jLabelVersione.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        jLabelVersione.setMaximumSize(new java.awt.Dimension(320, 30));
-        jLabelVersione.setMinimumSize(new java.awt.Dimension(320, 30));
-        jLabelVersione.setPreferredSize(new java.awt.Dimension(322, 32));
-        jPanelMain.add(jLabelVersione, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 0, 328, 20));
-
-        jLayeredPaneCenter.add(jPanelMain, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 330, 277));
-
         jPanelSetupLan.setMaximumSize(new java.awt.Dimension(330, 277));
         jPanelSetupLan.setMinimumSize(new java.awt.Dimension(330, 277));
         jPanelSetupLan.setName("setup lan"); // NOI18N
@@ -595,50 +594,6 @@ public class JRivitMain extends javax.swing.JFrame {
 
         jLayeredPaneCenter.add(jPanelWarning, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 330, 277));
 
-        jPanelStart.setAlignmentX(1.0F);
-        jPanelStart.setAlignmentY(1.0F);
-        jPanelStart.setMaximumSize(new java.awt.Dimension(330, 277));
-        jPanelStart.setMinimumSize(new java.awt.Dimension(330, 277));
-        jPanelStart.setName("start"); // NOI18N
-        jPanelStart.setPreferredSize(new java.awt.Dimension(330, 277));
-        jPanelStart.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        listLavori.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
-        listLavori.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                listLavoriMouseClicked(evt);
-            }
-        });
-        listLavori.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                listLavoriItemStateChanged(evt);
-            }
-        });
-        jPanelStart.add(listLavori, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 2, 326, 180));
-
-        listWLavori.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
-        listWLavori.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                listWLavoriMouseClicked(evt);
-            }
-        });
-        listWLavori.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                listWLavoriItemStateChanged(evt);
-            }
-        });
-        jPanelStart.add(listWLavori, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 2, 326, 180));
-
-        JTextAreaDescrizioneLavoro.setEditable(false);
-        JTextAreaDescrizioneLavoro.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
-        JTextAreaDescrizioneLavoro.setLineWrap(true);
-        JTextAreaDescrizioneLavoro.setRows(5);
-        JTextAreaDescrizioneLavoro.setMaximumSize(new java.awt.Dimension(320, 80));
-        JTextAreaDescrizioneLavoro.setMinimumSize(new java.awt.Dimension(320, 80));
-        jPanelStart.add(JTextAreaDescrizioneLavoro, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 186, 328, 90));
-
-        jLayeredPaneCenter.add(jPanelStart, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 330, 277));
-
         jPanelDialog.setMaximumSize(new java.awt.Dimension(330, 277));
         jPanelDialog.setMinimumSize(new java.awt.Dimension(330, 277));
         jPanelDialog.setName("dialog"); // NOI18N
@@ -667,7 +622,6 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelRight.setPreferredSize(new java.awt.Dimension(70, 286));
         jPanelRight.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jButtonPR1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/play_circle.png"))); // NOI18N
         jButtonPR1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jButtonPR1.setContentAreaFilled(false);
         jButtonPR1.setMaximumSize(new java.awt.Dimension(67, 67));
@@ -706,6 +660,50 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelRight.add(jButtonPR3, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 210, -1, -1));
 
         getContentPane().add(jPanelRight, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 0, 70, 286));
+
+        jPanelLeft.setAlignmentX(0.1F);
+        jPanelLeft.setAlignmentY(0.1F);
+        jPanelLeft.setMaximumSize(new java.awt.Dimension(70, 286));
+        jPanelLeft.setMinimumSize(new java.awt.Dimension(70, 286));
+        jPanelLeft.setPreferredSize(new java.awt.Dimension(70, 286));
+        jPanelLeft.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jButtonPL1.setAlignmentX(0.5F);
+        jButtonPL1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButtonPL1.setContentAreaFilled(false);
+        jButtonPL1.setMaximumSize(new java.awt.Dimension(65, 65));
+        jButtonPL1.setMinimumSize(new java.awt.Dimension(65, 65));
+        jButtonPL1.setPreferredSize(new java.awt.Dimension(65, 65));
+        jButtonPL1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonPL1ActionPerformed(evt);
+            }
+        });
+        jPanelLeft.add(jButtonPL1, new org.netbeans.lib.awtextra.AbsoluteConstraints(4, 6, -1, -1));
+
+        jButtonPL2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButtonPL2.setContentAreaFilled(false);
+        jButtonPL2.setMargin(new java.awt.Insets(4, 14, 4, 14));
+        jButtonPL2.setPreferredSize(new java.awt.Dimension(65, 65));
+        jButtonPL2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonPL2ActionPerformed(evt);
+            }
+        });
+        jPanelLeft.add(jButtonPL2, new org.netbeans.lib.awtextra.AbsoluteConstraints(4, 108, -1, -1));
+
+        jButtonPL3.setAlignmentX(0.5F);
+        jButtonPL3.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jButtonPL3.setContentAreaFilled(false);
+        jButtonPL3.setPreferredSize(new java.awt.Dimension(65, 65));
+        jButtonPL3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonPL3ActionPerformed(evt);
+            }
+        });
+        jPanelLeft.add(jButtonPL3, new org.netbeans.lib.awtextra.AbsoluteConstraints(4, 210, -1, -1));
+
+        getContentPane().add(jPanelLeft, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 70, 286));
 
         jPanelBotton.setBackground(new java.awt.Color(0, 0, 0));
         jPanelBotton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -879,7 +877,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 } else {
                     if (this.isChiediConfermaStop()) {
                         this.setContesto(this.panCur);
-                        richiesta = Static.STATO_STOP;
+                        scelta = Static.STATO_STOP;
                         this.AlertDialogWhat = "Confirm stop work ?";
                         this.jLabelDialog.setText(AlertDialogWhat);
                         PanelDialog();
@@ -895,14 +893,14 @@ public class JRivitMain extends javax.swing.JFrame {
                     case Static.STATO_CALIBRAZIONE:
                         this.AlertDialogWhat = "Proceed with calibration test ?";
                         this.jLabelDialog.setText(AlertDialogWhat);
-                        richiesta = Static.RICHIESTA_CALIBRAZIONE_TEST;
+                        scelta = Static.RICHIESTA_CALIBRAZIONE_TEST;
                         PanelDialog();
                         break;
                     case Static.STATO_CALIBRAZIONE_TEST:
                         //Salvare la calibrazione ?
                         this.AlertDialogWhat = "Confirm calibration rewrite ?";
                         this.jLabelDialog.setText(AlertDialogWhat);
-                        richiesta = Static.RICHIESTA_CALIBRAZIONE_SALVA;
+                        scelta = Static.RICHIESTA_CALIBRAZIONE_SALVA;
                         PanelDialog();
                         break;
                     default:
@@ -911,7 +909,7 @@ public class JRivitMain extends javax.swing.JFrame {
                             PanelStart();
                         } else {
                             if (this.isChiediConfermaStop()) {
-                                richiesta = Static.STATO_STOP;
+                                scelta = Static.STATO_STOP;
                                 this.AlertDialogWhat = "Confirm stop work ?";
                                 this.jLabelDialog.setText(AlertDialogWhat);
                                 PanelDialog();
@@ -929,7 +927,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 try {
                     //Pulsante Sì alla domanda ? Annulla ? Abort ?
                     //passa direttamente ad annullare lavoro
-                    switch (this.richiesta) {
+                    switch (this.scelta) {
 
                         case Static.ANNULLA -> {
                             this.esegui("annulla");
@@ -1000,12 +998,12 @@ public class JRivitMain extends javax.swing.JFrame {
             case "started" ->//Continua
             {
                 this.setContesto(this.panCur);
-                richiesta = Static.CONTINUA;
+                scelta = Static.CONTINUA;
                 rispostaErrore();
 
             }
             case "canvas" -> {
-                richiesta = Static.CONTINUA;
+                scelta = Static.CONTINUA;
                 rispostaErrore();
                 //PanelStarted(); Rimane in cavans 
             }
@@ -1046,12 +1044,12 @@ public class JRivitMain extends javax.swing.JFrame {
             case "started" ->//Accetta il tiro
             {
                 this.setContesto(this.panCur);
-                richiesta = Static.ACCETTA;
+                scelta = Static.ACCETTA;
                 rispostaErrore();
             }
             case "canvas" -> {
                 if (!getStato().equals(Static.STATO_CALIBRAZIONE)) {
-                    richiesta = Static.ACCETTA;
+                    scelta = Static.ACCETTA;
                     rispostaErrore();
                 }
             }
@@ -1088,18 +1086,18 @@ public class JRivitMain extends javax.swing.JFrame {
             }
             case "start" -> {
                 this.AlertDialogWhat = "Enter re-calibration mode ?";
-                this.richiesta = Static.RICHIESTA_CALIBRAZIONE;
+                this.scelta = Static.RICHIESTA_CALIBRAZIONE;
                 this.jLabelDialog.setText(AlertDialogWhat);
                 PanelDialog();
             }
             case "started" -> {//Annullare il tiro
                 this.setContesto(this.panCur);
-                this.richiesta = Static.ANNULLA;
+                this.scelta = Static.ANNULLA;
                 rispostaErrore();
             }
             case "canvas" -> {
                 if (!getStato().equals(Static.STATO_CALIBRAZIONE)) {
-                    this.richiesta = Static.ANNULLA;
+                    this.scelta = Static.ANNULLA;
                     rispostaErrore();
                 }
             }
@@ -1141,7 +1139,7 @@ public class JRivitMain extends javax.swing.JFrame {
                         if (this.isChiediConfermaStop()) {
 //                    DialogQ = STATO_PAUSA;
                             this.setContesto(this.panCur);
-                            richiesta = Static.STATO_PAUSA;
+                            scelta = Static.STATO_PAUSA;
                             this.AlertDialogWhat = "Confirm pause work ?";
                             this.jLabelDialog.setText(AlertDialogWhat);
                             PanelDialog();
@@ -1157,7 +1155,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 PulsanteGiu();
             }
             case "dialog" -> {//Scelta no alla domanda, ritornare al pannello started, No Salva waveform, No test
-                switch (this.richiesta) {
+                switch (this.scelta) {
                     case Static.RICHIESTA_CALIBRAZIONE_TEST -> {//Ritorna in calibrazione
                         this.avviaCalibrazione();
                     }
@@ -1221,7 +1219,7 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     private void rispostaErrore() {
         String rispostaErrore = "";
-        switch (this.richiesta) {
+        switch (this.scelta) {
             case Static.CONTINUA ->
                 rispostaErrore = "continua";
             case Static.ANNULLA ->
@@ -2089,7 +2087,7 @@ public class JRivitMain extends javax.swing.JFrame {
     /**
      * Pannello di Setup l'utente deve scegliere tra setup Lan o WiFi
      */
-    private void PanelSetup() {
+    public void PanelSetup() {
         this.esegui("aggiorna_nm_list");
         this.changeButtons(this.Img_Exit, this.Img_Lan, this.Img_WiFi,
                 this.Img_Freccia_su, this.Img_Freccia_giu, setIconSetup());
@@ -2662,7 +2660,6 @@ public class JRivitMain extends javax.swing.JFrame {
             limLotti = 1;
             limPezzi = 1;
         }
-        this.esegui("scegli");
     }
 
     /**
@@ -2675,6 +2672,7 @@ public class JRivitMain extends javax.swing.JFrame {
             setStatoConcluso(false);
             setInErrore(false);
             azzeraContatori();
+            this.richiesta = Static.RICHIESTA_AVVIO;
             this.esegui("scegli_e_avvia");
         } catch (Exception ex) {
             Static.debug("Error starting work " + lavoroScelto + " ! " + ex.toString(), 2);
@@ -3216,6 +3214,13 @@ public class JRivitMain extends javax.swing.JFrame {
     void updateNmButtons() {
         this.changeButtons(this.Img_Exit, this.Img_Lan, this.Img_WiFi,
                 this.Img_Freccia_su, this.Img_Freccia_giu, setIconSetup());
+    }
+
+    public String getRichiesta() {
+        return richiesta;
+    }
+    public  void setRichiesta(String richiesta) {
+        this.richiesta = richiesta;
     }
 
 }
