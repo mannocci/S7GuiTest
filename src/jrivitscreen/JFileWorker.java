@@ -51,11 +51,10 @@ public class JFileWorker extends Thread {
 // Classi
 
     private final JRivitMain Rm;
-
+    private String richiesta;
     private WatchService watcher;
     private Path fileName;
     private WatchKey key;
-    private String richiesta;
 
     public JFileWorker(JRivitMain mf) throws IOException {
         this.richiesta = "";
@@ -733,7 +732,9 @@ public class JFileWorker extends Thread {
         this.Rm.setInternetIndicator(internetIndicator);
         this.Rm.setVPNIndicator(vpnIndicator);
         this.Rm.setWiFiIndicator(wifiIndicator);
-        this.Rm.updateNmButtons();
+        if(this.Rm.getPanCur().equals("setup")){
+            this.Rm.updateNmButtons();
+        }
     }
 
     /**
