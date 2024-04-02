@@ -91,20 +91,18 @@ public class JButtonsDio {
 
     }
 
-    void gestisciTasto(String nomeTasto) {
-        currentTime = System.currentTimeMillis();
+    void gestisciTasto(String nomeTasto,  long nanoTime) {
         // Gestione del rimbalzo dei tasti (debounce)
-        if (currentTime - lastPressTime > 300) {
-            //  System.out.println("Button 2 pressed " + nomeTasto);
+        if (nanoTime - lastPressTime > 300000000l) {
             this.mf.pulsanteHw(nomeTasto);
-            lastPressTime = currentTime;
+            lastPressTime = nanoTime;
         }
 
     }
 
     private void creaBottone(String nomeTasto, int gpio) {
         Button btn = new Button(gpio, pud);
-        btn.whenPressed(nanoTime -> gestisciTasto(nomeTasto));
+        btn.whenPressed(nanoTime -> gestisciTasto(nomeTasto, nanoTime));
         button.add(btn);
 //        System.out.printf("chiave = %s Valore = %d\n", nomeTasto, gpio);
     }
