@@ -68,28 +68,28 @@ public class JDoWorker extends SwingWorker<String, Object> {
                 case "init" ->
                     this.init();
                 case "calibrazione" -> {
-                    avviaCalibrazione();
+                    this.impostaLavoro();
                     this.Rm.setRichiesta(Static.RICHIESTA_CALIBRAZIONE);
                 }
                 case "calibrazione_test" -> {
                     JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_CALIBRAZIONE_TEST);
-                     this.Rm.setRichiesta(Static.RICHIESTA_CALIBRAZIONE_TEST);
+                    this.Rm.setRichiesta(Static.RICHIESTA_CALIBRAZIONE_TEST);
                 }
                 case "salva_calibrazione" -> {
                     JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_CALIBRAZIONE_SALVA);
-                     this.Rm.setRichiesta(Static.RICHIESTA_CALIBRAZIONE_SALVA);
-                }                
+                    this.Rm.setRichiesta(Static.RICHIESTA_CALIBRAZIONE_SALVA);
+                }
                 case "stop" -> {
                     JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_STOP);
                     this.Rm.setRichiesta(Static.RICHIESTA_STOP);
                 }
                 case "pausa" -> {
                     JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_PAUSA);
-                     this.Rm.setRichiesta(Static.RICHIESTA_PAUSA);
+                    this.Rm.setRichiesta(Static.RICHIESTA_PAUSA);
                 }
-                case "riavvio" -> 
+                case "riavvio" ->
                     riavviaLavoro();
-                case "continua", "accetta", "annulla" -> 
+                case "continua", "accetta", "annulla" ->
                     JFileWorker.scriviFlag(Static.F_RISPOSTA_TIRO_ERRATO + "_" + this.operation);
                 case "aggiorna_nome_device" -> {
                     this.NomeDevice = JFileWorker.leggiFile(this.f_nome_device);
@@ -106,15 +106,15 @@ public class JDoWorker extends SwingWorker<String, Object> {
 
                 case "on_of_nm_device" ->
                     this.on_of_nm_device();
-                    
+
                 case "scegli" -> {
                     this.impostaLavoro();
-                }                
-                
+                }
+
                 case "scegli_wl" -> {
                     this.scegliWL();
                     this.fileWorker.WlListaPronta();    // Lettura elenco lavori della lista. Da rivedere se si può chiamare in modo più "pulito"
-                }                
+                }
 
                 case "scegli_e_avvia" -> {
                     this.impostaLavoro();//Crea w_scelto
@@ -164,11 +164,11 @@ public class JDoWorker extends SwingWorker<String, Object> {
         String lavoro = this.Rm.getLavoroScelto();
         // Scrivo anche i dettagli del lavoro. Serviranno allo scambio dati tramite webSocket
         JFileWorker.scriviFileConReady(Static.F_W_SCELTO, lavoro
-            + "§" + this.Rm.getLimLotti()
-            + "§" + this.Rm.getLimPezzi()
-            + "§" + this.Rm.getUDLotti()
-            + "§" + this.Rm.geUDPezzi()
-         );
+                + "§" + this.Rm.getLimLotti()
+                + "§" + this.Rm.getLimPezzi()
+                + "§" + this.Rm.getUDLotti()
+                + "§" + this.Rm.geUDPezzi()
+        );
     }
 
     /**
@@ -177,13 +177,14 @@ public class JDoWorker extends SwingWorker<String, Object> {
     void scegliWL() {
         String Wlista = this.Rm.getWLscelta();
         JFileWorker.scriviFileConReady(Static.F_WL_SCELTA, Wlista
-            + "§" + this.Rm.getWLnrCicli());
+                + "§" + this.Rm.getWLnrCicli());
     }
-      /**
-     * Avvia la richiesta a Control per la WorkList
-     * Questo implica di dover andare a leggere la lista dei lavori e scriverli in un file
-     * con indice§nome lavoro. ogni volta che screen inizia un lavoro viene rimosso dal file che
-     * inizierà con l'indica§nome lavoro successivo
+
+    /**
+     * Avvia la richiesta a Control per la WorkList Questo implica di dover
+     * andare a leggere la lista dei lavori e scriverli in un file con
+     * indice§nome lavoro. ogni volta che screen inizia un lavoro viene rimosso
+     * dal file che inizierà con l'indica§nome lavoro successivo
      */
     void avviaWL() {
         JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_AVVIO_WL);
@@ -196,12 +197,6 @@ public class JDoWorker extends SwingWorker<String, Object> {
     void riavviaLavoro() {
         JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_RIAVVIO);
         this.Rm.gr.setCurva("");
-    }    
-    /**
-     * Imposta lavoro scelto e avvia la calibrazione
-     */
-    void avviaCalibrazione() {
-        JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_CALIBRAZIONE);
     }
 
     /**

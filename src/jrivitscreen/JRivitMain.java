@@ -411,6 +411,7 @@ public class JRivitMain extends javax.swing.JFrame {
         JTextAreaDescrizioneLavoro.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
         JTextAreaDescrizioneLavoro.setLineWrap(true);
         JTextAreaDescrizioneLavoro.setRows(5);
+        JTextAreaDescrizioneLavoro.setFocusable(false);
         JTextAreaDescrizioneLavoro.setMaximumSize(new java.awt.Dimension(320, 80));
         JTextAreaDescrizioneLavoro.setMinimumSize(new java.awt.Dimension(320, 80));
         jPanelStart.add(JTextAreaDescrizioneLavoro, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 186, 328, 90));

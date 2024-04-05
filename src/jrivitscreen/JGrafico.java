@@ -77,43 +77,43 @@ public class JGrafico extends JPanel {
 
     private String curva;
     private String curvaDiRiferimento;
-    int nPointsRifChar;
     int[] xPoints, yPoints;
-    private int picco = 0;
     private int piccoRif = 1;
+    private int posizionePiccoRif;
+    private int picco = 0;
     private int posizionePicco;
     private boolean primoGiro;
     private Font f;
-    private String um;
     private JRivitMain Rm;
-    private float passoX;
-    private int nPointsCurvaChar;
-    private float nPointsMax;
-    private int scalaY;
-    private int posizionePiccoRif;
-    private int yMax;
+    private float fattoreX;
+    private float fattoreY;
+    private float maxLength;
+    private int maxPicco;   // Picco più elevato tra le curve
+    private int valPicco;   // Valore del picco nell'unità di misura scelta
     private Graphics2D gr;
     private String[] yRifchar;
     private String[] yCurvaChar;
 
-    private final int bordoInf = 20;
-    private final int bordoSup = 50;
-    private final int bordoSx = 30;
-
-    private final int jPanelPosX = 1;
-    private final int jPanelPosY = 1;
+    private final int jPanelPosX = 0;
+    private final int jPanelPosY = 0;
     private final int jPanelWidth = 330;
     private final int jPanelHeight = 277;
-    private int y0;
+    private final int bordoInf = 20;
+    private final int bordoSup = 30;
+    private final int bordoSx = 30;
+    private float y0;           // Coordinata Y dell'origine del grafico
+    private float altezzaGraf;  // Altezza dello spazio per il grafico
+    private float larghezzaGraf;  // Larghezza dello spazio per il grafico
 
     public JGrafico(JRivitMain Rm) {
         picco = 0;
         this.Rm = Rm;
         posizionePicco = 0;
         primoGiro = false;
-        this.um = "Bar";
         this.setBounds(jPanelPosX, jPanelPosY, jPanelWidth, jPanelHeight);
-        y0 = this.getHeight() - bordoInf;
+        y0 = this.jPanelHeight- bordoInf;
+        altezzaGraf = (y0 - bordoSup);
+        larghezzaGraf = this.jPanelWidth - bordoSx;
 //Aggiornata impostazione grandezza JPanel come gli altri
     }
 
@@ -128,7 +128,6 @@ public class JGrafico extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         try {
-
             super.paintComponent(g); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
 
             if (this.Rm.getPanCur().equals("canvas")) {
@@ -165,14 +164,14 @@ public class JGrafico extends JPanel {
                         if (!this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE)) { 
                             gr.setColor(Color.BLUE);
                             gr.setStroke(new BasicStroke(3));
-                            if (nPointsRifChar > 1) {
-                                xPoints = new int[nPointsRifChar];
-                                yPoints = new int[nPointsRifChar];
-                                for (int i = 0; i < nPointsRifChar; i++) {
-                                    xPoints[i] = Math.round(i * passoX) + bordoSx;
-                                    yPoints[i] = y0 - 2 - Integer.parseInt(yRifchar[i]) / scalaY;
+                            if (yRifchar.length > 1) {
+                                xPoints = new int[yRifchar.length];
+                                yPoints = new int[yRifchar.length];
+                                for (int i = 0; i < yRifchar.length; i++) {
+                                    xPoints[i] = Math.round(i * fattoreX) + bordoSx;
+                                    yPoints[i] = Math.round(y0 - 2 - (float)Integer.parseInt(yRifchar[i]) * fattoreY);
                                 }
-                                gr.drawPolyline(xPoints, yPoints, nPointsRifChar);
+                                gr.drawPolyline(xPoints, yPoints, yRifchar.length);
                                 //this.Rm.getjLayeredPaneCenter().repaint();
                             }
                         }
@@ -194,12 +193,12 @@ public class JGrafico extends JPanel {
                                 // gr.drawString("Calib.test", 200, 43);
                             }
                         }
-                        if (nPointsCurvaChar > 1) {
-                            xPoints = new int[nPointsCurvaChar];
-                            yPoints = new int[nPointsCurvaChar];
-                            for (int i = 0; i < nPointsCurvaChar; i++) {
-                                xPoints[i] = Math.round(i * passoX) + bordoSx;
-                                yPoints[i] = y0 - 2 - Integer.parseInt(yCurvaChar[i]) / scalaY;
+                        if (yCurvaChar.length > 1) {
+                            xPoints = new int[yCurvaChar.length];
+                            yPoints = new int[yCurvaChar.length];
+                            for (int i = 0; i < yCurvaChar.length; i++) {
+                                xPoints[i] = Math.round(i * fattoreX) + bordoSx;
+                                yPoints[i] = Math.round(y0 - 2 - Integer.parseInt(yCurvaChar[i]) * fattoreY);
                             }
                             gr.setStroke(new BasicStroke(3));
                             if (this.Rm.getInErrore()) {
@@ -213,13 +212,13 @@ public class JGrafico extends JPanel {
                                 int xP = posizionePicco, yP = 0;
                                 int i = 0;
                                 int indice = 0;
-                                // Disegno delle zone errate. Il vettore delleposizioni contiene x e y intervallate
+                                // Disegno delle zone errate. Il vettore delle posizioni contiene x e y intervallate
                                 for (String errValue : posErrValues) {
                                     if (i % 2 == 0) {   // istanti dei test
                                         indice = Integer.parseInt(errValue);
-                                        xP = Math.round(indice * passoX) + bordoSx - 10;
+                                        xP = Math.round(indice * fattoreX) + bordoSx - 10;
                                     } else {
-                                        yP = jPanelHeight - bordoInf - 5 - Integer.parseInt(yCurvaChar[indice]) / scalaY - 10;
+                                        yP = Math.round(jPanelHeight - bordoInf - 5 - Integer.parseInt(yCurvaChar[indice]) * fattoreY - 10);
                                         gr.drawOval(xP, yP, 20, 20);
                                     }
                                     i++;
@@ -232,7 +231,7 @@ public class JGrafico extends JPanel {
                                     gr.setColor(Color.GREEN);
                                 }
                             }
-                            gr.drawPolyline(xPoints, yPoints, nPointsCurvaChar);
+                            gr.drawPolyline(xPoints, yPoints, yCurvaChar.length);
                             //this.Rm.getjLayeredPaneCenter().repaint();
 
                             scriviPicco(picco, posizionePicco);
@@ -275,68 +274,57 @@ public class JGrafico extends JPanel {
         this.primoGiro = primoGiro;
     }
 
-    void setUM(String um) {
-        this.um = um;
-    }
-
     private void disegnaAssi() {
         gr.setColor(Color.BLACK);
         gr.drawLine(bordoSx, this.jPanelHeight - bordoInf, this.jPanelWidth, this.jPanelHeight - bordoInf);   // Asse X
-        gr.drawLine(bordoSx, this.jPanelHeight - bordoInf, bordoSx, bordoSup - 20);   // Asse Y
+        gr.drawLine(bordoSx, this.jPanelHeight - bordoInf, bordoSx, bordoSup);   // Asse Y
         yRifchar = curvaDiRiferimento.split(",");
-        nPointsRifChar = yRifchar.length;
-
         yCurvaChar = curva.split(",");
-        nPointsCurvaChar = yCurvaChar.length;
-        nPointsMax = Math.max(nPointsRifChar, nPointsCurvaChar);// Calcolo il nr. di punti del grafico
-        passoX = (this.jPanelWidth - bordoSx) / nPointsMax;
+        maxLength = Math.max(yRifchar.length, yCurvaChar.length);   // Calcolo il nr. di punti del grafico
+        fattoreX = larghezzaGraf / maxLength;                           // Fattore X per le larghezze
         float distanzaX = (this.jPanelWidth - bordoSx) / 6; // Distanza tra le etichette sull'asse X
-        int intervalloX = Math.round(nPointsMax / 6);       // Tempo tra le etichette
+        int intervalloX = Math.round(maxLength / 6);       // Tempo tra le etichette
         float posY = (float) (y0 + bordoInf - 3);           // Posizione inferiore delle etichette
         for (int i = 0; i < 6; i ++) {    // Scala dei tempi
             try {
-                gr.drawString(Integer.toString(intervalloX * i), (distanzaX * i) + bordoSx, posY);
+                gr.drawString(Integer.toString(intervalloX * i), (distanzaX * i) + bordoSx - 2, posY);
             } catch (Exception e) {
                 Static.debug("Errore Integer toString\n" + e.toString(), 2);
             }
         }
 
         // Scala delle pressioni
-        yMax = Math.max(piccoRif, picco);   // Calcolo l'altezza max del grafico
-        scalaY = Math.round(yMax / (y0 - bordoSup));        // Proporzione del grafico
-        if (scalaY == 0) {
-            scalaY = 1;
+        maxPicco = Math.max(piccoRif, picco);   // Il maggiore dei picchi
+        fattoreY = altezzaGraf / (float)(maxPicco * 1.2);  // fattore moltiplicativo Y del grafico (rispetto al picco + 20%)
+        if (maxPicco < 0) {
+            maxPicco = 0;
         }
-        if (yMax < 0) {
-            yMax = 0;
-        }
-        if (um.equals("Bar")) {
-            yMax = (yMax) / 10;
+        if (this.Rm.getUM().equals("Bar")) {
+            valPicco = maxPicco / 10;
         } else {
-            yMax = (yMax) * this.Rm.getConversion() / 10000;
+            valPicco = maxPicco * this.Rm.getConversion() / 10000;
         }
         int valore;
         String strValore;
-        int altezzaGraf = (y0 - bordoSup);
         float distanzaY = (float) altezzaGraf / 8;    // Distanza tra le etichette sull'asse Y
-        int intervalloY = Math.round(yMax / 8);         // Pressione tra le etichette
+        int intervalloY = Math.round((float)(valPicco * 1.2) / 8);       // Incremento Pressione tra le etichette
         for (int i = 0; i < 8; i++) {           // Ce ne stanno 8 nel grafico
             valore = intervalloY * i;
             if (valore < 10) {   //  Aggiungo gli spazi per allineare a destra i numeri
-                strValore = "    " + valore;
+                strValore = "     " + valore;
             } else if (valore < 100) {
-                strValore = "  " + valore;
+                strValore = "   " + valore;
             } else if (valore > 999) {
-                int tmpValore = Math.round(valore / 1000);
-                if (tmpValore < 10) {
-                    strValore = "  " + tmpValore + "K";
+                float tmpValore = (float)valore / 1000;
+                if (tmpValore < 9.99f) {
+                    strValore = String.format (" %.1fK", tmpValore);
                 } else {
-                    strValore = "" + tmpValore + "K";
+                    strValore = String.format ("%.1fK", tmpValore);
                 }
             } else {
-                strValore = "" + valore;
+                strValore = " " + valore;
             }
-            gr.drawString(strValore, 1f, y0 - (i * distanzaY) + 10);
+            gr.drawString(strValore, 0, y0 - (i * distanzaY) + 2);
         }
     }
 
@@ -348,7 +336,7 @@ public class JGrafico extends JPanel {
         if (picco < 0) {
             picco = 0;
         }
-        if (um.equals("Bar")) {
+        if (this.Rm.getUM().equals("Bar")) {
             piccoStr = Math.round((float) picco / 10) + " Bar ";
         } else {
             piccoStr = Math.round((float) picco * this.Rm.getConversion() / 10000) + " N ";

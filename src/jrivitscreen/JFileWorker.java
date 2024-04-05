@@ -146,7 +146,7 @@ public class JFileWorker extends Thread {
                             case Static.F_POWEROFF -> {
                                 Rm.getjLabelDeviceName().setText("POWERING OFF");
                                 Rm.PanelMain();
-                                
+
                                 Thread.sleep(2000);
                                 System.exit(0);
                             }
@@ -163,13 +163,16 @@ public class JFileWorker extends Thread {
                                     Rm.lavoroPronto();
                                 }
                             }
-                            case Static.F_LAVORO_PRONTO ->{
+                            case Static.F_LAVORO_PRONTO -> {
                                 lavoroPronto();//Imposta Lavoro Pronto
-                                if( this.Rm.getRichiesta().equals(Static.RICHIESTA_AVVIO)){
-                                     richiestaAvviaLavoro();//Crea richiesta_avvio
+                                if (this.Rm.getRichiesta().equals(Static.RICHIESTA_AVVIO)) {
+                                    richiestaAvviaLavoro();//Crea richiesta_avvio
+                                }
+                                if (this.Rm.getRichiesta().equals(Static.RICHIESTA_CALIBRAZIONE)) {
+                                    this.richiestaAvviaCalibrazione();
                                 }
                             }
-                                
+
                             /*Aggiungere la gestione della curva, contatori, stato con 
                                 * la creazione dei file F_CURVA_READY, F_LAVORO_READY. F_PULSANTE_READY
                              */
@@ -586,7 +589,6 @@ public class JFileWorker extends Thread {
             this.Rm.setCurva(leggiFile(Static.F_CURVA));
             String[] piccoArray = leggiFile(Static.F_PICCO).split(",");
             this.Rm.gr.setCurva(this.Rm.getCurva());
-            this.Rm.gr.setUM(this.Rm.getUM());
             this.Rm.gr.setPicco(Integer.parseInt(piccoArray[0]), Integer.parseInt(piccoArray[2]));
         } catch (Exception e) {
             Static.debug("Error while reading curve ", 2);
@@ -732,7 +734,7 @@ public class JFileWorker extends Thread {
         this.Rm.setInternetIndicator(internetIndicator);
         this.Rm.setVPNIndicator(vpnIndicator);
         this.Rm.setWiFiIndicator(wifiIndicator);
-        if(this.Rm.getPanCur().equals("setup")){
+        if (this.Rm.getPanCur().equals("setup")) {
             this.Rm.updateNmButtons();
         }
     }
@@ -847,10 +849,10 @@ public class JFileWorker extends Thread {
                 Rm.setUDLotti(lSceltoArray[3]);
                 Rm.setUDPezzi(lSceltoArray[4]);
             }
-            String umString = leggiFile(Static.F_UM);
+            String umString = leggiFile(Static.F_UM);   // Ogni lavoro ha un proprio tool con un diverso fattore di conversione
             String[] umArray = umString.split(",");
-            this.Rm.setUM(umArray[0]);
-            this.Rm.setConversion(Integer.parseInt(umArray[1]));
+            this.Rm.setUM(umArray[0]);  // UM è di pertinenza del CT
+            this.Rm.setConversion(Integer.parseInt(umArray[1]));    // Xf è di pertinenza del tool
             this.Rm.lavoroPronto();
         } catch (Exception e) {
             Static.debug("w_scelto -> wrong parameters count", 2);
@@ -912,12 +914,12 @@ public class JFileWorker extends Thread {
     private void readPiccoRiferimento() {
         String piccoStr = leggiFile(Static.F_PICCORIF);
         String[] piccoArray = piccoStr.split(",");
-        this.Rm.gr.setUM(this.Rm.getUM());
         this.Rm.gr.setPiccoRif(
                 Integer.parseInt(piccoArray[0]),
                 Integer.parseInt(piccoArray[2]));
         this.Rm.gr.setCurva("");
     }
+
     /**
      * Avvia il lavoro scelto
      */
@@ -925,4 +927,12 @@ public class JFileWorker extends Thread {
         JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_AVVIO);
         this.Rm.gr.setCurva("");
     }
+    
+    /**
+     * Avvia la calibrazione
+     */
+    void richiestaAvviaCalibrazione() {
+        JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_CALIBRAZIONE);
+    }
+
 }
