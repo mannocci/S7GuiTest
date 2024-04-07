@@ -787,7 +787,7 @@ public class JFileWorker extends Thread {
                 this.Rm.avviaCalibrazione();
             }
             case Static.STATO_CALIBRAZIONE_TEST -> {
-                this.Rm.avviaCalibrazione();
+                this.Rm.avviaCalibrazioneTest();
             }
             case Static.STATO_STOP -> {
                 /*
@@ -917,7 +917,6 @@ public class JFileWorker extends Thread {
         this.Rm.gr.setPiccoRif(
                 Integer.parseInt(piccoArray[0]),
                 Integer.parseInt(piccoArray[2]));
-        this.Rm.gr.setCurva("");
     }
 
     /**

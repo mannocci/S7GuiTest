@@ -111,7 +111,7 @@ public class JGrafico extends JPanel {
         posizionePicco = 0;
         primoGiro = false;
         this.setBounds(jPanelPosX, jPanelPosY, jPanelWidth, jPanelHeight);
-        y0 = this.jPanelHeight- bordoInf;
+        y0 = this.jPanelHeight - bordoInf;
         altezzaGraf = (y0 - bordoSup);
         larghezzaGraf = this.jPanelWidth - bordoSx;
 //Aggiornata impostazione grandezza JPanel come gli altri
@@ -119,10 +119,16 @@ public class JGrafico extends JPanel {
 
     public void setCurva(String curva) {
         this.curva = curva;
+        if (curva != null) {
+            this.yCurvaChar = curva.split(",");
+        }
     }
 
     public void setCurvaDiRiferimento(String curvaDiRiferimento) {
         this.curvaDiRiferimento = curvaDiRiferimento;
+        if (curvaDiRiferimento != null) {
+            this.yRifchar = curvaDiRiferimento.split(",");
+        }
     }
 
     @Override
@@ -131,19 +137,19 @@ public class JGrafico extends JPanel {
             super.paintComponent(g); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
 
             if (this.Rm.getPanCur().equals("canvas")) {
-                if (this.curva == null) {
-                    this.curva = "";
+                if (this.curva == null) {   // Per sicurezza
+                    this.setCurva("");
                 }
-                if (this.curva.length() > 1 || this.curvaDiRiferimento.length() > 1) {
+                if (this.curva.length() > 1 || this.curvaDiRiferimento.length() > 0) {
                     gr = (Graphics2D) g;
 
                     if (this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE)) {
                         if (!(this.curvaDiRiferimento.length() > 1)) {
                             if (this.curva.length() > 1) {
-                                this.curvaDiRiferimento = this.curva;
+                                this.setCurvaDiRiferimento(this.curva);   // La curva appena letta diventa il riferimento
                                 this.piccoRif = this.picco;
                                 this.posizionePiccoRif = this.posizionePicco;
-                                this.curva = "";
+//                                this.setCurva("");
                             }
                         }
                     }
@@ -159,23 +165,8 @@ public class JGrafico extends JPanel {
 
                     if (this.curvaDiRiferimento != null
                             && !this.curvaDiRiferimento.equals("0")) {  // Se esiste la curva di riferimento
-                        disegnaAssi();
-                        // Non disegno la curva di calibrazione se ne è stata avviata una nuova
-                        if (!this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE)) { 
-                            gr.setColor(Color.BLUE);
-                            gr.setStroke(new BasicStroke(3));
-                            if (yRifchar.length > 1) {
-                                xPoints = new int[yRifchar.length];
-                                yPoints = new int[yRifchar.length];
-                                for (int i = 0; i < yRifchar.length; i++) {
-                                    xPoints[i] = Math.round(i * fattoreX) + bordoSx;
-                                    yPoints[i] = Math.round(y0 - 2 - (float)Integer.parseInt(yRifchar[i]) * fattoreY);
-                                }
-                                gr.drawPolyline(xPoints, yPoints, yRifchar.length);
-                                //this.Rm.getjLayeredPaneCenter().repaint();
-                            }
-                        }
-
+                        //disegnaAssi();
+                        aggiornaAssi();
                         if (this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE)) {
                             f = new Font("Arial", 2, 20);
                             gr.setFont(f);
@@ -238,8 +229,27 @@ public class JGrafico extends JPanel {
                         } else {
                             scriviPicco(piccoRif, posizionePiccoRif);
                         }
+                                                // Non disegno la curva di calibrazione se ne è stata avviata una nuova
+                        if (!this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE)) {
+                            gr.setColor(Color.BLUE);
+                            gr.setStroke(new BasicStroke(3));
+                            if (yRifchar.length > 1) {
+                                xPoints = new int[yRifchar.length];
+                                yPoints = new int[yRifchar.length];
+                                for (int i = 0; i < yRifchar.length; i++) {
+                                    xPoints[i] = Math.round(i * fattoreX) + bordoSx;
+                                    yPoints[i] = Math.round(y0 - 2 - (float) Integer.parseInt(yRifchar[i]) * fattoreY);
+                                }
+                                gr.drawPolyline(xPoints, yPoints, yRifchar.length);
+                                //this.Rm.getjLayeredPaneCenter().repaint();
+                            }
+                        }
+
+
+                    } else {
+                        disegnaAssi();
                     }
-                }
+                } 
             }
         } catch (Exception e) {
             Static.debug("Error Graphic repaint\npiccoRif: " + piccoRif + " picco: " + picco + "\n" + e.toString(), 2);
@@ -278,14 +288,22 @@ public class JGrafico extends JPanel {
         gr.setColor(Color.BLACK);
         gr.drawLine(bordoSx, this.jPanelHeight - bordoInf, this.jPanelWidth, this.jPanelHeight - bordoInf);   // Asse X
         gr.drawLine(bordoSx, this.jPanelHeight - bordoInf, bordoSx, bordoSup);   // Asse Y
-        yRifchar = curvaDiRiferimento.split(",");
-        yCurvaChar = curva.split(",");
+    }
+
+    private void aggiornaAssi() {
+        gr.setColor(Color.BLACK);
+
+//        yRifchar = curvaDiRiferimento.split(",");
+//        yCurvaChar = curva.split(",");
         maxLength = Math.max(yRifchar.length, yCurvaChar.length);   // Calcolo il nr. di punti del grafico
         fattoreX = larghezzaGraf / maxLength;                           // Fattore X per le larghezze
         float distanzaX = (this.jPanelWidth - bordoSx) / 6; // Distanza tra le etichette sull'asse X
         int intervalloX = Math.round(maxLength / 6);       // Tempo tra le etichette
         float posY = (float) (y0 + bordoInf - 3);           // Posizione inferiore delle etichette
-        for (int i = 0; i < 6; i ++) {    // Scala dei tempi
+        for (int i = 0; i < 6; i++) {    // Scala dei tempi
+            gr.drawString("     ", (distanzaX * i) + bordoSx - 2, posY);
+        }
+        for (int i = 0; i < 6; i++) {    // Scala dei tempi
             try {
                 gr.drawString(Integer.toString(intervalloX * i), (distanzaX * i) + bordoSx - 2, posY);
             } catch (Exception e) {
@@ -295,7 +313,7 @@ public class JGrafico extends JPanel {
 
         // Scala delle pressioni
         maxPicco = Math.max(piccoRif, picco);   // Il maggiore dei picchi
-        fattoreY = altezzaGraf / (float)(maxPicco * 1.2);  // fattore moltiplicativo Y del grafico (rispetto al picco + 20%)
+        fattoreY = altezzaGraf / (float) (maxPicco * 1.2);  // fattore moltiplicativo Y del grafico (rispetto al picco + 20%)
         if (maxPicco < 0) {
             maxPicco = 0;
         }
@@ -307,7 +325,10 @@ public class JGrafico extends JPanel {
         int valore;
         String strValore;
         float distanzaY = (float) altezzaGraf / 8;    // Distanza tra le etichette sull'asse Y
-        int intervalloY = Math.round((float)(valPicco * 1.2) / 8);       // Incremento Pressione tra le etichette
+        int intervalloY = Math.round((float) (valPicco * 1.2) / 8);       // Incremento Pressione tra le etichette
+        for (int i = 0; i < 8; i++) {           // Ce ne stanno 8 nel grafico
+            gr.drawString("     ", 0, y0 - (i * distanzaY) + 2);
+        }
         for (int i = 0; i < 8; i++) {           // Ce ne stanno 8 nel grafico
             valore = intervalloY * i;
             if (valore < 10) {   //  Aggiungo gli spazi per allineare a destra i numeri
@@ -315,17 +336,18 @@ public class JGrafico extends JPanel {
             } else if (valore < 100) {
                 strValore = "   " + valore;
             } else if (valore > 999) {
-                float tmpValore = (float)valore / 1000;
+                float tmpValore = (float) valore / 1000;
                 if (tmpValore < 9.99f) {
-                    strValore = String.format (" %.1fK", tmpValore);
+                    strValore = String.format(" %.1fK", tmpValore);
                 } else {
-                    strValore = String.format ("%.1fK", tmpValore);
+                    strValore = String.format("%.1fK", tmpValore);
                 }
             } else {
                 strValore = " " + valore;
             }
             gr.drawString(strValore, 0, y0 - (i * distanzaY) + 2);
         }
+        disegnaAssi();
     }
 
     private void scriviPicco(int picco, int posizionePicco) {

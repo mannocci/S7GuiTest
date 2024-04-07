@@ -2846,6 +2846,7 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     void avviaCalibrazione() {
         gr.setPrimoGiro(true);
+        gr.setCurvaDiRiferimento("0");
         PanelCanvas();
     }
 
@@ -2855,6 +2856,7 @@ public class JRivitMain extends javax.swing.JFrame {
     void avviaCalibrazioneTest() {
         gr.setPrimoGiro(false);
         this.set_jLabel_B_L("Cal. Test");
+        gr.setCurvaDiRiferimento(Curva);
         PanelCanvas();
     }
 
