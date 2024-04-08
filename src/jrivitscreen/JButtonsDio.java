@@ -93,7 +93,7 @@ public class JButtonsDio {
 
     void gestisciTasto(String nomeTasto,  long nanoTime) {
         // Gestione del rimbalzo dei tasti (debounce)
-        if (nanoTime - lastPressTime > 300000000l) {
+        if (nanoTime - lastPressTime > 200000000) {
             this.mf.pulsanteHw(nomeTasto);
             lastPressTime = nanoTime;
         }

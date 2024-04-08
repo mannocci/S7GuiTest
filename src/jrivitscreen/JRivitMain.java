@@ -1185,7 +1185,7 @@ public class JRivitMain extends javax.swing.JFrame {
         // Qual'è il nome del pannello in primo piano ?
         switch (this.panCur) {
             case "main" -> {
-                
+
                 this.exit();
             }
 //                per ora uso il pulsante per chiudere;
@@ -1467,6 +1467,7 @@ public class JRivitMain extends javax.swing.JFrame {
         } else {
             lista = this.listLavori;
         }
+        lista.requestFocus();
         if (this.abilitaCalibrazione) {
             this.changeButtons(this.Img_Exit, this.Img_Nulla, this.Img_Calibrazione,
                     this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Ok);
@@ -1589,9 +1590,9 @@ public class JRivitMain extends javax.swing.JFrame {
      * Pannello che mostra il contenuto del file /tmp/warning.txt
      */
     private void PanelWarning() {
-
         this.changeButtons(this.Img_Exit, this.Img_Freccia_sx, this.Img_Freccia_dx,
                 this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Nulla);
+        this.listWarning.requestFocus(); // Per poter usare le frecce
         cambiaPannello(this.jPanelWarning);
     }
 
@@ -1628,49 +1629,30 @@ public class JRivitMain extends javax.swing.JFrame {
         if (lista != null) {
             nrItem = lista.getItemCount();
             nrCurItem = lista.getSelectedIndex();
+            lista.requestFocus();
             if (nrCurItem == -1) { // nessun elemento selezionato
                 nrCurItem = 0;
             }
             if (nrCurItem > 0) {
                 nrCurItem--;
+                robot.keyPress(KeyEvent.VK_UP);
+                robot.keyRelease(KeyEvent.VK_UP);
             } else {
-                nrCurItem = nrItem - 1;//Va all'ultimo Item
+                nrCurItem = nrItem - 1; // Va all'ultimo Item
+                lista.select(nrCurItem);
+                lista.makeVisible(nrCurItem);
             }
-            lista.select(nrCurItem);
+            //lista.select(nrCurItem);
             // rendi visibile l'elemento selezionato
-            lista.makeVisible(nrCurItem);
+            //lista.makeVisible(nrCurItem);
             if (this.panCur.equals("start")) {
                 updateDescription(nrCurItem);
-                /*
-                if (this.inWl == false) {
-                    this.JTextAreaDescrizioneLavoro.setText(
-                            this.elencoDesLavoro.get(nrCurItem));
-                    if (this.elencoLavoriCompleto.get(nrCurItem)[4].equals("0")) {
-                        this.JTextAreaDescrizioneLavoro.setBackground(Color.yellow);
-                        this.jButtonPR3.setIcon(this.Img_Nulla);//aggiorna il tipo di Icona per il pulsante
-                        this.jButtonPR3.setEnabled(false);
-                    } else {
-                        this.JTextAreaDescrizioneLavoro.setBackground(Color.white);
-                        this.jButtonPR3.setIcon(this.Img_Ok);//aggiorna il tipo di Icona per il pulsante
-                        this.jButtonPR3.setEnabled(true);
-                    }
-                } else {
-                    this.JTextAreaDescrizioneLavoro.setText(this.elencoDesWl.get(nrCurItem).toString());
-                    this.JTextAreaDescrizioneLavoro.setBackground(Color.white);
-                    this.jButtonPR3.setIcon(this.Img_Ok);//aggiorna il tipo di Icona per il pulsante
-                    this.jButtonPR3.setEnabled(true);
-                }
-                 */
             }
             if (isSetup) {
                 this.jButtonPR3.setIcon(this.setIconSetup());//aggiorna il tipo di Icona per il pulsante
             }
 
         }//End LIsta not NULL
-
-        robot.keyPress(KeyEvent.VK_UP);
-        robot.keyRelease(KeyEvent.VK_UP);
-        repaint();
     }//End PulsanteSu
 
     /**
@@ -1705,18 +1687,19 @@ public class JRivitMain extends javax.swing.JFrame {
         if (lista != null) {
             int nrItem = lista.getItemCount();
             int nrCurItem = lista.getSelectedIndex();
+            lista.requestFocus();
             if (nrCurItem == -1) { // nessun elemento selezionato
                 nrCurItem = 0;
             }
             if (nrCurItem < nrItem - 1) {
                 nrCurItem++;
+                robot.keyPress(KeyEvent.VK_DOWN);
+                robot.keyRelease(KeyEvent.VK_DOWN);
             } else {
-                nrCurItem = 0;//ritorna al primo Item
+                nrCurItem = 0;  // Ritorna al primo Item
+                lista.select(nrCurItem);
+                lista.makeVisible(nrCurItem);
             }
-            lista.select(nrCurItem);
-            // rendi visibile l'elemento selezionato
-            lista.makeVisible(nrCurItem);
-
             if (this.panCur.equals("start")) {
                 updateDescription(nrCurItem);
             }
@@ -1724,13 +1707,10 @@ public class JRivitMain extends javax.swing.JFrame {
                 this.jButtonPR3.setIcon(this.setIconSetup());//aggiorna il tipo di Icona per il pulsante
             }
         }//End LIsta not NULL
-        robot.keyPress(KeyEvent.VK_DOWN);
-        robot.keyRelease(KeyEvent.VK_DOWN);
-        repaint();
-    }//End PulsanteSu
+    }//End PulsanteGiu
 
     /**
-     * Simula la pressione del pulsante per scorrere la lista in giù
+     * Simula la pressione del pulsante per scorrere la lista sx e dx
      */
     private void PulsanteSxDx(int sx_dx) {
         switch (this.panCur) {
@@ -1755,8 +1735,6 @@ public class JRivitMain extends javax.swing.JFrame {
             }
 
         }
-
-        //repaint();
     }//End PulsanteSx
 
     /**
@@ -1765,6 +1743,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private void PanelSetupLan() {
         this.changeButtons(this.Img_Exit, this.Img_Freccia_sx, this.Img_Freccia_dx,
                 this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Ok);
+        this.listLan.requestFocus(); // Per poter usare le frecce
         cambiaPannello(this.jPanelSetupLan);
     }
 
@@ -1778,6 +1757,7 @@ public class JRivitMain extends javax.swing.JFrame {
         this.listWifi.add("");
         this.listWifi.add("");
         this.listWifi.add("Searching for WiFi networks...");
+        this.listWifi.requestFocus(); // Per poter usare le frecce
         cambiaPannello(this.jPanelSetupWiFi);
     }
 
@@ -1787,6 +1767,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private void PanelInfo() {
         this.changeButtons(this.Img_Exit, this.Img_Freccia_sx, this.Img_Freccia_dx,
                 this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Nulla);
+        this.listInfo.requestFocus(); // Per poter usare le frecce
         cambiaPannello(this.jPanelInfo);
     }
 
@@ -2092,6 +2073,7 @@ public class JRivitMain extends javax.swing.JFrame {
         this.esegui("aggiorna_nm_list");
         this.changeButtons(this.Img_Exit, this.Img_Lan, this.Img_WiFi,
                 this.Img_Freccia_su, this.Img_Freccia_giu, setIconSetup());
+        this.listSetupNM.requestFocus(); // Per poter usare le frecce
         cambiaPannello(this.jPanelSetup);
     }
 
@@ -3222,7 +3204,8 @@ public class JRivitMain extends javax.swing.JFrame {
     public String getRichiesta() {
         return richiesta;
     }
-    public  void setRichiesta(String richiesta) {
+
+    public void setRichiesta(String richiesta) {
         this.richiesta = richiesta;
     }
 
