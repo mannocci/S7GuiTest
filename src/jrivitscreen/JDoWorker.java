@@ -135,6 +135,19 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     this.Rm.set_jLabel_B_L(this.dateFormat.format(orario));
                     this.Rm.repaint();
                 }
+                case "wifi_2.4GHz.sh", "wifi_5GHz.sh", "wifi_auto.sh" -> {
+                    String[] cmd = {"/home/adminsb/bin/" + this.operation};
+                    run_system_bash(cmd);
+                }
+                case "startCert" -> {
+                    String[] cmd = {"/home/adminsb/bin/certSensStart.sh"};
+                    getRuntime().exec(cmd);
+                }
+                case "stopCert" -> {
+                    String[] cmd = {"sudo", "killall", "certSens.py"};
+                    run_system_bash(cmd);
+                }
+
             }
         } catch (NumberFormatException ex) {
             Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);

@@ -81,10 +81,15 @@ public class JFileWorker extends Thread {
 
                     Static.debug(kind.name() + ": " + fileName, 4);
                     if (kind == ENTRY_CREATE) {
-                        if (!fileName.toString().startsWith(Static.F_SENSORI)) {
+                        if (!fileName.toString().startsWith(Static.F_SENSORI) 
+                                && !fileName.toString().startsWith("certSens")) {
                             Static.debug("Creato: " + fileName, 3);
                         }
                         switch (fileName.toString()) {
+                            case "certSens_ready" -> {
+                                String certSens = leggiFile("certSens.txt");
+                                this.Rm.aggiornaListSens(certSens);
+                            }
                             case Static.F_STATO + "_ready" ->
                                 stato();
                             case Static.F_ARIA ->

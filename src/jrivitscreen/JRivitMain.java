@@ -62,13 +62,15 @@ public class JRivitMain extends javax.swing.JFrame {
     private String stato;
     private String richiesta;
     private JDoWorker doWorker;
-    private ImageIcon Img_Exit, Img_Ok, Img_Nulla, Img_Freccia_su,
-            Img_Freccia_giu, Img_Warning, Img_Setup, Img_Play,
+    private ImageIcon Img_Warning;
+    private final ImageIcon Img_Exit, Img_Ok, Img_Nulla, Img_Freccia_su,
+            Img_Freccia_giu, Img_Setup, Img_Play,
             Img_No_Warning, Img_Err_Warning, Img_Med_Warning,
             Img_Grafico, Img_Calibrazione, Img_reloadWork,
             Img_Continua, Img_Estende, Img_Stop,
             Img_Pause, Img_Annulla, Img_Lan, Img_WiFi,
             Img_Freccia_sx, Img_Freccia_dx, Img_Cancel, Img_W, Img_WL;
+    private final ImageIcon Img_Cert, Img_WiFi_2_4, Img_WiFi_5, Img_WiFi_Auto;
     private String AlertDialogAnnulla;
     private String AlertDialogWhat;
     private String Lavorodescrizione;
@@ -139,6 +141,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private DateFormat dateFormat;
     private Calendar now;
     private String scelta;
+    private String wifiMode;
 
 //
 //Dopo una sospensione
@@ -196,6 +199,10 @@ public class JRivitMain extends javax.swing.JFrame {
         Img_reloadWork = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/autorenew.png"));
         Img_W = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/w.png"));
         Img_WL = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/wl.png"));
+        Img_Cert = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/Cert.png"));
+        Img_WiFi_2_4 = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/wifi_2.4.png"));
+        Img_WiFi_5 = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/wifi_5.png"));
+        Img_WiFi_Auto = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/wifi_auto.png"));
 
         elencoLavori = new ArrayList<>();
         elencoWl = new ArrayList<>();
@@ -206,6 +213,7 @@ public class JRivitMain extends javax.swing.JFrame {
         this.UDLotti = "+";
         this.UDPezzi = "+";
 
+        wifiMode = "Auto";
         now = Calendar.getInstance();
         dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         try (InputStream in = this.getClass().getResourceAsStream("setup.properties")) {
@@ -295,6 +303,9 @@ public class JRivitMain extends javax.swing.JFrame {
         listWarning = new java.awt.List();
         jPanelDialog = new javax.swing.JPanel();
         jLabelDialog = new javax.swing.JLabel();
+        jPanelCert = new javax.swing.JPanel();
+        listCert = new java.awt.List();
+        listSens = new java.awt.List();
         jPanelRight = new javax.swing.JPanel();
         jButtonPR1 = new javax.swing.JButton();
         jButtonPR2 = new javax.swing.JButton();
@@ -614,6 +625,24 @@ public class JRivitMain extends javax.swing.JFrame {
 
         jLayeredPaneCenter.add(jPanelDialog, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 330, 277));
 
+        jPanelCert.setMaximumSize(new java.awt.Dimension(328, 276));
+        jPanelCert.setMinimumSize(new java.awt.Dimension(328, 276));
+        jPanelCert.setName("cert"); // NOI18N
+        jPanelCert.setPreferredSize(new java.awt.Dimension(328, 276));
+        jPanelCert.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        listCert.setBackground(new java.awt.Color(255, 255, 204));
+        listCert.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
+        listCert.setMaximumSize(new java.awt.Dimension(326, 273));
+        jPanelCert.add(listCert, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 2, 326, 190));
+
+        listSens.setBackground(new java.awt.Color(0, 153, 102));
+        listSens.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
+        listSens.setMaximumSize(new java.awt.Dimension(326, 273));
+        jPanelCert.add(listSens, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 192, 326, 86));
+
+        jLayeredPaneCenter.add(jPanelCert, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 328, 276));
+
         getContentPane().add(jLayeredPaneCenter, new org.netbeans.lib.awtextra.AbsoluteConstraints(75, 2, -1, -1));
 
         jPanelRight.setAlignmentX(0.0F);
@@ -921,6 +950,11 @@ public class JRivitMain extends javax.swing.JFrame {
                         }
                 }
             }
+            case "cert" -> {
+                esegui("wifi_2.4GHz.sh");
+                wifiMode = "band bg - 2.4 GHz";
+                aggiornaListCert();
+            }
 
             case "warning", "info", "setup lan", "setup wifi", "setup" ->
                 PulsanteSu();
@@ -1025,6 +1059,10 @@ public class JRivitMain extends javax.swing.JFrame {
             }
             case "setup lan", "setup wifi" -> {
                 PanelSetup();
+            }
+            case "cert" -> {
+                esegui("stopCert");
+                PanelMain();//Exit verso main
             }
 
         }
@@ -1152,6 +1190,11 @@ public class JRivitMain extends javax.swing.JFrame {
                 }
 
             }
+            case "cert" -> {
+                esegui("wifi_5GHz.sh");
+                wifiMode = "band a - 5 GHz";
+                aggiornaListCert();
+            }
             case "setup" -> {
                 PulsanteGiu();
             }
@@ -1185,10 +1228,12 @@ public class JRivitMain extends javax.swing.JFrame {
         // Qual'è il nome del pannello in primo piano ?
         switch (this.panCur) {
             case "main" -> {
+                esegui("startCert");
+                this.PanelCert();
 
-                this.exit();
-            }
 //                per ora uso il pulsante per chiudere;
+//                this.exit();
+            }
             case "start" -> {
                 if (this.inWl) {
                     impostaWL();
@@ -1212,6 +1257,12 @@ public class JRivitMain extends javax.swing.JFrame {
             case "setup lan", "setup wifi" -> {
                 PanelSetup();
             }
+            case "cert" -> {
+                esegui("wifi_auto.sh");
+                wifiMode = "Auto";
+                aggiornaListCert();
+            }
+
         }
     }//GEN-LAST:event_jButtonPR3ActionPerformed
 
@@ -1297,7 +1348,7 @@ public class JRivitMain extends javax.swing.JFrame {
 //        this.changeButtons(this.Img_Warning, this.Img_Info, this.Img_Setup,
 //                this.Img_W, this.Img_WL, this.Img_Exit);  // pannello precedente. La chiamata a System.exit() manda in crash la JVM. VERIFICARE
         this.changeButtons(this.Img_Warning, this.Img_Info, this.Img_Setup,
-                this.Img_W, this.Img_WL, this.Img_Nulla);
+                this.Img_W, this.Img_WL, this.Img_Cert);
         cambiaPannello(this.jPanelMain);
     }
 
@@ -1434,6 +1485,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel_msg;
     public javax.swing.JLayeredPane jLayeredPaneCenter;
     private javax.swing.JPanel jPanelBotton;
+    private javax.swing.JPanel jPanelCert;
     private javax.swing.JPanel jPanelDialog;
     private javax.swing.JPanel jPanelInfo;
     private javax.swing.JPanel jPanelLeft;
@@ -1446,9 +1498,11 @@ public class JRivitMain extends javax.swing.JFrame {
     private javax.swing.JPanel jPanelStarted;
     private javax.swing.JPanel jPanelWarning;
     private javax.swing.JProgressBar jProgressBar;
+    private java.awt.List listCert;
     private java.awt.List listInfo;
     private java.awt.List listLan;
     private java.awt.List listLavori;
+    private java.awt.List listSens;
     private java.awt.List listSetupNM;
     private java.awt.List listWLavori;
     private java.awt.List listWarning;
@@ -1781,6 +1835,13 @@ public class JRivitMain extends javax.swing.JFrame {
         this.changeButtons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
                 this.Img_Ok, this.Img_Cancel, this.Img_Nulla);
         cambiaPannello(this.jPanelDialog);
+    }
+
+    private void PanelCert() {
+        this.changeButtons(this.Img_Exit, this.Img_Nulla, this.Img_Nulla,
+                this.Img_WiFi_2_4, this.Img_WiFi_5, this.Img_WiFi_Auto);
+        aggiornaListCert();
+        cambiaPannello(this.jPanelCert);
     }
 
     /**
@@ -3207,6 +3268,45 @@ public class JRivitMain extends javax.swing.JFrame {
 
     public void setRichiesta(String richiesta) {
         this.richiesta = richiesta;
+    }
+
+    private void cambiaBandaWifi(String string) {
+        String cmd = "";
+        switch (string) {
+            case "2.4" ->
+                cmd = "wifi_2.4GHz.sh";
+            case "5" ->
+                cmd = "wifi_5GHz.sh";
+            case "auto" ->
+                cmd = "wifi_auto.sh";
+        }
+        esegui(cmd);
+    }
+
+    /**
+     * Aggiorna la lista delle stringhe per la certificazione
+     */
+    private void aggiornaListCert() {
+        listCert.removeAll();
+        listCert.add("WiFi AP mode: " + wifiMode);
+        List<String> certInfo = JFileWorker.leggiFileElenco("certInfo.txt");
+        for (String string : certInfo) {
+            String[] arrayRes = string.split(",");
+            for (String elemento : arrayRes) {
+                listCert.add(elemento.trim());
+            }
+        }
+        listCert.add("");
+        listCert.add("Selezionare un'opzione");
+    }
+
+    void aggiornaListSens(String certSens) {
+        listSens.removeAll();
+        String[] arraySens = certSens.split(",");
+        if (arraySens.length == 2) {
+            listSens.add("Sens1 Tool: " + arraySens[0] + " V");
+            listSens.add("Sens2 Aria: " + arraySens[1] + " V");
+        }
     }
 
 }
