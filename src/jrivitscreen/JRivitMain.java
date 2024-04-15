@@ -109,7 +109,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private String panCur;
     private boolean inErrore = false;
     private boolean in_pausa = false;
-    private boolean chiedi_conferma = false;
+    private boolean chiediConferma = false;
     private boolean statoConcluso = false;
     private boolean chiedi_conferma_stop;
     private List<String> elencoDesLavoro;
@@ -229,7 +229,7 @@ public class JRivitMain extends javax.swing.JFrame {
 
         this.pannelloPrecedente = "main";   // Server per gestire il ritorno dal pannello di warning
         this.chiedi_conferma_stop = true;
-        this.chiedi_conferma = false;
+        this.chiediConferma = false;
         this.temp_rpi = 0F;
         this.temp_io_board = 0F;
         this.v_in = 0F;
@@ -966,12 +966,27 @@ public class JRivitMain extends javax.swing.JFrame {
 
                         case Static.ANNULLA -> {
                             this.esegui("annulla");
+                            if (this.pannelloPrecedente.equals("started")) {
+                                PanelStarted();
+                            } else {
+                                PanelCanvas();
+                            }
                         }
                         case Static.CONTINUA -> {
                             this.esegui("continua");
+                            if (this.pannelloPrecedente.equals("started")) {
+                                PanelStarted();
+                            } else {
+                                PanelCanvas();
+                            }
                         }
                         case Static.ACCETTA -> {
                             this.esegui("accetta");
+                            if (this.pannelloPrecedente.equals("started")) {
+                                PanelStarted();
+                            } else {
+                                PanelCanvas();
+                            }
                         }
                         case Static.STATO_STOP -> {
                             this.esegui("stop");
@@ -990,9 +1005,7 @@ public class JRivitMain extends javax.swing.JFrame {
                             this.gr.setPrimoGiro(true);
                             this.updateDescription(this.listLavori.getSelectedIndex());
                             esegui("salva_calibrazione");
-
                         }
-
                     }
                     if (this.pannelloPrecedente.equals("start")) {
                         PanelStart();
@@ -1270,26 +1283,28 @@ public class JRivitMain extends javax.swing.JFrame {
      * Gestione della risposta scelta dall'utente per gestire l'errore
      */
     private void rispostaErrore() {
-        String rispostaErrore = "";
+        String rispostaErrore = "", testoRispostaErrore = "";
         switch (this.scelta) {
-            case Static.CONTINUA ->
+            case Static.CONTINUA -> {
                 rispostaErrore = "continua";
-            case Static.ANNULLA ->
+                testoRispostaErrore = "Go on";
+            }
+            case Static.ANNULLA -> {
                 rispostaErrore = "annulla";
-            case Static.ACCETTA ->
+                testoRispostaErrore = "Cancel traction";
+            }
+            case Static.ACCETTA -> {
                 rispostaErrore = "accetta";
+                testoRispostaErrore = "Accepts traction";
+            }
         }
 
         if (isChiediConferma()) {
-            this.AlertDialogWhat = rispostaErrore + " ?";
+            this.AlertDialogWhat = testoRispostaErrore + " ?";
             this.jLabelDialog.setText(AlertDialogWhat);
             PanelDialog();
         } else {
-            try {
-                this.esegui(rispostaErrore);
-            } catch (Exception ex) {
-                Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            this.esegui(rispostaErrore);
         }
     }
     private void listLavoriMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listLavoriMouseClicked
@@ -2477,7 +2492,7 @@ public class JRivitMain extends javax.swing.JFrame {
             this.doWorker.doInBackground();
         } catch (Exception ex) {
             Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
-            Static.debug("Errore eseguendo l'operazione " + operazione + " in background", 2);
+            Static.debug("Error running backgruond operation " + operazione, 2);
         }
     }
 
@@ -2544,10 +2559,10 @@ public class JRivitMain extends javax.swing.JFrame {
      * Imposta se chiedere o meno conferma quando il tiro è errato per la scelta
      * Continua, annulla accetta
      *
-     * @param chiedi_conferma
+     * @param chiediConfermaRisposta
      */
-    public void setChiedi_conferma(boolean chiedi_conferma) {
-        this.chiedi_conferma = chiedi_conferma;
+    public void setChiediConfermaRisposta(boolean chiediConfermaRisposta) {
+        this.chiediConferma = chiediConfermaRisposta;
     }
 
     /**
@@ -2555,7 +2570,7 @@ public class JRivitMain extends javax.swing.JFrame {
      * @return se devo chiedere o meno la conferma per Continua, annulla accetta
      */
     public boolean isChiediConferma() {
-        return this.chiedi_conferma;
+        return this.chiediConferma;
     }
 
     void set_nr_tiri_annullati(int tiri_annullati) {

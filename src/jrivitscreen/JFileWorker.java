@@ -112,7 +112,7 @@ public class JFileWorker extends Thread {
                                 readLavori();
                             case Static.F_WL + "_ready" ->
                                 readWl();
-                            case Static.F_CHIEDI_CONFERMA_NO ->
+                            case Static.F_CHIEDI_CONFERMA_RISPOSTA ->
                                 impostaChiediConferma(true);
                             case Static.F_ABILITA_CALIBRAZIONE -> {
                                 this.Rm.abilitaCalibrazione(true);
@@ -200,7 +200,7 @@ public class JFileWorker extends Thread {
                                 this.Rm.setSensoreCollegato(true);
                             case Static.F_ERRORE ->
                                 errore(false);
-                            case Static.F_CHIEDI_CONFERMA_NO ->
+                            case Static.F_CHIEDI_CONFERMA_RISPOSTA ->
                                 impostaChiediConferma(false);
                             case Static.F_ABILITA_CALIBRAZIONE -> {
                                 this.Rm.abilitaCalibrazione(false);
@@ -356,6 +356,7 @@ public class JFileWorker extends Thread {
         this.leggiNoSensore();
         this.leggiAriaInMinMax();   // Valori scritti nei files da Control
         this.leggiAbilitaCalibrazione();
+        this.leggiChiediConfermaRisposta();
         this.leggiControllerOnline();
         this.aggiornaContatori();
         this.aggiornaSensori();
@@ -635,7 +636,7 @@ public class JFileWorker extends Thread {
     }
 
     private void impostaChiediConferma(boolean si_o_no) {
-        this.Rm.setChiedi_conferma(si_o_no);
+        this.Rm.setChiediConfermaRisposta(si_o_no);
     }
 
     /**
@@ -937,6 +938,15 @@ public class JFileWorker extends Thread {
      */
     void richiestaAvviaCalibrazione() {
         JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_CALIBRAZIONE);
+    }
+
+    private void leggiChiediConfermaRisposta() {
+        File inputFile = new File(Static.PATH_WATCH + Static.F_CHIEDI_CONFERMA_RISPOSTA);
+        if (inputFile.exists()) {
+            this.Rm.setChiediConfermaRisposta(true);
+        } else {
+            this.Rm.setChiediConfermaRisposta(false);
+        }
     }
 
 }

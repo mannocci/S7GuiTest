@@ -100,7 +100,7 @@ public class Static {
             F_PICCO = "picco",
             F_PICCORIF = "piccorif",
             F_ABILITA_CALIBRAZIONE = "abilita_calibrazione",
-            F_CHIEDI_CONFERMA_NO = "chiedi_conferma_no",
+            F_CHIEDI_CONFERMA_RISPOSTA = "chiedi_conferma_risposta",
             F_CHIEDI_CONFERMA_STOP = "chiedi_conferma_stop",
             F_LOTTI_OK = "lotti_ok",
             F_SESSIONE = "sessione",
