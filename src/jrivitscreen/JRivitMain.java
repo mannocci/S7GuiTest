@@ -96,6 +96,7 @@ public class JRivitMain extends javax.swing.JFrame {
     public final String data_release;
     private final String srvKey;
     private List<String[]> elencoLavori;
+    private List<String> elencoTools;
     private List<String[]> elencoWl;
     private List<String[]> elencoWlLavori;
     private List<String[]> elencoLavoriCompleto;
@@ -113,6 +114,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private boolean statoConcluso = false;
     private boolean chiedi_conferma_stop;
     private List<String> elencoDesLavoro;
+    private List<String> elencoDesTools;
     private int w_level;
     private JFileWorker fileWorker = null;
     public JGrafico gr;
@@ -142,6 +144,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private Calendar now;
     private String scelta;
     private String wifiMode;
+    private boolean scegliTool;
 
 //
 //Dopo una sospensione
@@ -171,7 +174,7 @@ public class JRivitMain extends javax.swing.JFrame {
         this.jLabelPezziNoLimits.setVisible(false);
         this.AlertDialogWhat = "Cancel traction ?";
         this.jLabelNomeWL.setText("");
-
+        this.scegliTool = false;
         Img_Exit = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/exit.png"));
         Img_Ok = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/ok.png"));
         Img_Nulla = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/nulla.png"));
@@ -246,14 +249,19 @@ public class JRivitMain extends javax.swing.JFrame {
         this.bt = new JButtonsDio(this);
         doWorker = new JDoWorker(this, fileWorker);
         this.esegui("init");
-        this.esegui("aggiorna_nm_list");
+
 //        try {
 //            TimeUnit.SECONDS.sleep(2);//Attesa della fine del metodo init di JDoWorker
 //        } catch (InterruptedException ex) {
 //            Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
 //        }
-        this.stato = Static.STATO_STOP;
-        this.PanelMain();
+        if (this.richiesta == Static.RICHIESTA_RESET_SYSTEM) {
+            this.chiediConfermaReset();
+        } else {
+            this.esegui("aggiorna_nm_list");
+            this.stato = Static.STATO_STOP;
+            this.PanelMain();
+        }
     }
 
     /**
@@ -274,6 +282,7 @@ public class JRivitMain extends javax.swing.JFrame {
         listLavori = new java.awt.List();
         listWLavori = new java.awt.List();
         JTextAreaDescrizioneLavoro = new javax.swing.JTextArea();
+        listTools = new java.awt.List();
         jPanelStarted = new javax.swing.JPanel();
         jLabelContatoreLotti = new javax.swing.JLabel();
         jLabelNomeDevice = new javax.swing.JLabel();
@@ -426,6 +435,19 @@ public class JRivitMain extends javax.swing.JFrame {
         JTextAreaDescrizioneLavoro.setMaximumSize(new java.awt.Dimension(320, 80));
         JTextAreaDescrizioneLavoro.setMinimumSize(new java.awt.Dimension(320, 80));
         jPanelStart.add(JTextAreaDescrizioneLavoro, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 186, 328, 90));
+
+        listTools.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        listTools.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                listToolsMouseClicked(evt);
+            }
+        });
+        listTools.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                listToolsItemStateChanged(evt);
+            }
+        });
+        jPanelStart.add(listTools, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 2, 326, 180));
 
         jLayeredPaneCenter.add(jPanelStart, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 330, 277));
 
@@ -1006,6 +1028,9 @@ public class JRivitMain extends javax.swing.JFrame {
                             this.updateDescription(this.listLavori.getSelectedIndex());
                             esegui("salva_calibrazione");
                         }
+                        case Static.RICHIESTA_RESET_SYSTEM -> {//Ok RESET SYSTEM
+                            esegui("reset_system");
+                        }
                     }
                     if (this.pannelloPrecedente.equals("start")) {
                         PanelStart();
@@ -1166,12 +1191,15 @@ public class JRivitMain extends javax.swing.JFrame {
         // Qual'è il nome del pannello in primo piano ?
         switch (this.panCur) {
             case "main" -> { //fare tutta WebControl
-                this.inWl = true;
-                this.set_jLabel_B_L("WL");
-                this.listLavori.setVisible(false);
-                this.listWLavori.setVisible(true);
-                this.JTextAreaDescrizioneLavoro.setText(this.elencoDesWl.get(0).toString());
-                PanelStart();
+                if (this.elencoDesWl != null) {
+                    this.inWl = true;
+                    this.set_jLabel_B_L("WL");
+                    this.listLavori.setVisible(false);
+                    this.listWLavori.setVisible(true);
+                    this.JTextAreaDescrizioneLavoro.setText(this.elencoDesWl.get(0).toString());
+                    PanelStart();
+                }
+
             }
             case "start" ->
                 PulsanteGiu();
@@ -1182,7 +1210,7 @@ public class JRivitMain extends javax.swing.JFrame {
 
                 if (this.stato.equals(Static.STATO_CALIBRAZIONE) || this.stato.equals(Static.STATO_CALIBRAZIONE_TEST)) {
                     //Uscita dalla Calibrazione
-                    this.esegui("stop");
+                    this.esegui("annulla_calibrazione");
                     PanelStart();
                 } else {
                     if (this.statoConcluso) {
@@ -1223,6 +1251,7 @@ public class JRivitMain extends javax.swing.JFrame {
                         this.gr.setPrimoGiro(true);
                         PanelStart();
                     }
+
                     default -> {
                         PanelStarted();
                     }
@@ -1356,14 +1385,27 @@ public class JRivitMain extends javax.swing.JFrame {
         updateDescription(elementoSelezionato);
     }//GEN-LAST:event_listWLavoriItemStateChanged
 
+    private void listToolsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listToolsMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_listToolsMouseClicked
+
+    private void listToolsItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_listToolsItemStateChanged
+        // TODO add your handling code here:
+    }//GEN-LAST:event_listToolsItemStateChanged
+
     /**
      * PanelMain Pannello che viene visualizzato all'avvio
      */
     public void PanelMain() {
 //        this.changeButtons(this.Img_Warning, this.Img_Info, this.Img_Setup,
 //                this.Img_W, this.Img_WL, this.Img_Exit);  // pannello precedente. La chiamata a System.exit() manda in crash la JVM. VERIFICARE
-        this.changeButtons(this.Img_Warning, this.Img_Info, this.Img_Setup,
-                this.Img_W, this.Img_WL, this.Img_Cert);
+        if (this.elencoDesWl != null) {
+            this.changeButtons(this.Img_Warning, this.Img_Info, this.Img_Setup,
+                    this.Img_W, this.Img_WL, this.Img_Cert);
+        } else {
+            this.changeButtons(this.Img_Warning, this.Img_Info, this.Img_Setup,
+                    this.Img_W, this.Img_Nulla, this.Img_Cert);
+        }
         cambiaPannello(this.jPanelMain);
     }
 
@@ -1519,6 +1561,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private java.awt.List listLavori;
     private java.awt.List listSens;
     private java.awt.List listSetupNM;
+    private java.awt.List listTools;
     private java.awt.List listWLavori;
     private java.awt.List listWarning;
     private java.awt.List listWifi;
@@ -1531,19 +1574,25 @@ public class JRivitMain extends javax.swing.JFrame {
     public void PanelStart() {
         int selezionato = 0, i = 0;
         java.awt.List lista;
-        if (this.inWl) {
-            lista = this.listWLavori;
+        if (this.scegliTool) {
+            lista = this.listTools;
+            this.changeButtons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
+                    this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Ok);
         } else {
-            lista = this.listLavori;
+            if (this.inWl) {
+                lista = this.listWLavori;
+            } else {
+                lista = this.listLavori;
+            }
+            if (this.abilitaCalibrazione) {
+                this.changeButtons(this.Img_Exit, this.Img_Nulla, this.Img_Calibrazione,
+                        this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Ok);
+            } else {
+                this.changeButtons(this.Img_Exit, this.Img_Nulla, this.Img_Nulla,
+                        this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Ok);
+            }
         }
         lista.requestFocus();
-        if (this.abilitaCalibrazione) {
-            this.changeButtons(this.Img_Exit, this.Img_Nulla, this.Img_Calibrazione,
-                    this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Ok);
-        } else {
-            this.changeButtons(this.Img_Exit, this.Img_Nulla, this.Img_Nulla,
-                    this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Ok);
-        }
 
         // Se sessione non contiene 0
         // vuole dire che da una pausa si vuole riprendere un lavoro
@@ -1952,7 +2001,6 @@ public class JRivitMain extends javax.swing.JFrame {
      * @param lista
      */
     public void aggiornaLavori(List<String> lista) {
-        this.listLavori.removeAll();
         String nomeLavoroRiga;
         String limLottiRiga;
         String limPezziRiga;
@@ -3324,4 +3372,22 @@ public class JRivitMain extends javax.swing.JFrame {
         }
     }
 
+    void aggiornaTools(List<String> leggiFileElenco) {
+        String[] toolSplit;
+        elencoTools = new ArrayList<>();
+        elencoDesTools = new ArrayList<>();
+        for (String riga : leggiFileElenco) {
+            toolSplit = riga.split("§"); // BarcodeUtensile, Nome, Descrizione
+            this.elencoTools.add(toolSplit[0] + "," + toolSplit[1]);
+            this.elencoDesTools.add(toolSplit[2]);
+        }
+        RefreshList(listTools, elencoTools);
+    }
+
+    public void chiediConfermaReset() {
+        scelta = Static.RICHIESTA_RESET_SYSTEM;
+        this.AlertDialogWhat = "Confirm system RESET ?";
+        this.jLabelDialog.setText(AlertDialogWhat);
+        PanelDialog();
+    }
 }
