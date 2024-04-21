@@ -213,7 +213,13 @@ public class JFileWorker extends Thread {
                             case Static.F_CONTROLLER_ONLINE -> {
                                 this.Rm.setControllerIndicator(false);
                             }
-
+                            case Static.F_RESET_REQUEST -> {
+                                this.Rm.setRichiesta("");
+                                initValues();
+                                this.Rm.esegui("aggiorna_nm_list");
+                                this.Rm.setStato( Static.STATO_STOP);
+                                this.Rm.PanelMain();                                
+                            }
                         }
                     }
 
@@ -353,6 +359,11 @@ public class JFileWorker extends Thread {
      *
      */
     public void initValues() {
+        if(! leggiFile(Static.F_RESET_REQUEST).contains("error")){
+            //Richiesta se si vuole fare reset del sistema
+            this.Rm.setRichiesta(Static.RICHIESTA_RESET_SYSTEM);
+            return;
+        }
         this.leggiNoSensore();
         this.leggiAriaInMinMax();   // Valori scritti nei files da Control
         this.leggiAbilitaCalibrazione();
@@ -363,6 +374,7 @@ public class JFileWorker extends Thread {
         this.readLavori();//Se non esite il file imposta il default
         //this.lavoroPronto(); il lavoro pronto deve essere comandato da Control
         this.readWl();//Se non esiste il file ?
+        this.readTools();
         // this.WlPronta(); la WL pronta deve essere comandata da Control
         this.readInfo();// Se non esiste il file imposta a stringa info
         this.readWarning();// Se non esiste il file imposta a sringa warning
@@ -947,6 +959,10 @@ public class JFileWorker extends Thread {
         } else {
             this.Rm.setChiediConfermaRisposta(false);
         }
+    }
+
+    private void readTools() {
+        this.Rm.aggiornaTools(leggiFileElenco(Static.F_TOOLS));
     }
 
 }
