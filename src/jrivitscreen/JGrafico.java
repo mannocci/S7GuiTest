@@ -196,7 +196,7 @@ public class JGrafico extends JPanel {
                                 String[] errValues = this.Rm.getEsitoTiro().split(",");
                                 String[] posErrValues = this.Rm.getPosizioneErrori().split(",");
                                 int alpha = 127; // 50% transparent
-                                Color myColour = new Color(0, 0, 200, alpha);
+                                Color myColour = new Color(200, 0, 0, alpha);
                                 gr.setColor(myColour);
                                 //gr.setXORMode(Color.GRAY);
                                 int nPunti = (errValues.length - 4) / 5;    // es.: 0,0,0,0,15,0,10,0,0
