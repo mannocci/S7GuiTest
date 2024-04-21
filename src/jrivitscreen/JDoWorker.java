@@ -79,6 +79,12 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_CALIBRAZIONE_SALVA);
                     this.Rm.setRichiesta(Static.RICHIESTA_CALIBRAZIONE_SALVA);
                 }
+                case "annulla_calibrazione" -> {
+                    JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_CALIBRAZIONE_ANNULLA);
+                    this.Rm.setRichiesta(Static.RICHIESTA_CALIBRAZIONE_ANNULLA);
+//                    JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_STOP);
+//                    this.Rm.setRichiesta(Static.RICHIESTA_STOP);                    
+                }
                 case "stop" -> {
                     JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_STOP);
                     this.Rm.setRichiesta(Static.RICHIESTA_STOP);
@@ -147,7 +153,11 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     String[] cmd = {"sudo", "killall", "certSens.py"};
                     run_system_bash(cmd);
                 }
-
+                case "reset_system" -> {
+                    JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_RESET_SYSTEM);
+                    this.Rm.setRichiesta(Static.RICHIESTA_RESET_SYSTEM);                    
+                }
+                    
             }
         } catch (NumberFormatException ex) {
             Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
