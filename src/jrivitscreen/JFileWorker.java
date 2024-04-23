@@ -51,13 +51,11 @@ public class JFileWorker extends Thread {
 // Classi
 
     private final JRivitMain Rm;
-    private String richiesta;
     private WatchService watcher;
     private Path fileName;
     private WatchKey key;
 
     public JFileWorker(JRivitMain mf) throws IOException {
-        this.richiesta = "";
         this.Rm = mf;
         // create gpio controller by file (run bash script before !)     
         try {
@@ -186,7 +184,7 @@ public class JFileWorker extends Thread {
                             case Static.F_WL_LISTA + "_ready" ->
                                 WlListaPronta();
                             case Static.F_RICHIESTA + "_ready" ->
-                                this.richiesta = leggiFile(Static.F_RICHIESTA);
+                                this.Rm.setRichiesta(leggiFile(Static.F_RICHIESTA));
                         }
                     }
                     if (kind == ENTRY_DELETE) {
