@@ -209,12 +209,17 @@ public class JGrafico extends JPanel {
                                 int indice = 0;
                                 // Disegno delle zone errate. Il vettore delle posizioni contiene x e y intervallate
                                 for (String errValue : posErrValues) {
+
                                     if (i % 2 == 0) {   // istanti dei test
                                         indice = Integer.parseInt(errValue);
                                         xP = Math.round(indice * fattoreX) + bordoSx - 10;
                                     } else {
-                                        yP = Math.round(jPanelHeight - bordoInf - 5 - Integer.parseInt(yCurvaChar[indice]) * fattoreY - 10);
-                                        gr.drawOval(xP, yP, 20, 20);
+                                        if (indice < yCurvaChar.length) {
+                                            yP = Math.round(jPanelHeight - bordoInf - 5 - Integer.parseInt(yCurvaChar[indice]) * fattoreY - 10);
+                                            gr.drawOval(xP, yP, 20, 20);
+                                        } else {
+                                            Static.debug("Error invalid error position\nindice: " + indice + " lenht: " + yCurvaChar.length, 2);
+                                        }
                                     }
                                     i++;
                                 }
@@ -229,9 +234,14 @@ public class JGrafico extends JPanel {
                                             gr.setColor(Color.decode("0xdd0000"));  //  Rosso
                                         case "accetta" ->
                                             gr.setColor(Color.decode("0x00dd00"));  // Verde, è già verde
-                                        case "annulla" ->
-                                            gr.setColor(myFantasma );   // "fantasma"
-                                        //canDraw = false;
+                                        case "annulla" -> {
+                                            //gr.setColor(myFantasma );   // "fantasma"
+                                            canDraw = false;
+                                            yCurvaChar = new String[]{""};
+                                            picco = 0;
+                                            aggiornaAssi();
+                                            scriviPicco(piccoRif, posizionePiccoRif);
+                                        }
                                     }
                                 }
                             }
@@ -245,6 +255,7 @@ public class JGrafico extends JPanel {
                         }
                         // Non disegno la curva di calibrazione se ne è stata avviata una nuova
                         if (!this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE)) {
+
                             gr.setColor(Color.BLUE);
                             gr.setStroke(new BasicStroke(3));
                             if (yRifchar.length > 1) {
@@ -256,10 +267,10 @@ public class JGrafico extends JPanel {
                                 }
                                 gr.drawPolyline(xPointsRif, yPointsRif, yRifchar.length);
                                 // Se la curva è OK la ridisegno davanti al riferimento per coerenza con l'interfaccia WEB
-                                if (this.Rm.getStato().equals(Static.STATO_AVVIATO) && !this.Rm.getInErrore()) {
-                                    gr.setColor(Color.decode("0x00dd00"));  // Verde
-                                    gr.drawPolyline(xPoints, yPoints, yCurvaChar.length);
-                                }
+//                                if (this.Rm.getStato().equals(Static.STATO_AVVIATO) && !this.Rm.getInErrore()) {
+//                                    gr.setColor(Color.decode("0x00dd00"));  // Verde
+//                                    gr.drawPolyline(xPoints, yPoints, yCurvaChar.length);
+//                                }
                             }
                         }
 
