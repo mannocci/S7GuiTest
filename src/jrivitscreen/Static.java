@@ -39,7 +39,10 @@ public class Static {
             RICHIESTA_RIAVVIO = "85",
             RICHIESTA_CALIBRAZIONE_SALVA = "86",
             RICHIESTA_CALIBRAZIONE_ANNULLA = "87",
-            RICHIESTA_RESET_SYSTEM = "88";
+            RICHIESTA_RESET_SYSTEM = "88",      
+            RICHIESTA_BACKUP_DB = "89",
+            RICHIESTA_RESTORE_DB = "90",
+            RICHIESTA_IMPOSTA_TOOL = "91";
             
 
     final static String STATO_AVVIATO = "91",
@@ -67,6 +70,7 @@ public class Static {
             F_WL     = "wl.txt",
             F_WL_SCELTA = "wl_scelta",
             F_TOOLS = "tools.txt",
+            F_TOOL_SCELTO = "tool_scelto",
             F_WL_RUNNING = "wl_running",//Contiene il lavoro avviato e l'indice dell'elenco "nome lavoro§n"
             F_RISPOSTA_TIRO_ERRATO = "risposta_tiro_errato",
             F_RISPOSTA_TIRO_ERRATO_CONTINUA = "risposta_tiro_errato_continua",
