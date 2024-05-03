@@ -104,6 +104,8 @@ public class JGrafico extends JPanel {
     private float y0;           // Coordinata Y dell'origine del grafico
     private float altezzaGraf;  // Altezza dello spazio per il grafico
     private float larghezzaGraf;  // Larghezza dello spazio per il grafico
+    private int[] xPointsRif;
+    private int[] yPointsRif;
 
     public JGrafico(JRivitMain Rm) {
         picco = 0;
@@ -133,6 +135,8 @@ public class JGrafico extends JPanel {
 
     @Override
     protected void paintComponent(Graphics g) {
+        boolean canDraw = true;
+        Color myFantasma = new Color(63, 20, 94); // Color fantasma
         try {
             super.paintComponent(g); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
 
@@ -214,42 +218,55 @@ public class JGrafico extends JPanel {
                                     }
                                     i++;
                                 }
-                                gr.setColor(Color.RED);
+                                gr.setColor(Color.decode("0xdd0000"));  //  Rosso
                             } else {
+                                gr.setColor(Color.decode("0x00dd00"));  // Verde
                                 if (this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE)) {
                                     gr.setColor(Color.BLUE);
                                 } else {
-                                    gr.setColor(Color.GREEN);
+                                    switch (this.Rm.getRispostaErrore()) {
+                                        case "continua" ->
+                                            gr.setColor(Color.decode("0xdd0000"));  //  Rosso
+                                        case "accetta" ->
+                                            gr.setColor(Color.decode("0x00dd00"));  // Verde, è già verde
+                                        case "annulla" ->
+                                            gr.setColor(myFantasma );   // "fantasma"
+                                        //canDraw = false;
+                                    }
                                 }
                             }
-                            gr.drawPolyline(xPoints, yPoints, yCurvaChar.length);
+                            if (canDraw) {
+                                gr.drawPolyline(xPoints, yPoints, yCurvaChar.length);
+                                scriviPicco(picco, posizionePicco);
+                            }
                             //this.Rm.getjLayeredPaneCenter().repaint();
-
-                            scriviPicco(picco, posizionePicco);
                         } else {
                             scriviPicco(piccoRif, posizionePiccoRif);
                         }
-                                                // Non disegno la curva di calibrazione se ne è stata avviata una nuova
+                        // Non disegno la curva di calibrazione se ne è stata avviata una nuova
                         if (!this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE)) {
                             gr.setColor(Color.BLUE);
                             gr.setStroke(new BasicStroke(3));
                             if (yRifchar.length > 1) {
-                                xPoints = new int[yRifchar.length];
-                                yPoints = new int[yRifchar.length];
+                                xPointsRif = new int[yRifchar.length];
+                                yPointsRif = new int[yRifchar.length];
                                 for (int i = 0; i < yRifchar.length; i++) {
-                                    xPoints[i] = Math.round(i * fattoreX) + bordoSx;
-                                    yPoints[i] = Math.round(y0 - 2 - (float) Integer.parseInt(yRifchar[i]) * fattoreY);
+                                    xPointsRif[i] = Math.round(i * fattoreX) + bordoSx;
+                                    yPointsRif[i] = Math.round(y0 - 2 - (float) Integer.parseInt(yRifchar[i]) * fattoreY);
                                 }
-                                gr.drawPolyline(xPoints, yPoints, yRifchar.length);
-                                //this.Rm.getjLayeredPaneCenter().repaint();
+                                gr.drawPolyline(xPointsRif, yPointsRif, yRifchar.length);
+                                // Se la curva è OK la ridisegno davanti al riferimento per coerenza con l'interfaccia WEB
+                                if (this.Rm.getStato().equals(Static.STATO_AVVIATO) && !this.Rm.getInErrore()) {
+                                    gr.setColor(Color.decode("0x00dd00"));  // Verde
+                                    gr.drawPolyline(xPoints, yPoints, yCurvaChar.length);
+                                }
                             }
                         }
-
 
                     } else {
                         disegnaAssi();
                     }
-                } 
+                }
             }
         } catch (Exception e) {
             Static.debug("Error Graphic repaint\npiccoRif: " + piccoRif + " picco: " + picco + "\n" + e.toString(), 2);
@@ -353,6 +370,7 @@ public class JGrafico extends JPanel {
     private void scriviPicco(int picco, int posizionePicco) {
         f = new Font("Arial", 1, 20);
         gr.setFont(f);
+        Color oldColor = gr.getColor();
         gr.setColor(Color.BLACK);
         String piccoStr;
         if (picco < 0) {
@@ -364,6 +382,7 @@ public class JGrafico extends JPanel {
             piccoStr = Math.round((float) picco * this.Rm.getConversion() / 10000) + " N ";
         }
         gr.drawString(piccoStr + ((float) posizionePicco / 100) + "s", 5, 20);
+        gr.setColor(oldColor);
     }
 
 }
