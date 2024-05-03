@@ -28,8 +28,6 @@ package jrivitscreen;
 import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Robot;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,7 +37,6 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -49,9 +46,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import org.apache.commons.cli.*;
-import javax.swing.JTextArea;
 
 /**
  *
@@ -144,7 +139,8 @@ public class JRivitMain extends javax.swing.JFrame {
     private Calendar now;
     private String scelta;
     private String wifiMode;
-    private boolean scegliTool;
+    private boolean inSceltaTool;
+    private String rispostaErrore;
 
 //
 //Dopo una sospensione
@@ -174,7 +170,7 @@ public class JRivitMain extends javax.swing.JFrame {
         this.jLabelPezziNoLimits.setVisible(false);
         this.AlertDialogWhat = "Cancel traction ?";
         this.jLabelNomeWL.setText("");
-        this.scegliTool = false;
+        this.inSceltaTool = false;  // Da impostare in base alla presenza di richiesta di setup iniziale
         Img_Exit = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/exit.png"));
         Img_Ok = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/ok.png"));
         Img_Nulla = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/nulla.png"));
@@ -215,7 +211,8 @@ public class JRivitMain extends javax.swing.JFrame {
         this.lavoroScelto = "";
         this.UDLotti = "+";
         this.UDPezzi = "+";
-
+        
+        rispostaErrore="";
         wifiMode = "Auto";
         now = Calendar.getInstance();
         dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -1277,12 +1274,17 @@ public class JRivitMain extends javax.swing.JFrame {
 //                this.exit();
             }
             case "start" -> {
-                if (this.inWl) {
-                    impostaWL();
-                    avviaWL();
+                if (inSceltaTool) {
+                    esegui("imposta_tool");
+                    this.inSceltaTool = false;
                 } else {
-                    impostaLavoro();
-                    avviaLavoro();
+                    if (this.inWl) {
+                        impostaWL();
+                        avviaWL();
+                    } else {
+                        impostaLavoro();
+                        avviaLavoro();
+                    }
                 }
 
             }
@@ -1312,7 +1314,7 @@ public class JRivitMain extends javax.swing.JFrame {
      * Gestione della risposta scelta dall'utente per gestire l'errore
      */
     private void rispostaErrore() {
-        String rispostaErrore = "", testoRispostaErrore = "";
+         String testoRispostaErrore = "";
         switch (this.scelta) {
             case Static.CONTINUA -> {
                 rispostaErrore = "continua";
@@ -1336,6 +1338,21 @@ public class JRivitMain extends javax.swing.JFrame {
             this.esegui(rispostaErrore);
         }
     }
+    /**
+     * passa la risposta fatta in corrispondenza di un errore
+     * @return 
+     */
+    public String getRispostaErrore(){
+        return this.rispostaErrore;
+    }
+    /**
+     * set 
+     * 
+     */
+    public void setRispostaErrore(String setErr){
+         this.rispostaErrore = setErr;
+    }    
+    
     private void listLavoriMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listLavoriMouseClicked
         this.JTextAreaDescrizioneLavoro.setText(
                 this.elencoDesLavoro.get(this.listLavori.getSelectedIndex()));
@@ -1399,14 +1416,19 @@ public class JRivitMain extends javax.swing.JFrame {
     public void PanelMain() {
 //        this.changeButtons(this.Img_Warning, this.Img_Info, this.Img_Setup,
 //                this.Img_W, this.Img_WL, this.Img_Exit);  // pannello precedente. La chiamata a System.exit() manda in crash la JVM. VERIFICARE
-        if (this.elencoDesWl != null) {
-            this.changeButtons(this.Img_Warning, this.Img_Info, this.Img_Setup,
-                    this.Img_W, this.Img_WL, this.Img_Cert);
+        if (this.inSceltaTool) {    // Prima installazione -> scelta tool
+            cambiaPannello(this.jPanelStart);
+            PanelStart();
         } else {
-            this.changeButtons(this.Img_Warning, this.Img_Info, this.Img_Setup,
-                    this.Img_W, this.Img_Nulla, this.Img_Cert);
+            if (this.elencoDesWl != null) {
+                this.changeButtons(this.Img_Warning, this.Img_Info, this.Img_Setup,
+                        this.Img_W, this.Img_WL, this.Img_Cert);
+            } else {
+                this.changeButtons(this.Img_Warning, this.Img_Info, this.Img_Setup,
+                        this.Img_W, this.Img_Nulla, this.Img_Cert);
+            }
+            cambiaPannello(this.jPanelMain);
         }
-        cambiaPannello(this.jPanelMain);
     }
 
     /**
@@ -1438,6 +1460,16 @@ public class JRivitMain extends javax.swing.JFrame {
 
         this.jButtonPR3.setIcon(I6);
         this.jButtonPR3.setEnabled((!I6.equals(this.Img_Nulla)));
+        
+        if(I1.equals(Img_Continua)) {
+            this.jButtonPL1.setBackground(Color.red);
+            this.jButtonPL2.setBackground(Color.green);
+            this.jButtonPL3.setBackground(Color.white);
+        } else {
+            this.jButtonPL1.setBackground(Color.gray);
+            this.jButtonPL2.setBackground(Color.gray);
+            this.jButtonPL3.setBackground(Color.gray);
+        }
     }
 
     /**
@@ -1574,9 +1606,12 @@ public class JRivitMain extends javax.swing.JFrame {
     public void PanelStart() {
         int selezionato = 0, i = 0;
         java.awt.List lista;
-        if (this.scegliTool) {
+        if (this.inSceltaTool) {
+            this.listLavori.setVisible(false);
+            this.listWLavori.setVisible(false);
+            this.listTools.setVisible(true);
             lista = this.listTools;
-            this.changeButtons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
+            this.changeButtons(this.Img_Exit, this.Img_Nulla, this.Img_Nulla,
                     this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Ok);
         } else {
             if (this.inWl) {
@@ -1675,6 +1710,10 @@ public class JRivitMain extends javax.swing.JFrame {
 
     public java.awt.List getListLavori() {
         return listLavori;
+    }
+
+    public java.awt.List getListTools() {
+        return listTools;
     }
 
     public java.awt.List getListWarning() {
@@ -3238,41 +3277,49 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     private void updateDescription(int nrCurItem) {
         String nomeContatori;
-        if (this.inWl) {
-            if (nrCurItem < this.elencoWlCompleto.size()) { // Per prevenire eventuali errori
-                this.JTextAreaDescrizioneLavoro.setText(this.elencoWl.get(nrCurItem)[0].toString() + " - " + this.elencoDesWl.get(nrCurItem).toString());
-                if (this.elencoWlCompleto.get(nrCurItem)[3].equals("0")) {
-                    this.JTextAreaDescrizioneLavoro.setBackground(Color.yellow);
-                    this.jButtonPR3.setIcon(this.Img_Nulla);//aggiorna il tipo di Icona per il pulsante
-                    this.jButtonPR3.setEnabled(false);
-                } else {
-                    this.JTextAreaDescrizioneLavoro.setBackground(Color.white);
-                    this.jButtonPR3.setIcon(this.Img_Ok);//aggiorna il tipo di Icona per il pulsante
-                    this.jButtonPR3.setEnabled(true);
-                }
+        if (inSceltaTool) {
+            if (nrCurItem < this.elencoTools.size()) { // Per prevenire eventuali errori
+                this.JTextAreaDescrizioneLavoro.setText(this.elencoTools.get(nrCurItem));
             }
         } else {
-            if (nrCurItem < this.elencoLavoriCompleto.size()) { // Per prevenire eventuali errori
-                //+ " L=" + limLottiRiga + " T=" + limPezziRiga
-                if (this.elencoLavori.get(nrCurItem)[1].equals("-1")) {
-                    nomeContatori = this.elencoLavori.get(nrCurItem)[0];
-                } else {
-                    nomeContatori = this.elencoLavori.get(nrCurItem)[0].toString()
-                            + " L="
-                            + this.elencoLavori.get(nrCurItem)[1].toString()
-                            + " T="
-                            + this.elencoLavori.get(nrCurItem)[2].toString();
+            if (this.inWl) {
+                if (nrCurItem < this.elencoWlCompleto.size()) { // Per prevenire eventuali errori
+                    this.JTextAreaDescrizioneLavoro.setText(this.elencoWl.get(
+                            nrCurItem)[0] + " - "
+                            + this.elencoDesWl.get(nrCurItem));
+                    if (this.elencoWlCompleto.get(nrCurItem)[3].equals("0")) {
+                        this.JTextAreaDescrizioneLavoro.setBackground(Color.yellow);
+                        this.jButtonPR3.setIcon(this.Img_Nulla);//aggiorna il tipo di Icona per il pulsante
+                        this.jButtonPR3.setEnabled(false);
+                    } else {
+                        this.JTextAreaDescrizioneLavoro.setBackground(Color.white);
+                        this.jButtonPR3.setIcon(this.Img_Ok);//aggiorna il tipo di Icona per il pulsante
+                        this.jButtonPR3.setEnabled(true);
+                    }
                 }
-                this.JTextAreaDescrizioneLavoro.setText(nomeContatori + " - " + this.elencoDesLavoro.get(nrCurItem));
-                // Se il lavoro non è avviabile
-                if (this.elencoLavoriCompleto.get(nrCurItem)[4].equals("0")) {
-                    this.JTextAreaDescrizioneLavoro.setBackground(Color.yellow);
-                    this.jButtonPR3.setIcon(this.Img_Nulla);//aggiorna il tipo di Icona per il pulsante
-                    this.jButtonPR3.setEnabled(false);
-                } else {
-                    this.JTextAreaDescrizioneLavoro.setBackground(Color.white);
-                    this.jButtonPR3.setIcon(this.Img_Ok);//aggiorna il tipo di Icona per il pulsante
-                    this.jButtonPR3.setEnabled(true);
+            } else {
+                if (nrCurItem < this.elencoLavoriCompleto.size()) { // Per prevenire eventuali errori
+                    //+ " L=" + limLottiRiga + " T=" + limPezziRiga
+                    if (this.elencoLavori.get(nrCurItem)[1].equals("-1")) {
+                        nomeContatori = this.elencoLavori.get(nrCurItem)[0];
+                    } else {
+                        nomeContatori = this.elencoLavori.get(nrCurItem)[0]
+                                + " L="
+                                + this.elencoLavori.get(nrCurItem)[1]
+                                + " T="
+                                + this.elencoLavori.get(nrCurItem)[2];
+                    }
+                    this.JTextAreaDescrizioneLavoro.setText(nomeContatori + " - " + this.elencoDesLavoro.get(nrCurItem));
+                    // Se il lavoro non è avviabile
+                    if (this.elencoLavoriCompleto.get(nrCurItem)[4].equals("0")) {
+                        this.JTextAreaDescrizioneLavoro.setBackground(Color.yellow);
+                        this.jButtonPR3.setIcon(this.Img_Nulla);//aggiorna il tipo di Icona per il pulsante
+                        this.jButtonPR3.setEnabled(false);
+                    } else {
+                        this.JTextAreaDescrizioneLavoro.setBackground(Color.white);
+                        this.jButtonPR3.setIcon(this.Img_Ok);//aggiorna il tipo di Icona per il pulsante
+                        this.jButtonPR3.setEnabled(true);
+                    }
                 }
             }
         }
@@ -3378,7 +3425,7 @@ public class JRivitMain extends javax.swing.JFrame {
         elencoDesTools = new ArrayList<>();
         for (String riga : leggiFileElenco) {
             toolSplit = riga.split("§"); // BarcodeUtensile, Nome, Descrizione
-            this.elencoTools.add(toolSplit[0] + "," + toolSplit[1]);
+            this.elencoTools.add(toolSplit[0] + ", " + toolSplit[1]);
             this.elencoDesTools.add(toolSplit[2]);
         }
         RefreshList(listTools, elencoTools);
