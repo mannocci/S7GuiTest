@@ -157,7 +157,11 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_RESET_SYSTEM);
                     this.Rm.setRichiesta(Static.RICHIESTA_RESET_SYSTEM);                    
                 }
-                    
+                case "imposta_tool" -> {
+                    JFileWorker.scriviFile(Static.F_TOOL_SCELTO, this.Rm.getListLavori().getSelectedItem());
+                    JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_IMPOSTA_TOOL);
+                    this.Rm.setRichiesta(Static.RICHIESTA_IMPOSTA_TOOL);                    
+                }
             }
         } catch (NumberFormatException ex) {
             Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
