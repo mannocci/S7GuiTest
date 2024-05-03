@@ -79,7 +79,7 @@ public class JFileWorker extends Thread {
 
                     Static.debug(kind.name() + ": " + fileName, 4);
                     if (kind == ENTRY_CREATE) {
-                        if (!fileName.toString().startsWith(Static.F_SENSORI) 
+                        if (!fileName.toString().startsWith(Static.F_SENSORI)
                                 && !fileName.toString().startsWith("certSens")) {
                             Static.debug("Creato: " + fileName, 3);
                         }
@@ -185,6 +185,12 @@ public class JFileWorker extends Thread {
                                 WlListaPronta();
                             case Static.F_RICHIESTA + "_ready" ->
                                 this.Rm.setRichiesta(leggiFile(Static.F_RICHIESTA));
+                            case Static.F_RISPOSTA_TIRO_ERRATO_ACCETTA ->
+                                this.Rm.setRispostaErrore("accetta");
+                            case Static.F_RISPOSTA_TIRO_ERRATO_ANNULLA ->
+                                this.Rm.setRispostaErrore("annulla");
+                            case Static.F_RISPOSTA_TIRO_ERRATO_CONTINUA ->
+                                this.Rm.setRispostaErrore("continua");
                         }
                     }
                     if (kind == ENTRY_DELETE) {
@@ -215,8 +221,8 @@ public class JFileWorker extends Thread {
                                 this.Rm.setRichiesta("");
                                 initValues();
                                 this.Rm.esegui("aggiorna_nm_list");
-                                this.Rm.setStato( Static.STATO_STOP);
-                                this.Rm.PanelMain();                                
+                                this.Rm.setStato(Static.STATO_STOP);
+                                this.Rm.PanelMain();
                             }
                         }
                     }
@@ -357,7 +363,7 @@ public class JFileWorker extends Thread {
      *
      */
     public void initValues() {
-        if(! leggiFile(Static.F_RESET_REQUEST).contains("error")){
+        if (!leggiFile(Static.F_RESET_REQUEST).contains("error")) {
             //Richiesta se si vuole fare reset del sistema
             this.Rm.setRichiesta(Static.RICHIESTA_RESET_SYSTEM);
             return;
@@ -777,6 +783,7 @@ public class JFileWorker extends Thread {
      * legge il file curva per costruire il grafico mostrato nel Pannello Canvas
      */
     private void gestisciCurva() {
+        this.Rm.setRispostaErrore("");
         leggiCurva();
         this.Rm.setEsitoTiro(leggiFile(Static.F_ESITO_TIRO));
         this.Rm.repaint();
@@ -797,6 +804,9 @@ public class JFileWorker extends Thread {
             }
             case Static.STATO_AVVIATO -> {
                 this.Rm.setStatoConcluso(false);
+                this.Rm.setStatoConcluso(false);
+                this.Rm.setInErrore(false);
+                this.Rm.azzeraContatori();
                 this.Rm.PanelStarted();
             }
             case Static.STATO_CALIBRAZIONE -> {
@@ -942,7 +952,7 @@ public class JFileWorker extends Thread {
         JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_AVVIO);
         this.Rm.gr.setCurva("");
     }
-    
+
     /**
      * Avvia la calibrazione
      */
