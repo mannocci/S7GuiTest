@@ -379,6 +379,7 @@ public class JFileWorker extends Thread {
         //this.lavoroPronto(); il lavoro pronto deve essere comandato da Control
         this.readWl();//Se non esiste il file ?
         this.readTools();
+        
         // this.WlPronta(); la WL pronta deve essere comandata da Control
         this.readInfo();// Se non esiste il file imposta a stringa info
         this.readWarning();// Se non esiste il file imposta a sringa warning
@@ -950,7 +951,7 @@ public class JFileWorker extends Thread {
      */
     void richiestaAvviaLavoro() {
         JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_AVVIO);
-        this.Rm.gr.setCurva("");
+        this.Rm.gr.resetCurva();
     }
 
     /**
@@ -970,6 +971,10 @@ public class JFileWorker extends Thread {
     }
 
     private void readTools() {
+        String setFlagTools = leggiFile(Static.F_FIRST_TIME);
+        if( ! setFlagTools.startsWith("error")){
+            this.Rm.setInSceltaTool(true);
+        }
         this.Rm.aggiornaTools(leggiFileElenco(Static.F_TOOLS));
     }
 

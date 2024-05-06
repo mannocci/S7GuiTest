@@ -142,7 +142,7 @@ public class JGrafico extends JPanel {
 
             if (this.Rm.getPanCur().equals("canvas")) {
                 if (this.curva == null) {   // Per sicurezza
-                    this.setCurva("");
+                    this.curva = "";
                 }
                 if (this.curva.length() > 1 || this.curvaDiRiferimento.length() > 0) {
                     gr = (Graphics2D) g;
@@ -153,7 +153,6 @@ public class JGrafico extends JPanel {
                                 this.setCurvaDiRiferimento(this.curva);   // La curva appena letta diventa il riferimento
                                 this.piccoRif = this.picco;
                                 this.posizionePiccoRif = this.posizionePicco;
-//                                this.setCurva("");
                             }
                         }
                     }
@@ -237,8 +236,7 @@ public class JGrafico extends JPanel {
                                         case "annulla" -> {
                                             //gr.setColor(myFantasma );   // "fantasma"
                                             canDraw = false;
-                                            yCurvaChar = new String[]{""};
-                                            picco = 0;
+                                            resetCurva();
                                             aggiornaAssi();
                                             scriviPicco(piccoRif, posizionePiccoRif);
                                         }
@@ -395,5 +393,9 @@ public class JGrafico extends JPanel {
         gr.drawString(piccoStr + ((float) posizionePicco / 100) + "s", 5, 20);
         gr.setColor(oldColor);
     }
-
+    public void resetCurva () {
+        this.curva = "";
+        this.yCurvaChar = new String[]{""};
+        this.picco = 0;
+    }
 }

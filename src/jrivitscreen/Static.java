@@ -114,7 +114,8 @@ public class Static {
             F_LISTA_NM_CON = "lista_nm_con",
             F_INTERNET_STATUS = "internet_status",
             F_CONTROLLER_ONLINE = "controller_online",
-            F_POWEROFF = "poweroff";
+            F_POWEROFF = "poweroff",
+            F_FIRST_TIME = "first_time";
     static String PATH_WATCH = "/tmp/CT/";
     static String PATH_LCK = "/tmp/CTLock/";
     static long ATTESA_SCRITTURA_FILE = 1000L;

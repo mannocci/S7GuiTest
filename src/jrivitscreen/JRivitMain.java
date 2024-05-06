@@ -141,6 +141,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private String wifiMode;
     private boolean inSceltaTool;
     private String rispostaErrore;
+    private String welcome;
 
 //
 //Dopo una sospensione
@@ -211,8 +212,8 @@ public class JRivitMain extends javax.swing.JFrame {
         this.lavoroScelto = "";
         this.UDLotti = "+";
         this.UDPezzi = "+";
-        
-        rispostaErrore="";
+
+        rispostaErrore = "";
         wifiMode = "Auto";
         now = Calendar.getInstance();
         dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -237,7 +238,8 @@ public class JRivitMain extends javax.swing.JFrame {
         this.pressione_aria_in = 0F;
         this.inPausa = "0";
         this.richiesta = "";
-
+        this.welcome = "Welcome for the first Time!          Select Tool before start working";
+        //Aggiunti spazi per fare andare a capo la seconda frase
         try {
             fileWorker = new JFileWorker(this);
         } catch (IOException ex) {
@@ -456,10 +458,10 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelStarted.setPreferredSize(new java.awt.Dimension(330, 277));
         jPanelStarted.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabelContatoreLotti.setFont(new java.awt.Font("SansSerif", 0, 36)); // NOI18N
+        jLabelContatoreLotti.setFont(new java.awt.Font("SansSerif", 1, 24)); // NOI18N
         jLabelContatoreLotti.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelContatoreLotti.setText("0/0");
-        jPanelStarted.add(jLabelContatoreLotti, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 138, 160, 30));
+        jPanelStarted.add(jLabelContatoreLotti, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 138, 163, 30));
 
         jLabelNomeDevice.setFont(new java.awt.Font("SansSerif", 1, 20)); // NOI18N
         jLabelNomeDevice.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -526,10 +528,10 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelDesContatoreLotti.setToolTipText("");
         jPanelStarted.add(jLabelDesContatoreLotti, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 100, 160, 30));
 
-        jLabelContatorePezzi.setFont(new java.awt.Font("SansSerif", 0, 36)); // NOI18N
+        jLabelContatorePezzi.setFont(new java.awt.Font("SansSerif", 1, 24)); // NOI18N
         jLabelContatorePezzi.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelContatorePezzi.setText("0/0");
-        jPanelStarted.add(jLabelContatorePezzi, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 138, 160, 30));
+        jPanelStarted.add(jLabelContatorePezzi, new org.netbeans.lib.awtextra.AbsoluteConstraints(165, 138, 163, 30));
 
         jLabelDesPezziNoLimits.setFont(new java.awt.Font("SansSerif", 0, 24)); // NOI18N
         jLabelDesPezziNoLimits.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -537,10 +539,10 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelDesPezziNoLimits.setToolTipText("");
         jPanelStarted.add(jLabelDesPezziNoLimits, new org.netbeans.lib.awtextra.AbsoluteConstraints(84, 100, 160, 30));
 
-        jLabelPezziNoLimits.setFont(new java.awt.Font("SansSerif", 0, 36)); // NOI18N
+        jLabelPezziNoLimits.setFont(new java.awt.Font("SansSerif", 1, 24)); // NOI18N
         jLabelPezziNoLimits.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelPezziNoLimits.setText("0");
-        jPanelStarted.add(jLabelPezziNoLimits, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 138, 310, 30));
+        jPanelStarted.add(jLabelPezziNoLimits, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 138, 328, 30));
 
         jLabelNomeLavoro.setFont(new java.awt.Font("SansSerif", 1, 20)); // NOI18N
         jLabelNomeLavoro.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -1314,7 +1316,7 @@ public class JRivitMain extends javax.swing.JFrame {
      * Gestione della risposta scelta dall'utente per gestire l'errore
      */
     private void rispostaErrore() {
-         String testoRispostaErrore = "";
+        String testoRispostaErrore = "";
         switch (this.scelta) {
             case Static.CONTINUA -> {
                 rispostaErrore = "continua";
@@ -1338,21 +1340,24 @@ public class JRivitMain extends javax.swing.JFrame {
             this.esegui(rispostaErrore);
         }
     }
+
     /**
      * passa la risposta fatta in corrispondenza di un errore
-     * @return 
+     *
+     * @return
      */
-    public String getRispostaErrore(){
+    public String getRispostaErrore() {
         return this.rispostaErrore;
     }
+
     /**
-     * set 
-     * 
+     * set
+     *
      */
-    public void setRispostaErrore(String setErr){
-         this.rispostaErrore = setErr;
-    }    
-    
+    public void setRispostaErrore(String rispostaErrore) {
+        this.rispostaErrore = rispostaErrore;
+    }
+
     private void listLavoriMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listLavoriMouseClicked
         this.JTextAreaDescrizioneLavoro.setText(
                 this.elencoDesLavoro.get(this.listLavori.getSelectedIndex()));
@@ -1460,8 +1465,8 @@ public class JRivitMain extends javax.swing.JFrame {
 
         this.jButtonPR3.setIcon(I6);
         this.jButtonPR3.setEnabled((!I6.equals(this.Img_Nulla)));
-        
-        if(I1.equals(Img_Continua)) {
+
+        if (I1.equals(Img_Continua)) {
             this.jButtonPL1.setBackground(Color.red);
             this.jButtonPL2.setBackground(Color.green);
             this.jButtonPL3.setBackground(Color.white);
@@ -1611,6 +1616,7 @@ public class JRivitMain extends javax.swing.JFrame {
             this.listWLavori.setVisible(false);
             this.listTools.setVisible(true);
             lista = this.listTools;
+            this.JTextAreaDescrizioneLavoro.setText(this.welcome);
             this.changeButtons(this.Img_Exit, this.Img_Nulla, this.Img_Nulla,
                     this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Ok);
         } else {
@@ -1764,10 +1770,14 @@ public class JRivitMain extends javax.swing.JFrame {
         // Qual'è il nome del pannello in primo piano ?
         switch (this.panCur) {
             case "start" -> {
-                if (this.inWl == false) {
-                    lista = this.listLavori;
+                if (this.inSceltaTool) {
+                    lista = this.listTools;
                 } else {
-                    lista = this.listWLavori;
+                    if (this.inWl == false) {
+                        lista = this.listLavori;
+                    } else {
+                        lista = this.listWLavori;
+                    }
                 }
             }
             case "setup wifi" ->
@@ -1822,10 +1832,14 @@ public class JRivitMain extends javax.swing.JFrame {
 
         switch (this.panCur) {
             case "start" -> {
-                if (this.inWl == false) {
-                    lista = this.listLavori;
+                if (this.inSceltaTool) {
+                    lista = this.listTools;
                 } else {
-                    lista = this.listWLavori;
+                    if (this.inWl == false) {
+                        lista = this.listLavori;
+                    } else {
+                        lista = this.listWLavori;
+                    }
                 }
             }
             case "setup wifi" ->
@@ -3279,7 +3293,8 @@ public class JRivitMain extends javax.swing.JFrame {
         String nomeContatori;
         if (inSceltaTool) {
             if (nrCurItem < this.elencoTools.size()) { // Per prevenire eventuali errori
-                this.JTextAreaDescrizioneLavoro.setText(this.elencoTools.get(nrCurItem));
+                this.JTextAreaDescrizioneLavoro.setText(this.elencoTools.get(nrCurItem) + " - "
+                        + this.elencoDesTools.get(nrCurItem));
             }
         } else {
             if (this.inWl) {
@@ -3437,4 +3452,13 @@ public class JRivitMain extends javax.swing.JFrame {
         this.jLabelDialog.setText(AlertDialogWhat);
         PanelDialog();
     }
+
+    public boolean isInSceltaTool() {
+        return inSceltaTool;
+    }
+
+    public void setInSceltaTool(boolean inSceltaTool) {
+        this.inSceltaTool = inSceltaTool;
+    }
+
 }

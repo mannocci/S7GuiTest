@@ -158,9 +158,13 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     this.Rm.setRichiesta(Static.RICHIESTA_RESET_SYSTEM);                    
                 }
                 case "imposta_tool" -> {
-                    JFileWorker.scriviFile(Static.F_TOOL_SCELTO, this.Rm.getListLavori().getSelectedItem());
+                    String tool[] = this.Rm.getListTools().getSelectedItem().split(",");
+                    JFileWorker.scriviFile(Static.F_TOOL_SCELTO, tool[0]);
                     JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_IMPOSTA_TOOL);
-                    this.Rm.setRichiesta(Static.RICHIESTA_IMPOSTA_TOOL);                    
+                    this.Rm.setRichiesta(Static.RICHIESTA_IMPOSTA_TOOL);   
+                    JFileWorker.cancellaFile(Static.F_FIRST_TIME);
+                    this.Rm.setInSceltaTool(false);
+                    this.Rm.PanelMain();
                 }
             }
         } catch (NumberFormatException ex) {
@@ -215,7 +219,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
      */
     void avviaWL() {
         JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_AVVIO_WL);
-        this.Rm.gr.setCurva("");
+        this.Rm.gr.resetCurva();
     }
 
     /**
@@ -223,7 +227,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
      */
     void riavviaLavoro() {
         JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_RIAVVIO);
-        this.Rm.gr.setCurva("");
+        this.Rm.gr.resetCurva();
     }
 
     /**
