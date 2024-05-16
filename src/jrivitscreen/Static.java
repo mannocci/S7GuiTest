@@ -30,98 +30,103 @@ import java.time.format.DateTimeFormatter;
 public class Static {
 
     //Variabili final (non modificabili)
-    final static String RICHIESTA_AVVIO_WL = "79",
-            RICHIESTA_AVVIO = "80",
-            RICHIESTA_PAUSA = "81",
-            RICHIESTA_STOP = "82",
-            RICHIESTA_CALIBRAZIONE = "83",
-            RICHIESTA_CALIBRAZIONE_TEST = "84",
-            RICHIESTA_RIAVVIO = "85",
-            RICHIESTA_CALIBRAZIONE_SALVA = "86",
-            RICHIESTA_CALIBRAZIONE_ANNULLA = "87",
-            RICHIESTA_RESET_SYSTEM = "88",      
-            RICHIESTA_BACKUP_DB = "89",
-            RICHIESTA_RESTORE_DB = "90",
-            RICHIESTA_IMPOSTA_TOOL = "91";
-            
+    // Richieste
+    final static String RICHIESTA_AVVIO_WL = "79";
+    final static String RICHIESTA_AVVIO = "80";
+    final static String RICHIESTA_PAUSA = "81";
+    final static String RICHIESTA_STOP = "82";
+    final static String RICHIESTA_CALIBRAZIONE = "83";
+    final static String RICHIESTA_CALIBRAZIONE_TEST = "84";
+    final static String RICHIESTA_RIAVVIO = "85";
+    final static String RICHIESTA_CALIBRAZIONE_SALVA = "86";
+    final static String RICHIESTA_CALIBRAZIONE_ANNULLA = "87";
+    final static String RICHIESTA_RESET_SYSTEM = "88";
+    final static String RICHIESTA_BACKUP_DB = "89";
+    final static String RICHIESTA_RESTORE_DB = "90";
+    final static String RICHIESTA_IMPOSTA_TOOL = "91";
+    final static String RICHIESTA_AGGIORNA_INFO = "92";
 
-    final static String STATO_AVVIATO = "91",
-            STATO_CONCLUSO = "100",
-            STATO_CALIBRAZIONE = "200",
-            STATO_CALIBRAZIONE_TEST = "220",
-            STATO_SCELTA_LAVORO = "300",
-            STATO_PAUSA = "92",
-            STATO_STOP = "93";
-    
+    // Stati
+    final static String STATO_AVVIATO = "91";
+    final static String STATO_PAUSA = "92";
+    final static String STATO_STOP = "93";
+    final static String STATO_CONCLUSO = "100";
+    final static String STATO_CALIBRAZIONE = "200";
+    final static String STATO_CALIBRAZIONE_TEST = "220";
+
+    // Risposte
     final static String CONTINUA = "51";
     final static String ACCETTA = "52";
     final static String ANNULLA = "53";
+
     final static String ARIA_CHIUSA = "0";
     final static String ARIA_APERTA = "1";
 
     // Nomi dei file
-    final static String F_STATO = "stato",
-            F_RESET_REQUEST = "reset_request",
-            F_RICHIESTA = "richiesta",
-            F_PULSANTE = "pulsante",
-            F_W = "w.txt",
-            F_W_SCELTO = "w_scelto",
-            F_WL_LISTA = "wl_lista.txt",
-            F_WL     = "wl.txt",
-            F_WL_SCELTA = "wl_scelta",
-            F_TOOLS = "tools.txt",
-            F_TOOL_SCELTO = "tool_scelto",
-            F_WL_RUNNING = "wl_running",//Contiene il lavoro avviato e l'indice dell'elenco "nome lavoro§n"
-            F_RISPOSTA_TIRO_ERRATO = "risposta_tiro_errato",
-            F_RISPOSTA_TIRO_ERRATO_CONTINUA = "risposta_tiro_errato_continua",
-            F_RISPOSTA_TIRO_ERRATO_ACCETTA = "risposta_tiro_errato_accetta",
-            F_RISPOSTA_TIRO_ERRATO_ANNULLA = "risposta_tiro_errato_annulla",
-            F_AGGIORNATO_LAVORI = "aggiornato_lavori",
-            F_AGGIORNA_WIFI = "aggiorna_wifi",
-            F_RELOAD = "reload",
-            F_LAVORO_AVVIATO = "lavoro_avviato",
-            F_LAVORO_PRONTO = "lavoro_pronto",
-            F_WL_PRONTA = "wl_pronta",
-            F_PRESSIONE_ARIA_IN_MIN = "pressione_aria_in_min",
-            F_PRESSIONE_ARIA_IN_MAX = "pressione_aria_in_max",
-            F_NO_SENSORE = "no_sensore",
-            F_CONTATORI = "contatori",
-            F_TIRI_NEL_LOTTO = "tiri_nel_lotto",
-            F_TIRI_OK = "tiri_ok",
-            F_TIRI_ERRATI = "tiri_errati",
-            F_TIRI_ANNULLATI = "tiri_annullati",
-            F_INFO = "info.txt",
-            F_SENSORI = "sensori",
-            F_WARNING = "warning.txt",
-            F_STATUS_LAN = "status_lan",
-            F_STATUS_WIFI = "status_wifi",
-            F_IN_PAUSA = "in_pausa",
-            F_NOME_DEVICE = "nome_device",
-            F_UM = "um",    // Bar o Newton
-            F_ARIA = "aria",
-            F_ERRORE = "errore",
-            F_POSIZIONE_ERRORI = "posizione_errore",
-            F_CURVA = "curva",
-            F_ESITO_TIRO = "esito_tiro",
-            F_CURVA_DI_RIFERIMENTO = "curva_di_riferimento",
-            F_PICCO = "picco",
-            F_PICCORIF = "piccorif",
-            F_ABILITA_CALIBRAZIONE = "abilita_calibrazione",
-            F_CHIEDI_CONFERMA_RISPOSTA = "chiedi_conferma_risposta",
-            F_CHIEDI_CONFERMA_STOP = "chiedi_conferma_stop",
-            F_LOTTI_OK = "lotti_ok",
-            F_SESSIONE = "sessione",
-            F_LISTA_NM_CON = "lista_nm_con",
-            F_INTERNET_STATUS = "internet_status",
-            F_CONTROLLER_ONLINE = "controller_online",
-            F_POWEROFF = "poweroff",
-            F_FIRST_TIME = "first_time";
+    final static String F_STATO = "stato";
+    final static String F_RESET_REQUEST = "reset_request";
+    final static String F_RICHIESTA = "richiesta";
+    final static String F_PULSANTE = "pulsante";
+    final static String F_W = "w.txt";
+    final static String F_W_SCELTO = "w_scelto";
+    final static String F_WL_LISTA = "wl_lista.txt";
+    final static String F_WL = "wl.txt";
+    final static String F_WL_SCELTA = "wl_scelta";
+    final static String F_TOOLS = "tools.txt";
+    final static String F_TOOL_SCELTO = "tool_scelto";
+    final static String F_WL_RUNNING = "wl_running";//Contiene il lavoro avviato e l'indice dell'elenco "nome lavoro§n"
+    final static String F_RISPOSTA_TIRO_ERRATO = "risposta_tiro_errato";
+    final static String F_RISPOSTA_TIRO_ERRATO_CONTINUA = "risposta_tiro_errato_continua";
+    final static String F_RISPOSTA_TIRO_ERRATO_ACCETTA = "risposta_tiro_errato_accetta";
+    final static String F_RISPOSTA_TIRO_ERRATO_ANNULLA = "risposta_tiro_errato_annulla";
+    final static String F_AGGIORNATO_LAVORI = "aggiornato_lavori";
+    final static String F_AGGIORNA_WIFI = "aggiorna_wifi";
+    final static String F_RELOAD = "reload";
+    final static String F_LAVORO_AVVIATO = "lavoro_avviato";
+    final static String F_LAVORO_PRONTO = "lavoro_pronto";
+    final static String F_WL_PRONTA = "wl_pronta";
+    final static String F_PRESSIONE_ARIA_IN_MIN = "pressione_aria_in_min";
+    final static String F_PRESSIONE_ARIA_IN_MAX = "pressione_aria_in_max";
+    final static String F_NO_SENSORE = "no_sensore";
+    final static String F_CONTATORI = "contatori";
+    final static String F_TIRI_NEL_LOTTO = "tiri_nel_lotto";
+    final static String F_TIRI_OK = "tiri_ok";
+    final static String F_TIRI_ERRATI = "tiri_errati";
+    final static String F_TIRI_ANNULLATI = "tiri_annullati";
+    final static String F_INFO = "info.txt";
+    final static String F_SENSORI = "sensori";
+    final static String F_WARNING = "warning.txt";
+    final static String F_STATUS_LAN = "status_lan";
+    final static String F_STATUS_WIFI = "status_wifi";
+    final static String F_IN_PAUSA = "in_pausa";
+    final static String F_NOME_DEVICE = "nome_device";
+    final static String F_UM = "um"; // Bar o Newton
+    final static String F_ARIA = "aria";
+    final static String F_ERRORE = "errore";
+    final static String F_POSIZIONE_ERRORI = "posizione_errore";
+    final static String F_CURVA = "curva";
+    final static String F_ESITO_TIRO = "esito_tiro";
+    final static String F_CURVA_DI_RIFERIMENTO = "curva_di_riferimento";
+    final static String F_PICCO = "picco";
+    final static String F_PICCORIF = "piccorif";
+    final static String F_ABILITA_CALIBRAZIONE = "abilita_calibrazione";
+    final static String F_CONFERMA_RISP_ERRORE = "conferma_risp_errore";
+    final static String F_CONFERMA_STOP_PAUSA = "conferma_stop_pausa";
+    final static String F_LOTTI_OK = "lotti_ok";
+    final static String F_SESSIONE = "sessione";
+    final static String F_LISTA_NM_CON = "lista_nm_con";
+    final static String F_INTERNET_STATUS = "internet_status";
+    final static String F_CONTROLLER_ONLINE = "controller_online";
+    final static String F_POWEROFF = "poweroff";
+    final static String F_FIRST_TIME = "first_time";
+    
     static String PATH_WATCH = "/tmp/CT/";
     static String PATH_LCK = "/tmp/CTLock/";
     static long ATTESA_SCRITTURA_FILE = 1000L;
     // da utilizzare per impostare il livello di debug
     // 0:debug disattivato 1:errore 2:warning 3:info 4:verbose
-    final private static int DEBUGLEVEL = 3;
+    static int DEBUGLEVEL = 3;
+    static boolean VMMODE = false;
     static float MAX_VARIAZIONE_PRESSIONE = 9.0f;   // Massima variazione di pressione ammessa da una lettura all'altra
 
 //    final public static DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yy HH:mm:ss.SSS");  // per i messaggi di log
@@ -137,6 +142,18 @@ public class Static {
         if (livello <= Static.DEBUGLEVEL) {
             System.out.println(dtf.format(LocalDateTime.now()) + ": " + string);
         }
+    }
+
+    static void setDEBUG_LEVEL(String optionValue) {
+        try {
+            Static.DEBUGLEVEL = Integer.parseInt(optionValue);
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid parameter -v " + optionValue);
+        }
+    }
+
+    static void setVMMODE(boolean vmMode) {
+        Static.VMMODE = vmMode;
     }
 
     public Static() {
