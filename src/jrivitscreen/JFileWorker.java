@@ -41,7 +41,6 @@ import java.nio.file.WatchService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import javax.swing.JLayeredPane;
 
 /**
  *
@@ -57,13 +56,13 @@ public class JFileWorker extends Thread {
 
     public JFileWorker(JRivitMain mf) throws IOException {
         this.Rm = mf;
+        Path dir = Paths.get(Static.PATH_WATCH);
         // create gpio controller by file (run bash script before !)     
         try {
             watcher = FileSystems.getDefault().newWatchService();
         } catch (IOException ex) {
-            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
+            Static.debug("Error starting watch service modified file registered for dir: " + dir.toString() + ": " + ex, 1);
         }
-        Path dir = Paths.get(Static.PATH_WATCH);
         dir.register(watcher, ENTRY_CREATE, ENTRY_DELETE);
         Static.debug("Watch service modified file registered for dir: " + dir.toString(), 3);
     }
@@ -110,16 +109,16 @@ public class JFileWorker extends Thread {
                                 readLavori();
                             case Static.F_WL + "_ready" ->
                                 readWl();
-                            case Static.F_CHIEDI_CONFERMA_RISPOSTA ->
-                                impostaChiediConferma(true);
                             case Static.F_ABILITA_CALIBRAZIONE -> {
                                 this.Rm.abilitaCalibrazione(true);
                                 if (this.Rm.getPanCur().equals("start")) {
                                     this.Rm.PanelStart();
                                 }
                             }
-                            case Static.F_CHIEDI_CONFERMA_STOP ->
-                                impostaChiediConfermaStop(true);
+                            case Static.F_CONFERMA_STOP_PAUSA ->
+                                this.Rm.setConfermaStopPausa(true);
+                            case Static.F_CONFERMA_RISP_ERRORE ->
+                                this.Rm.setConfermaRispErrore(true);
                             case Static.F_PULSANTE ->
                                 gestisciPulsante();
                             case Static.F_WARNING + "_ready" ->
@@ -204,16 +203,16 @@ public class JFileWorker extends Thread {
                                 this.Rm.setSensoreCollegato(true);
                             case Static.F_ERRORE ->
                                 errore(false);
-                            case Static.F_CHIEDI_CONFERMA_RISPOSTA ->
-                                impostaChiediConferma(false);
                             case Static.F_ABILITA_CALIBRAZIONE -> {
                                 this.Rm.abilitaCalibrazione(false);
                                 if (this.Rm.getPanCur().equals("start")) {
                                     this.Rm.PanelStart();
                                 }
                             }
-                            case Static.F_CHIEDI_CONFERMA_STOP ->
-                                impostaChiediConfermaStop(false);
+                            case Static.F_CONFERMA_STOP_PAUSA ->
+                                this.Rm.setConfermaStopPausa(false);
+                            case Static.F_CONFERMA_RISP_ERRORE ->
+                                this.Rm.setConfermaRispErrore(false);
                             case Static.F_CONTROLLER_ONLINE -> {
                                 this.Rm.setControllerIndicator(false);
                             }
@@ -221,7 +220,6 @@ public class JFileWorker extends Thread {
                                 this.Rm.setRichiesta("");
                                 initValues();
                                 this.Rm.esegui("aggiorna_nm_list");
-                                this.Rm.setStato(Static.STATO_STOP);
                                 this.Rm.PanelMain();
                             }
                         }
@@ -238,22 +236,6 @@ public class JFileWorker extends Thread {
             }
         } catch (InterruptedException | RuntimeException ex) {
             Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    /**
-     * Un conto è lo stato dell'aria, ma l'azione di chiusura e apertura deve
-     * essere fatta da control. I led da chi li facciamo comandare ? Da control
-     * vedi Class JTask
-     *
-     * @param stato
-     */
-    private void mostraStatoAria(String stato) {
-
-        if (stato.equals(Static.ARIA_CHIUSA)) {//Aria chiusa
-            this.Rm.ariaChiusa();
-        } else { //Aria aperta
-            this.Rm.ariaAperta();
         }
     }
 
@@ -275,7 +257,7 @@ public class JFileWorker extends Thread {
      * Legge il file con la descrizione delle info di sistema
      */
     private void readInfo() {
-        List<String> LeggiFileElencoInfo = this.leggiFileElenco(Static.F_INFO);
+        List<String> LeggiFileElencoInfo = JFileWorker.leggiFileElenco(Static.F_INFO);
         if (LeggiFileElencoInfo.isEmpty()) {
             LeggiFileElencoInfo.add("Manca file Info");
         }
@@ -287,7 +269,7 @@ public class JFileWorker extends Thread {
      */
     private void readWarning() {
 //        lavoro che deve essere fatto da JDoWorker
-        List<String> warning_file = this.leggiFileElenco(Static.F_WARNING);
+        List<String> warning_file = JFileWorker.leggiFileElenco(Static.F_WARNING);
         if (warning_file.isEmpty()) {
             warning_file.add("Warning file not present or empty");
         }
@@ -321,7 +303,7 @@ public class JFileWorker extends Thread {
      * Leggere il DB è meglio
      */
     private void readSetupLan() {
-        this.Rm.aggiornaSetupLan(this.leggiFileElenco(Static.F_STATUS_LAN));
+        this.Rm.aggiornaSetupLan(JFileWorker.leggiFileElenco(Static.F_STATUS_LAN));
     }
 
     /**
@@ -329,7 +311,7 @@ public class JFileWorker extends Thread {
      * sopra forse è meglio leggere il DB
      */
     private void readSetupWifi() {
-        this.Rm.aggiornaSetupWiFi(this.leggiFileElenco(Static.F_STATUS_WIFI));
+        this.Rm.aggiornaSetupWiFi(JFileWorker.leggiFileElenco(Static.F_STATUS_WIFI));
     }
 
     /**
@@ -352,7 +334,7 @@ public class JFileWorker extends Thread {
      * Pressione Aria viene letta ogni 5 secondi
      */
     private void aggiornaSensori() {
-        String line = this.leggiFile(Static.F_SENSORI);
+        String line = JFileWorker.leggiFile(Static.F_SENSORI);
         this.Rm.updateSensori(line);
     }
 
@@ -366,12 +348,13 @@ public class JFileWorker extends Thread {
         if (!leggiFile(Static.F_RESET_REQUEST).contains("error")) {
             //Richiesta se si vuole fare reset del sistema
             this.Rm.setRichiesta(Static.RICHIESTA_RESET_SYSTEM);
-            return;
+            this.Rm.chiediConfermaReset();
         }
         this.leggiNoSensore();
         this.leggiAriaInMinMax();   // Valori scritti nei files da Control
         this.leggiAbilitaCalibrazione();
-        this.leggiChiediConfermaRisposta();
+        this.leggiConfermaRispErrore();
+        this.leggiConfermaStopPausa();
         this.leggiControllerOnline();
         this.aggiornaContatori();
         this.aggiornaSensori();
@@ -379,7 +362,7 @@ public class JFileWorker extends Thread {
         //this.lavoroPronto(); il lavoro pronto deve essere comandato da Control
         this.readWl();//Se non esiste il file ?
         this.readTools();
-        
+
         // this.WlPronta(); la WL pronta deve essere comandata da Control
         this.readInfo();// Se non esiste il file imposta a stringa info
         this.readWarning();// Se non esiste il file imposta a sringa warning
@@ -408,6 +391,7 @@ public class JFileWorker extends Thread {
      * Metodo per fare il lock del file basato su filesystem: se non esiste
      * nomFile.lock lo scrive bloccando così il file
      *
+     * @param NomeFile
      * @return
      */
     public static boolean lockFile(String NomeFile) {
@@ -538,8 +522,7 @@ public class JFileWorker extends Thread {
         try {
             File inputFile = new File(Static.PATH_WATCH + NomeFile);
             if (!inputFile.exists()) {
-                Static.debug("File " + inputFile.getAbsolutePath()
-                        + " does not exists\n", 2);
+                Static.debug("File " + inputFile.getAbsolutePath() + " does not exists", 2);
                 ListaRighe.add("errore lettura File " + NomeFile);
                 return ListaRighe;
             }
@@ -569,8 +552,7 @@ public class JFileWorker extends Thread {
         try {
             File inputFile = new File(Static.PATH_WATCH + NomeFile);
             if (!inputFile.exists()) {
-                Static.debug("File " + inputFile.getAbsolutePath()
-                        + " does not exists\n", 2);
+                Static.debug("File " + inputFile.getAbsolutePath() + " does not exists", 2);
                 contenutoFile = "errore " + NomeFile;
                 return contenutoFile;
             }
@@ -640,22 +622,6 @@ public class JFileWorker extends Thread {
         }
     }
 
-    private void lottiOk() {
-        try {
-            int lottiok = Integer.parseInt(leggiFile(Static.F_LOTTI_OK));
-            if (lottiok == 0) {
-                lottiok = 1;
-            }
-            this.Rm.set_nr_lotti_ok(lottiok);
-        } catch (NumberFormatException e) {
-            Static.debug("Contenuto del file lotti_ok non numerico !\n" + e.getMessage(), 2);
-        }
-    }
-
-    private void impostaChiediConferma(boolean si_o_no) {
-        this.Rm.setChiediConfermaRisposta(si_o_no);
-    }
-
     /**
      * cancella un file
      *
@@ -687,10 +653,6 @@ public class JFileWorker extends Thread {
                 Static.debug("Errore eliminando il file " + NomeFile, 2);
             }
         }
-    }
-
-    private void impostaChiediConfermaStop(boolean si_o_no) {
-        this.Rm.setChiedi_conferma_stop(si_o_no);
     }
 
     /**
@@ -961,21 +923,30 @@ public class JFileWorker extends Thread {
         JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_CALIBRAZIONE);
     }
 
-    private void leggiChiediConfermaRisposta() {
-        File inputFile = new File(Static.PATH_WATCH + Static.F_CHIEDI_CONFERMA_RISPOSTA);
+    private void leggiConfermaRispErrore() {
+        File inputFile = new File(Static.PATH_WATCH + Static.F_CONFERMA_RISP_ERRORE);
         if (inputFile.exists()) {
-            this.Rm.setChiediConfermaRisposta(true);
+            this.Rm.setConfermaRispErrore(true);
         } else {
-            this.Rm.setChiediConfermaRisposta(false);
+            this.Rm.setConfermaRispErrore(false);
         }
     }
 
     private void readTools() {
         String setFlagTools = leggiFile(Static.F_FIRST_TIME);
-        if( ! setFlagTools.startsWith("error")){
+        if (!setFlagTools.startsWith("error")) {    // siamo al primo avvio o al reset
             this.Rm.setInSceltaTool(true);
         }
         this.Rm.aggiornaTools(leggiFileElenco(Static.F_TOOLS));
+    }
+
+    private void leggiConfermaStopPausa() {
+        File inputFile = new File(Static.PATH_WATCH + Static.F_CONFERMA_STOP_PAUSA);
+        if (inputFile.exists()) {
+            this.Rm.setConfermaStopPausa(true);
+        } else {
+            this.Rm.setConfermaStopPausa(false);
+        }
     }
 
 }
