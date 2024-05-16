@@ -132,9 +132,10 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     this.avviaWL();
                 }
 
-                case "aggiorna info" ->
-                    this.updateInfo();
-
+                case "aggiorna info" -> {
+                    JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_AGGIORNA_INFO);
+                    this.Rm.setRichiesta(Static.RICHIESTA_AGGIORNA_INFO);
+                }
                 case "orario" -> {
                     Date orario = now.getTime();
                     //this.dateFormat.setTimeZone(TimeZone.getTimeZone("Europe/London"));
@@ -183,7 +184,6 @@ public class JDoWorker extends SwingWorker<String, Object> {
      * della classe FileWorker
      */
     void init() {
-// ffff non è più un thread. Ora basta che esista l'oggetto        this.bt.start();//Gestione dei pulsanti
         this.fileWorker.start();//Avvio FileWorker
         this.fileWorker.initValues();
     }
@@ -278,12 +278,6 @@ public class JDoWorker extends SwingWorker<String, Object> {
      */
     void updateInfo() {
         List<String> listaInfo = JFileWorker.leggiFileElenco(Static.F_INFO);
-        List<String> listaSensori = JFileWorker.leggiFileElenco(Static.F_SENSORI);
-        listaInfo.add("JRivitScreen ver. " + this.Rm.versione + " release " + this.Rm.data_release);
-        listaInfo.add("=========================");
-        for (String string : listaSensori) {
-            listaInfo.add(string);
-        }
         this.Rm.setListInfo(listaInfo);
     }
 
