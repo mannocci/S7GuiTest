@@ -105,9 +105,9 @@ public class JRivitMain extends javax.swing.JFrame {
     private String panCur;
     private boolean inErrore = false;
     private boolean in_pausa = false;
-    private boolean chiediConferma = false;
+    private boolean confermaRispErrore = false;
     private boolean statoConcluso = false;
-    private boolean chiedi_conferma_stop;
+    private boolean confermaStopPausa;
     private List<String> elencoDesLavoro;
     private List<String> elencoDesTools;
     private int w_level;
@@ -131,7 +131,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private String UDLotti;
     private String UDPezzi;
     private boolean sensoreCollegato;
-    public final JButtonsDio bt;
+    public JButtonsDio bt = null;
     private int conversion;
     public static final int MAX_Y = 320;
     public static final int MAX_X = 480;
@@ -155,7 +155,7 @@ public class JRivitMain extends javax.swing.JFrame {
             robot = new Robot();
             robot.mouseMove(MAX_X, MAX_Y);
         } catch (AWTException ex) {
-            Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
+            Static.debug("Error initializing robot system", 2);
         }
         gr = new JGrafico(this);
         gr.setBackground(new java.awt.Color(255, 255, 255));
@@ -226,11 +226,16 @@ public class JRivitMain extends javax.swing.JFrame {
         versione = setup.getProperty("versione", "1.0");
         data_release = setup.getProperty("data_versione", "14/12/2022");
         srvKey = setup.getProperty("srvkey", "");
-        System.out.println("JRivitScreen ver. " + versione + " release " + data_release);
-
-        this.pannelloPrecedente = "main";   // Server per gestire il ritorno dal pannello di warning
-        this.chiedi_conferma_stop = true;
-        this.chiediConferma = false;
+        Static.debug("JRivitScreen ver. " + versione + " release " + data_release, 1);
+        if (Static.VMMODE)
+            Static.debug("virtual Mode ON", 1);
+        Static.debug("Debug level: " + Static.DEBUGLEVEL, 1);
+        Static.debug("Impostato Path per Work " + Static.PATH_WATCH, 3);
+        Static.debug("Impostato Path per Lock " + Static.PATH_LCK, 3);
+    
+        this.pannelloPrecedente = "main";   // Serve per gestire il ritorno dal pannello di warning
+        this.confermaStopPausa = true;
+        this.confermaRispErrore = false;
         this.temp_rpi = 0F;
         this.temp_io_board = 0F;
         this.v_in = 0F;
@@ -245,18 +250,12 @@ public class JRivitMain extends javax.swing.JFrame {
         } catch (IOException ex) {
             Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
         }
-        this.bt = new JButtonsDio(this);
+        if (!Static.VMMODE) {
+            this.bt = new JButtonsDio(this);
+        }
         doWorker = new JDoWorker(this, fileWorker);
         this.esegui("init");
-
-//        try {
-//            TimeUnit.SECONDS.sleep(2);//Attesa della fine del metodo init di JDoWorker
-//        } catch (InterruptedException ex) {
-//            Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-        if (this.richiesta == Static.RICHIESTA_RESET_SYSTEM) {
-            this.chiediConfermaReset();
-        } else {
+        if (!this.richiesta.equals(Static.RICHIESTA_RESET_SYSTEM)) {
             this.esegui("aggiorna_nm_list");
             this.stato = Static.STATO_STOP;
             this.PanelMain();
@@ -926,7 +925,7 @@ public class JRivitMain extends javax.swing.JFrame {
                     this.esegui("stop");
                     PanelStart();
                 } else {
-                    if (this.isChiediConfermaStop()) {
+                    if (this.isConfermaStopPausa()) {
                         this.setContesto(this.panCur);
                         scelta = Static.STATO_STOP;
                         this.AlertDialogWhat = "Confirm stop work ?";
@@ -959,7 +958,7 @@ public class JRivitMain extends javax.swing.JFrame {
                             this.esegui("stop");
                             PanelStart();
                         } else {
-                            if (this.isChiediConfermaStop()) {
+                            if (this.isConfermaStopPausa()) {
                                 scelta = Static.STATO_STOP;
                                 this.AlertDialogWhat = "Confirm stop work ?";
                                 this.jLabelDialog.setText(AlertDialogWhat);
@@ -1215,7 +1214,7 @@ public class JRivitMain extends javax.swing.JFrame {
                     if (this.statoConcluso) {
                         avviaLavoro();
                     } else {
-                        if (this.isChiediConfermaStop()) {
+                        if (this.isConfermaStopPausa()) {
 //                    DialogQ = STATO_PAUSA;
                             this.setContesto(this.panCur);
                             scelta = Static.STATO_PAUSA;
@@ -1248,6 +1247,9 @@ public class JRivitMain extends javax.swing.JFrame {
                     }
                     case Static.RICHIESTA_CALIBRAZIONE_SALVA -> {//Ritorna in scelta lavoro
                         this.gr.setPrimoGiro(true);
+                        PanelStart();
+                    }
+                    case Static.RICHIESTA_RESET_SYSTEM -> { // Ritorna in scelta lavoro
                         PanelStart();
                     }
 
@@ -1332,7 +1334,7 @@ public class JRivitMain extends javax.swing.JFrame {
             }
         }
 
-        if (isChiediConferma()) {
+        if (isiConfermaRispErrore()) {
             this.AlertDialogWhat = testoRispostaErrore + " ?";
             this.jLabelDialog.setText(AlertDialogWhat);
             PanelDialog();
@@ -1418,7 +1420,7 @@ public class JRivitMain extends javax.swing.JFrame {
     /**
      * PanelMain Pannello che viene visualizzato all'avvio
      */
-    public void PanelMain() {
+    public final void PanelMain() {
 //        this.changeButtons(this.Img_Warning, this.Img_Info, this.Img_Setup,
 //                this.Img_W, this.Img_WL, this.Img_Exit);  // pannello precedente. La chiamata a System.exit() manda in crash la JVM. VERIFICARE
         if (this.inSceltaTool) {    // Prima installazione -> scelta tool
@@ -1503,18 +1505,28 @@ public class JRivitMain extends javax.swing.JFrame {
         Option pathL = new Option("pl", "pathLock", true, "Lock path");
         pathL.setRequired(false);
         opzioni.addOption(pathL);
+        Option debugLevel = new Option("v", "debugLevel", true, "debug level (0-4)");
+        debugLevel.setRequired(false);
+        opzioni.addOption(debugLevel);
+        Option virtualMode = new Option("vm", "virtualMode", false, "virtual mode");
+        debugLevel.setRequired(false);
+        opzioni.addOption(virtualMode);
 
         CommandLineParser parser = new DefaultParser();
         HelpFormatter formatter = new HelpFormatter();
         try {
             cmd = parser.parse(opzioni, args);
+            if (cmd.hasOption("vm")) {
+                Static.setVMMODE(true);
+            }
+            if (cmd.hasOption("v")) {
+                Static.setDEBUG_LEVEL(cmd.getOptionValue("debugLevel"));
+            }
             if (cmd.hasOption("pw")) {
                 Static.setPATH_WATCH(cmd.getOptionValue("pathWork"));
-                Static.debug("Impostato Path per Work " + Static.PATH_WATCH, 3);
             }
             if (cmd.hasOption("pl")) {
                 Static.setPATH_LCK(cmd.getOptionValue("pathLock"));
-                Static.debug("Impostato Path per Lock " + Static.PATH_LCK, 3);
             }
         } catch (ParseException e) {
             System.out.println(e.getMessage());
@@ -2098,7 +2110,7 @@ public class JRivitMain extends javax.swing.JFrame {
             this.elencoDesLavoro.add(descrizioneRiga);
         }
         RefreshList(listLavori, elencoTxt);
-        if (panCur.equals("work")) {
+        if (panCur.equals("start")) {
             updateDescription(0);
         }
     }//End aggiornaLavori
@@ -2350,9 +2362,10 @@ public class JRivitMain extends javax.swing.JFrame {
         this.tiriNelLotto = tiriNelLotto;
     }
 
+    @SuppressWarnings("UseSpecificCatch")
     void updateSensori(String Valori) {
         String[] arrayValori;
-        if (Valori.equals("")) {
+        if (Valori.startsWith("error")) {
 //            this.jLabel_msg.setText("Air pressure not updated !"); // Aggiungere eventualmente un contatore
         } else {
             arrayValori = Valori.split(",");
@@ -2360,7 +2373,6 @@ public class JRivitMain extends javax.swing.JFrame {
                 // Calcolo esatto della pressione in base al grafico di risposta del sensore emc
                 // dalle specifiche il fattore di riduzione doveva essere 4, ma confrontando i valori
                 // con un pressostato già tarato si è individuato un fattore di 3.85
-                float correzionePressione = 0.20f;
                 this.pressione_aria_in = ((Float.parseFloat(arrayValori[4]) - 1) * 10 / 3.85f);
                 this.temp_rpi = Float.valueOf(arrayValori[0]);
                 this.temp_io_board = Float.valueOf(arrayValori[1]);
@@ -2390,7 +2402,7 @@ public class JRivitMain extends javax.swing.JFrame {
                     }
                 }
                 this.setListInfo(infoAggiuntive);
-            } catch (NumberFormatException e) {
+            } catch (Exception e) {
                 Static.debug("jrivitscreen.JRivitMain.update_sensori() - \n" + e.getMessage(), 2);
             }
         }//end Else
@@ -2587,13 +2599,12 @@ public class JRivitMain extends javax.swing.JFrame {
      *
      * @param operazione
      */
-    public void esegui(String operazione) {
+    public final void esegui(String operazione) {
         this.doWorker.set_operation(operazione);
         try {
             this.doWorker.doInBackground();
         } catch (Exception ex) {
-            Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
-            Static.debug("Error running backgruond operation " + operazione, 2);
+            Static.debug("Error running background operation " + operazione + ": " + ex, 2);
         }
     }
 
@@ -2660,21 +2671,18 @@ public class JRivitMain extends javax.swing.JFrame {
      * Imposta se chiedere o meno conferma quando il tiro è errato per la scelta
      * Continua, annulla accetta
      *
-     * @param chiediConfermaRisposta
+     * @param confermaRispErrore
      */
-    public void setChiediConfermaRisposta(boolean chiediConfermaRisposta) {
-        this.chiediConferma = chiediConfermaRisposta;
+    public void setConfermaRispErrore(boolean confermaRispErrore) {
+        this.confermaRispErrore = confermaRispErrore;
     }
 
     /**
      *
      * @return se devo chiedere o meno la conferma per Continua, annulla accetta
      */
-    public boolean isChiediConferma() {
-        return this.chiediConferma;
-    }
-
-    void set_nr_tiri_annullati(int tiri_annullati) {
+    public boolean isiConfermaRispErrore() {
+        return this.confermaRispErrore;
     }
 
     /**
@@ -2692,16 +2700,16 @@ public class JRivitMain extends javax.swing.JFrame {
      *
      * @param si_o_no
      */
-    void setChiedi_conferma_stop(boolean si_o_no) {
-        this.chiedi_conferma_stop = si_o_no;
+    void setConfermaStopPausa(boolean si_o_no) {
+        this.confermaStopPausa = si_o_no;
     }
 
     /**
      *
      * @return si o no conferma alla scelta STOP o PAUSA
      */
-    boolean isChiediConfermaStop() {
-        return this.chiedi_conferma_stop;
+    boolean isConfermaStopPausa() {
+        return this.confermaStopPausa;
     }
 
     /**
@@ -3023,7 +3031,6 @@ public class JRivitMain extends javax.swing.JFrame {
      * conclude la fase di calibrazione
      */
     void fineCalibrazione() {
-        setStato(Static.STATO_SCELTA_LAVORO);
         PanelMain();
     }
 
@@ -3448,7 +3455,7 @@ public class JRivitMain extends javax.swing.JFrame {
 
     public void chiediConfermaReset() {
         scelta = Static.RICHIESTA_RESET_SYSTEM;
-        this.AlertDialogWhat = "Confirm system RESET ?";
+        this.AlertDialogWhat = "Confirm system RESET to factory default ?";
         this.jLabelDialog.setText(AlertDialogWhat);
         PanelDialog();
     }
