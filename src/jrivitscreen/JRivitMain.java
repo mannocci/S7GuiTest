@@ -150,6 +150,7 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     public JRivitMain() {
         this.panCur = "main";
+        String beta = "β";
         initComponents();
         try {
             robot = new Robot();
@@ -223,7 +224,11 @@ public class JRivitMain extends javax.swing.JFrame {
         } catch (IOException ex) {
             Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
         }
-        versione = setup.getProperty("versione", "1.0");
+        if( ! setup.getProperty("versione", "0.0").startsWith("0.")){
+            beta="";
+        }
+        versione = setup.getProperty("versione", "0.0")+beta;
+
         data_release = setup.getProperty("data_versione", "14/12/2022");
         srvKey = setup.getProperty("srvkey", "");
         Static.debug("JRivitScreen ver. " + versione + " release " + data_release, 1);
@@ -2425,8 +2430,8 @@ public class JRivitMain extends javax.swing.JFrame {
                     this.JTextAreaDescrizioneInfo.append(Static.dtf.format(LocalDateTime.now()) + "\n");
                     DecimalFormat df = new DecimalFormat("0.00");// solo due cifre decimali
                     this.JTextAreaDescrizioneInfo.append("Air: " + df.format(this.pressione_aria_in) + " bar\n");
-                    this.JTextAreaDescrizioneInfo.append("V CPU: " + this.v_rpi.toString() + " V IN: " + this.v_in.toString() + "\n");
-                    this.JTextAreaDescrizioneInfo.append("Board T.: " + this.temp_io_board.toString() + " °C" + " CPU T.: " + this.temp_rpi.toString() + " °C\n");
+                    this.JTextAreaDescrizioneInfo.append("Vcpu: " + this.v_rpi.toString() + "V - Vin: " + this.v_in.toString() + "V\n");
+                    this.JTextAreaDescrizioneInfo.append("Board T.: " + this.temp_io_board.toString() + "°C - CPU T.: " + this.temp_rpi.toString() + "°C\n");
                 } catch (Exception e) {
                     Static.debug("Error reading info file\n" + e.toString(), 3);
                 }
