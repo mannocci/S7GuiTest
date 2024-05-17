@@ -39,6 +39,8 @@ import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
@@ -691,6 +693,7 @@ public class JFileWorker extends Thread {
      */
     private void readListaNMdevice() {
         List<String> list_nm_con = leggiFileElenco(Static.F_LISTA_NM_CON);
+        Collections.sort(list_nm_con, String.CASE_INSENSITIVE_ORDER);
         this.Rm.setListNmCon(list_nm_con);
         boolean lanIndicator = false;
         boolean vpnIndicator = false;

@@ -234,15 +234,24 @@ public class JDoWorker extends SwingWorker<String, Object> {
      * Attiva o disattiva di device di rete
      */
     void on_of_nm_device() {
-        String nomeDevice = this.Rm.getListSetupNM().getItem(this.Rm.getListSetupNM().getSelectedIndex());
-        String device;
-        if (nomeDevice.contains(" OFF")) {
-            device = nomeDevice.substring(0, nomeDevice.indexOf(" OFF"));
+        String[] cmd  = {"/home/adminsb/bin/start_stop_NM.sh", ""};
+        String[] cmdOFF = {"nmcli", "c","down",""};
+        String nomeSelezionato = this.Rm.getListSetupNM().getItem(this.Rm.getListSetupNM().getSelectedIndex());
+        String nomeCon;
+        if (nomeSelezionato.contains(" OFF")) {
+            nomeCon = nomeSelezionato.substring(0, nomeSelezionato.indexOf(" OFF"));
         } else {
-            device = nomeDevice.substring(0, nomeDevice.indexOf(" ON"));
+            nomeCon = nomeSelezionato.substring(0, nomeSelezionato.indexOf(" ON"));
+            if(nomeCon.startsWith("eth0" )){
+                cmdOFF[3] = "eth0_dhcp";
+                run_system_bash(cmdOFF);
+                cmdOFF[3] ="eth0_direct";
+                run_system_bash(cmdOFF);
+                cmdOFF[3] = "eth0_static";
+                run_system_bash(cmdOFF);
+             }
         }
-
-        String[] cmd = {"/home/adminsb/bin/start_stop_NM.sh", device};
+        cmd[1] = nomeCon;
         run_system_bash(cmd);
         //Dopo aver avviato o spento una con. deve aggiornare il file
         cmd[0] = "/home/adminsb/bin/nm_list_con.sh";

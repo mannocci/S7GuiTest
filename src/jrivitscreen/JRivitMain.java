@@ -37,6 +37,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -224,10 +225,10 @@ public class JRivitMain extends javax.swing.JFrame {
         } catch (IOException ex) {
             Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
         }
-        if( ! setup.getProperty("versione", "0.0").startsWith("0.")){
-            beta="";
+        if (!setup.getProperty("versione", "0.0").startsWith("0.")) {
+            beta = "";
         }
-        versione = setup.getProperty("versione", "0.0")+beta;
+        versione = setup.getProperty("versione", "0.0") + beta;
 
         data_release = setup.getProperty("data_versione", "14/12/2022");
         srvKey = setup.getProperty("srvkey", "");
@@ -1969,8 +1970,10 @@ public class JRivitMain extends javax.swing.JFrame {
     private void PanelInfo() {
         this.changeButtons(this.Img_Exit, this.Img_Freccia_sx, this.Img_Freccia_dx,
                 this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Nulla);
+//        this.JTextAreaDescrizioneInfo.setVisible(true);
         this.listInfo.requestFocus(); // Per poter usare le frecce
         cambiaPannello(this.jPanelInfo);
+        
     }
 
     /**
@@ -2384,6 +2387,7 @@ public class JRivitMain extends javax.swing.JFrame {
     @SuppressWarnings("UseSpecificCatch")
     void updateSensori(String Valori) {
         String[] arrayValori;
+      
         if (Valori.startsWith("error")) {
 //            this.jLabel_msg.setText("Air pressure not updated !"); // Aggiungere eventualmente un contatore
         } else {
@@ -2420,9 +2424,8 @@ public class JRivitMain extends javax.swing.JFrame {
                         this.jLabel_msg.setText("INC.AIR OK: " + df.format(pressione_aria_in) + " Bar");
                     }
                 }
-                this.JTextAreaDescrizioneInfo.selectAll();
-                this.JTextAreaDescrizioneInfo.replaceSelection("");
-                
+            if (this.panCur.equals("info")) {      
+                this.JTextAreaDescrizioneInfo.setText("");
                 if (this.pressione_aria_in == null) {
                     this.JTextAreaDescrizioneInfo.append("Pressione aria Null");
                 }
@@ -2435,12 +2438,15 @@ public class JRivitMain extends javax.swing.JFrame {
                 } catch (Exception e) {
                     Static.debug("Error reading info file\n" + e.toString(), 3);
                 }
-                if( this.panCur.equals("info")){
-                    this.JTextAreaDescrizioneInfo.repaint();
-                }
+//                if (this.panCur.equals("info")) {
+//                   // this.JTextAreaDescrizioneInfo.repaint();
+//                }else{
+//                    this.JTextAreaDescrizioneInfo.setVisible(false);
+               }
             } catch (Exception e) {
                 Static.debug("jrivitscreen.JRivitMain.update_sensori() - \n" + e.getMessage(), 2);
             }
+        
         }//end Else
     }
 
@@ -2543,7 +2549,7 @@ public class JRivitMain extends javax.swing.JFrame {
      *
      * @param list_nm_con Elenco dei device
      */
-    public void setListNmCon(List list_nm_con) {
+    public void setListNmCon(List <String> list_nm_con) {
         this.listSetupNM.removeAll();
         for (int c = 0; c < list_nm_con.size(); c++) {
             this.listSetupNM.add(list_nm_con.get(c).toString());
@@ -2563,7 +2569,9 @@ public class JRivitMain extends javax.swing.JFrame {
         for (int c = 0; c < infoAggiuntive.size(); c++) {
             this.listInfo.add(infoAggiuntive.get(c).toString());
         }
-        this.listInfo.repaint();
+        if (this.panCur.equals("info")) {
+            this.listInfo.repaint();
+        }
     }
 
     /**
