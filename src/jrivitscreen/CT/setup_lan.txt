@@ -1,3 +1,0 @@
-DHCP
-STATIC
-Default factory 192.168.207.1

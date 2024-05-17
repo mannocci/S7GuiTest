@@ -1,8 +1,0 @@
-info.txt 
-lavori_descrizione.txt 
-lavori.txt 
-nome_device 
-setup_lan.txt 
-setup_wifi.txt 
-warning.txt
-
