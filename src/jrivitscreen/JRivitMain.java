@@ -227,12 +227,13 @@ public class JRivitMain extends javax.swing.JFrame {
         data_release = setup.getProperty("data_versione", "14/12/2022");
         srvKey = setup.getProperty("srvkey", "");
         Static.debug("JRivitScreen ver. " + versione + " release " + data_release, 1);
-        if (Static.VMMODE)
+        if (Static.VMMODE) {
             Static.debug("virtual Mode ON", 1);
+        }
         Static.debug("Debug level: " + Static.DEBUGLEVEL, 1);
         Static.debug("Impostato Path per Work " + Static.PATH_WATCH, 3);
         Static.debug("Impostato Path per Lock " + Static.PATH_LCK, 3);
-    
+
         this.pannelloPrecedente = "main";   // Serve per gestire il ritorno dal pannello di warning
         this.confermaStopPausa = true;
         this.confermaRispErrore = false;
@@ -305,6 +306,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelSetupWiFi = new javax.swing.JPanel();
         listWifi = new java.awt.List();
         jPanelInfo = new javax.swing.JPanel();
+        JTextAreaDescrizioneInfo = new javax.swing.JTextArea();
         listInfo = new java.awt.List();
         jPanelWarning = new javax.swing.JPanel();
         listWarning = new java.awt.List();
@@ -602,10 +604,21 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelInfo.setPreferredSize(new java.awt.Dimension(328, 276));
         jPanelInfo.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        JTextAreaDescrizioneInfo.setEditable(false);
+        JTextAreaDescrizioneInfo.setBackground(new java.awt.Color(255, 255, 255));
+        JTextAreaDescrizioneInfo.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
+        JTextAreaDescrizioneInfo.setForeground(new java.awt.Color(0, 0, 0));
+        JTextAreaDescrizioneInfo.setLineWrap(true);
+        JTextAreaDescrizioneInfo.setRows(5);
+        JTextAreaDescrizioneInfo.setFocusable(false);
+        JTextAreaDescrizioneInfo.setMaximumSize(new java.awt.Dimension(320, 80));
+        JTextAreaDescrizioneInfo.setMinimumSize(new java.awt.Dimension(320, 80));
+        jPanelInfo.add(JTextAreaDescrizioneInfo, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 2, 328, 124));
+
         listInfo.setBackground(new java.awt.Color(255, 255, 204));
         listInfo.setFont(new java.awt.Font("Dialog", 0, 16)); // NOI18N
         listInfo.setMaximumSize(new java.awt.Dimension(326, 273));
-        jPanelInfo.add(listInfo, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 2, 326, 273));
+        jPanelInfo.add(listInfo, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 128, 326, 146));
         listInfo.getAccessibleContext().setAccessibleName("Lista_info");
         listInfo.getAccessibleContext().setAccessibleDescription("Informazioni del sistema");
 
@@ -1554,6 +1567,7 @@ public class JRivitMain extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextArea JTextAreaDescrizioneInfo;
     private javax.swing.JTextArea JTextAreaDescrizioneLavoro;
     private javax.swing.JButton jButtonPL1;
     private javax.swing.JButton jButtonPL2;
@@ -2401,7 +2415,24 @@ public class JRivitMain extends javax.swing.JFrame {
                         this.jLabel_msg.setText("INC.AIR OK: " + df.format(pressione_aria_in) + " Bar");
                     }
                 }
-                this.setListInfo(infoAggiuntive);
+                this.JTextAreaDescrizioneInfo.selectAll();
+                this.JTextAreaDescrizioneInfo.replaceSelection("");
+                
+                if (this.pressione_aria_in == null) {
+                    this.JTextAreaDescrizioneInfo.append("Pressione aria Null");
+                }
+                try {
+                    this.JTextAreaDescrizioneInfo.append(Static.dtf.format(LocalDateTime.now()) + "\n");
+                    DecimalFormat df = new DecimalFormat("0.00");// solo due cifre decimali
+                    this.JTextAreaDescrizioneInfo.append("Air: " + df.format(this.pressione_aria_in) + " bar\n");
+                    this.JTextAreaDescrizioneInfo.append("V CPU: " + this.v_rpi.toString() + " V IN: " + this.v_in.toString() + "\n");
+                    this.JTextAreaDescrizioneInfo.append("Board T.: " + this.temp_io_board.toString() + " °C" + " CPU T.: " + this.temp_rpi.toString() + " °C\n");
+                } catch (Exception e) {
+                    Static.debug("Error reading info file\n" + e.toString(), 3);
+                }
+                if( this.panCur.equals("info")){
+                    this.JTextAreaDescrizioneInfo.repaint();
+                }
             } catch (Exception e) {
                 Static.debug("jrivitscreen.JRivitMain.update_sensori() - \n" + e.getMessage(), 2);
             }
@@ -2524,24 +2555,8 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     public void setListInfo(List info) {
         this.listInfo.removeAll();
-        if (this.pressione_aria_in == null) {
-            listInfo.add("Pressione aria Null");
-        }
-        try {
-            listInfo.add(Static.dtf.format(LocalDateTime.now()));
-            DecimalFormat df = new DecimalFormat("0.00");// solo due cifre decimali
-            listInfo.add("Air pressure: " + df.format(this.pressione_aria_in) + " bar");
-            listInfo.add("V CPU: " + this.v_rpi.toString() + " V");
-            listInfo.add("V IN: " + this.v_in.toString() + " V");
-            listInfo.add("I/O board Temp.: " + this.temp_io_board.toString() + " °C");
-            listInfo.add("CPU Temp.: " + this.temp_rpi.toString() + " °C");
-            listInfo.add("-------------------------------------------------------");
-        } catch (Exception e) {
-            Static.debug("Error reading info file\n" + e.toString(), 3);
-        }
-        infoAggiuntive = info;
-        for (int c = 0; c < info.size(); c++) {
-            this.listInfo.add(info.get(c).toString());
+        for (int c = 0; c < infoAggiuntive.size(); c++) {
+            this.listInfo.add(infoAggiuntive.get(c).toString());
         }
         this.listInfo.repaint();
     }
@@ -3466,6 +3481,15 @@ public class JRivitMain extends javax.swing.JFrame {
 
     public void setInSceltaTool(boolean inSceltaTool) {
         this.inSceltaTool = inSceltaTool;
+    }
+
+    public List getInfoAggiuntive() {
+        return infoAggiuntive;
+    }
+
+    public void setInfoAggiuntive(List infoAggiuntive) {
+        this.infoAggiuntive.clear();
+        this.infoAggiuntive = infoAggiuntive;
     }
 
 }

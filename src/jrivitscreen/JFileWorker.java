@@ -261,6 +261,7 @@ public class JFileWorker extends Thread {
         if (LeggiFileElencoInfo.isEmpty()) {
             LeggiFileElencoInfo.add("Manca file Info");
         }
+        this.Rm.setInfoAggiuntive(LeggiFileElencoInfo);
         this.Rm.setListInfo(LeggiFileElencoInfo);
     }
 
