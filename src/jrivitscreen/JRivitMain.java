@@ -27,6 +27,7 @@ package jrivitscreen;
 
 import java.awt.AWTException;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
@@ -67,6 +68,7 @@ public class JRivitMain extends javax.swing.JFrame {
             Img_Pause, Img_Annulla, Img_Lan, Img_WiFi,
             Img_Freccia_sx, Img_Freccia_dx, Img_Cancel, Img_W, Img_WL;
     private final ImageIcon Img_Cert, Img_WiFi_2_4, Img_WiFi_5, Img_WiFi_Auto;
+    private final ImageIcon Img_start_WiFi, Img_stop_WiFi, Img_start_log, Img_stop_log;
     private String AlertDialogAnnulla;
     private String AlertDialogWhat;
     private String Lavorodescrizione;
@@ -143,6 +145,8 @@ public class JRivitMain extends javax.swing.JFrame {
     private boolean inSceltaTool;
     private String rispostaErrore;
     private String welcome;
+    private boolean isAPOn = false;     //  usato per la certificazione
+    private boolean isLogOn = false;    //  usato per la certificazione
 
 //
 //Dopo una sospensione
@@ -205,6 +209,10 @@ public class JRivitMain extends javax.swing.JFrame {
         Img_WiFi_2_4 = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/wifi_2.4.png"));
         Img_WiFi_5 = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/wifi_5.png"));
         Img_WiFi_Auto = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/wifi_auto.png"));
+        Img_start_WiFi = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/startWifi.png"));
+        Img_stop_WiFi = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/stopWifi.png"));
+        Img_start_log = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/startLog.png"));
+        Img_stop_log = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/stopLog.png"));
 
         elencoLavori = new ArrayList<>();
         elencoWl = new ArrayList<>();
@@ -286,7 +294,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelStart = new javax.swing.JPanel();
         listLavori = new java.awt.List();
         listWLavori = new java.awt.List();
-        JTextAreaDescrizioneLavoro = new javax.swing.JTextArea();
+        JTextAreaDescrizione = new javax.swing.JTextArea();
         listTools = new java.awt.List();
         jPanelStarted = new javax.swing.JPanel();
         jLabelContatoreLotti = new javax.swing.JLabel();
@@ -341,7 +349,6 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelInternet = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setMaximumSize(new java.awt.Dimension(480, 320));
         setMinimumSize(new java.awt.Dimension(480, 320));
         setName("frameMain"); // NOI18N
         setUndecorated(true);
@@ -433,14 +440,14 @@ public class JRivitMain extends javax.swing.JFrame {
         });
         jPanelStart.add(listWLavori, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 2, 326, 180));
 
-        JTextAreaDescrizioneLavoro.setEditable(false);
-        JTextAreaDescrizioneLavoro.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
-        JTextAreaDescrizioneLavoro.setLineWrap(true);
-        JTextAreaDescrizioneLavoro.setRows(5);
-        JTextAreaDescrizioneLavoro.setFocusable(false);
-        JTextAreaDescrizioneLavoro.setMaximumSize(new java.awt.Dimension(320, 80));
-        JTextAreaDescrizioneLavoro.setMinimumSize(new java.awt.Dimension(320, 80));
-        jPanelStart.add(JTextAreaDescrizioneLavoro, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 186, 328, 90));
+        JTextAreaDescrizione.setEditable(false);
+        JTextAreaDescrizione.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
+        JTextAreaDescrizione.setLineWrap(true);
+        JTextAreaDescrizione.setRows(5);
+        JTextAreaDescrizione.setFocusable(false);
+        JTextAreaDescrizione.setMaximumSize(new java.awt.Dimension(320, 80));
+        JTextAreaDescrizione.setMinimumSize(new java.awt.Dimension(320, 80));
+        jPanelStart.add(JTextAreaDescrizione, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 186, 328, 90));
 
         listTools.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         listTools.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -673,12 +680,12 @@ public class JRivitMain extends javax.swing.JFrame {
         listCert.setBackground(new java.awt.Color(255, 255, 204));
         listCert.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
         listCert.setMaximumSize(new java.awt.Dimension(326, 273));
-        jPanelCert.add(listCert, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 2, 326, 190));
+        jPanelCert.add(listCert, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 2, 326, 185));
 
         listSens.setBackground(new java.awt.Color(0, 153, 102));
         listSens.setFont(new java.awt.Font("Dialog", 1, 16)); // NOI18N
         listSens.setMaximumSize(new java.awt.Dimension(326, 273));
-        jPanelCert.add(listSens, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 192, 326, 86));
+        jPanelCert.add(listSens, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 186, 326, 90));
 
         jLayeredPaneCenter.add(jPanelCert, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 328, 276));
 
@@ -794,7 +801,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabel_B_R.setBackground(java.awt.Color.lightGray);
         jLabel_B_R.setFont(new java.awt.Font("DejaVu Sans", 1, 14)); // NOI18N
         jLabel_B_R.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel_B_R.setText("Aria Off");
+        jLabel_B_R.setText("Air OFF");
         jLabel_B_R.setOpaque(true);
         jPanelBotton.add(jLabel_B_R, new org.netbeans.lib.awtextra.AbsoluteConstraints(407, 5, 70, 20));
         jLabel_B_R.getAccessibleContext().setAccessibleDescription("Indicatore dello stato dell'aria");
@@ -807,7 +814,9 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabel_msg.setOpaque(true);
         jPanelBotton.add(jLabel_msg, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 5, 187, 20));
 
+        jLabelWarning.setBackground(java.awt.Color.green);
         jLabelWarning.setFont(new java.awt.Font("DejaVu Sans", 1, 13)); // NOI18N
+        jLabelWarning.setForeground(java.awt.Color.black);
         jLabelWarning.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabelWarning.setText("OK");
         jLabelWarning.setToolTipText("");
@@ -925,11 +934,11 @@ public class JRivitMain extends javax.swing.JFrame {
                         }
                     }
                     this.listLavori.select(i);
-                    this.JTextAreaDescrizioneLavoro.setText(this.elencoDesLavoro.get(i));
+                    this.JTextAreaDescrizione.setText(this.elencoDesLavoro.get(i));
                     // todo Gestire il caso in cui il lavoro in pausa non viene trovato
                     PanelStarted();
                 } else {
-                    //this.JTextAreaDescrizioneLavoro.setText(this.elencoDesLavoro.get(0));
+                    //this.JTextAreaDescrizione.setText(this.elencoDesLavoro.get(0));
                     PanelStart();
                 }
             }
@@ -990,9 +999,8 @@ public class JRivitMain extends javax.swing.JFrame {
                 }
             }
             case "cert" -> {
-                esegui("wifi_2.4GHz.sh");
+                esegui("certWifi_2.4GHz.sh");
                 wifiMode = "band bg - 2.4 GHz";
-                aggiornaListCert();
             }
 
             case "warning", "info", "setup lan", "setup wifi", "setup" ->
@@ -1153,6 +1161,22 @@ public class JRivitMain extends javax.swing.JFrame {
                 this.esegui("aggiorna_stato_lan");
                 PanelSetupLan();
             }
+            case "cert" -> {
+                if (!isAPOn) {
+                    esegui("certWifi_2.4GHz.sh");
+                    this.jButtonPL2.setIcon(this.Img_stop_WiFi);
+                } else {
+                    esegui("certWifiStop.sh");
+                    this.jButtonPL2.setIcon(this.Img_start_WiFi);
+                    listCert.removeAll();
+                    listCert.add("WiFi AP OFF");
+                    listCert.add("");
+                    listCert.add("LOG: " + (isLogOn ? "ON" : "OFF"));
+                    listCert.add("");
+                    listCert.add("Press button to choose mode");
+                }
+                isAPOn = !isAPOn;
+            }
             case "dialog" -> {
                 if (this.contesto.contains("started")) {
                     PanelStarted();
@@ -1195,7 +1219,26 @@ public class JRivitMain extends javax.swing.JFrame {
                     rispostaErrore();
                 }
             }
-
+            case "cert" -> {
+                if (!isLogOn) {
+                    esegui("certSensLogStart.sh");
+                    this.jButtonPL3.setIcon(this.Img_stop_log);
+                } else {
+                    esegui("certSensLogStop.sh");
+                    this.jButtonPL3.setIcon(this.Img_start_log);
+                }
+                isLogOn = !isLogOn;
+                if (isAPOn) {
+                    aggiornaListCert(null);
+                } else {
+                    listCert.removeAll();
+                    listCert.add("WiFi AP OFF");
+                    listCert.add("");
+                    listCert.add("LOG: " + (isLogOn ? "ON" : "OFF"));
+                    listCert.add("");
+                    listCert.add("Press button to choose mode");
+                }
+            }
         }
     }//GEN-LAST:event_jButtonPL3ActionPerformed
     /**
@@ -1213,7 +1256,7 @@ public class JRivitMain extends javax.swing.JFrame {
                     this.set_jLabel_B_L("WL");
                     this.listLavori.setVisible(false);
                     this.listWLavori.setVisible(true);
-                    this.JTextAreaDescrizioneLavoro.setText(this.elencoDesWl.get(0).toString());
+                    this.JTextAreaDescrizione.setText(this.elencoDesWl.get(0).toString());
                     PanelStart();
                 }
 
@@ -1249,9 +1292,8 @@ public class JRivitMain extends javax.swing.JFrame {
 
             }
             case "cert" -> {
-                esegui("wifi_5GHz.sh");
+                esegui("certWifi_5GHz.sh");
                 wifiMode = "band a - 5 GHz";
-                aggiornaListCert();
             }
             case "setup" -> {
                 PulsanteGiu();
@@ -1325,11 +1367,9 @@ public class JRivitMain extends javax.swing.JFrame {
                 PanelSetup();
             }
             case "cert" -> {
-                esegui("wifi_auto.sh");
+                esegui("certWifi_auto.sh");
                 wifiMode = "Auto";
-                aggiornaListCert();
             }
-
         }
     }//GEN-LAST:event_jButtonPR3ActionPerformed
 
@@ -1380,7 +1420,7 @@ public class JRivitMain extends javax.swing.JFrame {
     }
 
     private void listLavoriMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listLavoriMouseClicked
-        this.JTextAreaDescrizioneLavoro.setText(
+        this.JTextAreaDescrizione.setText(
                 this.elencoDesLavoro.get(this.listLavori.getSelectedIndex()));
         int idLavoro = this.listLavori.getSelectedIndex();
         if (evt.getClickCount() == 2) { // doppio click -> avvio lavoro
@@ -1414,7 +1454,7 @@ public class JRivitMain extends javax.swing.JFrame {
     }//GEN-LAST:event_listLavoriItemStateChanged
 
     private void listWLavoriMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listWLavoriMouseClicked
-        this.JTextAreaDescrizioneLavoro.setText(
+        this.JTextAreaDescrizione.setText(
                 this.elencoDesWl.get(this.listWLavori.getSelectedIndex()).toString());
         if (evt.getClickCount() == 2) { // doppio click -> avvio work list
             impostaWL();
@@ -1573,8 +1613,8 @@ public class JRivitMain extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextArea JTextAreaDescrizione;
     private javax.swing.JTextArea JTextAreaDescrizioneInfo;
-    private javax.swing.JTextArea JTextAreaDescrizioneLavoro;
     private javax.swing.JButton jButtonPL1;
     private javax.swing.JButton jButtonPL2;
     private javax.swing.JButton jButtonPL3;
@@ -1648,7 +1688,7 @@ public class JRivitMain extends javax.swing.JFrame {
             this.listWLavori.setVisible(false);
             this.listTools.setVisible(true);
             lista = this.listTools;
-            this.JTextAreaDescrizioneLavoro.setText(this.welcome);
+            this.JTextAreaDescrizione.setText(this.welcome);
             this.changeButtons(this.Img_Exit, this.Img_Nulla, this.Img_Nulla,
                     this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Ok);
         } else {
@@ -1973,7 +2013,7 @@ public class JRivitMain extends javax.swing.JFrame {
 //        this.JTextAreaDescrizioneInfo.setVisible(true);
         this.listInfo.requestFocus(); // Per poter usare le frecce
         cambiaPannello(this.jPanelInfo);
-        
+
     }
 
     /**
@@ -1989,9 +2029,16 @@ public class JRivitMain extends javax.swing.JFrame {
     }
 
     private void PanelCert() {
-        this.changeButtons(this.Img_Exit, this.Img_Nulla, this.Img_Nulla,
+        this.changeButtons(this.Img_Exit, this.Img_start_WiFi, this.Img_start_log,
                 this.Img_WiFi_2_4, this.Img_WiFi_5, this.Img_WiFi_Auto);
-        aggiornaListCert();
+        this.jButtonPL2.setIcon(isAPOn ? this.Img_stop_WiFi : this.Img_start_WiFi);
+        this.jButtonPL3.setIcon(isLogOn ? this.Img_stop_log : this.Img_start_log);
+        listCert.removeAll();
+        listCert.add("WiFi AP: "+ (isAPOn ? "ON" : "OFF"));
+        listCert.add("");
+        listCert.add("LOG: " + (isLogOn ? "ON" : "OFF"));
+        listCert.add("");
+        listCert.add("Press button to choose mode");
         cambiaPannello(this.jPanelCert);
     }
 
@@ -2093,47 +2140,54 @@ public class JRivitMain extends javax.swing.JFrame {
         String limPezziRiga;
         String descrizioneRiga;
         String canStart;
+        String cntLotti;
+        String cntPezzi;
         String[] lavoroSplit;
-
-        if (lista.isEmpty() || lista.contains("errore")) {  // sintassi nomelavoro, lotti, pezzi, descrizione, canStart
-            lista.add(" no count limits§-1§-1§work without counting limits§0");
-            Static.debug("ERROR: Emply work list", 2);
-            // todo verificare se in caso di file lavori.txt vuoto occore fermarsi
-        }
-        List<String> elencoTxt = new ArrayList<>();
-        elencoDesLavoro = new ArrayList<>();
-        elencoLavori = new ArrayList<>();
-        elencoLavoriCompleto = new ArrayList<>();
-        elencoDesLavoroCompleto = new ArrayList<>();
-        this.elencoLavori.clear();
-        for (String riga : lista) {
-            lavoroSplit = riga.split("§"); // nomeLavoro, limLotti, limPezzi, descrizione, canStart, UDLotti, UDPezzi
-            this.elencoLavoriCompleto.add(lavoroSplit);
-            nomeLavoroRiga = lavoroSplit[0];
-            limLottiRiga = lavoroSplit[1];
-            limPezziRiga = lavoroSplit[2];
-            descrizioneRiga = lavoroSplit[3];
-            canStart = lavoroSplit[4];
-            /*
-            // non servono per costruire le stringhe dell'elenco ma solo quando il lavoro è stato scelto
-            UDLotti = lavoroSplit[5];
-            UDPezzi = lavoroSplit[6];
-             */
-            if (limLottiRiga.equals("-1")) { // Lavoro senza limiti -> visualizzo solo il nome
-                elencoTxt.add(nomeLavoroRiga);
-            } else {
-                elencoTxt.add(nomeLavoroRiga + " L=" + limLottiRiga + " T=" + limPezziRiga);
+        try {
+            if (lista.isEmpty() || lista.contains("errore")) {  // sintassi nomelavoro, lotti, pezzi, descrizione, canStart, UDLotti, UDPezzi, cntLotti, cntPezzi
+                lista.add(" no count limits§-1§-1§work without counting limits§0");
+                Static.debug("ERROR: Emply work list", 2);
+                // todo verificare se in caso di file lavori.txt vuoto occore fermarsi
             }
-            this.elencoLavori.add(lavoroSplit);
-            if (canStart.equals("0")) { // lavoro non avviabile
-                descrizioneRiga = "Not calibrated -> " + descrizioneRiga;
+            List<String> elencoTxt = new ArrayList<>();
+            elencoDesLavoro = new ArrayList<>();
+            elencoLavori = new ArrayList<>();
+            elencoLavoriCompleto = new ArrayList<>();
+            elencoDesLavoroCompleto = new ArrayList<>();
+            this.elencoLavori.clear();
+            for (String riga : lista) {
+                lavoroSplit = riga.split("§"); // nomeLavoro, limLotti, limPezzi, descrizione, canStart, UDLotti, UDPezzi
+                this.elencoLavoriCompleto.add(lavoroSplit);
+                nomeLavoroRiga = lavoroSplit[0];
+                limLottiRiga = lavoroSplit[1];
+                limPezziRiga = lavoroSplit[2];
+                descrizioneRiga = lavoroSplit[3];
+                canStart = lavoroSplit[4];
+                /*
+                // non servono per costruire le stringhe dell'elenco ma solo quando il lavoro è stato scelto
+                UDLotti = lavoroSplit[5];
+                UDPezzi = lavoroSplit[6];
+                 */
+                cntLotti = lavoroSplit[7];
+                cntPezzi = lavoroSplit[8];
+                if (limLottiRiga.equals("-1")) { // Lavoro senza limiti -> visualizzo solo il nome
+                    elencoTxt.add(nomeLavoroRiga);
+                } else {
+                    elencoTxt.add(nomeLavoroRiga + " L=" + cntLotti + "/" + limLottiRiga + " T=" + cntPezzi + "/" + limPezziRiga);
+                }
+                this.elencoLavori.add(lavoroSplit);
+                if (canStart.equals("0")) { // lavoro non avviabile
+                    descrizioneRiga = "Not calibrated -> " + descrizioneRiga;
+                }
+                this.elencoDesLavoroCompleto.add(descrizioneRiga);
+                this.elencoDesLavoro.add(descrizioneRiga);
             }
-            this.elencoDesLavoroCompleto.add(descrizioneRiga);
-            this.elencoDesLavoro.add(descrizioneRiga);
-        }
-        RefreshList(listLavori, elencoTxt);
-        if (panCur.equals("start")) {
-            updateDescription(0);
+            RefreshList(listLavori, elencoTxt);
+            if (panCur.equals("start")) {
+                updateDescription(0);
+            }
+        } catch (Exception e) {
+            Static.debug("Error reading list of works:" + lista.toString() + " - " + e, 2);
         }
     }//End aggiornaLavori
 
@@ -2387,7 +2441,7 @@ public class JRivitMain extends javax.swing.JFrame {
     @SuppressWarnings("UseSpecificCatch")
     void updateSensori(String Valori) {
         String[] arrayValori;
-      
+
         if (Valori.startsWith("error")) {
 //            this.jLabel_msg.setText("Air pressure not updated !"); // Aggiungere eventualmente un contatore
         } else {
@@ -2424,29 +2478,29 @@ public class JRivitMain extends javax.swing.JFrame {
                         this.jLabel_msg.setText("INC.AIR OK: " + df.format(pressione_aria_in) + " Bar");
                     }
                 }
-            if (this.panCur.equals("info")) {      
-                this.JTextAreaDescrizioneInfo.setText("");
-                if (this.pressione_aria_in == null) {
-                    this.JTextAreaDescrizioneInfo.append("Pressione aria Null");
-                }
-                try {
-                    this.JTextAreaDescrizioneInfo.append(Static.dtf.format(LocalDateTime.now()) + "\n");
-                    DecimalFormat df = new DecimalFormat("0.00");// solo due cifre decimali
-                    this.JTextAreaDescrizioneInfo.append("Air: " + df.format(this.pressione_aria_in) + " bar\n");
-                    this.JTextAreaDescrizioneInfo.append("Vcpu: " + this.v_rpi.toString() + "V - Vin: " + this.v_in.toString() + "V\n");
-                    this.JTextAreaDescrizioneInfo.append("Board T.: " + this.temp_io_board.toString() + "°C - CPU T.: " + this.temp_rpi.toString() + "°C\n");
-                } catch (Exception e) {
-                    Static.debug("Error reading info file\n" + e.toString(), 3);
-                }
+                if (this.panCur.equals("info")) {
+                    this.JTextAreaDescrizioneInfo.setText("");
+                    if (this.pressione_aria_in == null) {
+                        this.JTextAreaDescrizioneInfo.append("Pressione aria Null");
+                    }
+                    try {
+                        this.JTextAreaDescrizioneInfo.append(Static.dtf.format(LocalDateTime.now()) + "\n");
+                        DecimalFormat df = new DecimalFormat("0.00");// solo due cifre decimali
+                        this.JTextAreaDescrizioneInfo.append("Air: " + df.format(this.pressione_aria_in) + " bar\n");
+                        this.JTextAreaDescrizioneInfo.append("Vcpu: " + this.v_rpi.toString() + "V - Vin: " + this.v_in.toString() + "V\n");
+                        this.JTextAreaDescrizioneInfo.append("Board T.: " + this.temp_io_board.toString() + "°C - CPU T.: " + this.temp_rpi.toString() + "°C\n");
+                    } catch (Exception e) {
+                        Static.debug("Error reading info file\n" + e.toString(), 3);
+                    }
 //                if (this.panCur.equals("info")) {
 //                   // this.JTextAreaDescrizioneInfo.repaint();
 //                }else{
 //                    this.JTextAreaDescrizioneInfo.setVisible(false);
-               }
+                }
             } catch (Exception e) {
                 Static.debug("jrivitscreen.JRivitMain.update_sensori() - \n" + e.getMessage(), 2);
             }
-        
+
         }//end Else
     }
 
@@ -2549,11 +2603,12 @@ public class JRivitMain extends javax.swing.JFrame {
      *
      * @param list_nm_con Elenco dei device
      */
-    public void setListNmCon(List <String> list_nm_con) {
+    public void setListNmCon(List<String> list_nm_con) {
         this.listSetupNM.removeAll();
         for (int c = 0; c < list_nm_con.size(); c++) {
             this.listSetupNM.add(list_nm_con.get(c).toString());
         }
+
         this.listSetupNM.select(0);
         this.listSetupNM.getVisibleIndex();
         this.listSetupNM.repaint();
@@ -3325,53 +3380,46 @@ public class JRivitMain extends javax.swing.JFrame {
      * @param nrCurItem Indice dell'elemento selezionato
      */
     private void updateDescription(int nrCurItem) {
-        String nomeContatori;
-        if (inSceltaTool) {
-            if (nrCurItem < this.elencoTools.size()) { // Per prevenire eventuali errori
-                this.JTextAreaDescrizioneLavoro.setText(this.elencoTools.get(nrCurItem) + " - "
-                        + this.elencoDesTools.get(nrCurItem));
-            }
-        } else {
-            if (this.inWl) {
-                if (nrCurItem < this.elencoWlCompleto.size()) { // Per prevenire eventuali errori
-                    this.JTextAreaDescrizioneLavoro.setText(this.elencoWl.get(
-                            nrCurItem)[0] + " - "
-                            + this.elencoDesWl.get(nrCurItem));
-                    if (this.elencoWlCompleto.get(nrCurItem)[3].equals("0")) {
-                        this.JTextAreaDescrizioneLavoro.setBackground(Color.yellow);
-                        this.jButtonPR3.setIcon(this.Img_Nulla);//aggiorna il tipo di Icona per il pulsante
-                        this.jButtonPR3.setEnabled(false);
-                    } else {
-                        this.JTextAreaDescrizioneLavoro.setBackground(Color.white);
-                        this.jButtonPR3.setIcon(this.Img_Ok);//aggiorna il tipo di Icona per il pulsante
-                        this.jButtonPR3.setEnabled(true);
-                    }
+        try {   // Per prevenire eventuali indici errati
+            if (inSceltaTool) {
+                if (nrCurItem < this.elencoTools.size()) { // Per prevenire eventuali errori
+                    this.JTextAreaDescrizione.setText(this.elencoTools.get(nrCurItem) + " - "
+                            + this.elencoDesTools.get(nrCurItem));
                 }
             } else {
-                if (nrCurItem < this.elencoLavoriCompleto.size()) { // Per prevenire eventuali errori
-                    //+ " L=" + limLottiRiga + " T=" + limPezziRiga
-                    if (this.elencoLavori.get(nrCurItem)[1].equals("-1")) {
-                        nomeContatori = this.elencoLavori.get(nrCurItem)[0];
-                    } else {
-                        nomeContatori = this.elencoLavori.get(nrCurItem)[0]
-                                + " L="
-                                + this.elencoLavori.get(nrCurItem)[1]
-                                + " T="
-                                + this.elencoLavori.get(nrCurItem)[2];
+                if (this.inWl) {
+                    if (nrCurItem < this.elencoWlCompleto.size()) { // Per prevenire eventuali errori
+                        this.JTextAreaDescrizione.setText(this.elencoWl.get(
+                                nrCurItem)[0] + " - "
+                                + this.elencoDesWl.get(nrCurItem));
+                        if (this.elencoWlCompleto.get(nrCurItem)[3].equals("0")) {
+                            this.JTextAreaDescrizione.setBackground(Color.yellow);
+                            this.jButtonPR3.setIcon(this.Img_Nulla);//aggiorna il tipo di Icona per il pulsante
+                            this.jButtonPR3.setEnabled(false);
+                        } else {
+                            this.JTextAreaDescrizione.setBackground(Color.white);
+                            this.jButtonPR3.setIcon(this.Img_Ok);//aggiorna il tipo di Icona per il pulsante
+                            this.jButtonPR3.setEnabled(true);
+                        }
                     }
-                    this.JTextAreaDescrizioneLavoro.setText(nomeContatori + " - " + this.elencoDesLavoro.get(nrCurItem));
-                    // Se il lavoro non è avviabile
-                    if (this.elencoLavoriCompleto.get(nrCurItem)[4].equals("0")) {
-                        this.JTextAreaDescrizioneLavoro.setBackground(Color.yellow);
-                        this.jButtonPR3.setIcon(this.Img_Nulla);//aggiorna il tipo di Icona per il pulsante
-                        this.jButtonPR3.setEnabled(false);
-                    } else {
-                        this.JTextAreaDescrizioneLavoro.setBackground(Color.white);
-                        this.jButtonPR3.setIcon(this.Img_Ok);//aggiorna il tipo di Icona per il pulsante
-                        this.jButtonPR3.setEnabled(true);
+                } else {
+                    if (nrCurItem < this.listLavori.getItemCount()) { // Per prevenire eventuali errori
+                        this.JTextAreaDescrizione.setText(listLavori.getItem(nrCurItem) + " - " + this.elencoDesLavoro.get(nrCurItem));
+                        // Se il lavoro non è avviabile
+                        if (this.elencoLavoriCompleto.get(nrCurItem)[4].equals("0")) {
+                            this.JTextAreaDescrizione.setBackground(Color.yellow);
+                            this.jButtonPR3.setIcon(this.Img_Nulla);//aggiorna il tipo di Icona per il pulsante
+                            this.jButtonPR3.setEnabled(false);
+                        } else {
+                            this.JTextAreaDescrizione.setBackground(Color.white);
+                            this.jButtonPR3.setIcon(this.Img_Ok);//aggiorna il tipo di Icona per il pulsante
+                            this.jButtonPR3.setEnabled(true);
+                        }
                     }
                 }
             }
+        } catch (Exception e) {
+            Static.debug("Error building description for element:" + nrCurItem + " - " + e, 2);
         }
     }
 
@@ -3434,38 +3482,27 @@ public class JRivitMain extends javax.swing.JFrame {
         String cmd = "";
         switch (string) {
             case "2.4" ->
-                cmd = "wifi_2.4GHz.sh";
+                cmd = "certWifi_2.4GHz.sh";
             case "5" ->
-                cmd = "wifi_5GHz.sh";
+                cmd = "certWifi_5GHz.sh";
             case "auto" ->
-                cmd = "wifi_auto.sh";
+                cmd = "certWifi_auto.sh";
         }
         esegui(cmd);
     }
 
-    /**
-     * Aggiorna la lista delle stringhe per la certificazione
-     */
-    private void aggiornaListCert() {
-        listCert.removeAll();
-        listCert.add("WiFi AP mode: " + wifiMode);
-        List<String> certInfo = JFileWorker.leggiFileElenco("certInfo.txt");
-        for (String string : certInfo) {
-            String[] arrayRes = string.split(",");
-            for (String elemento : arrayRes) {
-                listCert.add(elemento.trim());
-            }
-        }
-        listCert.add("");
-        listCert.add("Selezionare un'opzione");
-    }
-
     void aggiornaListSens(String certSens) {
-        listSens.removeAll();
-        String[] arraySens = certSens.split(",");
-        if (arraySens.length == 2) {
-            listSens.add("Sens1 Tool: " + arraySens[0] + " V");
-            listSens.add("Sens2 Aria: " + arraySens[1] + " V");
+        try {
+            listSens.removeAll();
+            String[] arraySens = certSens.split(",");
+            if (arraySens.length > 0) {
+                listSens.add("Sens1 Tool: " + arraySens[0] + " V");
+                listSens.add("Sens2 Aria: " + arraySens[1] + " V");
+                listSens.add("In:    In1=" + arraySens[2] + " In2=" + arraySens[3] + " In3=" + arraySens[4] + " In4=" + arraySens[5]);
+                listSens.add("Out: Air=" + arraySens[6] + " G=" + arraySens[7] + " Y=" + arraySens[8] + " R=" + arraySens[9]);
+            }
+        } catch (Exception e) {
+            Static.debug("Error reading cert.status: " + certSens + " - " + e.toString(), lotto);
         }
     }
 
@@ -3503,6 +3540,30 @@ public class JRivitMain extends javax.swing.JFrame {
     public void setInfoAggiuntive(List infoAggiuntive) {
         this.infoAggiuntive.clear();
         this.infoAggiuntive = infoAggiuntive;
+    }
+
+    /**
+     * Aggiorna la lista delle stringhe per la certificazione
+     */
+    public void aggiornaListCert(List<String> certInfo) {
+        if (certInfo == null) {
+            int fine = listCert.getItemCount();
+            listCert.remove(fine - 1);
+            listCert.remove(fine - 2);
+            listCert.remove(fine - 3);
+        } else {
+            listCert.removeAll();
+            listCert.add("WiFi AP mode: " + wifiMode);
+            for (String string : certInfo) {
+                String[] arrayRes = string.split(",");
+                for (String elemento : arrayRes) {
+                    listCert.add(elemento.trim());
+                }
+            }
+        }
+        listCert.add("LOG: " + (isLogOn ? "ON" : "OFF"));
+        listCert.add("");
+        listCert.add("Press button to choose mode");
     }
 
 }

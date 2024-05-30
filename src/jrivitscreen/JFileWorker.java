@@ -192,6 +192,9 @@ public class JFileWorker extends Thread {
                                 this.Rm.setRispostaErrore("annulla");
                             case Static.F_RISPOSTA_TIRO_ERRATO_CONTINUA ->
                                 this.Rm.setRispostaErrore("continua");
+                            case "listaCert_ready" ->
+                                leggiCertInfo();
+
                         }
                     }
                     if (kind == ENTRY_DELETE) {
@@ -297,8 +300,8 @@ public class JFileWorker extends Thread {
                 this.Rm.getjLabelWarning().setText("E");
             }
         }
-        this.Rm.getjLabelWarning().repaint();
-        this.Rm.repaint();
+//        this.Rm.getjLabelWarning().repaint();
+//        this.Rm.repaint();
     }
 
     /**
@@ -952,5 +955,14 @@ public class JFileWorker extends Thread {
             this.Rm.setConfermaStopPausa(false);
         }
     }
+
+    /**
+     * Aggiorna la lista delle stringhe per la certificazione
+     */
+    public void leggiCertInfo() {
+        List<String> certInfo = JFileWorker.leggiFileElenco("certInfo.txt");
+        Rm.aggiornaListCert(certInfo);
+    }
+
 
 }

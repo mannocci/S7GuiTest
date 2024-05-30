@@ -30,6 +30,7 @@ import java.text.SimpleDateFormat;
 import javax.swing.SwingWorker;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -142,9 +143,10 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     this.Rm.set_jLabel_B_L(this.dateFormat.format(orario));
                     this.Rm.repaint();
                 }
-                case "wifi_2.4GHz.sh", "wifi_5GHz.sh", "wifi_auto.sh" -> {
+                case "certWifi_2.4GHz.sh", "certWifi_5GHz.sh", "certWifi_auto.sh", "certWifiStop.sh", 
+                        "certSensLogStart.sh", "certSensLogStop.sh" -> {
                     String[] cmd = {"/home/adminsb/bin/" + this.operation};
-                    run_system_bash(cmd);
+                    getRuntime().exec(cmd);
                 }
                 case "startCert" -> {
                     String[] cmd = {"/home/adminsb/bin/certSensStart.sh"};
@@ -156,13 +158,13 @@ public class JDoWorker extends SwingWorker<String, Object> {
                 }
                 case "reset_system" -> {
                     JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_RESET_SYSTEM);
-                    this.Rm.setRichiesta(Static.RICHIESTA_RESET_SYSTEM);                    
+                    this.Rm.setRichiesta(Static.RICHIESTA_RESET_SYSTEM);
                 }
                 case "imposta_tool" -> {
                     String tool[] = this.Rm.getListTools().getSelectedItem().split(",");
                     JFileWorker.scriviFile(Static.F_TOOL_SCELTO, tool[0]);
                     JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_IMPOSTA_TOOL);
-                    this.Rm.setRichiesta(Static.RICHIESTA_IMPOSTA_TOOL);   
+                    this.Rm.setRichiesta(Static.RICHIESTA_IMPOSTA_TOOL);
                     JFileWorker.cancellaFile(Static.F_FIRST_TIME);
                     this.Rm.setInSceltaTool(false);
                     this.Rm.PanelMain();
@@ -231,30 +233,24 @@ public class JDoWorker extends SwingWorker<String, Object> {
     }
 
     /**
-     * Attiva o disattiva di device di rete
+     * Attiva o disattiva di device di rete tramite lo script start_stop_NM.sh
+     * Non serve passargli l'informazione se attivarla o meno la connessione
+     * perché agisce facendo l'opposto dello stato attuale: se trova ON la
+     * connessione la spegne e viceversa Diventa utile approfittare per
+     * aggiornare lo stato della network su CT nel DB.
+     * aggiornare APList nel 
+     *
      */
     void on_of_nm_device() {
-        String[] cmd  = {"/home/adminsb/bin/start_stop_NM.sh", ""};
-        String[] cmdOFF = {"nmcli", "c","down",""};
+        String[] cmd = {"/home/adminsb/bin/start_stop_NM.sh", ""};
         String nomeSelezionato = this.Rm.getListSetupNM().getItem(this.Rm.getListSetupNM().getSelectedIndex());
         String nomeCon;
         if (nomeSelezionato.contains(" OFF")) {
             nomeCon = nomeSelezionato.substring(0, nomeSelezionato.indexOf(" OFF"));
-        } else {
+          } else {
             nomeCon = nomeSelezionato.substring(0, nomeSelezionato.indexOf(" ON"));
-            if(nomeCon.startsWith("eth0" )){
-                cmdOFF[3] = "eth0_dhcp";
-                run_system_bash(cmdOFF);
-                cmdOFF[3] ="eth0_direct";
-                run_system_bash(cmdOFF);
-                cmdOFF[3] = "eth0_static";
-                run_system_bash(cmdOFF);
-             }
-        }
+          }
         cmd[1] = nomeCon;
-        run_system_bash(cmd);
-        //Dopo aver avviato o spento una con. deve aggiornare il file
-        cmd[0] = "/home/adminsb/bin/nm_list_con.sh";
         run_system_bash(cmd);
         this.Rm.set_jLabel_B_L("CON..");
     }
@@ -321,6 +317,18 @@ public class JDoWorker extends SwingWorker<String, Object> {
             System.out.println(line);
         }
         return line;
+    }
+
+    /**
+     * Cerca se il nome del device è una Wifi. Se sì fa richiesta a Control di
+     * aggiornare il DB della lista delle WIFI indicando lo stato della
+     * connessione
+     *
+     * @param nomeSelezionato
+     */
+    private void aggiornaDBWifi(String nomeSelezionato) {
+        JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_AGGIORNA_WIFI_STATUS);
+        JFileWorker.scriviFile(Static.F_NOME_CON, nomeSelezionato);
     }
 
 }

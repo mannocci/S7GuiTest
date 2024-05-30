@@ -45,6 +45,7 @@ public class Static {
     final static String RICHIESTA_RESTORE_DB = "90";
     final static String RICHIESTA_IMPOSTA_TOOL = "91";
     final static String RICHIESTA_AGGIORNA_INFO = "92";
+    final static String RICHIESTA_AGGIORNA_WIFI_STATUS = "93";
 
     // Stati
     final static String STATO_AVVIATO = "91";
@@ -115,6 +116,8 @@ public class Static {
     final static String F_LOTTI_OK = "lotti_ok";
     final static String F_SESSIONE = "sessione";
     final static String F_LISTA_NM_CON = "lista_nm_con";
+    final static String F_NM_CON = "nm_con";
+    final static String F_NOME_CON = "nome_con";
     final static String F_INTERNET_STATUS = "internet_status";
     final static String F_CONTROLLER_ONLINE = "controller_online";
     final static String F_POWEROFF = "poweroff";
