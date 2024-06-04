@@ -142,11 +142,12 @@ public class JFileWorker extends Thread {
                             case Static.F_CONTROLLER_ONLINE -> {
                                 this.Rm.setControllerIndicator(true);
                             }
-                            case (Static.F_LISTA_NM_CON + "_ready") ->
+                            case (Static.F_LISTA_NM_CON + "_ready") ->{
                                 readListaNMdevice();
                             // Verificare se si può usare "nmcli monitor" per tenere sotto controllo la rete e avvisare in caso di cambiamenti
-                            case (Static.F_INTERNET_STATUS + "_ready") ->
+                            //case (Static.F_INTERNET_STATUS + "_ready") ->
                                 readInternetStatus();
+                            }
                             case Static.F_POWEROFF -> {
                                 Rm.getjLabelDeviceName().setText("POWERING OFF");
                                 Rm.PanelMain();
