@@ -3490,12 +3490,16 @@ public class JRivitMain extends javax.swing.JFrame {
         }
         esegui(cmd);
     }
-
+/**
+ * Aggiorna i dati necessari alla certificazione letti dai relè e dai due sensori
+ * @param certSens Stringa 0.537,0.000,0,0,0,0,ON,OFF,OFF,OFF 
+ * Letta dal file che crea lo script Python
+ */
     void aggiornaListSens(String certSens) {
         try {
             listSens.removeAll();
             String[] arraySens = certSens.split(",");
-            if (arraySens.length > 0) {
+            if (arraySens.length > 8) {
                 listSens.add("Sens1 Tool: " + arraySens[0] + " V");
                 listSens.add("Sens2 Aria: " + arraySens[1] + " V");
                 listSens.add("In:    In1=" + arraySens[2] + " In2=" + arraySens[3] + " In3=" + arraySens[4] + " In4=" + arraySens[5]);
