@@ -73,6 +73,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private String AlertDialogWhat;
     private String Lavorodescrizione;
     private ImageIcon Img_Info;
+    private boolean wifiIndicator;
 
     private int tiriTotali;
     private int lotto;
@@ -92,6 +93,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private Properties setup;
     public final String versione;
     public final String data_release;
+    private String ctCanStart;
     private final String srvKey;
     private List<String[]> elencoLavori;
     private List<String> elencoTools;
@@ -147,13 +149,14 @@ public class JRivitMain extends javax.swing.JFrame {
     private String welcome;
     private boolean isAPOn = false;     //  usato per la certificazione
     private boolean isLogOn = false;    //  usato per la certificazione
-
+    private String snCT="";
 //
 //Dopo una sospensione
     /**
      * Creates new form JRivitMain
      */
     public JRivitMain() {
+        this.ctCanStart = "1";
         this.panCur = "main";
         String beta = "β";
         initComponents();
@@ -1493,6 +1496,10 @@ public class JRivitMain extends javax.swing.JFrame {
                 this.changeButtons(this.Img_Warning, this.Img_Info, this.Img_Setup,
                         this.Img_W, this.Img_Nulla, this.Img_Cert);
             }
+            if (this.ctCanStart.equals("0")) {
+                this.changeButtons(this.Img_Warning, this.Img_Info, this.Img_Setup,
+                        this.Img_Nulla, this.Img_Nulla, this.Img_Cert);                
+            }
             cambiaPannello(this.jPanelMain);
         }
     }
@@ -1874,8 +1881,10 @@ public class JRivitMain extends javax.swing.JFrame {
             }
             if (nrCurItem > 0) {
                 nrCurItem--;
-                robot.keyPress(KeyEvent.VK_UP);
-                robot.keyRelease(KeyEvent.VK_UP);
+                lista.select(nrCurItem);
+                lista.makeVisible(nrCurItem);                
+//                robot.keyPress(KeyEvent.VK_UP);
+//                robot.keyRelease(KeyEvent.VK_UP);
             } else {
                 nrCurItem = nrItem - 1; // Va all'ultimo Item
                 lista.select(nrCurItem);
@@ -1936,8 +1945,10 @@ public class JRivitMain extends javax.swing.JFrame {
             }
             if (nrCurItem < nrItem - 1) {
                 nrCurItem++;
-                robot.keyPress(KeyEvent.VK_DOWN);
-                robot.keyRelease(KeyEvent.VK_DOWN);
+                lista.select(nrCurItem);
+                lista.makeVisible(nrCurItem);                
+//                robot.keyPress(KeyEvent.VK_DOWN);
+//                robot.keyRelease(KeyEvent.VK_DOWN);
             } else {
                 nrCurItem = 0;  // Ritorna al primo Item
                 lista.select(nrCurItem);
@@ -2029,12 +2040,14 @@ public class JRivitMain extends javax.swing.JFrame {
     }
 
     private void PanelCert() {
+        esegui("certWifiStop.sh");
         this.changeButtons(this.Img_Exit, this.Img_start_WiFi, this.Img_start_log,
+//                this.Img_Nulla, this.Img_Nulla, this.Img_Nulla);
                 this.Img_WiFi_2_4, this.Img_WiFi_5, this.Img_WiFi_Auto);
         this.jButtonPL2.setIcon(isAPOn ? this.Img_stop_WiFi : this.Img_start_WiFi);
         this.jButtonPL3.setIcon(isLogOn ? this.Img_stop_log : this.Img_start_log);
         listCert.removeAll();
-        listCert.add("WiFi AP: "+ (isAPOn ? "ON" : "OFF"));
+        listCert.add("WiFi AP: " + (isAPOn ? "ON" : "OFF"));
         listCert.add("");
         listCert.add("LOG: " + (isLogOn ? "ON" : "OFF"));
         listCert.add("");
@@ -2085,7 +2098,7 @@ public class JRivitMain extends javax.swing.JFrame {
     }
 
     /**
-     * aggiornaWarning carica eventuali Warning dal file warning.txt
+     * aggiornaListWarning carica eventuali Warning dal file warning.txt
      *
      * @param jLabelWarning
      */
@@ -2098,36 +2111,35 @@ public class JRivitMain extends javax.swing.JFrame {
      *
      * @param lista
      */
-    public void aggiornaWarning(List<String> lista) {
+    public void aggiornaListWarning(List<String> lista) {
         this.listWarning.removeAll();
         RefreshList(this.listWarning, lista);
         this.listWarning.repaint();
     } //End AggiornaWarning
 
     /**
-     * aggiornaSetupLan carica eventuali Informazioni dal file
-     * /tmp/setup_lan.txt
+     * aggiornaListLan carica eventuali Informazioni dal file /tmp/setup_lan.txt
      *
      * @param lista
      */
-    public void aggiornaSetupLan(List<String> lista) {
+    public void aggiornaListLan(List<String> lista) {
         this.listLan.removeAll();
         RefreshList(this.listLan, lista);
         this.listLan.repaint();
-    }//End aggiornaSetupLan
+    }//End aggiornaListLan
 
     /**
-     * aggiornaSetupWiFi carica eventuali Informazioni dal file /tmp/status_wifi
+     * carica eventuali Informazioni dal file /tmp/status_wifi
      *
      * @param lista
      */
-    public void aggiornaSetupWiFi(List<String> lista) {
+    public void aggiornaListWiFi(List<String> lista) {
         if (panCur.equals("setup wifi")) {
             this.listWifi.removeAll();
             RefreshList(this.listWifi, lista);
             this.listWifi.repaint();
         }
-    }//End aggiornaSetupWiFi
+    }//End aggiornaListWiFi
 
     /**
      * aggiornaLavori
@@ -2139,7 +2151,7 @@ public class JRivitMain extends javax.swing.JFrame {
         String limLottiRiga;
         String limPezziRiga;
         String descrizioneRiga;
-        String canStart;
+        String workCanStart;
         String cntLotti;
         String cntPezzi;
         String[] lavoroSplit;
@@ -2162,7 +2174,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 limLottiRiga = lavoroSplit[1];
                 limPezziRiga = lavoroSplit[2];
                 descrizioneRiga = lavoroSplit[3];
-                canStart = lavoroSplit[4];
+                workCanStart = lavoroSplit[4];
                 /*
                 // non servono per costruire le stringhe dell'elenco ma solo quando il lavoro è stato scelto
                 UDLotti = lavoroSplit[5];
@@ -2176,7 +2188,7 @@ public class JRivitMain extends javax.swing.JFrame {
                     elencoTxt.add(nomeLavoroRiga + " L=" + cntLotti + "/" + limLottiRiga + " T=" + cntPezzi + "/" + limPezziRiga);
                 }
                 this.elencoLavori.add(lavoroSplit);
-                if (canStart.equals("0")) { // lavoro non avviabile
+                if (workCanStart.equals("0")) { // lavoro non avviabile
                     descrizioneRiga = "Not calibrated -> " + descrizioneRiga;
                 }
                 this.elencoDesLavoroCompleto.add(descrizioneRiga);
@@ -3211,6 +3223,7 @@ public class JRivitMain extends javax.swing.JFrame {
      * @param stato
      */
     void setWiFiIndicator(boolean stato) {
+        this.wifiIndicator = stato;
         if (stato) {
             jLabelWiFi.setBackground(Color.green);
         } else {
@@ -3490,11 +3503,14 @@ public class JRivitMain extends javax.swing.JFrame {
         }
         esegui(cmd);
     }
-/**
- * Aggiorna i dati necessari alla certificazione letti dai relè e dai due sensori
- * @param certSens Stringa 0.537,0.000,0,0,0,0,ON,OFF,OFF,OFF 
- * Letta dal file che crea lo script Python
- */
+
+    /**
+     * Aggiorna i dati necessari alla certificazione letti dai relè e dai due
+     * sensori
+     *
+     * @param certSens Stringa 0.537,0.000,0,0,0,0,ON,OFF,OFF,OFF Letta dal file
+     * che crea lo script Python
+     */
     void aggiornaListSens(String certSens) {
         try {
             listSens.removeAll();
@@ -3570,4 +3586,24 @@ public class JRivitMain extends javax.swing.JFrame {
         listCert.add("Press button to choose mode");
     }
 
+    public boolean isWifiIndicator() {
+        return wifiIndicator;
+    }
+
+    public String getSnCT() {
+        return snCT;
+    }
+
+    public void setSnCT(String snCT) {
+        this.snCT = snCT;
+    }
+
+    public String getCtCanStart() {
+        return ctCanStart;
+    }
+
+    public void setCtCanStart(String ctCanStart) {
+        this.ctCanStart = ctCanStart;
+    }
+    
 }

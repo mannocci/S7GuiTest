@@ -45,7 +45,6 @@ public class Static {
     final static String RICHIESTA_RESTORE_DB = "90";
     final static String RICHIESTA_IMPOSTA_TOOL = "91";
     final static String RICHIESTA_AGGIORNA_INFO = "92";
-    final static String RICHIESTA_AGGIORNA_WIFI_STATUS = "93";
 
     // Stati
     final static String STATO_AVVIATO = "91";

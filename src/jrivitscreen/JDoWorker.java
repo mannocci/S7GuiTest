@@ -120,7 +120,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
 
                 case "scegli_wl" -> {
                     this.scegliWL();
-                    this.fileWorker.WlListaPronta();    // Lettura elenco lavori della lista. Da rivedere se si può chiamare in modo più "pulito"
+                    //this.fileWorker.WlListaPronta();    // Lettura elenco lavori della lista. Da rivedere se si può chiamare in modo più "pulito"
                 }
 
                 case "scegli_e_avvia" -> {
@@ -153,7 +153,9 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     getRuntime().exec(cmd);
                 }
                 case "stopCert" -> {
-                    String[] cmd = {"sudo", "killall", "certSens.py"};
+                    String[] cmd = {"sudo", "killall", "-s", "2","certSens.py"};
+                    run_system_bash(cmd);
+                    cmd[4] = "certSensArduino.py";
                     run_system_bash(cmd);
                 }
                 case "reset_system" -> {
@@ -317,18 +319,6 @@ public class JDoWorker extends SwingWorker<String, Object> {
             System.out.println(line);
         }
         return line;
-    }
-
-    /**
-     * Cerca se il nome del device è una Wifi. Se sì fa richiesta a Control di
-     * aggiornare il DB della lista delle WIFI indicando lo stato della
-     * connessione
-     *
-     * @param nomeSelezionato
-     */
-    private void aggiornaDBWifi(String nomeSelezionato) {
-        JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_AGGIORNA_WIFI_STATUS);
-        JFileWorker.scriviFile(Static.F_NOME_CON, nomeSelezionato);
     }
 
 }

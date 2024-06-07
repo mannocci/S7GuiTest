@@ -97,11 +97,15 @@ public class JFileWorker extends Thread {
                                 aggiornaContatori();
                             case Static.F_SENSORI + "_ready" ->
                                 aggiornaSensori();
-                            case Static.F_NO_SENSORE -> {
+                            case Static.F_NO_SENSORE -> { // sensore scollegato
                                 //Da riguardare
-                                if (this.Rm.getStato().equals(Static.STATO_STOP)) {
-                                    this.Rm.setSensoreCollegato(false);
+                                //if (this.Rm.getStato().equals(Static.STATO_STOP)) {
+                                this.Rm.setSensoreCollegato(false);
+                                this.Rm.setCtCanStart("0");
+                                if( Rm.getPanCur().equals("main")){
+                                    this.Rm.PanelMain();    
                                 }
+                                //}
                             }
                             case Static.F_ERRORE ->
                                 errore(true);
@@ -142,10 +146,10 @@ public class JFileWorker extends Thread {
                             case Static.F_CONTROLLER_ONLINE -> {
                                 this.Rm.setControllerIndicator(true);
                             }
-                            case (Static.F_LISTA_NM_CON + "_ready") ->{
+                            case (Static.F_LISTA_NM_CON + "_ready") -> {
                                 readListaNMdevice();
-                            // Verificare se si può usare "nmcli monitor" per tenere sotto controllo la rete e avvisare in caso di cambiamenti
-                            //case (Static.F_INTERNET_STATUS + "_ready") ->
+                                // Verificare se si può usare "nmcli monitor" per tenere sotto controllo la rete e avvisare in caso di cambiamenti
+                                //case (Static.F_INTERNET_STATUS + "_ready") ->
                                 readInternetStatus();
                             }
                             case Static.F_POWEROFF -> {
@@ -205,8 +209,13 @@ public class JFileWorker extends Thread {
                         switch (fileName.toString()) {
                             case Static.F_ARIA ->
                                 this.Rm.ariaChiusa();
-                            case Static.F_NO_SENSORE ->
+                            case Static.F_NO_SENSORE -> {  // sensore collegato
                                 this.Rm.setSensoreCollegato(true);
+                                this.Rm.setCtCanStart("1");
+                                if( Rm.getPanCur().equals("main")){
+                                    this.Rm.PanelMain();    
+                                }                                
+                            }
                             case Static.F_ERRORE ->
                                 errore(false);
                             case Static.F_ABILITA_CALIBRAZIONE -> {
@@ -310,7 +319,7 @@ public class JFileWorker extends Thread {
      * Leggere il DB è meglio
      */
     private void readSetupLan() {
-        this.Rm.aggiornaSetupLan(JFileWorker.leggiFileElenco(Static.F_STATUS_LAN));
+        this.Rm.aggiornaListLan(JFileWorker.leggiFileElenco(Static.F_STATUS_LAN));
     }
 
     /**
@@ -318,7 +327,7 @@ public class JFileWorker extends Thread {
      * sopra forse è meglio leggere il DB
      */
     private void readSetupWifi() {
-        this.Rm.aggiornaSetupWiFi(JFileWorker.leggiFileElenco(Static.F_STATUS_WIFI));
+        this.Rm.aggiornaListWiFi(JFileWorker.leggiFileElenco(Static.F_STATUS_WIFI));
     }
 
     /**
@@ -352,6 +361,7 @@ public class JFileWorker extends Thread {
      *
      */
     public void initValues() {
+        this.Rm.setSnCT(leggiFile("hostname"));
         if (!leggiFile(Static.F_RESET_REQUEST).contains("error")) {
             //Richiesta se si vuole fare reset del sistema
             this.Rm.setRichiesta(Static.RICHIESTA_RESET_SYSTEM);
@@ -386,7 +396,7 @@ public class JFileWorker extends Thread {
         } else {
             this.Rm.ariaAperta();
         }
-
+        this.readSnCT();
         this.readNomeDevice();//Se non esiste il file imposta a CT-0000-00
 //        cancellaFile(Static.PATH_WATCH + "errore"); // Dovrebbe farlo COntrol
         this.Rm.set_jLabel_B_L("Main");
@@ -581,8 +591,14 @@ public class JFileWorker extends Thread {
     }
 
     private void leggiNoSensore() {
-        File noSensore = new File(Static.F_NO_SENSORE);
+        
+        File noSensore = new File(Static.PATH_WATCH+Static.F_NO_SENSORE);
         this.Rm.setSensoreCollegato(!noSensore.exists());
+        if(noSensore.exists()){
+            this.Rm.setCtCanStart("0");
+        }else{
+            this.Rm.setCtCanStart("1");
+        }
     }
 
     private void leggiAriaInMinMax() {
@@ -702,29 +718,15 @@ public class JFileWorker extends Thread {
         boolean lanIndicator = false;
         boolean vpnIndicator = false;
         boolean wifiIndicator = false;
-        boolean internetIndicator = false;
         for (String string : list_nm_con) {
-            if (string.contains("eth") && string.contains("ON")
-                    || string.contains("rasp4") && string.contains("ON")) {    // la prima riga che contiene "eth" e "ON" accende l'indicatore Lan
-                lanIndicator = true;
-            }
-            if (string.contains("Internet")) {    // se l'ultima riga contiene "full" accende l'indicatore Internet
-                if (string.contains("full")) {    // se l'ultima riga contiene "full" accende l'indicatore Internet
-                    lanIndicator = true;
-                    internetIndicator = true;
-                } else if (string.contains("limited") || string.contains("portal")) {
-                    lanIndicator = true;
-                }
-            }
             if ((string.contains("tun") || string.startsWith("VPN")) && string.contains("ON")) {    // la prima riga che contiene "tun" e "ON" accende l'indicatore VPN
                 vpnIndicator = true;
             }
-            if (string.contains("AP_") && string.contains("ON")) {    // la prima riga che contiene "eth" e "ON" accende l'indicatore Lan
+            if (string.contains("AP_" + this.Rm.getSnCT()) && string.contains("ON")) {    // la prima riga che contiene "eth" e "ON" accende l'indicatore Lan
                 wifiIndicator = true;
             }
         }
         this.Rm.setLanIndicator(lanIndicator);
-        this.Rm.setInternetIndicator(internetIndicator);
         this.Rm.setVPNIndicator(vpnIndicator);
         this.Rm.setWiFiIndicator(wifiIndicator);
         if (this.Rm.getPanCur().equals("setup")) {
@@ -965,5 +967,12 @@ public class JFileWorker extends Thread {
         Rm.aggiornaListCert(certInfo);
     }
 
+    private void readSnCT() {
+        try {
+            this.Rm.setSnCT(leggiFile("hostname"));
+        } catch (Exception ex) {
+            Static.debug("Error reading UM", 2);
+        }
+    }
 
 }
