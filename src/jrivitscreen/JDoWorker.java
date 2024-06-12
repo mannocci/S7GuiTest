@@ -153,10 +153,8 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     getRuntime().exec(cmd);
                 }
                 case "stopCert" -> {
-                    String[] cmd = {"sudo", "killall", "-s", "2","certSens.py"};
-                    run_system_bash(cmd);
-                    cmd[4] = "certSensArduino.py";
-                    run_system_bash(cmd);
+                    String[] cmd = {"/home/adminsb/bin/certSensStop.sh"};
+                    run_system_bash(cmd);//Non Server il programma certSens con Arduino si chiude da solo
                 }
                 case "reset_system" -> {
                     JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_RESET_SYSTEM);

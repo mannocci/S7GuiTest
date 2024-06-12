@@ -155,7 +155,6 @@ public class JFileWorker extends Thread {
                             case Static.F_POWEROFF -> {
                                 Rm.getjLabelDeviceName().setText("POWERING OFF");
                                 Rm.PanelMain();
-
                                 Thread.sleep(2000);
                                 System.exit(0);
                             }
@@ -871,6 +870,7 @@ public class JFileWorker extends Thread {
                 Rm.setWLnrCicli(Integer.parseInt(WLSceltaArray[1]));
             }
         }
+        
         Rm.wlPronta();
     }
 
