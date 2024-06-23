@@ -39,7 +39,6 @@ import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
@@ -102,11 +101,12 @@ public class JFileWorker extends Thread {
                                 //if (this.Rm.getStato().equals(Static.STATO_STOP)) {
                                 this.Rm.setSensoreCollegato(false);
                                 this.Rm.setCtCanStart("0");
-                                if( Rm.getPanCur().equals("main")){
-                                    this.Rm.PanelMain();    
+                                if (Rm.getPanCur().equals("main")) {
+                                    this.Rm.PanelMain();
                                 }
                                 //}
                             }
+
                             case Static.F_ERRORE ->
                                 errore(true);
                             case Static.F_POSIZIONE_ERRORI + "_ready" ->
@@ -167,7 +167,7 @@ public class JFileWorker extends Thread {
                             case (Static.F_INFO + "_ready") ->
                                 readInfo();
                             case Static.F_RELOAD -> {
-                                if (Rm.isStatoConcluso()) {
+                                if (Rm.isLavoroConcluso()) {
                                     Rm.lavoroPronto();
                                 }
                             }
@@ -186,8 +186,6 @@ public class JFileWorker extends Thread {
                              */
                             case Static.F_WL_PRONTA ->
                                 WlPronta();
-                            case Static.F_WL_LISTA + "_ready" ->
-                                WlListaPronta();
                             case Static.F_RICHIESTA + "_ready" ->
                                 this.Rm.setRichiesta(leggiFile(Static.F_RICHIESTA));
                             case Static.F_RISPOSTA_TIRO_ERRATO_ACCETTA ->
@@ -211,9 +209,9 @@ public class JFileWorker extends Thread {
                             case Static.F_NO_SENSORE -> {  // sensore collegato
                                 this.Rm.setSensoreCollegato(true);
                                 this.Rm.setCtCanStart("1");
-                                if( Rm.getPanCur().equals("main")){
-                                    this.Rm.PanelMain();    
-                                }                                
+                                if (Rm.getPanCur().equals("main")) {
+                                    this.Rm.PanelMain();
+                                }
                             }
                             case Static.F_ERRORE ->
                                 errore(false);
@@ -375,7 +373,6 @@ public class JFileWorker extends Thread {
         this.aggiornaContatori();
         this.aggiornaSensori();
         this.readLavori();//Se non esite il file imposta il default
-        //this.lavoroPronto(); il lavoro pronto deve essere comandato da Control
         this.readWl();//Se non esiste il file ?
         this.readTools();
 
@@ -383,7 +380,6 @@ public class JFileWorker extends Thread {
         this.readInfo();// Se non esiste il file imposta a stringa info
         this.readWarning();// Se non esiste il file imposta a sringa warning
         this.readCurvaDiRiferimento();//Se non esiste il file imposta a 0
-        this.readLavoroInPausa();//Se non esiste il file imposta non in pausa
         //this.LeggiAriaInMinMax(); // Letto dal DB
         //this.LeggiSessione();// Se non esite il file imposta il file a "0"
 //        this.mostraStatoAria(Static.ARIA_CHIUSA);//Se non esiste il file imposta a "0"
@@ -590,12 +586,12 @@ public class JFileWorker extends Thread {
     }
 
     private void leggiNoSensore() {
-        
-        File noSensore = new File(Static.PATH_WATCH+Static.F_NO_SENSORE);
+
+        File noSensore = new File(Static.PATH_WATCH + Static.F_NO_SENSORE);
         this.Rm.setSensoreCollegato(!noSensore.exists());
-        if(noSensore.exists()){
+        if (noSensore.exists()) {
             this.Rm.setCtCanStart("0");
-        }else{
+        } else {
             this.Rm.setCtCanStart("1");
         }
     }
@@ -678,8 +674,10 @@ public class JFileWorker extends Thread {
     }
 
     /**
-     * Aggiorna i contatori da mostrare allo schermo occorre discriminare se
-     * occorre fare il Count Down ?
+     * Aggiorna i contatori da mostrare allo schermo occorre discriminare se 0)
+     * cntLottio, 1) cntPezzi , 2) tiriValidi, 3) tiriAnnullati, 4) tiriErrati,
+     * 5) tiriTotali, 6) cntCicli, 7) UDLotti, 8) udPezzi, 9)indicelavoriWL
+     *
      */
     private void aggiornaContatori() {
         String testo = leggiFile(Static.F_CONTATORI);
@@ -687,7 +685,7 @@ public class JFileWorker extends Thread {
         if (contatori.length > 1) {
             //Se devo fare il Count Down
             //TiriNelLotto sono = Integer.parseInt(contatori[0] - Integer.parseInt(contatori[1])
-            //
+            //           
             //Lotto
             //Altrimenti devono essere decrementati
             try {
@@ -697,7 +695,7 @@ public class JFileWorker extends Thread {
                 this.Rm.setTiriAnnullati(Integer.parseInt(contatori[3]));
                 this.Rm.setTiriErrati(Integer.parseInt(contatori[4]));
                 this.Rm.setTiriTotali(Integer.parseInt(contatori[5]));
-
+                this.Rm.setCntCicli(Integer.parseInt(contatori[6]));
                 // aggiorna la visualizzazione dei contatori nel pannello
                 this.Rm.aggiornaContatori();
             } catch (NumberFormatException e) {
@@ -771,15 +769,15 @@ public class JFileWorker extends Thread {
         this.Rm.setStato(leggiFile(Static.F_STATO));
         switch (this.Rm.getStato()) {
             case Static.STATO_CONCLUSO -> {
-                this.Rm.setStatoConcluso(true);
+                this.Rm.setLavoroConcluso(true);
                 this.Rm.PanelStarted();
+                this.aggiornaContatori();
             }
             case Static.STATO_AVVIATO -> {
-                this.Rm.setStatoConcluso(false);
-                this.Rm.setStatoConcluso(false);
+                this.Rm.setLavoroConcluso(false);
                 this.Rm.setInErrore(false);
-                this.Rm.azzeraContatori();
                 this.Rm.PanelStarted();
+                this.aggiornaContatori();
             }
             case Static.STATO_CALIBRAZIONE -> {
                 this.Rm.avviaCalibrazione();
@@ -799,10 +797,6 @@ public class JFileWorker extends Thread {
                     this.Rm.PanelStart();
                 }
             }
-            case Static.STATO_PAUSA -> {
-                this.Rm.setStatoConcluso(false);
-                this.Rm.PanelStart();
-            }
             case Static.RICHIESTA_RIAVVIO -> {
                 if (this.Rm.getStato().equals(Static.STATO_CONCLUSO)) {
                     this.Rm.avviaLavoro();
@@ -812,15 +806,7 @@ public class JFileWorker extends Thread {
         }
     }
 
-    private void readLavoroInPausa() {
-        String testo = leggiFile(Static.F_IN_PAUSA);
-        if (!testo.startsWith("errore")) {
-            this.Rm.setInPausa("1");
-        }
-        cancellaFile(Static.F_IN_PAUSA);
-    }
-
-    /**
+      /**
      * Il file "pulsante" viene utilizzato dal webserver per telecontrallare la
      * pressione virtuale di un pulsante
      */
@@ -838,14 +824,18 @@ public class JFileWorker extends Thread {
         try {
             String lScelto = leggiFile(Static.F_W_SCELTO);
             String[] lSceltoArray = lScelto.split("§");
-            // if (!lSceltoArray[0].equals(Rm.getLavoroScelto())) {
-            Rm.setLavoroScelto(lSceltoArray[0]);
-            //}
-            if (lSceltoArray.length > 1) {
-                Rm.setLimLotti(lSceltoArray[1]);
-                Rm.setLimPezzi(lSceltoArray[2]);
-                Rm.setUDLotti(lSceltoArray[3]);
-                Rm.setUDPezzi(lSceltoArray[4]);
+            String nomeLavoro = lSceltoArray[0];
+            Rm.setLavoroScelto(nomeLavoro);
+            Rm.impostaLabelContatori();
+            // cerco il lavoro nell'elenco
+            for (String[] elencoLavori : this.Rm.getElencoLavori()) {
+                if (elencoLavori[0].equals(nomeLavoro)) {   // lavoro trovato
+                    Rm.setLimLotti(elencoLavori[1]);
+                    Rm.setLimPezzi(elencoLavori[2]);
+                    Rm.setUDLotti(elencoLavori[5]);
+                    Rm.setUDPezzi(elencoLavori[6]);
+                    break;
+                }
             }
             String umString = leggiFile(Static.F_UM);   // Ogni lavoro ha un proprio tool con un diverso fattore di conversione
             String[] umArray = umString.split(",");
@@ -864,14 +854,12 @@ public class JFileWorker extends Thread {
     private void WlPronta() {
         String wlScelta = leggiFile(Static.F_WL_SCELTA);
         String[] WLSceltaArray = wlScelta.split("§");
-        if (!WLSceltaArray[0].equals(Rm.getWLscelta())) {
+        if (!WLSceltaArray[0].equals(Rm.getWLscelta())) {   // la worklist è stata scelta dall'esterno
             Rm.setWLscelta(WLSceltaArray[0]);
             if (WLSceltaArray.length > 1) {
                 Rm.setWLnrCicli(Integer.parseInt(WLSceltaArray[1]));
             }
         }
-        
-        Rm.wlPronta();
     }
 
     private void leggiAbilitaCalibrazione() {
@@ -894,20 +882,6 @@ public class JFileWorker extends Thread {
 
     private void readPosizioneErrori() {
         this.Rm.setPosizioneErrori(leggiFile(Static.F_POSIZIONE_ERRORI));
-    }
-
-    public void WlListaPronta() {
-        try {
-            Rm.aggiornaWlLavori(leggiFileElenco(Static.F_WL_LISTA));
-            if (Rm.getElencoWlLavori().size() > 1) {
-                Rm.setLimLotti(Rm.getElencoWlLavori().get(0)[2]);
-                Rm.setLimPezzi(Rm.getElencoWlLavori().get(0)[3]);
-                Rm.setUDLotti(Rm.getElencoWlLavori().get(0)[4]);
-                Rm.setUDPezzi(Rm.getElencoWlLavori().get(0)[5]);
-            }
-        } catch (Exception ex) {
-            Static.debug("Error preparing WorkList " + Rm.getWLscelta() + " ! " + ex, 2);
-        }
     }
 
     private void readPiccoRiferimento() {
@@ -974,5 +948,6 @@ public class JFileWorker extends Thread {
             Static.debug("Error reading UM", 2);
         }
     }
+
 
 }
