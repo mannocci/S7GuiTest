@@ -31,6 +31,9 @@ public class Static {
 
     //Variabili final (non modificabili)
     // Richieste
+    final static String RICHIESTA_AVVIO_LAVORO = "76";
+    final static String RICHIESTA_STOP_LAVORO = "77";
+    final static String RICHIESTA_STOP_WL = "78";
     final static String RICHIESTA_AVVIO_WL = "79";
     final static String RICHIESTA_AVVIO = "80";
     final static String RICHIESTA_PAUSA = "81";
@@ -38,6 +41,7 @@ public class Static {
     final static String RICHIESTA_CALIBRAZIONE = "83";
     final static String RICHIESTA_CALIBRAZIONE_TEST = "84";
     final static String RICHIESTA_RIAVVIO = "85";
+    final static String RICHIESTA_RIAVVIO_WL = "185";
     final static String RICHIESTA_CALIBRAZIONE_SALVA = "86";
     final static String RICHIESTA_CALIBRAZIONE_ANNULLA = "87";
     final static String RICHIESTA_RESET_SYSTEM = "88";
@@ -45,10 +49,10 @@ public class Static {
     final static String RICHIESTA_RESTORE_DB = "90";
     final static String RICHIESTA_IMPOSTA_TOOL = "91";
     final static String RICHIESTA_AGGIORNA_INFO = "92";
-
+    final static String RICHIESTA_RESET_WL = "93";
+    final static String RICHIESTA_RESET_WORK= "94";
     // Stati
     final static String STATO_AVVIATO = "91";
-    final static String STATO_PAUSA = "92";
     final static String STATO_STOP = "93";
     final static String STATO_CONCLUSO = "100";
     final static String STATO_CALIBRAZIONE = "200";
@@ -64,6 +68,7 @@ public class Static {
 
     // Nomi dei file
     final static String F_STATO = "stato";
+    final static String F_SONO_IN = "sono_in";    
     final static String F_RESET_REQUEST = "reset_request";
     final static String F_RICHIESTA = "richiesta";
     final static String F_PULSANTE = "pulsante";
@@ -98,7 +103,6 @@ public class Static {
     final static String F_WARNING = "warning.txt";
     final static String F_STATUS_LAN = "status_lan";
     final static String F_STATUS_WIFI = "status_wifi";
-    final static String F_IN_PAUSA = "in_pausa";
     final static String F_NOME_DEVICE = "nome_device";
     final static String F_UM = "um"; // Bar o Newton
     final static String F_ARIA = "aria";
