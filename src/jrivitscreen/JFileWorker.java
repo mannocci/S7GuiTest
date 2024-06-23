@@ -173,7 +173,7 @@ public class JFileWorker extends Thread {
                             }
                             case Static.F_LAVORO_PRONTO -> {
                                 lavoroPronto();//Imposta Lavoro Pronto
-                                if (this.Rm.getRichiesta().equals(Static.RICHIESTA_AVVIO)) {
+                                if (this.Rm.getRichiesta().equals(Static.RICHIESTA_AVVIO_LAVORO)) {
                                     richiestaAvviaLavoro();//Crea richiesta_avvio
                                 }
                                 if (this.Rm.getRichiesta().equals(Static.RICHIESTA_CALIBRAZIONE)) {
@@ -896,7 +896,7 @@ public class JFileWorker extends Thread {
      * Avvia il lavoro scelto
      */
     void richiestaAvviaLavoro() {
-        JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_AVVIO);
+        JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_AVVIO_LAVORO);
         this.Rm.gr.resetCurva();
     }
 
