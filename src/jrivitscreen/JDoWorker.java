@@ -90,12 +90,14 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_STOP);
                     this.Rm.setRichiesta(Static.RICHIESTA_STOP);
                 }
-                case "pausa" -> {
+                case "richiesta_pausa" -> {
                     JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_PAUSA);
                     this.Rm.setRichiesta(Static.RICHIESTA_PAUSA);
                 }
-                case "riavvio" ->
+                case "riavvio_lavoro" ->
                     riavviaLavoro();
+                case "riavvio_wl" ->
+                    riavviaWL();                    
                 case "continua", "accetta", "annulla" ->
                     JFileWorker.scriviFlag(Static.F_RISPOSTA_TIRO_ERRATO + "_" + this.operation);
                 case "aggiorna_nome_device" -> {
@@ -114,22 +116,20 @@ public class JDoWorker extends SwingWorker<String, Object> {
                 case "on_of_nm_device" ->
                     this.on_of_nm_device();
 
-                case "scegli" -> {
+                case "scelto_lavoro" -> {
                     this.impostaLavoro();
                 }
 
-                case "scegli_wl" -> {
-                    this.scegliWL();
+                case "scelto_wl" -> {
+                    this.impostaWL();
                     //this.fileWorker.WlListaPronta();    // Lettura elenco lavori della lista. Da rivedere se si può chiamare in modo più "pulito"
                 }
 
-                case "scegli_e_avvia" -> {
-                    this.impostaLavoro();//Crea w_scelto
+                case "avvia_lavoro" -> {
+                    this.avviaLavoro();//Crea w_scelto
                 }
 
-                case "scegli_e_avvia_wl" -> {
-                    this.scegliWL();
-                    this.fileWorker.WlListaPronta();    // Lettura elenco lavori della lista. Da rivedere se si può chiamare in modo più "pulito"
+                case "avvia_wl" -> {
                     this.avviaWL();
                 }
 
@@ -169,6 +169,18 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     this.Rm.setInSceltaTool(false);
                     this.Rm.PanelMain();
                 }
+                case "reset_wl" -> {
+                    JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_RESET_WL);
+                    this.Rm.setRichiesta(Static.RICHIESTA_RESET_WL);                    
+                }
+                case "reset_work" -> {
+                    JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_RESET_WORK);
+                    this.Rm.setRichiesta(Static.RICHIESTA_RESET_WORK);                    
+                }
+                case "sono_in_wl" ->
+                    JFileWorker.scriviFileConReady(Static.F_SONO_IN, "wl");
+                case "sono_in_work" ->
+                    JFileWorker.scriviFileConReady(Static.F_SONO_IN, "work");                
             }
         } catch (NumberFormatException ex) {
             Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
@@ -196,21 +208,15 @@ public class JDoWorker extends SwingWorker<String, Object> {
     void impostaLavoro() {
         String lavoro = this.Rm.getLavoroScelto();
         // Scrivo anche i dettagli del lavoro. Serviranno allo scambio dati tramite webSocket
-        JFileWorker.scriviFileConReady(Static.F_W_SCELTO, lavoro
-                + "§" + this.Rm.getLimLotti()
-                + "§" + this.Rm.getLimPezzi()
-                + "§" + this.Rm.getUDLotti()
-                + "§" + this.Rm.geUDPezzi()
-        );
+        JFileWorker.scriviFileConReady(Static.F_W_SCELTO, lavoro);
     }
 
     /**
      * Riferisce a Control la scelta della Work List
      */
-    void scegliWL() {
+    void impostaWL() {
         String Wlista = this.Rm.getWLscelta();
-        JFileWorker.scriviFileConReady(Static.F_WL_SCELTA, Wlista
-                + "§" + this.Rm.getWLnrCicli());
+        JFileWorker.scriviFileConReady(Static.F_WL_SCELTA, Wlista);
     }
 
     /**
@@ -223,7 +229,13 @@ public class JDoWorker extends SwingWorker<String, Object> {
         JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_AVVIO_WL);
         this.Rm.gr.resetCurva();
     }
-
+    /**
+     * richiesta di Avvio del lavoro scelto
+     */
+    void avviaLavoro() {
+        JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_AVVIO_LAVORO);
+        this.Rm.gr.resetCurva();
+    }
     /**
      * Riavvia il lavoro scelto
      */
@@ -231,7 +243,13 @@ public class JDoWorker extends SwingWorker<String, Object> {
         JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_RIAVVIO);
         this.Rm.gr.resetCurva();
     }
-
+    /**
+     * Riavvia il lavoro scelto
+     */
+    void riavviaWL() {
+        JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_RIAVVIO_WL);
+        this.Rm.gr.resetCurva();
+    }
     /**
      * Attiva o disattiva di device di rete tramite lo script start_stop_NM.sh
      * Non serve passargli l'informazione se attivarla o meno la connessione
