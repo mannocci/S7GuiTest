@@ -3000,7 +3000,7 @@ public class JRivitMain extends javax.swing.JFrame {
         try {
             setLavoroConcluso(false);
             setInErrore(false);
-            this.richiesta = Static.RICHIESTA_AVVIO;
+            this.richiesta = Static.RICHIESTA_AVVIO_LAVORO;
             this.esegui("avvia_lavoro");
         } catch (Exception ex) {
             Static.debug("Error starting work " + lavoroScelto + " ! " + ex.toString(), 2);

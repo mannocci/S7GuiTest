@@ -31,11 +31,10 @@ public class Static {
 
     //Variabili final (non modificabili)
     // Richieste
-    final static String RICHIESTA_AVVIO_LAVORO = "76";
     final static String RICHIESTA_STOP_LAVORO = "77";
     final static String RICHIESTA_STOP_WL = "78";
     final static String RICHIESTA_AVVIO_WL = "79";
-    final static String RICHIESTA_AVVIO = "80";
+    final static String RICHIESTA_AVVIO_LAVORO = "80";
     final static String RICHIESTA_PAUSA = "81";
     final static String RICHIESTA_STOP = "82";
     final static String RICHIESTA_CALIBRAZIONE = "83";
