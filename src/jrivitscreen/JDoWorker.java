@@ -177,10 +177,14 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_RESET_WORK);
                     this.Rm.setRichiesta(Static.RICHIESTA_RESET_WORK);                    
                 }
-                case "sono_in_wl" ->
+                case "sono_in_wl" ->{
+                    JFileWorker.cancellaFile(Static.F_SONO_IN);
                     JFileWorker.scriviFileConReady(Static.F_SONO_IN, "wl");
-                case "sono_in_work" ->
+                }
+                case "sono_in_work" ->{
+                    JFileWorker.cancellaFile(Static.F_SONO_IN);
                     JFileWorker.scriviFileConReady(Static.F_SONO_IN, "work");                
+                }
             }
         } catch (NumberFormatException ex) {
             Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
