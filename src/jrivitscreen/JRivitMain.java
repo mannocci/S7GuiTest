@@ -3497,9 +3497,8 @@ public class JRivitMain extends javax.swing.JFrame {
                             this.jButtonPR3.setIcon(this.Img_Nulla);//aggiorna il tipo di Icona per il pulsante
                             this.jButtonPR3.setEnabled(false);
                         } else {
-                            if (this.elencoWlCompleto.get(nrCurItem)[10].equals("0")) {
+                            if (this.elencoWlCompleto.get(nrCurItem)[11].equals("0")) {
                                 this.JTextAreaDescrizione.setBackground(Color.white);
-
                                 this.in_pausa = false;
                             } else {
                                 this.JTextAreaDescrizione.setBackground(Color.cyan);
