@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
+import org.json.JSONArray;
 
 /**
  *
@@ -173,7 +174,8 @@ public class JFileWorker extends Thread {
                             }
                             case Static.F_LAVORO_PRONTO -> {
                                 lavoroPronto();//Imposta Lavoro Pronto
-                                if (this.Rm.getRichiesta().equals(Static.RICHIESTA_AVVIO_LAVORO)) {
+                                if (this.Rm.getRichiesta().equals(Static.RICHIESTA_AVVIO_LAVORO)
+                                        || this.Rm.getRichiesta().equals(Static.RICHIESTA_AVVIO_WL)) {
                                     richiestaAvviaLavoro();//Crea richiesta_avvio
                                 }
                                 if (this.Rm.getRichiesta().equals(Static.RICHIESTA_CALIBRAZIONE)) {
@@ -184,8 +186,15 @@ public class JFileWorker extends Thread {
                             /*Aggiungere la gestione della curva, contatori, stato con 
                                 * la creazione dei file F_CURVA_READY, F_LAVORO_READY. F_PULSANTE_READY
                              */
-                            case Static.F_WL_PRONTA ->
-                                WlPronta();
+                            case Static.F_WL_PRONTA -> {
+                                if (this.Rm.getRichiesta().equals(Static.RICHIESTA_AVVIO_WL)) {
+                                    JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_AVVIO_WL);
+                                    this.Rm.gr.resetCurva();
+                                    if (this.Rm.isInWl()) {
+                                        Rm.PanelStarted();
+                                    }
+                                }
+                            }
                             case Static.F_RICHIESTA + "_ready" ->
                                 this.Rm.setRichiesta(leggiFile(Static.F_RICHIESTA));
                             case Static.F_RISPOSTA_TIRO_ERRATO_ACCETTA ->
@@ -262,7 +271,8 @@ public class JFileWorker extends Thread {
      * Legge il file con la descrizione delle WorkList
      */
     private void readWl() {
-        this.Rm.aggiornaWl(leggiFileElenco(Static.F_WL));
+        String ContenutoFile = leggiFile(Static.F_WL);
+        this.Rm.aggiornaWl(new JSONArray(ContenutoFile));
     }
 
     /**
@@ -768,11 +778,16 @@ public class JFileWorker extends Thread {
     private void stato() {
         this.Rm.setStato(leggiFile(Static.F_STATO));
         switch (this.Rm.getStato()) {
+            case Static.STATO_CONCLUSA_WL -> 
+                    this.Rm.setWLConclusa(true);
+
             case Static.STATO_CONCLUSO -> {
                 this.Rm.setLavoroConcluso(true);
                 this.Rm.PanelStarted();
                 this.aggiornaContatori();
             }
+            case Static.STATO_AVVIATA_WL ->            
+                this.Rm.setWLConclusa(false);
             case Static.STATO_AVVIATO -> {
                 this.Rm.setLavoroConcluso(false);
                 this.Rm.setInErrore(false);
@@ -806,7 +821,7 @@ public class JFileWorker extends Thread {
         }
     }
 
-      /**
+    /**
      * Il file "pulsante" viene utilizzato dal webserver per telecontrallare la
      * pressione virtuale di un pulsante
      */
@@ -822,9 +837,7 @@ public class JFileWorker extends Thread {
      */
     private void lavoroPronto() {
         try {
-            String lScelto = leggiFile(Static.F_W_SCELTO);
-            String[] lSceltoArray = lScelto.split("§");
-            String nomeLavoro = lSceltoArray[0];
+            String nomeLavoro = leggiFile(Static.F_W_SCELTO);
             Rm.setLavoroScelto(nomeLavoro);
             Rm.impostaLabelContatori();
             // cerco il lavoro nell'elenco
@@ -853,12 +866,8 @@ public class JFileWorker extends Thread {
      */
     private void WlPronta() {
         String wlScelta = leggiFile(Static.F_WL_SCELTA);
-        String[] WLSceltaArray = wlScelta.split("§");
-        if (!WLSceltaArray[0].equals(Rm.getWLscelta())) {   // la worklist è stata scelta dall'esterno
-            Rm.setWLscelta(WLSceltaArray[0]);
-            if (WLSceltaArray.length > 1) {
-                Rm.setWLnrCicli(Integer.parseInt(WLSceltaArray[1]));
-            }
+        if (!wlScelta.equals(Rm.getWLscelta())) {   // la worklist è stata scelta dall'esterno
+            Rm.setWLscelta(wlScelta);
         }
     }
 
@@ -948,6 +957,5 @@ public class JFileWorker extends Thread {
             Static.debug("Error reading UM", 2);
         }
     }
-
 
 }

@@ -51,9 +51,11 @@ public class Static {
     final static String RICHIESTA_RESET_WL = "93";
     final static String RICHIESTA_RESET_WORK= "94";
     // Stati
+    final static String STATO_AVVIATA_WL= "90";
     final static String STATO_AVVIATO = "91";
     final static String STATO_STOP = "93";
     final static String STATO_CONCLUSO = "100";
+    final static String STATO_CONCLUSA_WL = "101";
     final static String STATO_CALIBRAZIONE = "200";
     final static String STATO_CALIBRAZIONE_TEST = "220";
 

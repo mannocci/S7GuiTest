@@ -69,7 +69,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
                 case "init" ->
                     this.init();
                 case "calibrazione" -> {
-                    this.impostaLavoro();
+                    this.comunicaLavoroScelto();
                     this.Rm.setRichiesta(Static.RICHIESTA_CALIBRAZIONE);
                 }
                 case "calibrazione_test" -> {
@@ -94,6 +94,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_PAUSA);
                     this.Rm.setRichiesta(Static.RICHIESTA_PAUSA);
                 }
+                
                 case "riavvio_lavoro" ->
                     riavviaLavoro();
                 case "riavvio_wl" ->
@@ -117,12 +118,11 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     this.on_of_nm_device();
 
                 case "scelto_lavoro" -> {
-                    this.impostaLavoro();
+                    this.comunicaLavoroScelto();
                 }
 
-                case "scelto_wl" -> {
-                    this.impostaWL();
-                    //this.fileWorker.WlListaPronta();    // Lettura elenco lavori della lista. Da rivedere se si può chiamare in modo più "pulito"
+                case "scelta_wl" -> {
+                    this.comunicaWLScelta();
                 }
 
                 case "avvia_lavoro" -> {
@@ -148,13 +148,17 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     String[] cmd = {"/home/adminsb/bin/" + this.operation};
                     getRuntime().exec(cmd);
                 }
+                case "certi_cicloPiu.sh", "certi_cicloMeno.sh" -> {
+                    String[] cmd = {"/home/adminsb/bin/" + this.operation};
+                    getRuntime().exec(cmd);
+                }                        
                 case "startCert" -> {
-                    String[] cmd = {"/home/adminsb/bin/certSensStart.sh"};
+                    String[] cmd = {"/home/adminsb/bin/certStartCiclo.sh"};
                     getRuntime().exec(cmd);
                 }
                 case "stopCert" -> {
-                    String[] cmd = {"/home/adminsb/bin/certSensStop.sh"};
-                    run_system_bash(cmd);//Non Server il programma certSens con Arduino si chiude da solo
+                    String[] cmd = {"/home/adminsb/bin/certStopCiclo.sh"};
+                    getRuntime().exec(cmd);//Non Server il programma certSens con Arduino si chiude da solo
                 }
                 case "reset_system" -> {
                     JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_RESET_SYSTEM);
@@ -209,7 +213,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
     /**
      * Imposta lavoro scelto
      */
-    void impostaLavoro() {
+    void comunicaLavoroScelto() {
         String lavoro = this.Rm.getLavoroScelto();
         // Scrivo anche i dettagli del lavoro. Serviranno allo scambio dati tramite webSocket
         JFileWorker.scriviFileConReady(Static.F_W_SCELTO, lavoro);
@@ -218,7 +222,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
     /**
      * Riferisce a Control la scelta della Work List
      */
-    void impostaWL() {
+    void comunicaWLScelta() {
         String Wlista = this.Rm.getWLscelta();
         JFileWorker.scriviFileConReady(Static.F_WL_SCELTA, Wlista);
     }
