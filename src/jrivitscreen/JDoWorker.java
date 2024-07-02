@@ -125,14 +125,6 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     this.comunicaWLScelta();
                 }
 
-                case "avvia_lavoro" -> {
-                    this.avviaLavoro();//Crea w_scelto
-                }
-
-                case "avvia_wl" -> {
-                    this.avviaWL();
-                }
-
                 case "aggiorna info" -> {
                     JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_AGGIORNA_INFO);
                     this.Rm.setRichiesta(Static.RICHIESTA_AGGIORNA_INFO);
@@ -227,23 +219,6 @@ public class JDoWorker extends SwingWorker<String, Object> {
         JFileWorker.scriviFileConReady(Static.F_WL_SCELTA, Wlista);
     }
 
-    /**
-     * Avvia la richiesta a Control per la WorkList Questo implica di dover
-     * andare a leggere la lista dei lavori e scriverli in un file con
-     * indice§nome lavoro. ogni volta che screen inizia un lavoro viene rimosso
-     * dal file che inizierà con l'indica§nome lavoro successivo
-     */
-    void avviaWL() {
-        JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_AVVIO_WL);
-        this.Rm.gr.resetCurva();
-    }
-    /**
-     * richiesta di Avvio del lavoro scelto
-     */
-    void avviaLavoro() {
-        JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_AVVIO_LAVORO);
-        this.Rm.gr.resetCurva();
-    }
     /**
      * Riavvia il lavoro scelto
      */

@@ -48,11 +48,12 @@ public class Static {
     final static String RICHIESTA_RESTORE_DB = "90";
     final static String RICHIESTA_IMPOSTA_TOOL = "91";
     final static String RICHIESTA_AGGIORNA_INFO = "92";
-    final static String RICHIESTA_RESET_WL = "93";
-    final static String RICHIESTA_RESET_WORK= "94";
+    final static String RICHIESTA_AGGIORNA_WIFI_STATUS = "93";
+    final static String RICHIESTA_RESET_WL = "94";
+    final static String RICHIESTA_RESET_WORK= "95"; 
     // Stati
     final static String STATO_AVVIATA_WL= "90";
-    final static String STATO_AVVIATO = "91";
+    final static String STATO_AVVIATO_W = "91";
     final static String STATO_STOP = "93";
     final static String STATO_CONCLUSO = "100";
     final static String STATO_CONCLUSA_WL = "101";

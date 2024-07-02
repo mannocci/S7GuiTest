@@ -174,9 +174,13 @@ public class JFileWorker extends Thread {
                             }
                             case Static.F_LAVORO_PRONTO -> {
                                 lavoroPronto();//Imposta Lavoro Pronto
+                                // Nel caso in cui la scelta del lavoro fosse stata fatta dall'esterno
+                                if (this.Rm.getRichiesta().equals(Static.RICHIESTA_AVVIO_LAVORO)) {
+                                    this.Rm.setLavoroScelto(leggiFile(Static.F_W_SCELTO));
+                                }
                                 if (this.Rm.getRichiesta().equals(Static.RICHIESTA_AVVIO_LAVORO)
                                         || this.Rm.getRichiesta().equals(Static.RICHIESTA_AVVIO_WL)) {
-                                    richiestaAvviaLavoro();//Crea richiesta_avvio
+                                    richiestaAvvioLavoro();//Crea richiesta_avvio
                                 }
                                 if (this.Rm.getRichiesta().equals(Static.RICHIESTA_CALIBRAZIONE)) {
                                     this.richiestaAvviaCalibrazione();
@@ -188,11 +192,14 @@ public class JFileWorker extends Thread {
                              */
                             case Static.F_WL_PRONTA -> {
                                 if (this.Rm.getRichiesta().equals(Static.RICHIESTA_AVVIO_WL)) {
-                                    JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_AVVIO_WL);
-                                    this.Rm.gr.resetCurva();
-                                    if (this.Rm.isInWl()) {
-                                        Rm.PanelStarted();
-                                    }
+                                    // Nel caso in cui la scelta della WL fosse stata fatta dall'esterno
+                                    this.Rm.setWLscelta(leggiFile(Static.F_WL_SCELTA));
+                                    richiestaAvvioWL();//Crea richiesta_avvio
+                                    //Simulare avvio del lavoro da parte di screen come se fosse stato scelto
+                                    //dalla lista dei lavori
+                                    this.Rm.impostaLavoroScelto();
+                                    this.Rm.avviaLavoro();
+                                    //this.Rm.PanelStarted();
                                 }
                             }
                             case Static.F_RICHIESTA + "_ready" ->
@@ -684,9 +691,11 @@ public class JFileWorker extends Thread {
     }
 
     /**
-     * Aggiorna i contatori da mostrare allo schermo occorre discriminare se 0)
-     * cntLottio, 1) cntPezzi , 2) tiriValidi, 3) tiriAnnullati, 4) tiriErrati,
-     * 5) tiriTotali, 6) cntCicli, 7) UDLotti, 8) udPezzi, 9)indicelavoriWL
+     * Aggiorna i contatori da mostrare allo schermo
+     *
+     * 0) cntLottio, 1) cntPezzi , 2) tiriValidi, 3) tiriAnnullati, 4)
+     * tiriErrati, 5) tiriTotali, 6) cntCicli, 7) UDLotti, 8) udPezzi,
+     * 9)indicelavoriWL
      *
      */
     private void aggiornaContatori() {
@@ -704,10 +713,10 @@ public class JFileWorker extends Thread {
                 this.Rm.setTiriValidi(Integer.parseInt(contatori[2]));
                 this.Rm.setTiriAnnullati(Integer.parseInt(contatori[3]));
                 this.Rm.setTiriErrati(Integer.parseInt(contatori[4]));
-                this.Rm.setTiriTotali(Integer.parseInt(contatori[5]));
                 this.Rm.setCntCicli(Integer.parseInt(contatori[6]));
+                this.Rm.setIndiceLavoroCorrente(Integer.parseInt(contatori[9]));
                 // aggiorna la visualizzazione dei contatori nel pannello
-                this.Rm.aggiornaContatori();
+                this.Rm.visualizzaContatori();
             } catch (NumberFormatException e) {
                 Static.debug("File contatori contains non numeric values\n" + e.getMessage(), 2);
             }
@@ -778,21 +787,31 @@ public class JFileWorker extends Thread {
     private void stato() {
         this.Rm.setStato(leggiFile(Static.F_STATO));
         switch (this.Rm.getStato()) {
-            case Static.STATO_CONCLUSA_WL -> 
-                    this.Rm.setWLConclusa(true);
-
-            case Static.STATO_CONCLUSO -> {
+            case Static.STATO_CONCLUSA_WL -> {
+                this.Rm.setWLConclusa(true);
                 this.Rm.setLavoroConcluso(true);
                 this.Rm.PanelStarted();
-                this.aggiornaContatori();
             }
-            case Static.STATO_AVVIATA_WL ->            
+
+            case Static.STATO_CONCLUSO -> {
+                if (this.Rm.isInWl()) {
+                    this.Rm.setLavoroConcluso(true);
+                    this.Rm.PanelStarted();
+                }
+            }
+            case Static.STATO_AVVIATA_WL -> {
+                this.Rm.setInWl(true);
                 this.Rm.setWLConclusa(false);
-            case Static.STATO_AVVIATO -> {
+                this.Rm.setInErrore(false);
+                this.aggiornaContatori();
+                this.Rm.PanelStarted();
+            }
+            case Static.STATO_AVVIATO_W -> {
+                this.Rm.setInWl(false);
                 this.Rm.setLavoroConcluso(false);
                 this.Rm.setInErrore(false);
-                this.Rm.PanelStarted();
                 this.aggiornaContatori();
+                this.Rm.PanelStarted();
             }
             case Static.STATO_CALIBRAZIONE -> {
                 this.Rm.avviaCalibrazione();
@@ -808,6 +827,7 @@ public class JFileWorker extends Thread {
 //                    scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_STOP);
                     this.Rm.PanelStart();
                 }*/
+                this.Rm.setWLConclusa(false);
                 if (Rm.getPanCur().equals("started") || Rm.getPanCur().equals("canvas") || Rm.getPanCur().equals("dialog")) {
                     this.Rm.PanelStart();
                 }
@@ -904,8 +924,16 @@ public class JFileWorker extends Thread {
     /**
      * Avvia il lavoro scelto
      */
-    void richiestaAvviaLavoro() {
+    void richiestaAvvioLavoro() {
         JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_AVVIO_LAVORO);
+        this.Rm.gr.resetCurva();
+    }
+
+    /**
+     * Avvia la WL scelta
+     */
+    void richiestaAvvioWL() {
+        JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_AVVIO_WL);
         this.Rm.gr.resetCurva();
     }
 

@@ -265,7 +265,7 @@ public class JGrafico extends JPanel {
                                 }
                                 gr.drawPolyline(xPointsRif, yPointsRif, yRifchar.length);
                                 // Se la curva è OK la ridisegno davanti al riferimento per coerenza con l'interfaccia WEB
-//                                if (this.Rm.getStato().equals(Static.STATO_AVVIATO) && !this.Rm.getInErrore()) {
+//                                if (this.Rm.getStato().equals(Static.STATO_AVVIATO_W) && !this.Rm.getInErrore()) {
 //                                    gr.setColor(Color.decode("0x00dd00"));  // Verde
 //                                    gr.drawPolyline(xPoints, yPoints, yCurvaChar.length);
 //                                }
