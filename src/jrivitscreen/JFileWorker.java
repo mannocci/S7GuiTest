@@ -717,6 +717,7 @@ public class JFileWorker extends Thread {
                 this.Rm.setIndiceLavoroCorrente(Integer.parseInt(contatori[9]));
                 // aggiorna la visualizzazione dei contatori nel pannello
                 this.Rm.visualizzaContatori();
+                this.Rm.setLabelWL();
             } catch (NumberFormatException e) {
                 Static.debug("File contatori contains non numeric values\n" + e.getMessage(), 2);
             }
@@ -794,10 +795,8 @@ public class JFileWorker extends Thread {
             }
 
             case Static.STATO_CONCLUSO -> {
-                if (this.Rm.isInWl()) {
                     this.Rm.setLavoroConcluso(true);
                     this.Rm.PanelStarted();
-                }
             }
             case Static.STATO_AVVIATA_WL -> {
                 this.Rm.setInWl(true);
