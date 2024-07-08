@@ -69,8 +69,12 @@ public class JDoWorker extends SwingWorker<String, Object> {
                 case "init" ->
                     this.init();
                 case "calibrazione" -> {
-                    this.comunicaLavoroScelto();
+//                    this.comunicaLavoroScelto();
+                    // E' importante che la variabile "richiesta" di Rm sia
+                    // impostata prima di chiedere il lavoro per consentire
+                    // l'avvio della procedura quando arriverà "lavoro pronto"
                     this.Rm.setRichiesta(Static.RICHIESTA_CALIBRAZIONE);
+                    this.Rm.impostaLavoroScelto();
                 }
                 case "calibrazione_test" -> {
                     JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_CALIBRAZIONE_TEST);
