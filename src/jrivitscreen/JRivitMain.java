@@ -181,6 +181,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private int indiceLavoroScelto;
     private int indiceLavoroCorrente;
     private int nrDiLavori;
+    private int indiceWLScelta;
 
     /**
      * Creates new form JRivitMain
@@ -189,6 +190,7 @@ public class JRivitMain extends javax.swing.JFrame {
         this.ctCanStart = "1";
         this.panCur = "main";
         this.snCT = "";
+        this.cntCicli = 1;
         String beta = "β";
         initComponents();
         try {
@@ -254,6 +256,7 @@ public class JRivitMain extends javax.swing.JFrame {
         infoAggiuntive = new ArrayList<>();
         this.sensoreCollegato = true;
         this.lavoroScelto = "";
+        this.WLscelta = "";
         this.UDLotti = "+";
         this.UDPezzi = "+";
 
@@ -1072,7 +1075,6 @@ public class JRivitMain extends javax.swing.JFrame {
                             this.esegui("stop");
                         }
                         case Static.RICHIESTA_CALIBRAZIONE -> {
-                            this.impostaLavoroScelto();
                             this.esegui("calibrazione");
                         }
                         case Static.RICHIESTA_CALIBRAZIONE_TEST -> {
@@ -1744,7 +1746,7 @@ public class JRivitMain extends javax.swing.JFrame {
             lista = this.listTools;
             this.JTextAreaDescrizione.setText(this.welcome);
             this.changeButtons(this.Img_Exit, this.Img_Nulla, this.Img_Nulla,
-                    this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Ok);
+                    this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Play);
         } else {
             if (this.inWl) {
                 lista = this.listWLavori;
@@ -1753,10 +1755,10 @@ public class JRivitMain extends javax.swing.JFrame {
             }
             if (this.abilitaCalibrazione) {
                 this.changeButtons(this.Img_Exit, this.Img_Nulla, this.Img_Calibrazione,
-                        this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Ok);
+                        this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Play);
             } else {
                 this.changeButtons(this.Img_Exit, reload, this.Img_Nulla,
-                        this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Ok);
+                        this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Play);
             }
         }
         lista.requestFocus();
@@ -1800,8 +1802,6 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     public void PanelStarted() {
         String[] desWlScelta = null;
-        int cntCicli = 0;
-        int limCicli = 0;
         this.jLabelNomeLavoro.setText(this.nomelavoro.trim());
         this.visualizzaContatori();
 
@@ -1815,7 +1815,7 @@ public class JRivitMain extends javax.swing.JFrame {
             this.changeButtons(this.Img_Continua, this.Img_Ok, this.Img_Annulla,
                     this.Img_Stop, this.Img_Pause, this.Img_Grafico);
         }
-        if (!this.inErrore && !this.lavoroConcluso) {
+        if (!this.inErrore && !(this.lavoroConcluso || this.wlConclusa)) {
             this.jPanelStarted.setBackground(Color.WHITE);
             this.changeButtons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
                     this.Img_Stop, this.Img_Pause, this.Img_Grafico);
@@ -1828,20 +1828,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelNomeLavoro.setVisible(true);
         if (this.inWl) {
             jLabelNomeWL.setVisible(true); // Mostro la label della worklist solo se necessario
-
-            for (int i = 0; i < this.elencoWl.size(); i++) {
-                desWlScelta = this.elencoWl.get(i);
-                if (desWlScelta[0].equals(this.WLscelta)) {
-                    cntCicli = Integer.parseInt(desWlScelta[1]);
-                    limCicli = Integer.parseInt(desWlScelta[2]);
-                    break;
-                }
-            }
-
-            jLabelNomeWL.setText(this.WLscelta + " (" + this.cntCicli + "/" + limCicli + ")  lav "
-                    + (this.indiceLavoroCorrente + 1)
-                    + "/"
-                    + this.nrDiLavori);
+            setLabelWL();
 // Da aggiungere il conteggio del nr d'ordine del lavoro esempio 2^ lavoro su 5 2/5
         } else {
             jLabelNomeWL.setVisible(false); // Mostro la label della worklist solo se necessario
@@ -1889,7 +1876,7 @@ public class JRivitMain extends javax.swing.JFrame {
         if (lavoroScelto.contains("Errore")) {
             lavoroScelto = "0";
         }
-        
+
         this.nomelavoro = this.lavoroScelto = lavoroScelto;
     }
 
@@ -2306,6 +2293,7 @@ public class JRivitMain extends javax.swing.JFrame {
         elencoDesWl = new ArrayList<>();//Descrizione di ogni WL
         elencoWl = new ArrayList<>();//Elenco WL parte di sopra 
         elencoWlCompleto = new ArrayList<>();
+        this.indiceWLScelta = 0;
         this.listWLavori.removeAll();
         this.elencoWl.clear();
         int contatoreRighe = 1;
@@ -2352,9 +2340,13 @@ public class JRivitMain extends javax.swing.JFrame {
                         + a.getInt("LimLotti") + "§"//9
                         + a.getInt("indice") + "§"//10
                         + a.getInt("totLavori") + "§"//11
-                        + a.getInt("cntTotPezzi")).split("§");//12
+                        + a.getInt("cntTotPezzi") + "§"//12
+                        + a.getBoolean("inPausa")).split("§");//13
                 this.elencoWl.add(OldDesWL);//Elenco di stringhe da visualizzare
-
+                if (this.WLscelta.equals(nomeWl)) {
+                    this.indiceWLScelta = contatoreRighe - 1;
+                }
+                contatoreRighe++;
             }
 
         } catch (Exception ex) {
@@ -2362,10 +2354,10 @@ public class JRivitMain extends javax.swing.JFrame {
         }
 
         RefreshList(listWLavori, elencoTxt);
-        this.listLavori.select(0);
-        this.listLavori.makeVisible(0);        
-        if (panCur.equals("work")) {
-            updateDescription(0);
+        this.listWLavori.select(this.indiceWLScelta);
+        this.listWLavori.makeVisible(this.indiceWLScelta);
+        if (panCur.equals("start")) {
+            updateDescription(this.indiceWLScelta);
         }
     }//End aggiornaWLavori
 
@@ -2552,7 +2544,7 @@ public class JRivitMain extends javax.swing.JFrame {
             //Nel caso di una WL la percentuale avanza rispetto al totale dei tiri da fare
             // totale dei tiri validi + errati 
             if (isInWl()) {
-                this.jProgressBar.setValue(this.tiriErrati+this.tiriValidi);
+                this.jProgressBar.setValue(this.tiriErrati + this.tiriValidi);
 
             } else {
                 this.jProgressBar.setValue(this.tiriNelLotto + ((this.lotto - 1) * this.limPezzi));
@@ -2928,7 +2920,6 @@ public class JRivitMain extends javax.swing.JFrame {
         this.lotto = lotto;
     }
 
-
     /**
      * Imposta il totale dei tiri nella Label
      *
@@ -3147,10 +3138,10 @@ public class JRivitMain extends javax.swing.JFrame {
             this.jLabelDesPezziNoLimits.setVisible(false);
             this.jLabelPezziNoLimits.setVisible(false);
             // Imposto la dimensione della barra percentuale
-            if(isInWl()){
+            if (isInWl()) {
                 this.jProgressBar.setMaximum(this.tiriTotali);
-            }else{
-                this.jProgressBar.setMaximum(this.limLotti * this.limPezzi);                
+            } else {
+                this.jProgressBar.setMaximum(this.limLotti * this.limPezzi);
             }
             this.jProgressBar.setVisible(true);
         }
@@ -3520,7 +3511,7 @@ public class JRivitMain extends javax.swing.JFrame {
         try {
             this.jButtonPL2.setIcon(this.Img_Nulla);//aggiorna il tipo di Icona per il pulsante
             this.jButtonPL2.setEnabled(false);
-            this.jButtonPR3.setIcon(this.Img_Ok);//aggiorna il tipo di Icona per il pulsante
+            this.jButtonPR3.setIcon(this.Img_Play);//aggiorna il tipo di Icona per il pulsante
             this.jButtonPR3.setEnabled(true);
             if (inSceltaTool) {
                 if (nrCurItem < this.elencoTools.size()) { // Per prevenire eventuali errori
@@ -3529,9 +3520,8 @@ public class JRivitMain extends javax.swing.JFrame {
                 }
             } else {
                 if (this.inWl) {
-                    //0 nomeWl, 1 cntCicli, 2 limCicli,3 Descrizione, 4 Avviabile ? (-1 almeno un lavoro non calibrato, 0 lista vuota)
+                    // 0 nomeWl, 1 cntCicli, 2 limCicli,3 Descrizione, 4 Avviabile ? (-1 almeno un lavoro non calibrato, 0 lista vuota)
                     // 5 NomeLavoro, 6 contaPezzi, 7 limPezzi, 8 contaLotti, 9 limLotti, 10 indice per segnalare se è in pausa 11)tot lavori
-                    
 
                     if (nrCurItem < this.elencoWl.size()) { // Per prevenire eventuali errori
                         String[] elementoSelezionato = this.elencoWl.get(nrCurItem);
@@ -3553,7 +3543,7 @@ public class JRivitMain extends javax.swing.JFrame {
                                 + elementoSelezionato[3];//Descrizione
                         if (!elementoSelezionato[4].equals("0")) {//Se è vuota non scrivere i valori del lavoro
                             testo += " ("//Descrizione;
-                                    + this.nomelavoro + " " + (Integer.parseInt(elementoSelezionato[10]) + 1) + "/" + elementoSelezionato[11]+"\n"//Nome del lavoro da avviare indice da avviare / tot lavori
+                                    + this.nomelavoro + " " + (Integer.parseInt(elementoSelezionato[10]) + 1) + "/" + elementoSelezionato[11] + "\n"//Nome del lavoro da avviare indice da avviare / tot lavori
                                     + " L=" + elementoSelezionato[8] + "/" + this.limLotti
                                     + " T=" + elementoSelezionato[6] + "/" + this.limPezzi + " tot T=" + elementoSelezionato[12] + ")";//tiri fatti/totale totale di tutti i lavori dei pezzi da fare
                         }
@@ -3564,6 +3554,7 @@ public class JRivitMain extends javax.swing.JFrame {
                             this.JTextAreaDescrizione.setBackground(Color.white);
                             this.in_pausa = false;
                         }
+                        // Non avviabile
                         if (elementoSelezionato[4].equals("-1") || elementoSelezionato[4].equals("0")) {
                             this.JTextAreaDescrizione.setBackground(Color.yellow);
                             this.jButtonPR3.setIcon(this.Img_Nulla);//aggiorna il tipo di Icona per il pulsante
@@ -3571,7 +3562,7 @@ public class JRivitMain extends javax.swing.JFrame {
                             this.in_pausa = false;
                         }
                         //Indice di partenza
-                        if (!elementoSelezionato[10].equals("0")) {
+                        if (elementoSelezionato[13].equals("true")) {   // Se siamo in pausa
                             this.JTextAreaDescrizione.setBackground(Color.cyan);
                             this.jButtonPL2.setIcon(this.Img_restart);//aggiorna il tipo di Icona per il pulsante
                             this.jButtonPL2.setEnabled(true);
@@ -3796,6 +3787,22 @@ public class JRivitMain extends javax.swing.JFrame {
 
     public void setIndiceLavoroCorrente(int indiceLavoroCorrente) {
         this.indiceLavoroCorrente = indiceLavoroCorrente;
+    }
+
+    public void setLabelWL() {
+        for (int i = 0; i < this.elencoWl.size(); i++) {
+            String[] desWlScelta = this.elencoWl.get(i);
+            if (desWlScelta[0].equals(this.WLscelta)) {
+                this.limCicli = Integer.parseInt(desWlScelta[2]);
+                break;
+            }
+        }
+
+        jLabelNomeWL.setText(this.WLscelta + " " + this.cntCicli + "/" + this.limCicli);
+        jLabelNomeLavoro.setText(this.nomelavoro + " "
+                + (this.indiceLavoroCorrente + 1)
+                + "/"
+                + this.nrDiLavori);
     }
 
 }
