@@ -180,6 +180,7 @@ public class JFileWorker extends Thread {
                                 }
                                 if (this.Rm.getRichiesta().equals(Static.RICHIESTA_AVVIO_LAVORO)
                                         || this.Rm.getRichiesta().equals(Static.RICHIESTA_AVVIO_WL)) {
+                                    leggiErrore();//Verifica l'esistenza del file errore. Se sì imposta il flag
                                     richiestaAvvioLavoro();//Crea richiesta_avvio
                                 }
                                 if (this.Rm.getRichiesta().equals(Static.RICHIESTA_CALIBRAZIONE)) {
@@ -795,8 +796,8 @@ public class JFileWorker extends Thread {
             }
 
             case Static.STATO_CONCLUSO -> {
-                    this.Rm.setLavoroConcluso(true);
-                    this.Rm.PanelStarted();
+                this.Rm.setLavoroConcluso(true);
+                this.Rm.PanelStarted();
             }
             case Static.STATO_AVVIATA_WL -> {
                 this.Rm.setInWl(true);
@@ -905,6 +906,18 @@ public class JFileWorker extends Thread {
             this.Rm.setControllerIndicator(true);
         } else {
             this.Rm.setControllerIndicator(false);
+        }
+    }
+
+    /**
+     * Verifica l'esistenza del file errore
+     */
+    private void leggiErrore() {
+        File inputFile = new File(Static.PATH_WATCH + Static.F_ERRORE);
+        if (inputFile.exists()) {
+            this.Rm.setInErrore(true);
+        } else {
+            this.Rm.setInErrore(false);
         }
     }
 
