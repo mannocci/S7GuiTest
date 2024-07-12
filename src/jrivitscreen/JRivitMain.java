@@ -631,7 +631,13 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelSetupLan.setPreferredSize(new java.awt.Dimension(330, 277));
         jPanelSetupLan.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        listLan.setFont(new java.awt.Font("DejaVu Sans Condensed", 0, 14)); // NOI18N
         listLan.setMaximumSize(new java.awt.Dimension(326, 273));
+        listLan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                listLanActionPerformed(evt);
+            }
+        });
         jPanelSetupLan.add(listLan, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 2, 326, 273));
 
         jLayeredPaneCenter.add(jPanelSetupLan, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 330, 277));
@@ -1524,6 +1530,10 @@ public class JRivitMain extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_listToolsItemStateChanged
 
+    private void listLanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listLanActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_listLanActionPerformed
+
     /**
      * PanelMain Pannello che viene visualizzato all'avvio
      */
@@ -2243,7 +2253,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 }
 
                 this.elencoLavori.add(lavoroSplit);
-                if (cntLotti != 1 || cntPezzi != 0) { // lavoro in pausa
+                if (cntLotti > 1 || cntPezzi > 0) { // lavoro in pausa
                     descrizioneRiga = "(Paused) - " + descrizioneRiga;
 //                    if (contatoreRighe == 1) {
 //                        this.in_pausa = true;
