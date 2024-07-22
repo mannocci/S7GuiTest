@@ -650,9 +650,12 @@ public class JFileWorker extends Thread {
      * legge unità di misura, fattore di conversione e nome_device registrato
      * nel record CT -> sn.
      */
+    @SuppressWarnings("UseSpecificCatch")
     private void readNomeDevice() {
         try {
-            this.Rm.setNomeDevice(leggiFile(Static.F_NOME_DEVICE));
+            String[] nomeSplit = leggiFile(Static.F_NOME_DEVICE).split("§");
+            this.Rm.setNomeDevice(nomeSplit[0]);
+            this.Rm.setDurataPlcOk(Integer.parseInt(nomeSplit[1]));
         } catch (Exception ex) {
             Static.debug("Error reading UM", 2);
         }
@@ -777,6 +780,36 @@ public class JFileWorker extends Thread {
         this.Rm.setRispostaErrore("");
         leggiCurva();
         this.Rm.setEsitoTiro(leggiFile(Static.F_ESITO_TIRO));
+        if (!this.Rm.getInErrore()
+                && !(this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE)
+                || this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE_TEST))) {
+
+            if (this.Rm.getDurataPlcOk() > 0) {
+                Color oldColor = this.Rm.getjPanelStarted().getBackground();
+                this.Rm.getjPanelStarted().setBackground(Color.green);
+                try {
+                    Thread.sleep(this.Rm.getDurataPlcOk() * 100);
+                } catch (InterruptedException ex) {
+                    Static.debug("Error changing color background " + ex, 2);
+                }
+                this.Rm.getjPanelStarted().setBackground(oldColor);
+            }
+
+        }
+//        if( !this.Rm.getInErrore() ){
+//            new Thread(() -> {
+//                if ( this.Rm.getDurataPlcOk() > 0) {
+//                    Color oldColor = this.Rm.getjPanelStarted().getBackground();
+//                    this.Rm.getjPanelStarted().setBackground(Color.green);
+//                    try {
+//                        Thread.sleep(this.Rm.getDurataPlcOk() * 100);
+//                    } catch (InterruptedException ex) {
+//                        Static.debug("Error changing color background "+ex, 2);
+//                    }
+//                    this.Rm.getjPanelStarted().setBackground(oldColor);
+//                }
+//            }).start();        
+//        }
         this.Rm.repaint();
     }
 

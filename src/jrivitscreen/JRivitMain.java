@@ -182,6 +182,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private int indiceLavoroCorrente;
     private int nrDiLavori;
     private int indiceWLScelta;
+    private int durataPlcOk;
 
     /**
      * Creates new form JRivitMain
@@ -211,6 +212,7 @@ public class JRivitMain extends javax.swing.JFrame {
         this.jLayeredPaneCenter.add(gr, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 330, 277));
         this.jLabelDesPezziNoLimits.setVisible(false);
         this.jLabelPezziNoLimits.setVisible(false);
+        this.durataPlcOk = 10;  // pausa di visualizzazione verde 1 secondo di default
         this.AlertDialogWhat = "Cancel traction ?";
         this.jLabelNomeWL.setText("");
         this.inSceltaTool = false;  // Da impostare in base alla presenza di richiesta di setup iniziale
@@ -1826,7 +1828,9 @@ public class JRivitMain extends javax.swing.JFrame {
                     this.Img_Stop, this.Img_Pause, this.Img_Grafico);
         }
         if (!this.inErrore && !(this.lavoroConcluso || this.wlConclusa)) {
-            this.jPanelStarted.setBackground(Color.WHITE);
+            if (this.jPanelStarted.getBackground() != Color.green) {
+                this.jPanelStarted.setBackground(Color.WHITE);
+            }
             this.changeButtons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
                     this.Img_Stop, this.Img_Pause, this.Img_Grafico);
         }
@@ -1839,7 +1843,6 @@ public class JRivitMain extends javax.swing.JFrame {
         if (this.inWl) {
             jLabelNomeWL.setVisible(true); // Mostro la label della worklist solo se necessario
             setLabelWL();
-// Da aggiungere il conteggio del nr d'ordine del lavoro esempio 2^ lavoro su 5 2/5
         } else {
             jLabelNomeWL.setVisible(false); // Mostro la label della worklist solo se necessario
         }
@@ -3800,6 +3803,7 @@ public class JRivitMain extends javax.swing.JFrame {
     }
 
     public void setLabelWL() {
+        String nomeLavoroVisualizzato;
         for (int i = 0; i < this.elencoWl.size(); i++) {
             String[] desWlScelta = this.elencoWl.get(i);
             if (desWlScelta[0].equals(this.WLscelta)) {
@@ -3807,12 +3811,28 @@ public class JRivitMain extends javax.swing.JFrame {
                 break;
             }
         }
-
         jLabelNomeWL.setText(this.WLscelta + " " + this.cntCicli + "/" + this.limCicli);
-        jLabelNomeLavoro.setText(this.nomelavoro + " "
-                + (this.indiceLavoroCorrente + 1)
-                + "/"
-                + this.nrDiLavori);
+        if (this.inWl) {
+            nomeLavoroVisualizzato = this.nomelavoro + " "
+                    + (this.indiceLavoroCorrente + 1)
+                    + "/"
+                    + this.nrDiLavori;
+        } else {
+            nomeLavoroVisualizzato = this.nomelavoro;
+        }
+        jLabelNomeLavoro.setText(nomeLavoroVisualizzato);
+    }
+
+    public void setDurataPlcOk(int durataPlcOk) {
+        this.durataPlcOk = durataPlcOk;
+    }
+
+    int getDurataPlcOk() {
+        return durataPlcOk;
+    }
+
+    public JPanel getjPanelStarted() {
+        return jPanelStarted;
     }
 
 }
