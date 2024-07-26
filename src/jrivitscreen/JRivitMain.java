@@ -261,7 +261,8 @@ public class JRivitMain extends javax.swing.JFrame {
         this.WLscelta = "";
         this.UDLotti = "+";
         this.UDPezzi = "+";
-
+        this.nomelavoro = "";
+        
         rispostaErrore = "";
         wifiMode = "Auto";
         Calendar.getInstance();
