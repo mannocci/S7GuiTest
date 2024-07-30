@@ -410,7 +410,7 @@ public class JFileWorker extends Thread {
             this.Rm.ariaAperta();
         }
         this.readSnCT();
-        this.readNomeDevice();//Se non esiste il file imposta a CT-0000-00
+        this.readNomeDevice();//Se non esiste il file imposta a CG-0000-00
 //        cancellaFile(Static.PATH_WATCH + "errore"); // Dovrebbe farlo COntrol
         this.Rm.set_jLabel_B_L("Main");
         this.Rm.repaint();
