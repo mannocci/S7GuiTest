@@ -262,7 +262,7 @@ public class JRivitMain extends javax.swing.JFrame {
         this.UDLotti = "+";
         this.UDPezzi = "+";
         this.nomelavoro = "";
-        
+
         rispostaErrore = "";
         wifiMode = "Auto";
         Calendar.getInstance();
@@ -326,11 +326,13 @@ public class JRivitMain extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jLabelSnCT1 = new javax.swing.JLabel();
         jLayeredPaneCenter = new javax.swing.JLayeredPane();
         jPanelMain = new javax.swing.JPanel();
         jLabelLogo = new javax.swing.JLabel();
         jLabelDeviceName = new javax.swing.JLabel();
         jLabelVersione = new javax.swing.JLabel();
+        jLabelSnCT = new javax.swing.JLabel();
         jPanelStart = new javax.swing.JPanel();
         listLavori = new java.awt.List();
         listWLavori = new java.awt.List();
@@ -388,6 +390,14 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelWiFi = new javax.swing.JLabel();
         jLabelInternet = new javax.swing.JLabel();
 
+        jLabelSnCT1.setFont(new java.awt.Font("Ubuntu Light", 1, 14)); // NOI18N
+        jLabelSnCT1.setForeground(java.awt.Color.black);
+        jLabelSnCT1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabelSnCT1.setText("CG-0000-24");
+        jLabelSnCT1.setMaximumSize(new java.awt.Dimension(320, 30));
+        jLabelSnCT1.setMinimumSize(new java.awt.Dimension(320, 30));
+        jLabelSnCT1.setPreferredSize(new java.awt.Dimension(322, 32));
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(480, 320));
         setName("frameMain"); // NOI18N
@@ -443,6 +453,15 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelVersione.setMinimumSize(new java.awt.Dimension(320, 30));
         jLabelVersione.setPreferredSize(new java.awt.Dimension(322, 32));
         jPanelMain.add(jLabelVersione, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 0, 328, 20));
+
+        jLabelSnCT.setFont(new java.awt.Font("Ubuntu Light", 1, 14)); // NOI18N
+        jLabelSnCT.setForeground(java.awt.Color.black);
+        jLabelSnCT.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabelSnCT.setText("CG-0000-24");
+        jLabelSnCT.setMaximumSize(new java.awt.Dimension(320, 30));
+        jLabelSnCT.setMinimumSize(new java.awt.Dimension(320, 30));
+        jLabelSnCT.setPreferredSize(new java.awt.Dimension(322, 32));
+        jPanelMain.add(jLabelSnCT, new org.netbeans.lib.awtextra.AbsoluteConstraints(225, 233, 100, 20));
 
         jLayeredPaneCenter.add(jPanelMain, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 330, 277));
 
@@ -1303,7 +1322,7 @@ public class JRivitMain extends javax.swing.JFrame {
         // Qual'è il nome del pannello in primo piano ?
         switch (this.panCur) {
             case "main" -> { //fare tutta WebControl
-                if (this.elencoDesWl != null) {
+                if (this.elencoDesWl != null && !this.elencoDesWl.isEmpty()) {
                     this.inWl = true;
                     this.set_jLabel_B_L("WL");
                     this.listLavori.setVisible(false);
@@ -1549,14 +1568,14 @@ public class JRivitMain extends javax.swing.JFrame {
         } else {
             if (this.elencoDesWl != null) {
                 this.changeButtons(this.Img_Warning, this.Img_Info, this.Img_Setup,
-                        this.Img_W, this.Img_WL, this.Img_Cert);
+                        this.Img_W, this.Img_WL, this.Img_Nulla);
             } else {
                 this.changeButtons(this.Img_Warning, this.Img_Info, this.Img_Setup,
-                        this.Img_W, this.Img_Nulla, this.Img_Cert);
+                        this.Img_W, this.Img_Nulla, this.Img_Nulla);
             }
             if (this.ctCanStart.equals("0")) {
                 this.changeButtons(this.Img_Warning, this.Img_Info, this.Img_Setup,
-                        this.Img_Nulla, this.Img_Nulla, this.Img_Cert);
+                        this.Img_Nulla, this.Img_Nulla, this.Img_Nulla);
             }
             cambiaPannello(this.jPanelMain);
         }
@@ -1703,6 +1722,8 @@ public class JRivitMain extends javax.swing.JFrame {
     private javax.swing.JLabel jLabelNomeLavoro;
     private javax.swing.JLabel jLabelNomeWL;
     private javax.swing.JLabel jLabelPezziNoLimits;
+    private javax.swing.JLabel jLabelSnCT;
+    private javax.swing.JLabel jLabelSnCT1;
     private javax.swing.JLabel jLabelVPN;
     private javax.swing.JLabel jLabelValidi;
     private javax.swing.JLabel jLabelVersione;
@@ -2694,13 +2715,13 @@ public class JRivitMain extends javax.swing.JFrame {
 //        }
 //    }
     /**
-     * setNomeDevice set Label noeme del device
+     * setNomeDevice set Label nome del device
      *
      * @param nd Nome del device letto dal file nome_device.txt
      */
     public void setNomeDevice(String nd) {
         if (nd.contains("Errore")) {
-            nd = "CT-0000-00";
+            nd = "CG-0000-00";
         }
         this.jLabelNomeDevice.setText(nd);
         this.jLabelDeviceName.setText(nd);
@@ -3761,6 +3782,7 @@ public class JRivitMain extends javax.swing.JFrame {
 
     public void setSnCT(String snCT) {
         this.snCT = snCT;
+        this.jLabelSnCT.setText(snCT);
     }
 
     public String getCtCanStart() {
