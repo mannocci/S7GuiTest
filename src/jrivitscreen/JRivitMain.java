@@ -2244,9 +2244,10 @@ public class JRivitMain extends javax.swing.JFrame {
         int contatoreRighe = 1;
         String[] lavoroSplit;
         try {
-            if (lista.isEmpty() || lista.contains("errore")) {  // sintassi nomelavoro, lotti, pezzi, descrizione, canStart, UDLotti, UDPezzi, cntLotti, cntPezzi
-                lista.add(" no count limits§-1§-1§work without counting limits§0");
-                Static.debug("ERROR: Emply work list", 2);
+            if (lista.get(0).contains("errore")) {  // sintassi nomelavoro, lotti, pezzi, descrizione, canStart, UDLotti, UDPezzi, cntLotti, cntPezzi
+                lista.clear();
+                lista.add(" no count limits§-1§-1§work without counting limits§1§+§+§1§0");
+                Static.debug("ERROR: Empty work list", 2);
                 // todo verificare se in caso di file lavori.txt vuoto occore fermarsi
             }
             List<String> elencoTxt = new ArrayList<>();
@@ -2352,7 +2353,7 @@ public class JRivitMain extends javax.swing.JFrame {
                     descrizione = "Empty Work List - " + descrizione;
                 }
                 if (condizioneAvvio == -1) { // lavoro non avviabile
-                    descrizione = "One work is Not calibrated - " + descrizione;
+                    descrizione = "At least one work is Not calibrated - " + descrizione;
                 }
                 this.elencoDesWl.add(descrizione);
                 this.elencoWlCompleto.add(a);//Lista OBJ JSON
