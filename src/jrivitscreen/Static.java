@@ -70,6 +70,7 @@ public class Static {
     final static String ARIA_APERTA = "1";
 
     // Nomi dei file
+    
     final static String F_STATO = "stato";
     final static String F_SONO_IN = "sono_in";    
     final static String F_RESET_REQUEST = "reset_request";
