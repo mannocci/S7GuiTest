@@ -277,10 +277,15 @@ public class JFileWorker extends Thread {
 
     /**
      * Legge il file con la descrizione delle WorkList
+     * Aggiunto controllo se il file è vuoto
      */
     private void readWl() {
         String ContenutoFile = leggiFile(Static.F_WL);
-        this.Rm.aggiornaWl(new JSONArray(ContenutoFile));
+        if(! ContenutoFile.startsWith("errore ")){
+            this.Rm.aggiornaWl(new JSONArray(ContenutoFile));
+        }else{
+            System.out.println("Errore lettura file "+Static.F_WL);
+        }        
     }
 
     /**
@@ -542,7 +547,7 @@ public class JFileWorker extends Thread {
     /**
      * Metodo che utilizza il controllo del Lock per leggere righe multiple da
      * un file
-     *
+     * Aggiunto controllo su errore di lettura di file inesistente o vuoto
      * @param NomeFile
      * @return La riga letta del file
      */
@@ -559,10 +564,14 @@ public class JFileWorker extends Thread {
             lock = lockFile(NomeFile);
             if (lock) {
                 ListaRighe = Files.readAllLines(Paths.get(Static.PATH_WATCH + NomeFile), StandardCharsets.UTF_8);
+                if(ListaRighe.size() == 0){
+                    ListaRighe.add("errore lettura File " + NomeFile);
+                }
                 unLock(NomeFile);
             }
         } catch (IOException ex) {
             Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
+            ListaRighe.add("errore lettura File " + NomeFile);
             unLock(NomeFile);
             return ListaRighe;
         }
@@ -593,18 +602,20 @@ public class JFileWorker extends Thread {
                 while (myReader.hasNextLine()) {
                     contenutoFile += myReader.nextLine();
                 }
+                if( ! (contenutoFile.length() > 1)){
+                    contenutoFile = "errore " + NomeFile;
+                }
             }
         } catch (IOException ex) {
             Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
             unLock(NomeFile);
-            return "";
+            return "errore ";
         }
         unLock(NomeFile);
         return contenutoFile;
     }
 
     private void leggiNoSensore() {
-
         File noSensore = new File(Static.PATH_WATCH + Static.F_NO_SENSORE);
         this.Rm.setSensoreCollegato(!noSensore.exists());
         if (noSensore.exists()) {
