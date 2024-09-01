@@ -54,6 +54,7 @@ ha le seguenti variabili dedicate alla pausa sono inutili vanno tolte
  */
 package jrivitscreen;
 
+
 import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Robot;
@@ -87,7 +88,7 @@ public class JRivitMain extends javax.swing.JFrame {
 
     private String stato;
     private String richiesta;
-    private JDoWorker doWorker;
+    private final JDoWorker doWorker;
     private ImageIcon Img_Warning;
     private final ImageIcon Img_Exit, Img_Ok, Img_Nulla, Img_Freccia_su,
             Img_Freccia_giu, Img_Setup, Img_Play,
@@ -277,8 +278,9 @@ public class JRivitMain extends javax.swing.JFrame {
             beta = "";
         }
         versione = setup.getProperty("versione", "0.0") + beta;
-
+        
         data_release = setup.getProperty("data_versione", "14/12/2022");
+        
         setup.getProperty("srvkey", "");
         Static.debug("JRivitScreen ver. " + versione + " release " + data_release, 1);
         if (Static.VMMODE) {
@@ -309,6 +311,7 @@ public class JRivitMain extends javax.swing.JFrame {
             this.bt = new JButtonsDio(this);
         }
         doWorker = new JDoWorker(this, fileWorker);
+        
         this.esegui("init");
         if (!this.richiesta.equals(Static.RICHIESTA_RESET_SYSTEM)) {
             this.esegui("aggiorna_nm_list");
@@ -1157,12 +1160,12 @@ public class JRivitMain extends javax.swing.JFrame {
             case "started" ->//Continua
             {
                 this.setContesto(this.panCur);
-                scelta = Static.CONTINUA;
+                scelta = Static.ACCETTA;
                 rispostaErrore();
 
             }
             case "canvas" -> {
-                scelta = Static.CONTINUA;
+                scelta = Static.ACCETTA;
                 rispostaErrore();
                 //PanelStarted(); Rimane in cavans 
             }
@@ -1217,12 +1220,12 @@ public class JRivitMain extends javax.swing.JFrame {
             case "started" ->//Accetta il tiro
             {
                 this.setContesto(this.panCur);
-                scelta = Static.ACCETTA;
+                scelta = Static.ANNULLA;
                 rispostaErrore();
             }
             case "canvas" -> {
                 if (!getStato().equals(Static.STATO_CALIBRAZIONE)) {
-                    scelta = Static.ACCETTA;
+                    scelta = Static.ANNULLA;
                     rispostaErrore();
                 }
             }
@@ -1281,12 +1284,12 @@ public class JRivitMain extends javax.swing.JFrame {
             }
             case "started" -> {//Annullare il tiro
                 this.setContesto(this.panCur);
-                this.scelta = Static.ANNULLA;
+                this.scelta = Static.CONTINUA;
                 rispostaErrore();
             }
             case "canvas" -> {
                 if (!getStato().equals(Static.STATO_CALIBRAZIONE)) {
-                    this.scelta = Static.ANNULLA;
+                    this.scelta = Static.CONTINUA;
                     rispostaErrore();
                 }
             }
@@ -1846,7 +1849,7 @@ public class JRivitMain extends javax.swing.JFrame {
         }
         if (this.inErrore) {
             this.jPanelStarted.setBackground(Color.RED);
-            this.changeButtons(this.Img_Continua, this.Img_Ok, this.Img_Annulla,
+            this.changeButtons(this.Img_Ok, this.Img_Annulla,this.Img_Continua, 
                     this.Img_Stop, this.Img_Pause, this.Img_Grafico);
         }
         if (!this.inErrore && !(this.lavoroConcluso || this.wlConclusa)) {
@@ -2160,7 +2163,7 @@ public class JRivitMain extends javax.swing.JFrame {
         } else {
 
             if (this.inErrore) {
-                this.changeButtons(this.Img_Continua, this.Img_Ok, this.Img_Annulla,
+                this.changeButtons(this.Img_Ok, this.Img_Annulla,this.Img_Continua, 
                         this.Img_Stop, this.Img_Pause, this.Img_Estende);
             } else if (this.lavoroConcluso) {
                 this.changeButtons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
@@ -2275,7 +2278,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 if (limLottiRiga == -1) { // Lavoro senza limiti -> visualizzo solo il nome
                     elencoTxt.add(nomeLavoroRiga);
                 } else {
-                    elencoTxt.add(nomeLavoroRiga + " L=" + cntLotti + "/" + limLottiRiga + " T=" + cntPezzi + "/" + limPezziRiga);
+                    elencoTxt.add(nomeLavoroRiga + " L=" + cntLotti + "/" + limLottiRiga + " F=" + cntPezzi + "/" + limPezziRiga);
                 }
 
                 this.elencoLavori.add(lavoroSplit);
@@ -3581,7 +3584,7 @@ public class JRivitMain extends javax.swing.JFrame {
                             testo += " ("//Descrizione;
                                     + this.nomelavoro + " " + (Integer.parseInt(elementoSelezionato[10]) + 1) + "/" + elementoSelezionato[11] + "\n"//Nome del lavoro da avviare indice da avviare / tot lavori
                                     + " L=" + elementoSelezionato[8] + "/" + this.limLotti
-                                    + " T=" + elementoSelezionato[6] + "/" + this.limPezzi + " tot T=" + elementoSelezionato[12] + ")";//tiri fatti/totale totale di tutti i lavori dei pezzi da fare
+                                    + " F=" + elementoSelezionato[6] + "/" + this.limPezzi + " tot F=" + elementoSelezionato[12] + ")";//tiri fatti/totale totale di tutti i lavori dei pezzi da fare
                         }
 
                         this.JTextAreaDescrizione.setText(testo);
