@@ -197,6 +197,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
         this.operation = operation;
     }
 
+    
     /**
      * inizializza diversi stati per prevenire la scheda bianca Avvia l'istanza
      * della classe FileWorker
@@ -204,6 +205,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
     void init() {
         this.fileWorker.start();//Avvio FileWorker
         this.fileWorker.initValues();
+        JFileWorker.scriviFile(Static.F_SCREEN_VERSION,this.Rm.versione+" "+this.Rm.data_release);
     }
 
     /**
