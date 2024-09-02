@@ -129,6 +129,7 @@ public class Static {
     final static String F_CONTROLLER_ONLINE = "controller_online";
     final static String F_POWEROFF = "poweroff";
     final static String F_FIRST_TIME = "first_time";
+    final static String F_SCREEN_VERSION ="screen_version";
     
     static String PATH_WATCH = "/tmp/CT/";
     static String PATH_LCK = "/tmp/CTLock/";
@@ -141,6 +142,7 @@ public class Static {
 
 //    final public static DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yy HH:mm:ss.SSS");  // per i messaggi di log
     final public static DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yy HH:mm:ss");  // per i messaggi di log
+    
 
     /**
      * Visualizza informazioni di debug.
