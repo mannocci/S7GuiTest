@@ -96,7 +96,7 @@ public class JRivitMain extends javax.swing.JFrame {
             Img_Grafico, Img_Calibrazione, Img_reloadWork,
             Img_Continua, Img_Estende, Img_Stop,
             Img_Pause, Img_Annulla, Img_Lan, Img_WiFi,
-            Img_Freccia_sx, Img_Freccia_dx, Img_Cancel, Img_W, Img_WL;
+            Img_Freccia_sx, Img_Freccia_dx, Img_Cancel, Img_W, Img_WL,Img_SysStopped;
     private final ImageIcon Img_Cert, Img_WiFi_2_4, Img_WiFi_5, Img_WiFi_Auto;
     private final ImageIcon Img_start_WiFi, Img_stop_WiFi, Img_start_log, Img_stop_log, Img_restart;
     private String AlertDialogWhat;
@@ -253,7 +253,8 @@ public class JRivitMain extends javax.swing.JFrame {
         Img_start_log = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/startLog.png"));
         Img_stop_log = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/stopLog.png"));
         Img_restart = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/restart_alt.png"));
-
+        Img_SysStopped = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/logoriSystemStopped.png"));
+        
         elencoLavori = new ArrayList<>();
         elencoWl = new ArrayList<>();
         infoAggiuntive = new ArrayList<>();
