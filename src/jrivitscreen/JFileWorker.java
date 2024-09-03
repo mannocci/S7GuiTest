@@ -55,6 +55,7 @@ public class JFileWorker extends Thread {
     private WatchService watcher;
     private Path fileName;
     private WatchKey key;
+    private int OldW_Level;
 
     public JFileWorker(JRivitMain mf) throws IOException {
         this.Rm = mf;
@@ -154,11 +155,38 @@ public class JFileWorker extends Thread {
                                 readInternetStatus();
                             }
                             case Static.F_POWEROFF -> {
-                                Rm.getjLabelDeviceName().setText("POWERING OFF");
+                                Rm.getjLabelDeviceName().setText("POWERING OFF SYSTEM");
+                                Rm.getJLabelLogo().setIcon(Rm.getImageIconSysStopped());
+                                Rm.setInFreeze(true);
                                 Rm.PanelMain();
-                                Thread.sleep(2000);
+                                Thread.sleep(3000);//Aggiunto un secondo per mostrare il pannello
                                 System.exit(0);
                             }
+                            case Static.F_REBOOT -> {
+                                Rm.getjLabelDeviceName().setText("REBOOT SYSTEM");
+                                Rm.getJLabelLogo().setIcon(Rm.getImageIconSysStopped());
+                                Rm.setInFreeze(true);
+                                Rm.PanelMain();
+                                Thread.sleep(3000);//Aggiunto un secondo per mostrare il pannello
+                                System.exit(0);
+                            }                            
+                            case Static.F_SYSTEM_FREEZE -> {
+                                Rm.setInFreeze(true);
+                                Rm.showPannelloErrore(true);
+                                 Rm.saveButtons();
+                                 Rm.clearButtons();
+                                Rm.getjLabelDeviceName().setText("SYSTEM FREEZE");
+                                //Rm.getJLabelLogo().setIcon(Rm.getImageIconSysStopped());
+                            }   
+                            case Static.F_SYSTEM_LOCK_EMERGENCY -> {
+                                Rm.setInFreeze(true);
+                                Rm.showPannelloErrore(true);
+                                Rm.saveButtons();
+                                Rm.clearButtons();
+                                Rm.getjLabelDeviceName().setText("SYSTEM LOCK EMERGENCY");
+                                Rm.getJLabelLogo().setIcon(Rm.getImageIconSysStopped());                                
+                            }
+                         
                             case (Static.F_NOME_DEVICE + "_ready") -> {  // Il file F_UM viene creato dopo aver letto tutti i dati del CT
                                 readNomeDevice();
                                 if (this.Rm.getPanCur().equals("main")) {
@@ -251,6 +279,18 @@ public class JFileWorker extends Thread {
                                 this.Rm.esegui("aggiorna_nm_list");
                                 this.Rm.PanelMain();
                             }
+                            case Static.F_SYSTEM_FREEZE ->{
+                                Rm.setInFreeze(false);
+                                Rm.showPannelloErrore(false);
+                                Rm.restoreButtons();
+                                Rm.getjLabelDeviceName().setText(this.Rm.getNomeDevice());
+                                Rm.getJLabelLogo().setIcon(Rm.getImageIconLogo());                                
+                            }
+                            case Static.F_SYSTEM_LOCK_EMERGENCY ->{
+                                Rm.setInFreeze(false);
+                                Rm.showPannelloErrore(false);
+                                Rm.restoreButtons();
+                            }                            
                         }
                     }
 

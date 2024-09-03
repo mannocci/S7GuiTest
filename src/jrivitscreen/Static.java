@@ -50,9 +50,9 @@ public class Static {
     final static String RICHIESTA_AGGIORNA_INFO = "92";
     final static String RICHIESTA_AGGIORNA_WIFI_STATUS = "93";
     final static String RICHIESTA_RESET_WL = "94";
-    final static String RICHIESTA_RESET_WORK= "95"; 
+    final static String RICHIESTA_RESET_WORK = "95";
     // Stati
-    final static String STATO_AVVIATA_WL= "90";
+    final static String STATO_AVVIATA_WL = "90";
     final static String STATO_AVVIATO_W = "91";
     // final static String STATO_PAUSA = "92"; // Non è uno stato del device, quindi non va gestito
     final static String STATO_STOP = "93";
@@ -70,9 +70,8 @@ public class Static {
     final static String ARIA_APERTA = "1";
 
     // Nomi dei file
-    
     final static String F_STATO = "stato";
-    final static String F_SONO_IN = "sono_in";    
+    final static String F_SONO_IN = "sono_in";
     final static String F_RESET_REQUEST = "reset_request";
     final static String F_RICHIESTA = "richiesta";
     final static String F_PULSANTE = "pulsante";
@@ -128,8 +127,12 @@ public class Static {
     final static String F_INTERNET_STATUS = "internet_status";
     final static String F_CONTROLLER_ONLINE = "controller_online";
     final static String F_POWEROFF = "poweroff";
+    final static String F_REBOOT = "reboot";
     final static String F_FIRST_TIME = "first_time";
-    final static String F_SCREEN_VERSION ="screen_version";
+    final static String F_SCREEN_VERSION = "screen_version";
+    final static String F_SYSTEM_FREEZE = "system_freeze";
+    final static String F_SYSTEM_LOCK_EMERGENCY = "system_lock_emergency";
+    final static String F_SYSTEM_RETURN_OK = "system_return_ok";
     
     static String PATH_WATCH = "/tmp/CT/";
     static String PATH_LCK = "/tmp/CTLock/";
@@ -142,7 +145,6 @@ public class Static {
 
 //    final public static DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yy HH:mm:ss.SSS");  // per i messaggi di log
     final public static DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yy HH:mm:ss");  // per i messaggi di log
-    
 
     /**
      * Visualizza informazioni di debug.

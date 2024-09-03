@@ -54,7 +54,6 @@ ha le seguenti variabili dedicate alla pausa sono inutili vanno tolte
  */
 package jrivitscreen;
 
-
 import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Robot;
@@ -71,6 +70,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -96,7 +96,7 @@ public class JRivitMain extends javax.swing.JFrame {
             Img_Grafico, Img_Calibrazione, Img_reloadWork,
             Img_Continua, Img_Estende, Img_Stop,
             Img_Pause, Img_Annulla, Img_Lan, Img_WiFi,
-            Img_Freccia_sx, Img_Freccia_dx, Img_Cancel, Img_W, Img_WL,Img_SysStopped;
+            Img_Freccia_sx, Img_Freccia_dx, Img_Cancel, Img_W, Img_WL, Img_SysStopped, Img_Logo;
     private final ImageIcon Img_Cert, Img_WiFi_2_4, Img_WiFi_5, Img_WiFi_Auto;
     private final ImageIcon Img_start_WiFi, Img_stop_WiFi, Img_start_log, Img_stop_log, Img_restart;
     private String AlertDialogWhat;
@@ -136,6 +136,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private String panCur;
     private boolean inErrore = false;
     private boolean in_pausa = false;
+    private boolean inFreeze = false;
     private boolean confermaRispErrore = false;
     private boolean lavoroConcluso = false;
     private boolean wlConclusa = false;
@@ -184,11 +185,14 @@ public class JRivitMain extends javax.swing.JFrame {
     private int nrDiLavori;
     private int indiceWLScelta;
     private int durataPlcOk;
+    private String nomeDevice;
+    private ImageIcon buttonSave[];
 
     /**
      * Creates new form JRivitMain
      */
     public JRivitMain() {
+        this.buttonSave = new ImageIcon[6];
         this.ctCanStart = "1";
         this.panCur = "main";
         this.snCT = "";
@@ -254,7 +258,7 @@ public class JRivitMain extends javax.swing.JFrame {
         Img_stop_log = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/stopLog.png"));
         Img_restart = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/restart_alt.png"));
         Img_SysStopped = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/logoriSystemStopped.png"));
-        
+        Img_Logo = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/logori2.png"));
         elencoLavori = new ArrayList<>();
         elencoWl = new ArrayList<>();
         infoAggiuntive = new ArrayList<>();
@@ -279,9 +283,9 @@ public class JRivitMain extends javax.swing.JFrame {
             beta = "";
         }
         versione = setup.getProperty("versione", "0.0") + beta;
-        
+
         data_release = setup.getProperty("data_versione", "14/12/2022");
-        
+
         setup.getProperty("srvkey", "");
         Static.debug("JRivitScreen ver. " + versione + " release " + data_release, 1);
         if (Static.VMMODE) {
@@ -312,7 +316,7 @@ public class JRivitMain extends javax.swing.JFrame {
             this.bt = new JButtonsDio(this);
         }
         doWorker = new JDoWorker(this, fileWorker);
-        
+
         this.esegui("init");
         if (!this.richiesta.equals(Static.RICHIESTA_RESET_SYSTEM)) {
             this.esegui("aggiorna_nm_list");
@@ -375,6 +379,11 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelCert = new javax.swing.JPanel();
         listCert = new java.awt.List();
         listSens = new java.awt.List();
+        jPanelLock = new javax.swing.JPanel();
+        jLabelLogoLock = new javax.swing.JLabel();
+        jLabelVersioneLock = new javax.swing.JLabel();
+        jLabelDeviceNameLock = new javax.swing.JLabel();
+        jLabelSnCGLock = new javax.swing.JLabel();
         jPanelRight = new javax.swing.JPanel();
         jButtonPR1 = new javax.swing.JButton();
         jButtonPR2 = new javax.swing.JButton();
@@ -757,6 +766,54 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelCert.add(listSens, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 186, 326, 90));
 
         jLayeredPaneCenter.add(jPanelCert, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 328, 276));
+
+        jPanelLock.setBackground(new java.awt.Color(255, 255, 255));
+        jPanelLock.setMaximumSize(new java.awt.Dimension(330, 277));
+        jPanelLock.setMinimumSize(new java.awt.Dimension(330, 277));
+        jPanelLock.setName("main"); // NOI18N
+        jPanelLock.setPreferredSize(new java.awt.Dimension(330, 277));
+        jPanelLock.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLabelLogoLock.setBackground(new java.awt.Color(255, 255, 255));
+        jLabelLogoLock.setForeground(new java.awt.Color(0, 0, 0));
+        jLabelLogoLock.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelLogoLock.setIcon(new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/lavori-in-corso.png"))); // NOI18N
+        jLabelLogoLock.setAlignmentY(0.0F);
+        jLabelLogoLock.setFocusable(false);
+        jLabelLogoLock.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jLabelLogoLock.setMaximumSize(new java.awt.Dimension(250, 250));
+        jLabelLogoLock.setMinimumSize(new java.awt.Dimension(250, 250));
+        jLabelLogoLock.setPreferredSize(new java.awt.Dimension(250, 250));
+        jPanelLock.add(jLabelLogoLock, new org.netbeans.lib.awtextra.AbsoluteConstraints(54, 23, 220, 230));
+
+        jLabelVersioneLock.setFont(new java.awt.Font("Ubuntu Light", 1, 14)); // NOI18N
+        jLabelVersioneLock.setForeground(java.awt.Color.blue);
+        jLabelVersioneLock.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelVersioneLock.setText("Ver.");
+        jLabelVersioneLock.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        jLabelVersioneLock.setMaximumSize(new java.awt.Dimension(320, 30));
+        jLabelVersioneLock.setMinimumSize(new java.awt.Dimension(320, 30));
+        jLabelVersioneLock.setPreferredSize(new java.awt.Dimension(322, 32));
+        jPanelLock.add(jLabelVersioneLock, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 0, 328, 20));
+
+        jLabelDeviceNameLock.setFont(new java.awt.Font("Ubuntu Light", 3, 18)); // NOI18N
+        jLabelDeviceNameLock.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelDeviceNameLock.setText("Device Name");
+        jLabelDeviceNameLock.setMaximumSize(new java.awt.Dimension(320, 30));
+        jLabelDeviceNameLock.setMinimumSize(new java.awt.Dimension(320, 30));
+        jLabelDeviceNameLock.setPreferredSize(new java.awt.Dimension(322, 32));
+        jPanelLock.add(jLabelDeviceNameLock, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 255, 328, 20));
+
+        jLabelSnCGLock.setFont(new java.awt.Font("Ubuntu Light", 1, 14)); // NOI18N
+        jLabelSnCGLock.setForeground(java.awt.Color.black);
+        jLabelSnCGLock.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabelSnCGLock.setText("CG-0000-24");
+        jLabelSnCGLock.setMaximumSize(new java.awt.Dimension(320, 30));
+        jLabelSnCGLock.setMinimumSize(new java.awt.Dimension(320, 30));
+        jLabelSnCGLock.setPreferredSize(new java.awt.Dimension(322, 32));
+        jPanelLock.add(jLabelSnCGLock, new org.netbeans.lib.awtextra.AbsoluteConstraints(225, 233, 100, 20));
+
+        jLayeredPaneCenter.add(jPanelLock, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 330, 277));
 
         getContentPane().add(jLayeredPaneCenter, new org.netbeans.lib.awtextra.AbsoluteConstraints(75, 2, -1, -1));
 
@@ -1581,6 +1638,10 @@ public class JRivitMain extends javax.swing.JFrame {
                 this.changeButtons(this.Img_Warning, this.Img_Info, this.Img_Setup,
                         this.Img_Nulla, this.Img_Nulla, this.Img_Nulla);
             }
+            if (this.inFreeze) {
+                this.changeButtons(this.Img_Warning, this.Img_Info, this.Img_Nulla,
+                        this.Img_Nulla, this.Img_Nulla, this.Img_Nulla);
+            }
             cambiaPannello(this.jPanelMain);
         }
     }
@@ -1624,6 +1685,42 @@ public class JRivitMain extends javax.swing.JFrame {
             this.jButtonPL2.setBackground(Color.gray);
             this.jButtonPL3.setBackground(Color.gray);
         }
+    }
+
+    /**
+     * Salva i pulsanti
+     */
+    public void saveButtons() {
+        this.buttonSave[0] = (ImageIcon) this.jButtonPL1.getIcon();
+        this.buttonSave[1] = (ImageIcon) this.jButtonPL2.getIcon();
+        this.buttonSave[2] = (ImageIcon) this.jButtonPL3.getIcon();
+        this.buttonSave[3] = (ImageIcon) this.jButtonPR1.getIcon();
+        this.buttonSave[4] = (ImageIcon) this.jButtonPR2.getIcon();
+        this.buttonSave[5] = (ImageIcon) this.jButtonPR3.getIcon();
+    }
+
+    /**
+     * Disabilita i pulsanti
+     */
+    public void clearButtons() {
+        changeButtons(this.Img_Nulla,
+                this.Img_Nulla,
+                this.Img_Nulla,
+                this.Img_Nulla,
+                this.Img_Nulla,
+                this.Img_Nulla);        
+     }
+
+    /**
+     * restore dei pulsanti
+     */
+    public void restoreButtons() {
+        changeButtons(this.buttonSave[0],
+                this.buttonSave[1],
+                this.buttonSave[2],
+                this.buttonSave[3],
+                this.buttonSave[4],
+                this.buttonSave[5]);
     }
 
     /**
@@ -1717,20 +1814,24 @@ public class JRivitMain extends javax.swing.JFrame {
     private javax.swing.JLabel jLabelDesContatorePezzi;
     private javax.swing.JLabel jLabelDesPezziNoLimits;
     private javax.swing.JLabel jLabelDeviceName;
+    private javax.swing.JLabel jLabelDeviceNameLock;
     private javax.swing.JLabel jLabelDialog;
     private javax.swing.JLabel jLabelErrati;
     private javax.swing.JLabel jLabelInternet;
     private javax.swing.JLabel jLabelLan;
     private javax.swing.JLabel jLabelLogo;
+    private javax.swing.JLabel jLabelLogoLock;
     private javax.swing.JLabel jLabelNomeDevice;
     private javax.swing.JLabel jLabelNomeLavoro;
     private javax.swing.JLabel jLabelNomeWL;
     private javax.swing.JLabel jLabelPezziNoLimits;
+    private javax.swing.JLabel jLabelSnCGLock;
     private javax.swing.JLabel jLabelSnCT;
     private javax.swing.JLabel jLabelSnCT1;
     private javax.swing.JLabel jLabelVPN;
     private javax.swing.JLabel jLabelValidi;
     private javax.swing.JLabel jLabelVersione;
+    private javax.swing.JLabel jLabelVersioneLock;
     private javax.swing.JLabel jLabelWarning;
     private javax.swing.JLabel jLabelWiFi;
     private javax.swing.JLabel jLabel_Annullati;
@@ -1745,6 +1846,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private javax.swing.JPanel jPanelDialog;
     private javax.swing.JPanel jPanelInfo;
     private javax.swing.JPanel jPanelLeft;
+    private javax.swing.JPanel jPanelLock;
     private javax.swing.JPanel jPanelMain;
     private javax.swing.JPanel jPanelRight;
     private javax.swing.JPanel jPanelSetup;
@@ -1850,7 +1952,7 @@ public class JRivitMain extends javax.swing.JFrame {
         }
         if (this.inErrore) {
             this.jPanelStarted.setBackground(Color.RED);
-            this.changeButtons(this.Img_Ok, this.Img_Annulla,this.Img_Continua, 
+            this.changeButtons(this.Img_Ok, this.Img_Annulla, this.Img_Continua,
                     this.Img_Stop, this.Img_Pause, this.Img_Grafico);
         }
         if (!this.inErrore && !(this.lavoroConcluso || this.wlConclusa)) {
@@ -1905,6 +2007,10 @@ public class JRivitMain extends javax.swing.JFrame {
 
     public JLabel getjLabelNomeLavoro() {
         return jLabelNomeLavoro;
+    }
+
+    public JLabel getJLabelLogo() {
+        return this.jLabelLogo;
     }
 
     public String getLavoroScelto() {
@@ -2164,7 +2270,7 @@ public class JRivitMain extends javax.swing.JFrame {
         } else {
 
             if (this.inErrore) {
-                this.changeButtons(this.Img_Ok, this.Img_Annulla,this.Img_Continua, 
+                this.changeButtons(this.Img_Ok, this.Img_Annulla, this.Img_Continua,
                         this.Img_Stop, this.Img_Pause, this.Img_Estende);
             } else if (this.lavoroConcluso) {
                 this.changeButtons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
@@ -2728,6 +2834,7 @@ public class JRivitMain extends javax.swing.JFrame {
         if (nd.contains("Errore")) {
             nd = "CG-0000-00";
         }
+        this.nomeDevice = nd;
         this.jLabelNomeDevice.setText(nd);
         this.jLabelDeviceName.setText(nd);
         this.jLabelVersione.setText("ver. " + versione + " rel. " + data_release);
@@ -3236,8 +3343,17 @@ public class JRivitMain extends javax.swing.JFrame {
      *
      * @param statoErrore
      */
-    void setInErrore(boolean statoErrore) {
+    public void setInErrore(boolean statoErrore) {
         this.inErrore = statoErrore;
+    }
+
+    /**
+     * Il sistema in Freeze ?
+     *
+     * @param stato True o False
+     */
+    public void setInFreeze(boolean stato) {
+        this.inFreeze = stato;
     }
 
     /**
@@ -3863,4 +3979,33 @@ public class JRivitMain extends javax.swing.JFrame {
         return jPanelStarted;
     }
 
+    public ImageIcon getImageIconLogo() {
+        return Img_Logo;
+    }
+
+    public ImageIcon getImageIconSysStopped() {
+        return Img_SysStopped;
+    }
+
+    /**
+     * Ritorna il nome del device
+     *
+     * @return
+     */
+    public String getNomeDevice() {
+        return this.nomeDevice;
+    }
+
+    /**
+     * Mostra o nasconde il pannello di errore
+     *
+     * @param mostra boolean true/false
+     */
+    public void showPannelloErrore(boolean mostra) {
+        if (mostra) {
+            this.jLayeredPaneCenter.moveToFront(this.jPanelLock);
+        } else {
+            this.jLayeredPaneCenter.moveToBack(this.jPanelLock);
+        }
+    }
 }
