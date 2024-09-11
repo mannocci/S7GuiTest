@@ -282,7 +282,7 @@ public class JRivitMain extends javax.swing.JFrame {
         if (!setup.getProperty("versione", "0.0").startsWith("0.")) {
             beta = "";
         }
-        versione = setup.getProperty("versione", "0.0") + beta;
+        versione = setup.getProperty("versione", "0.0");
 
         data_release = setup.getProperty("data_versione", "14/12/2022");
 
@@ -3994,6 +3994,22 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     public String getNomeDevice() {
         return this.nomeDevice;
+    }
+
+    public JLabel getjLabelDeviceNameLock() {
+        return jLabelDeviceNameLock;
+    }
+
+    public void setjLabelDeviceNameLock(JLabel jLabelDeviceNameLock) {
+        this.jLabelDeviceNameLock = jLabelDeviceNameLock;
+    }
+
+    public JLabel getjLabelVersioneLock() {
+        return jLabelVersioneLock;
+    }
+
+    public void setjLabelVersioneLock(JLabel jLabelVersioneLock) {
+        this.jLabelVersioneLock = jLabelVersioneLock;
     }
 
     /**

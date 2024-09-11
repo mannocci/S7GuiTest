@@ -56,6 +56,8 @@ public class Static {
     final static String STATO_AVVIATO_W = "91";
     // final static String STATO_PAUSA = "92"; // Non è uno stato del device, quindi non va gestito
     final static String STATO_STOP = "93";
+    final static String STATO_MANUTENZIONE = "94";
+    final static String STATO_BLOCCO = "95";
     final static String STATO_CONCLUSO = "100";
     final static String STATO_CONCLUSA_WL = "101";
     final static String STATO_CALIBRAZIONE = "200";

@@ -169,24 +169,25 @@ public class JFileWorker extends Thread {
                                 Rm.PanelMain();
                                 Thread.sleep(3000);//Aggiunto un secondo per mostrare il pannello
                                 System.exit(0);
-                            }                            
+                            }
                             case Static.F_SYSTEM_FREEZE -> {
                                 Rm.setInFreeze(true);
                                 Rm.showPannelloErrore(true);
-                                 Rm.saveButtons();
-                                 Rm.clearButtons();
-                                Rm.getjLabelDeviceName().setText("SYSTEM FREEZE");
+                                Rm.saveButtons();
+                                Rm.clearButtons();
+                                Rm.getjLabelVersioneLock().setText(Rm.getjLabelVersione().getText());
+                                Rm.getjLabelDeviceNameLock().setText("SYSTEM FREEZE");
                                 //Rm.getJLabelLogo().setIcon(Rm.getImageIconSysStopped());
-                            }   
+                            }
                             case Static.F_SYSTEM_LOCK_EMERGENCY -> {
                                 Rm.setInFreeze(true);
                                 Rm.showPannelloErrore(true);
                                 Rm.saveButtons();
                                 Rm.clearButtons();
-                                Rm.getjLabelDeviceName().setText("SYSTEM LOCK EMERGENCY");
-                                Rm.getJLabelLogo().setIcon(Rm.getImageIconSysStopped());                                
+                                Rm.getjLabelVersioneLock().setText(Rm.getjLabelVersione().getText());
+                                Rm.getjLabelDeviceNameLock().setText("EMERGENCY SYSTEM LOCK");
                             }
-                         
+
                             case (Static.F_NOME_DEVICE + "_ready") -> {  // Il file F_UM viene creato dopo aver letto tutti i dati del CT
                                 readNomeDevice();
                                 if (this.Rm.getPanCur().equals("main")) {
@@ -279,18 +280,18 @@ public class JFileWorker extends Thread {
                                 this.Rm.esegui("aggiorna_nm_list");
                                 this.Rm.PanelMain();
                             }
-                            case Static.F_SYSTEM_FREEZE ->{
+                            case Static.F_SYSTEM_FREEZE -> {
                                 Rm.setInFreeze(false);
                                 Rm.showPannelloErrore(false);
                                 Rm.restoreButtons();
                                 Rm.getjLabelDeviceName().setText(this.Rm.getNomeDevice());
-                                Rm.getJLabelLogo().setIcon(Rm.getImageIconLogo());                                
+                                Rm.getJLabelLogo().setIcon(Rm.getImageIconLogo());
                             }
-                            case Static.F_SYSTEM_LOCK_EMERGENCY ->{
+                            case Static.F_SYSTEM_LOCK_EMERGENCY -> {
                                 Rm.setInFreeze(false);
                                 Rm.showPannelloErrore(false);
                                 Rm.restoreButtons();
-                            }                            
+                            }
                         }
                     }
 
@@ -316,16 +317,16 @@ public class JFileWorker extends Thread {
     }
 
     /**
-     * Legge il file con la descrizione delle WorkList
-     * Aggiunto controllo se il file è vuoto
+     * Legge il file con la descrizione delle WorkList Aggiunto controllo se il
+     * file è vuoto
      */
     private void readWl() {
         String ContenutoFile = leggiFile(Static.F_WL);
-        if(! ContenutoFile.startsWith("errore ")){
+        if (!ContenutoFile.startsWith("errore ")) {
             this.Rm.aggiornaWl(new JSONArray(ContenutoFile));
-        }else{
-            System.out.println("Errore lettura file "+Static.F_WL);
-        }        
+        } else {
+            System.out.println("Errore lettura file " + Static.F_WL);
+        }
     }
 
     /**
@@ -586,8 +587,9 @@ public class JFileWorker extends Thread {
 
     /**
      * Metodo che utilizza il controllo del Lock per leggere righe multiple da
-     * un file
-     * Aggiunto controllo su errore di lettura di file inesistente o vuoto
+     * un file Aggiunto controllo su errore di lettura di file inesistente o
+     * vuoto
+     *
      * @param NomeFile
      * @return La riga letta del file
      */
@@ -604,7 +606,7 @@ public class JFileWorker extends Thread {
             lock = lockFile(NomeFile);
             if (lock) {
                 ListaRighe = Files.readAllLines(Paths.get(Static.PATH_WATCH + NomeFile), StandardCharsets.UTF_8);
-                if(ListaRighe.size() == 0){
+                if (ListaRighe.size() == 0) {
                     ListaRighe.add("errore lettura File " + NomeFile);
                 }
                 unLock(NomeFile);
@@ -642,7 +644,7 @@ public class JFileWorker extends Thread {
                 while (myReader.hasNextLine()) {
                     contenutoFile += myReader.nextLine();
                 }
-                if( ! (contenutoFile.length() > 1)){
+                if (!(contenutoFile.length() > 1)) {
                     contenutoFile = "errore " + NomeFile;
                 }
             }
