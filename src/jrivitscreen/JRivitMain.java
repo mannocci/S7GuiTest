@@ -4000,16 +4000,12 @@ public class JRivitMain extends javax.swing.JFrame {
         return jLabelDeviceNameLock;
     }
 
-    public void setjLabelDeviceNameLock(JLabel jLabelDeviceNameLock) {
-        this.jLabelDeviceNameLock = jLabelDeviceNameLock;
-    }
-
     public JLabel getjLabelVersioneLock() {
         return jLabelVersioneLock;
     }
 
-    public void setjLabelVersioneLock(JLabel jLabelVersioneLock) {
-        this.jLabelVersioneLock = jLabelVersioneLock;
+    public JLabel getjLabelVersione() {
+        return jLabelVersione;
     }
 
     /**
