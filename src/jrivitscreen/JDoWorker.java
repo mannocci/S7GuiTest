@@ -185,6 +185,8 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     JFileWorker.cancellaFile(Static.F_SONO_IN);
                     JFileWorker.scriviFileConReady(Static.F_SONO_IN, "work");                
                 }
+                case "annulla_reset" ->
+                    JFileWorker.cancellaFile(Static.F_RESET_REQUEST);
             }
         } catch (NumberFormatException ex) {
             Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
