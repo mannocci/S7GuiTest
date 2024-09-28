@@ -135,9 +135,16 @@ public class Static {
     final static String F_SYSTEM_FREEZE = "system_freeze";
     final static String F_SYSTEM_LOCK_EMERGENCY = "system_lock_emergency";
     final static String F_SYSTEM_RETURN_OK = "system_return_ok";
+    final static String F_GPIO21 = "GPIO21";
+    final static String F_GPIO16 = "GPIO16";
+    final static String F_GPIO20 = "GPIO20";
+    final static String F_GPIO26 = "GPIO26";
+    final static String F_GPIO19 = "GPIO19";
+    final static String F_GPIO12 = "GPIO12";
     
     static String PATH_WATCH = "/tmp/CT/";
     static String PATH_LCK = "/tmp/CTLock/";
+    static String PATH_TASTI = "/tmp/CTTASTI/";
     static long ATTESA_SCRITTURA_FILE = 1000L;
     // da utilizzare per impostare il livello di debug
     // 0:debug disattivato 1:errore 2:warning 3:info 4:verbose
