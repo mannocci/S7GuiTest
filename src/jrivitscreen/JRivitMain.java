@@ -165,7 +165,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private String UDLotti;
     private String UDPezzi;
     private boolean sensoreCollegato;
-    public JButtonsDio bt = null;
+    public JButtonFile bt = null;
     private int conversion;
     public static final int MAX_Y = 320;
     public static final int MAX_X = 480;
@@ -313,7 +313,13 @@ public class JRivitMain extends javax.swing.JFrame {
             Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
         }
         if (!Static.VMMODE) {
-            this.bt = new JButtonsDio(this);
+            try {
+                //Lo start() non serve
+                this.bt = new JButtonFile(this);
+                this.bt.start();
+            } catch (IOException ex) {
+                Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         doWorker = new JDoWorker(this, fileWorker);
 
@@ -1449,6 +1455,7 @@ public class JRivitMain extends javax.swing.JFrame {
                         PanelStart();
                     }
                     case Static.RICHIESTA_RESET_SYSTEM -> { // Ritorna in scelta lavoro
+                        esegui("annulla_reset");
                         PanelStart();
                     }
 
@@ -1708,8 +1715,8 @@ public class JRivitMain extends javax.swing.JFrame {
                 this.Img_Nulla,
                 this.Img_Nulla,
                 this.Img_Nulla,
-                this.Img_Nulla);        
-     }
+                this.Img_Nulla);
+    }
 
     /**
      * restore dei pulsanti
@@ -2018,10 +2025,10 @@ public class JRivitMain extends javax.swing.JFrame {
     }
 
     public void setLavoroScelto(String lavoroScelto) {
+        
         if (lavoroScelto.contains("Errore")) {
             lavoroScelto = "0";
         }
-
         this.nomelavoro = this.lavoroScelto = lavoroScelto;
     }
 
@@ -3847,7 +3854,7 @@ public class JRivitMain extends javax.swing.JFrame {
 
     public void chiediConfermaReset() {
         scelta = Static.RICHIESTA_RESET_SYSTEM;
-        this.AlertDialogWhat = "Confirm system RESET to factory default ?";
+        this.AlertDialogWhat = "Confirm FACTORY RESET ?";
         this.jLabelDialog.setText(AlertDialogWhat);
         PanelDialog();
     }
