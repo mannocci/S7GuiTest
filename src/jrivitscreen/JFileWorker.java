@@ -43,6 +43,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 import org.json.JSONArray;
+//import St.Statica;
 
 /**
  *
@@ -50,6 +51,9 @@ import org.json.JSONArray;
  */
 public class JFileWorker extends Thread {
 // Classi
+    // prova di funzionamento della classe statica in comune tra i progetti java
+
+//    String a = Statica.RICHIESTA_STOP_LAVORO;
 
     private final JRivitMain Rm;
     private WatchService watcher;
@@ -215,6 +219,7 @@ public class JFileWorker extends Thread {
                                 if (this.Rm.getRichiesta().equals(Static.RICHIESTA_CALIBRAZIONE)) {
                                     this.richiestaAvviaCalibrazione();
                                 }
+
                             }
 
                             /*Aggiungere la gestione della curva, contatori, stato con 
@@ -732,7 +737,23 @@ public class JFileWorker extends Thread {
             unLock(NomeFile);
         }
     }
+    /**
+     * Cancella il file, senza PATH predefinita
+     * @param NomeFile  inserire anche la PATH
+     */
+    public static void cancellaFileGenerico(String NomeFile) {
+        File f = new File( NomeFile);
+        if (f.exists()) {
+            boolean lock = lockFile(NomeFile);
+            if (lock) {
 
+                if (!f.delete()) {
+                    Static.debug("errore eliminando il file " + NomeFile, 2);
+                }
+            }
+            unLock(NomeFile);
+        }
+    }
     /**
      * Cancella file lck in /tmp
      *
@@ -945,6 +966,17 @@ public class JFileWorker extends Thread {
         try {
             String nomeLavoro = leggiFile(Static.F_W_SCELTO);
             Rm.setLavoroScelto(nomeLavoro);
+            int index = 0;
+            for (String[] lav : Rm.getElencoLavori()) {
+                if (lav[0].equals(nomeLavoro)) {
+                    break;
+                }
+                index++;
+            }
+            this.Rm.setLimLotti(this.Rm.getElencoLavori().get(index)[1]);
+            this.Rm.setLimPezzi(this.Rm.getElencoLavori().get(index)[2]);
+            this.Rm.setUDLotti(this.Rm.getElencoLavori().get(index)[5]);
+            this.Rm.setUDPezzi(this.Rm.getElencoLavori().get(index)[6]);
             Rm.impostaLabelContatori();
             // cerco il lavoro nell'elenco
             for (String[] elencoLavori : this.Rm.getElencoLavori()) {
