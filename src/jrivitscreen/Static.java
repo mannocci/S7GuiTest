@@ -128,6 +128,7 @@ public class Static {
     final static String F_NOME_CON = "nome_con";
     final static String F_INTERNET_STATUS = "internet_status";
     final static String F_CONTROLLER_ONLINE = "controller_online";
+    final static String F_CONTROLLER_BAD = "controller_bad";
     final static String F_POWEROFF = "poweroff";
     final static String F_REBOOT = "reboot";
     final static String F_FIRST_TIME = "first_time";
@@ -141,6 +142,7 @@ public class Static {
     final static String F_GPIO26 = "GPIO26";
     final static String F_GPIO19 = "GPIO19";
     final static String F_GPIO12 = "GPIO12";
+    final static String F_USB_PENDRIVE = "usb_pendrive";
     
     static String PATH_WATCH = "/tmp/CT/";
     static String PATH_LCK = "/tmp/CTLock/";
