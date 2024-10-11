@@ -22,9 +22,11 @@
 package jrivitscreen;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import static java.lang.Runtime.getRuntime;
+import java.nio.file.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import javax.swing.SwingWorker;
@@ -98,11 +100,11 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_PAUSA);
                     this.Rm.setRichiesta(Static.RICHIESTA_PAUSA);
                 }
-                
+
                 case "riavvio_lavoro" ->
                     riavviaLavoro();
                 case "riavvio_wl" ->
-                    riavviaWL();                    
+                    riavviaWL();
                 case "continua", "accetta", "annulla" ->
                     JFileWorker.scriviFlag(Static.F_RISPOSTA_TIRO_ERRATO + "_" + this.operation);
                 case "aggiorna_nome_device" -> {
@@ -111,7 +113,8 @@ public class JDoWorker extends SwingWorker<String, Object> {
                 }
                 case "aggiorna_nm_list" ->
                     this.update_status_nm();
-
+                case "esegui_backup" ->
+                    this.esegui_backup();
                 case "aggiorna_stato_wifi" ->
                     this.update_status_wifi();
 
@@ -139,15 +142,14 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     this.Rm.set_jLabel_B_L(this.dateFormat.format(orario));
                     this.Rm.repaint();
                 }
-                case "certWifi_2.4GHz.sh", "certWifi_5GHz.sh", "certWifi_auto.sh", "certWifiStop.sh", 
-                        "certSensLogStart.sh", "certSensLogStop.sh" -> {
+                case "certWifi_2.4GHz.sh", "certWifi_5GHz.sh", "certWifi_auto.sh", "certWifiStop.sh", "certSensLogStart.sh", "certSensLogStop.sh" -> {
                     String[] cmd = {"/home/adminsb/bin/" + this.operation};
                     getRuntime().exec(cmd);
                 }
                 case "certi_cicloPiu.sh", "certi_cicloMeno.sh" -> {
                     String[] cmd = {"/home/adminsb/bin/" + this.operation};
                     getRuntime().exec(cmd);
-                }                        
+                }
                 case "startCert" -> {
                     String[] cmd = {"/home/adminsb/bin/certStartCiclo.sh"};
                     getRuntime().exec(cmd);
@@ -171,19 +173,19 @@ public class JDoWorker extends SwingWorker<String, Object> {
                 }
                 case "reset_wl" -> {
                     JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_RESET_WL);
-                    this.Rm.setRichiesta(Static.RICHIESTA_RESET_WL);                    
+                    this.Rm.setRichiesta(Static.RICHIESTA_RESET_WL);
                 }
                 case "reset_work" -> {
                     JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_RESET_WORK);
-                    this.Rm.setRichiesta(Static.RICHIESTA_RESET_WORK);                    
+                    this.Rm.setRichiesta(Static.RICHIESTA_RESET_WORK);
                 }
-                case "sono_in_wl" ->{
+                case "sono_in_wl" -> {
                     JFileWorker.cancellaFile(Static.F_SONO_IN);
                     JFileWorker.scriviFileConReady(Static.F_SONO_IN, "wl");
                 }
-                case "sono_in_work" ->{
+                case "sono_in_work" -> {
                     JFileWorker.cancellaFile(Static.F_SONO_IN);
-                    JFileWorker.scriviFileConReady(Static.F_SONO_IN, "work");                
+                    JFileWorker.scriviFileConReady(Static.F_SONO_IN, "work");
                 }
                 case "annulla_reset" ->
                     JFileWorker.cancellaFile(Static.F_RESET_REQUEST);
@@ -199,13 +201,12 @@ public class JDoWorker extends SwingWorker<String, Object> {
         this.operation = operation;
     }
 
-    
     /**
      * inizializza diversi stati per prevenire la scheda bianca Avvia l'istanza
      * della classe FileWorker
      */
     void init() {
-        JFileWorker.scriviFile(Static.F_SCREEN_VERSION,this.Rm.versione+" "+this.Rm.data_release);
+        JFileWorker.scriviFile(Static.F_SCREEN_VERSION, this.Rm.versione + " " + this.Rm.data_release);
         this.fileWorker.start();//Avvio FileWorker
         this.fileWorker.initValues();
     }
@@ -234,6 +235,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
         JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_RIAVVIO);
         this.Rm.gr.resetCurva();
     }
+
     /**
      * Riavvia il lavoro scelto
      */
@@ -241,13 +243,13 @@ public class JDoWorker extends SwingWorker<String, Object> {
         JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_RIAVVIO_WL);
         this.Rm.gr.resetCurva();
     }
+
     /**
      * Attiva o disattiva di device di rete tramite lo script start_stop_NM.sh
      * Non serve passargli l'informazione se attivarla o meno la connessione
      * perché agisce facendo l'opposto dello stato attuale: se trova ON la
      * connessione la spegne e viceversa Diventa utile approfittare per
-     * aggiornare lo stato della network su CT nel DB.
-     * aggiornare APList nel 
+     * aggiornare lo stato della network su CT nel DB. aggiornare APList nel
      *
      */
     void on_of_nm_device() {
@@ -256,9 +258,9 @@ public class JDoWorker extends SwingWorker<String, Object> {
         String nomeCon;
         if (nomeSelezionato.contains(" OFF")) {
             nomeCon = nomeSelezionato.substring(0, nomeSelezionato.indexOf(" OFF"));
-          } else {
+        } else {
             nomeCon = nomeSelezionato.substring(0, nomeSelezionato.indexOf(" ON"));
-          }
+        }
         cmd[1] = nomeCon;
         run_system_bash(cmd);
         this.Rm.set_jLabel_B_L("CON..");
@@ -304,10 +306,11 @@ public class JDoWorker extends SwingWorker<String, Object> {
         Process exec = null;
         try {
             exec = getRuntime().exec(cmd);
-            run_system_result = printResults(exec);
-            //return exec.exitValue();
+            exec.waitFor();
         } catch (IOException ex) {
             Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(JDoWorker.class.getName()).log(Level.SEVERE, null, ex);
         }
         return exec;
     }
@@ -326,6 +329,42 @@ public class JDoWorker extends SwingWorker<String, Object> {
             System.out.println(line);
         }
         return line;
+    }
+
+    /**
+     * esegue il backup senza tabelle sec_* e testi ...
+     */
+    private void esegui_backup() {
+        String usbPath = "";
+        this.Rm.setInBackup(true);
+        this.Rm.getListUsbFile().removeAll();
+        this.Rm.getListUsbFile().add("");
+        this.Rm.getListUsbFile().add("Backup ....");
+        this.Rm.disableButton("PL2");
+        this.Rm.disableButton("PL3");
+        this.Rm.disableButton("PR1");
+        this.Rm.disableButton("PR2");
+        String[] cmd = {"/home/adminsb/bin/backup_db_web.sh",""};
+        Process proces = run_system_bash(cmd);
+        if (proces.exitValue() == 0) {
+            File from = new File("/var/www/html/_lib/file/doc/backup_db.zip");
+            usbPath = this.Rm.getListInfo().getItem(0);
+            File to = new File(usbPath + "/backup_db.zip");
+            try {
+                Files.copy(from.toPath(), to.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                this.Rm.getListUsbFile().removeAll();
+                this.Rm.getListUsbFile().add("");
+                this.Rm.getListUsbFile().add("Copy completed !");
+                this.Rm.getListUsbFile().add("Now you can remove");
+                this.Rm.getListUsbFile().add("USB Pendrive");
+                cmd[0] = "umount";
+                cmd[1] = usbPath;
+                proces = run_system_bash(cmd);
+            } catch (IOException ex) {
+                Logger.getLogger(JDoWorker.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
     }
 
 }

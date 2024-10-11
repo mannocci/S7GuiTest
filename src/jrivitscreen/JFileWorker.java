@@ -54,7 +54,6 @@ public class JFileWorker extends Thread {
     // prova di funzionamento della classe statica in comune tra i progetti java
 
 //    String a = Statica.RICHIESTA_STOP_LAVORO;
-
     private final JRivitMain Rm;
     private WatchService watcher;
     private Path fileName;
@@ -160,6 +159,10 @@ public class JFileWorker extends Thread {
                                 // Verificare se si può usare "nmcli monitor" per tenere sotto controllo la rete e avvisare in caso di cambiamenti
                                 //case (Static.F_INTERNET_STATUS + "_ready") ->
                                 readInternetStatus();
+                            }
+                            case (Static.F_USB_LISTA_FILE + "_ready") -> {
+                                readListaFileUSB();
+                                Rm.PanelUsb();
                             }
                             case Static.F_POWEROFF -> {
                                 Rm.getjLabelDeviceName().setText("POWERING OFF SYSTEM");
@@ -303,6 +306,12 @@ public class JFileWorker extends Thread {
                                 Rm.showPannelloErrore(false);
                                 Rm.restoreButtons();
                             }
+                            case (Static.F_USB_LISTA_FILE ) -> {
+                                if( ! Rm.isBackup()){
+                                    Rm.PanelMain();
+                                }
+                                this.Rm.setInBackup(false);
+                            }                            
                         }
                     }
 
@@ -743,12 +752,14 @@ public class JFileWorker extends Thread {
             unLock(NomeFile);
         }
     }
+
     /**
      * Cancella il file, senza PATH predefinita
-     * @param NomeFile  inserire anche la PATH
+     *
+     * @param NomeFile inserire anche la PATH
      */
     public static void cancellaFileGenerico(String NomeFile) {
-        File f = new File( NomeFile);
+        File f = new File(NomeFile);
         if (f.exists()) {
             boolean lock = lockFile(NomeFile);
             if (lock) {
@@ -760,6 +771,7 @@ public class JFileWorker extends Thread {
             unLock(NomeFile);
         }
     }
+
     /**
      * Cancella file lck in /tmp
      *
@@ -806,6 +818,15 @@ public class JFileWorker extends Thread {
                 Static.debug("File contatori contains non numeric values\n" + e.getMessage(), 2);
             }
         }
+    }
+
+    /**
+     * Lettura file lista usb file
+     */
+    private void readListaFileUSB() {
+        List<String> list_usb_files = leggiFileElenco(Static.F_USB_LISTA_FILE);
+        Collections.sort(list_usb_files, String.CASE_INSENSITIVE_ORDER);
+        this.Rm.setListUsbFiles(list_usb_files);
     }
 
     /**

@@ -143,6 +143,7 @@ public class Static {
     final static String F_GPIO19 = "GPIO19";
     final static String F_GPIO12 = "GPIO12";
     final static String F_USB_PENDRIVE = "usb_pendrive";
+    final static String F_USB_LISTA_FILE = "usb_lista_file";
     
     static String PATH_WATCH = "/tmp/CT/";
     static String PATH_LCK = "/tmp/CTLock/";

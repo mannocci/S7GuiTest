@@ -99,6 +99,8 @@ public class JRivitMain extends javax.swing.JFrame {
             Img_Freccia_sx, Img_Freccia_dx, Img_Cancel, Img_W, Img_WL, Img_SysStopped, Img_Logo;
     private final ImageIcon Img_Cert, Img_WiFi_2_4, Img_WiFi_5, Img_WiFi_Auto;
     private final ImageIcon Img_start_WiFi, Img_stop_WiFi, Img_start_log, Img_stop_log, Img_restart;
+    private final ImageIcon Img_restore;
+    private final ImageIcon Img_backup;
     private String AlertDialogWhat;
     private String Lavorodescrizione;
     private ImageIcon Img_Info;
@@ -187,6 +189,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private int durataPlcOk;
     private String nomeDevice;
     private ImageIcon buttonSave[];
+    private boolean inBackup;
 
     /**
      * Creates new form JRivitMain
@@ -259,6 +262,9 @@ public class JRivitMain extends javax.swing.JFrame {
         Img_restart = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/restart_alt.png"));
         Img_SysStopped = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/logoriSystemStopped.png"));
         Img_Logo = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/logori2.png"));
+        Img_backup = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/backup.png"));
+        Img_restore = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/restore.png"));
+
         elencoLavori = new ArrayList<>();
         elencoWl = new ArrayList<>();
         infoAggiuntive = new ArrayList<>();
@@ -351,7 +357,6 @@ public class JRivitMain extends javax.swing.JFrame {
         listLavori = new java.awt.List();
         listWLavori = new java.awt.List();
         JTextAreaDescrizione = new javax.swing.JTextArea();
-        listTools = new java.awt.List();
         jPanelStarted = new javax.swing.JPanel();
         jLabelContatoreLotti = new javax.swing.JLabel();
         jLabelNomeDevice = new javax.swing.JLabel();
@@ -390,6 +395,11 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelVersioneLock = new javax.swing.JLabel();
         jLabelDeviceNameLock = new javax.swing.JLabel();
         jLabelSnCGLock = new javax.swing.JLabel();
+        jPanelUsb = new javax.swing.JPanel();
+        listUsbFile = new java.awt.List();
+        jPanelTools = new javax.swing.JPanel();
+        JTextAreaDescTool = new javax.swing.JTextArea();
+        listTools = new java.awt.List();
         jPanelRight = new javax.swing.JPanel();
         jButtonPR1 = new javax.swing.JButton();
         jButtonPR2 = new javax.swing.JButton();
@@ -527,19 +537,6 @@ public class JRivitMain extends javax.swing.JFrame {
         JTextAreaDescrizione.setMinimumSize(new java.awt.Dimension(320, 80));
         jPanelStart.add(JTextAreaDescrizione, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 186, 328, 90));
 
-        listTools.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
-        listTools.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                listToolsMouseClicked(evt);
-            }
-        });
-        listTools.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                listToolsItemStateChanged(evt);
-            }
-        });
-        jPanelStart.add(listTools, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 2, 326, 180));
-
         jLayeredPaneCenter.add(jPanelStart, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 330, 277));
 
         jPanelStarted.setBackground(new java.awt.Color(204, 204, 255));
@@ -660,6 +657,11 @@ public class JRivitMain extends javax.swing.JFrame {
         listSetupNM.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 listSetupNMMouseClicked(evt);
+            }
+        });
+        listSetupNM.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                listSetupNMActionPerformed(evt);
             }
         });
         jPanelSetup.add(listSetupNM, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 2, 326, 273));
@@ -820,6 +822,64 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelLock.add(jLabelSnCGLock, new org.netbeans.lib.awtextra.AbsoluteConstraints(225, 233, 100, 20));
 
         jLayeredPaneCenter.add(jPanelLock, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 330, 277));
+
+        jPanelUsb.setAlignmentX(1.0F);
+        jPanelUsb.setAlignmentY(1.0F);
+        jPanelUsb.setMaximumSize(new java.awt.Dimension(330, 277));
+        jPanelUsb.setMinimumSize(new java.awt.Dimension(330, 277));
+        jPanelUsb.setName("list_file_usb"); // NOI18N
+        jPanelUsb.setPreferredSize(new java.awt.Dimension(330, 277));
+        jPanelUsb.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        listUsbFile.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        listUsbFile.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                listUsbFileMouseClicked(evt);
+            }
+        });
+        listUsbFile.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                listUsbFileItemStateChanged(evt);
+            }
+        });
+        jPanelUsb.add(listUsbFile, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 2, 390, 290));
+
+        jLayeredPaneCenter.add(jPanelUsb, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 330, 277));
+
+        jPanelTools.setAlignmentX(1.0F);
+        jPanelTools.setAlignmentY(1.0F);
+        jPanelTools.setMaximumSize(new java.awt.Dimension(330, 277));
+        jPanelTools.setMinimumSize(new java.awt.Dimension(330, 277));
+        jPanelTools.setName("start"); // NOI18N
+        jPanelTools.setPreferredSize(new java.awt.Dimension(330, 277));
+        jPanelTools.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        JTextAreaDescTool.setEditable(false);
+        JTextAreaDescTool.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
+        JTextAreaDescTool.setLineWrap(true);
+        JTextAreaDescTool.setRows(5);
+        JTextAreaDescTool.setFocusable(false);
+        JTextAreaDescTool.setMaximumSize(new java.awt.Dimension(320, 80));
+        JTextAreaDescTool.setMinimumSize(new java.awt.Dimension(320, 80));
+        jPanelTools.add(JTextAreaDescTool, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 186, 400, 110));
+
+        listTools.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        listTools.setMaximumSize(new java.awt.Dimension(330, 277));
+        listTools.setMinimumSize(new java.awt.Dimension(330, 277));
+        listTools.setPreferredSize(new java.awt.Dimension(330, 277));
+        listTools.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                listToolsMouseClicked(evt);
+            }
+        });
+        listTools.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                listToolsItemStateChanged(evt);
+            }
+        });
+        jPanelTools.add(listTools, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 2, 330, 277));
+
+        jLayeredPaneCenter.add(jPanelTools, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 330, 277));
 
         getContentPane().add(jLayeredPaneCenter, new org.netbeans.lib.awtextra.AbsoluteConstraints(75, 2, -1, -1));
 
@@ -1255,6 +1315,9 @@ public class JRivitMain extends javax.swing.JFrame {
                 esegui("stopCert");
                 PanelMain();//Exit verso main
             }
+            case "list_file_usb" -> {
+                PanelMain();//Exit verso main
+            }
 
         }
     }//GEN-LAST:event_jButtonPL1ActionPerformed
@@ -1315,11 +1378,15 @@ public class JRivitMain extends javax.swing.JFrame {
                 }
                 isAPOn = !isAPOn;
             }
+            case "list_file_usb" -> {
+                esegui("esegui_backup");
+            }
             case "dialog" -> {
                 if (this.contesto.contains("started")) {
                     PanelStarted();
                 }
             }
+
         }
     }//GEN-LAST:event_jButtonPL2ActionPerformed
     /**
@@ -1612,6 +1679,18 @@ public class JRivitMain extends javax.swing.JFrame {
         updateDescription(elementoSelezionato);
     }//GEN-LAST:event_listWLavoriItemStateChanged
 
+    private void listLanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listLanActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_listLanActionPerformed
+
+    private void listUsbFileMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listUsbFileMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_listUsbFileMouseClicked
+
+    private void listUsbFileItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_listUsbFileItemStateChanged
+        // TODO add your handling code here:
+    }//GEN-LAST:event_listUsbFileItemStateChanged
+
     private void listToolsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listToolsMouseClicked
         // TODO add your handling code here:
     }//GEN-LAST:event_listToolsMouseClicked
@@ -1620,9 +1699,9 @@ public class JRivitMain extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_listToolsItemStateChanged
 
-    private void listLanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listLanActionPerformed
+    private void listSetupNMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listSetupNMActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_listLanActionPerformed
+    }//GEN-LAST:event_listSetupNMActionPerformed
 
     /**
      * PanelMain Pannello che viene visualizzato all'avvio
@@ -1805,6 +1884,7 @@ public class JRivitMain extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextArea JTextAreaDescTool;
     private javax.swing.JTextArea JTextAreaDescrizione;
     private javax.swing.JTextArea JTextAreaDescrizioneInfo;
     private javax.swing.JButton jButtonPL1;
@@ -1861,6 +1941,8 @@ public class JRivitMain extends javax.swing.JFrame {
     private javax.swing.JPanel jPanelSetupWiFi;
     private javax.swing.JPanel jPanelStart;
     private javax.swing.JPanel jPanelStarted;
+    private javax.swing.JPanel jPanelTools;
+    private javax.swing.JPanel jPanelUsb;
     private javax.swing.JPanel jPanelWarning;
     private javax.swing.JProgressBar jProgressBar;
     private java.awt.List listCert;
@@ -1870,6 +1952,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private java.awt.List listSens;
     private java.awt.List listSetupNM;
     private java.awt.List listTools;
+    private java.awt.List listUsbFile;
     private java.awt.List listWLavori;
     private java.awt.List listWarning;
     private java.awt.List listWifi;
@@ -1992,6 +2075,10 @@ public class JRivitMain extends javax.swing.JFrame {
         return this.listInfo;
     }
 
+    public java.awt.List getListUsbFile() {
+        return this.listUsbFile;
+    }
+
     public java.awt.List getListLavori() {
         return listLavori;
     }
@@ -2025,7 +2112,7 @@ public class JRivitMain extends javax.swing.JFrame {
     }
 
     public void setLavoroScelto(String lavoroScelto) {
-        
+
         if (lavoroScelto.contains("Errore")) {
             lavoroScelto = "0";
         }
@@ -2200,7 +2287,7 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     private void PanelSetupLan() {
         this.changeButtons(this.Img_Exit, this.Img_Freccia_sx, this.Img_Freccia_dx,
-                this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Ok);
+                this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Nulla);
         this.listLan.requestFocus(); // Per poter usare le frecce
         cambiaPannello(this.jPanelSetupLan);
     }
@@ -2210,7 +2297,7 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     private void PanelSetupWifi() {
         this.changeButtons(this.Img_Exit, this.Img_Freccia_sx, this.Img_Freccia_dx,
-                this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Ok);
+                this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Nulla);
         this.listWifi.removeAll();
         this.listWifi.add("");
         this.listWifi.add("");
@@ -2617,10 +2704,22 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     public void PanelSetup() {
         this.esegui("aggiorna_nm_list");
+//        this.changeButtons(this.Img_Exit, this.Img_Lan, this.Img_WiFi,
+//                this.Img_Freccia_su, this.Img_Freccia_giu, setIconSetup());
         this.changeButtons(this.Img_Exit, this.Img_Lan, this.Img_WiFi,
-                this.Img_Freccia_su, this.Img_Freccia_giu, setIconSetup());
+                this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Nulla);
         this.listSetupNM.requestFocus(); // Per poter usare le frecce
         cambiaPannello(this.jPanelSetup);
+    }
+
+    /**
+     * Pannello di Lista file penDrive USB
+     */
+    public void PanelUsb() {
+        this.changeButtons(this.Img_Exit, this.Img_backup, this.Img_restore,
+                this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Nulla);
+        this.listUsbFile.requestFocus(); // Per poter usare le frecce      
+        cambiaPannello(this.jPanelUsb);
     }
 
     /**
@@ -2889,6 +2988,21 @@ public class JRivitMain extends javax.swing.JFrame {
         this.listSetupNM.select(0);
         this.listSetupNM.getVisibleIndex();
         this.listSetupNM.repaint();
+    }
+
+    /**
+     * Lista l'elenco dei files sulla PenDrive USB
+     *
+     * @param list_usb_files Elenco dei device
+     */
+    public void setListUsbFiles(List<String> list_usb_files) {
+        this.listUsbFile.removeAll();
+        for (int c = 0; c < list_usb_files.size(); c++) {
+            this.listUsbFile.add(list_usb_files.get(c).toString());
+        }
+        this.listUsbFile.select(0);
+        this.listUsbFile.getVisibleIndex();
+        this.listUsbFile.repaint();
     }
 
     /**
@@ -4030,4 +4144,53 @@ public class JRivitMain extends javax.swing.JFrame {
                 jLabelController.setBackground(Color.red);
         }
     }
+
+    /**
+     * Disabilita un pulsante
+     *
+     * @param pulsante
+     */
+    public void disableButton(String pulsante) {
+        switch (pulsante) {
+            case "PL1" -> {
+                this.jButtonPL1.setIcon(Img_Nulla);
+                this.jButtonPL1.setEnabled(false);
+            }
+            case "PL2" -> {
+                this.jButtonPL2.setIcon(Img_Nulla);
+                this.jButtonPL2.setEnabled(false);
+            }
+            case "PL3" -> {
+                this.jButtonPL3.setIcon(Img_Nulla);
+                this.jButtonPL3.setEnabled(false);
+            }
+            case "PR1" -> {
+                this.jButtonPR1.setIcon(Img_Nulla);
+                this.jButtonPR1.setEnabled(false);
+            }
+            case "PR2" -> {
+                this.jButtonPR2.setIcon(Img_Nulla);
+                this.jButtonPR2.setEnabled(false);
+            }
+            case "PR3" -> {
+                this.jButtonPR3.setIcon(Img_Nulla);
+                this.jButtonPR3.setEnabled(false);
+            }
+        }
+        this.jPanelLeft.repaint();
+    } 
+
+    boolean isBackup() {
+        return this.inBackup;
+    }
+
+    public boolean isInBackup() {
+        return inBackup;
+    }
+
+    public void setInBackup(boolean inBackup) {
+        this.inBackup = inBackup;
+    }
+  
+
 }
