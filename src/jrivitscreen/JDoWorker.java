@@ -205,9 +205,9 @@ public class JDoWorker extends SwingWorker<String, Object> {
      * della classe FileWorker
      */
     void init() {
+        JFileWorker.scriviFile(Static.F_SCREEN_VERSION,this.Rm.versione+" "+this.Rm.data_release);
         this.fileWorker.start();//Avvio FileWorker
         this.fileWorker.initValues();
-        JFileWorker.scriviFile(Static.F_SCREEN_VERSION,this.Rm.versione+" "+this.Rm.data_release);
     }
 
     /**
