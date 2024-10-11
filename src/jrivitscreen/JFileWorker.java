@@ -150,7 +150,10 @@ public class JFileWorker extends Thread {
                                 readSetupWifi();
                             }
                             case Static.F_CONTROLLER_ONLINE -> {
-                                this.Rm.setControllerIndicator(true);
+                                this.Rm.setControllerIndicator(0);  // Verde
+                            }
+                            case Static.F_CONTROLLER_BAD -> {
+                                this.Rm.setControllerIndicator(1);  // Giallo
                             }
                             case (Static.F_LISTA_NM_CON + "_ready") -> {
                                 readListaNMdevice();
@@ -277,7 +280,10 @@ public class JFileWorker extends Thread {
                             case Static.F_CONFERMA_RISP_ERRORE ->
                                 this.Rm.setConfermaRispErrore(false);
                             case Static.F_CONTROLLER_ONLINE -> {
-                                this.Rm.setControllerIndicator(false);
+                                this.Rm.setControllerIndicator(2);  // Rosso
+                            }
+                            case Static.F_CONTROLLER_BAD -> {
+                                this.Rm.setControllerIndicator(0);  // Verde
                             }
                             case Static.F_RESET_REQUEST -> {
                                 this.Rm.setRichiesta("");
@@ -1021,9 +1027,13 @@ public class JFileWorker extends Thread {
     private void leggiControllerOnline() {
         File inputFile = new File(Static.PATH_WATCH + Static.F_CONTROLLER_ONLINE);
         if (inputFile.exists()) {
-            this.Rm.setControllerIndicator(true);
+            this.Rm.setControllerIndicator(0);  // Verde
         } else {
-            this.Rm.setControllerIndicator(false);
+            this.Rm.setControllerIndicator(2);  // Rosso
+        }
+        inputFile = new File(Static.PATH_WATCH + Static.F_CONTROLLER_BAD);
+        if (inputFile.exists()) {
+            this.Rm.setControllerIndicator(1);  // Giallo
         }
     }
 
