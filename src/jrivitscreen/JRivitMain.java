@@ -3468,19 +3468,6 @@ public class JRivitMain extends javax.swing.JFrame {
     }
 
     /**
-     * Imposta il visualizzatore dello stato di raggiungibilità del Controller
-     *
-     * @param stato
-     */
-    public void setControllerIndicator(boolean stato) {
-        if (stato) {
-            jLabelController.setBackground(Color.green);
-        } else {
-            jLabelController.setBackground(Color.red);
-        }
-    }
-
-    /**
      * Stato della WiFi Green OK - Red OFF
      *
      * @param stato
@@ -4025,6 +4012,22 @@ public class JRivitMain extends javax.swing.JFrame {
             this.jLayeredPaneCenter.moveToFront(this.jPanelLock);
         } else {
             this.jLayeredPaneCenter.moveToBack(this.jPanelLock);
+        }
+    }
+
+    /**
+     * Imposta il visualizzatore dello stato di raggiungibilità del Controller
+     *
+     * @param stato
+     */
+    void setControllerIndicator(int stato) {
+        switch (stato) {
+            case 0 ->
+                jLabelController.setBackground(Color.green);
+            case 1 ->
+                jLabelController.setBackground(Color.yellow);
+            case 2 ->
+                jLabelController.setBackground(Color.red);
         }
     }
 }
