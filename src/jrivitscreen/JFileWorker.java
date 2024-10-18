@@ -161,8 +161,9 @@ public class JFileWorker extends Thread {
                                 readInternetStatus();
                             }
                             case (Static.F_USB_LISTA_FILE + "_ready") -> {
-                                readListaFileUSB();
+                                this.Rm.setInBackup(true);
                                 Rm.PanelUsb();
+                                readListaFileUSB();
                             }
                             case Static.F_POWEROFF -> {
                                 Rm.getjLabelDeviceName().setText("POWERING OFF SYSTEM");
@@ -307,7 +308,7 @@ public class JFileWorker extends Thread {
                                 Rm.restoreButtons();
                             }
                             case (Static.F_USB_LISTA_FILE ) -> {
-                                if( ! Rm.isBackup()){
+                                if(  Rm.isBackup()){
                                     Rm.PanelMain();
                                 }
                                 this.Rm.setInBackup(false);
