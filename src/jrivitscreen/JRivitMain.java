@@ -60,6 +60,7 @@ import java.awt.Robot;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -1134,9 +1135,17 @@ public class JRivitMain extends javax.swing.JFrame {
                 PanelStart();
             }
 
-            case "start" -> {
+            case "start" ->
                 PulsanteSu();
+
+            case "list_file_usb" -> {
+                PulsanteSu();
+                this.jButtonPL3.setEnabled(false);
+                if (this.listUsbFile.getSelectedItem().equals("backup_db.zip")) {
+                    this.jButtonPL3.setEnabled(true);
+                }
             }
+
             case "started" -> {//Stop
                 //esiste conferma_no come file in /tmp/CT ?
                 // se esiste non chiede conferma della scelta
@@ -1316,6 +1325,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 PanelMain();//Exit verso main
             }
             case "list_file_usb" -> {
+                esegui("umount_usb");
                 PanelMain();//Exit verso main
             }
 
@@ -1379,7 +1389,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 isAPOn = !isAPOn;
             }
             case "list_file_usb" -> {
-                esegui("esegui_backup");
+                esegui("usb_db_backup");
             }
             case "dialog" -> {
                 if (this.contesto.contains("started")) {
@@ -1423,6 +1433,9 @@ public class JRivitMain extends javax.swing.JFrame {
                     this.scelta = Static.CONTINUA;
                     rispostaErrore();
                 }
+            }
+            case "list_file_usb" -> {
+                this.esegui("usb_db_restore");
             }
             case "cert" -> {
                 if (!isLogOn) {
@@ -1469,7 +1482,13 @@ public class JRivitMain extends javax.swing.JFrame {
             }
             case "start" ->
                 PulsanteGiu();
-
+            case "list_file_usb" -> {
+                PulsanteGiu();
+                this.jButtonPL3.setEnabled(false);
+                if (this.listUsbFile.getSelectedItem().equals("backup_db.zip")) {
+                    this.jButtonPL3.setEnabled(true);
+                }
+            }
             case "warning", "info", "setup lan", "setup wifi" ->
                 PulsanteGiu();
             case "started", "canvas" -> {//Reload Lavoro appena concluso esci da calibrazione
@@ -2150,6 +2169,8 @@ public class JRivitMain extends javax.swing.JFrame {
                     }
                 }
             }
+            case "list_file_usb" ->
+                lista = this.listUsbFile;
             case "setup wifi" ->
                 lista = this.listWifi;
             case "setup lan" ->
@@ -2216,6 +2237,8 @@ public class JRivitMain extends javax.swing.JFrame {
             }
             case "setup wifi" ->
                 lista = this.listWifi;
+            case "list_file_usb" ->
+                lista = this.listUsbFile;
             case "setup lan" ->
                 lista = this.listLan;
             case "info" ->
@@ -2718,7 +2741,8 @@ public class JRivitMain extends javax.swing.JFrame {
     public void PanelUsb() {
         this.changeButtons(this.Img_Exit, this.Img_backup, this.Img_restore,
                 this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Nulla);
-        this.listUsbFile.requestFocus(); // Per poter usare le frecce      
+        this.listUsbFile.requestFocus(); // Per poter usare le frecce   
+        this.jButtonPL3.setEnabled(false);
         cambiaPannello(this.jPanelUsb);
     }
 
@@ -4178,7 +4202,7 @@ public class JRivitMain extends javax.swing.JFrame {
             }
         }
         this.jPanelLeft.repaint();
-    } 
+    }
 
     boolean isBackup() {
         return this.inBackup;
@@ -4191,6 +4215,5 @@ public class JRivitMain extends javax.swing.JFrame {
     public void setInBackup(boolean inBackup) {
         this.inBackup = inBackup;
     }
-  
 
 }
