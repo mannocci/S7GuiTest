@@ -113,8 +113,14 @@ public class JDoWorker extends SwingWorker<String, Object> {
                 }
                 case "aggiorna_nm_list" ->
                     this.update_status_nm();
-                case "esegui_backup" ->
-                    this.esegui_backup();
+
+                case "usb_db_backup" ->
+                    this.esegui_db_backup();
+                case "umount_usb" ->
+                    this.esegui_umount_usb();
+                case "usb_db_restore" ->
+                    this.esegui_db_restore();
+
                 case "aggiorna_stato_wifi" ->
                     this.update_status_wifi();
 
@@ -334,17 +340,13 @@ public class JDoWorker extends SwingWorker<String, Object> {
     /**
      * esegue il backup senza tabelle sec_* e testi ...
      */
-    private void esegui_backup() {
+    private void esegui_db_backup() {
         String usbPath = "";
         this.Rm.setInBackup(true);
         this.Rm.getListUsbFile().removeAll();
         this.Rm.getListUsbFile().add("");
         this.Rm.getListUsbFile().add("Backup ....");
-        this.Rm.disableButton("PL2");
-        this.Rm.disableButton("PL3");
-        this.Rm.disableButton("PR1");
-        this.Rm.disableButton("PR2");
-        String[] cmd = {"/home/adminsb/bin/backup_db_web.sh",""};
+        String[] cmd = {"/home/adminsb/bin/backup_db_web.sh", ""};
         Process proces = run_system_bash(cmd);
         if (proces.exitValue() == 0) {
             File from = new File("/var/www/html/_lib/file/doc/backup_db.zip");
@@ -364,7 +366,60 @@ public class JDoWorker extends SwingWorker<String, Object> {
                 Logger.getLogger(JDoWorker.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        
+
+    }
+
+    /**
+     * esegue il restore senza tabelle sec_* e testi ...
+     */
+    private void esegui_db_restore() {
+        String usbPath = "";
+        this.Rm.setInBackup(true);
+        this.Rm.getListUsbFile().removeAll();
+        this.Rm.getListUsbFile().add("");
+        this.Rm.getListUsbFile().add("Copy files ....");
+        String[] cmd = {"/home/adminsb/bin/restore_db_web.sh", ""};
+        File to = new File("/var/www/html/_lib/file/doc/backup_db.zip");
+        usbPath = this.Rm.getListInfo().getItem(0);
+        File from = new File(usbPath + "/backup_db.zip");
+        try {
+            Files.copy(from.toPath(), to.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            this.Rm.getListUsbFile().removeAll();
+            this.Rm.getListUsbFile().add("");
+            this.Rm.getListUsbFile().add("Copy completed !");
+            this.Rm.getListUsbFile().add("Now Start Restore DB ......");
+            Process proces = run_system_bash(cmd);
+
+            if (proces.exitValue() == 0) {
+                this.Rm.getListUsbFile().removeAll();
+                this.Rm.getListUsbFile().add("");
+                this.Rm.getListUsbFile().add("Restore completed !");
+                this.Rm.getListUsbFile().add("Umounted pen drive ");
+            } else {
+                this.Rm.getListUsbFile().removeAll();
+                this.Rm.getListUsbFile().add("");
+                this.Rm.getListUsbFile().add("Error to restore the DB!");
+                this.Rm.getListUsbFile().add("Umounted pen drive");
+            }
+        } catch (IOException ex) {
+            this.Rm.getListUsbFile().removeAll();
+            this.Rm.getListUsbFile().add("");
+            this.Rm.getListUsbFile().add("Error to copy the DB file !");
+            this.Rm.getListUsbFile().add("Umounted pen drive");
+            Logger.getLogger(JDoWorker.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        esegui_umount_usb();
+    }
+
+    /**
+     * Smonta la usb PenDrive
+     */
+    private void esegui_umount_usb() {
+        String[] cmd = {"umount", ""};
+        String usbPath = this.Rm.getListInfo().getItem(0);
+        cmd[1] = usbPath;
+        run_system_bash(cmd);
+        System.out.print("umounted " + usbPath);
     }
 
 }
