@@ -102,6 +102,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private final ImageIcon Img_start_WiFi, Img_stop_WiFi, Img_start_log, Img_stop_log, Img_restart;
     private final ImageIcon Img_restore;
     private final ImageIcon Img_backup;
+    private final ImageIcon Img_firmware;
     private String AlertDialogWhat;
     private String Lavorodescrizione;
     private ImageIcon Img_Info;
@@ -265,6 +266,7 @@ public class JRivitMain extends javax.swing.JFrame {
         Img_Logo = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/logori2.png"));
         Img_backup = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/backup.png"));
         Img_restore = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/restore.png"));
+        Img_firmware = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/firmware.png"));
 
         elencoLavori = new ArrayList<>();
         elencoWl = new ArrayList<>();
@@ -2740,7 +2742,7 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     public void PanelUsb() {
         this.changeButtons(this.Img_Exit, this.Img_backup, this.Img_restore,
-                this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Nulla);
+                this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_firmware);
         this.listUsbFile.requestFocus(); // Per poter usare le frecce   
         this.jButtonPL3.setEnabled(false);
         cambiaPannello(this.jPanelUsb);
