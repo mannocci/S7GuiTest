@@ -120,7 +120,8 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     this.esegui_umount_usb();
                 case "usb_db_restore" ->
                     this.esegui_db_restore();
-
+                case "usb_file_restore" ->
+                    this.esegui_file_restore();
                 case "aggiorna_stato_wifi" ->
                     this.update_status_wifi();
 
@@ -368,7 +369,32 @@ public class JDoWorker extends SwingWorker<String, Object> {
         }
 
     }
-
+   /**
+     * esegue il restore dal file firmware.bin ...
+     */
+    private void esegui_file_restore() {
+        String usbPath = "";
+        this.Rm.setInBackup(true);
+        this.Rm.getListUsbFile().removeAll();
+        this.Rm.getListUsbFile().add("");
+        this.Rm.getListUsbFile().add("Copy files ....");
+        usbPath = this.Rm.getListInfo().getItem(0);
+        String[] cmd = {"/home/adminsb/bin/restore_from_usb.sh", ""};
+        cmd[1]=usbPath;
+        Process proces = run_system_bash(cmd);
+        if (proces.exitValue() == 0) {
+            this.Rm.getListUsbFile().removeAll();
+            this.Rm.getListUsbFile().add("");
+            this.Rm.getListUsbFile().add("Finish to copy file !");
+            this.Rm.getListUsbFile().add("Umounted pen drive");             
+        }else{
+            this.Rm.getListUsbFile().removeAll();
+            this.Rm.getListUsbFile().add("");
+            this.Rm.getListUsbFile().add("Error to copy file !");
+            this.Rm.getListUsbFile().add("Umounted pen drive");            
+        }     
+        esegui_umount_usb();
+    }
     /**
      * esegue il restore senza tabelle sec_* e testi ...
      */
@@ -399,13 +425,13 @@ public class JDoWorker extends SwingWorker<String, Object> {
                 this.Rm.getListUsbFile().removeAll();
                 this.Rm.getListUsbFile().add("");
                 this.Rm.getListUsbFile().add("Error to restore the DB!");
-                this.Rm.getListUsbFile().add("Umounted pen drive");
+                this.Rm.getListUsbFile().add("Umounting pen drive");
             }
         } catch (IOException ex) {
             this.Rm.getListUsbFile().removeAll();
             this.Rm.getListUsbFile().add("");
             this.Rm.getListUsbFile().add("Error to copy the DB file !");
-            this.Rm.getListUsbFile().add("Umounted pen drive");
+            this.Rm.getListUsbFile().add("Umounting pen drive");
             Logger.getLogger(JDoWorker.class.getName()).log(Level.SEVERE, null, ex);
         }
         esegui_umount_usb();
@@ -420,6 +446,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
         cmd[1] = usbPath;
         run_system_bash(cmd);
         System.out.print("umounted " + usbPath);
+        this.Rm.getListUsbFile().add("Umounted pen drive " + usbPath+"!");
     }
 
 }
