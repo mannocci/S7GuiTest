@@ -1143,9 +1143,13 @@ public class JRivitMain extends javax.swing.JFrame {
             case "list_file_usb" -> {
                 PulsanteSu();
                 this.jButtonPL3.setEnabled(false);
+                this.jButtonPR3.setEnabled(false);
                 if (this.listUsbFile.getSelectedItem().equals("backup_db.zip")) {
                     this.jButtonPL3.setEnabled(true);
                 }
+                if (this.listUsbFile.getSelectedItem().equals("firmware.bin")) {
+                    this.jButtonPR3.setEnabled(true);
+                }                
             }
 
             case "started" -> {//Stop
@@ -1487,9 +1491,13 @@ public class JRivitMain extends javax.swing.JFrame {
             case "list_file_usb" -> {
                 PulsanteGiu();
                 this.jButtonPL3.setEnabled(false);
+                this.jButtonPR3.setEnabled(false);
                 if (this.listUsbFile.getSelectedItem().equals("backup_db.zip")) {
                     this.jButtonPL3.setEnabled(true);
                 }
+                if (this.listUsbFile.getSelectedItem().equals("firmware.bin")) {
+                    this.jButtonPR3.setEnabled(true);
+                }                
             }
             case "warning", "info", "setup lan", "setup wifi" ->
                 PulsanteGiu();
@@ -1598,6 +1606,9 @@ public class JRivitMain extends javax.swing.JFrame {
             case "setup lan", "setup wifi" -> {
                 PanelSetup();
             }
+            case "list_file_usb" -> {
+                this.esegui("usb_file_restore");
+            }            
             case "cert" -> {
                 esegui("certi_cicloStart.sh");
                 wifiMode = "Auto";
@@ -2745,6 +2756,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_firmware);
         this.listUsbFile.requestFocus(); // Per poter usare le frecce   
         this.jButtonPL3.setEnabled(false);
+        this.jButtonPR3.setEnabled(false);
         cambiaPannello(this.jPanelUsb);
     }
 
