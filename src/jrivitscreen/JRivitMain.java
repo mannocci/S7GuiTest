@@ -60,8 +60,6 @@ import java.awt.Robot;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -71,7 +69,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -1149,7 +1146,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 }
                 if (this.listUsbFile.getSelectedItem().equals("firmware.bin")) {
                     this.jButtonPR3.setEnabled(true);
-                }                
+                }
             }
 
             case "started" -> {//Stop
@@ -1497,7 +1494,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 }
                 if (this.listUsbFile.getSelectedItem().equals("firmware.bin")) {
                     this.jButtonPR3.setEnabled(true);
-                }                
+                }
             }
             case "warning", "info", "setup lan", "setup wifi" ->
                 PulsanteGiu();
@@ -1608,7 +1605,7 @@ public class JRivitMain extends javax.swing.JFrame {
             }
             case "list_file_usb" -> {
                 this.esegui("usb_file_restore");
-            }            
+            }
             case "cert" -> {
                 esegui("certi_cicloStart.sh");
                 wifiMode = "Auto";
@@ -2743,9 +2740,10 @@ public class JRivitMain extends javax.swing.JFrame {
 //        this.changeButtons(this.Img_Exit, this.Img_Lan, this.Img_WiFi,
 //                this.Img_Freccia_su, this.Img_Freccia_giu, setIconSetup());
         this.changeButtons(this.Img_Exit, this.Img_Lan, this.Img_WiFi,
-                this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Nulla);
+                this.Img_Freccia_su, this.Img_Freccia_giu, setIconSetup());
         this.listSetupNM.requestFocus(); // Per poter usare le frecce
         cambiaPannello(this.jPanelSetup);
+        this.jButtonPR3.setEnabled(true);
     }
 
     /**
@@ -2854,7 +2852,7 @@ public class JRivitMain extends javax.swing.JFrame {
     @SuppressWarnings("UseSpecificCatch")
     void updateSensori(String Valori) {
         String[] arrayValori;
-
+        DecimalFormat df = new DecimalFormat("0.00");// solo due cifre decimali
         if (Valori.startsWith("error")) {
 //            this.jLabel_msg.setText("Air pressure not updated !"); // Aggiungere eventualmente un contatore
         } else {
@@ -2872,7 +2870,6 @@ public class JRivitMain extends javax.swing.JFrame {
                     if (this.pressione_aria_in < 0) {
                         this.pressione_aria_in = 0f;
                     }
-                    DecimalFormat df = new DecimalFormat("0.00");// solo due cifre decimali
                     if (pressione_aria_in <= 2) { // aria in ingresso non collegata
                         this.jLabel_msg.setBackground(java.awt.Color.BLACK);
                         this.jLabel_msg.setForeground(java.awt.Color.WHITE);
@@ -2898,13 +2895,22 @@ public class JRivitMain extends javax.swing.JFrame {
                     }
                     try {
                         this.JTextAreaDescrizioneInfo.append(Static.dtf.format(LocalDateTime.now()) + "\n");
-                        DecimalFormat df = new DecimalFormat("0.00");// solo due cifre decimali
+                        
                         this.JTextAreaDescrizioneInfo.append("Air: " + df.format(this.pressione_aria_in) + " bar\n");
                         this.JTextAreaDescrizioneInfo.append("Vcpu: " + this.v_rpi.toString() + "V - Vin: " + this.v_in.toString() + "V\n");
                         this.JTextAreaDescrizioneInfo.append("Board T.: " + this.temp_io_board.toString() + "°C - CPU T.: " + this.temp_rpi.toString() + "°C\n");
                     } catch (Exception e) {
                         Static.debug("Error reading info file\n" + e.toString(), 3);
                     }
+                     try {//totale spazio disco 6, spazio usato 7, spazio libero 8
+                        float free, tot, percent;
+                        free = Float.parseFloat(arrayValori[8]);
+                        tot = Float.parseFloat(arrayValori[6]);
+                        percent = (free / tot *100);
+                        this.JTextAreaDescrizioneInfo.append("Disk free " +arrayValori[8]  + "/"+arrayValori[6]+" GB ("+df.format(percent)+"%)" );
+                    } catch (Exception e) {
+                        Static.debug("Error reading info file\n" + e.toString(), 3);
+                    }                   
 //                if (this.panCur.equals("info")) {
 //                   // this.JTextAreaDescrizioneInfo.repaint();
 //                }else{
@@ -4169,17 +4175,33 @@ public class JRivitMain extends javax.swing.JFrame {
 
     /**
      * Imposta il visualizzatore dello stato di raggiungibilità del Controller
+     * Inoltre il colore evidenzia il ruolo: black -> Stand alone § yellow ->
+     * Controller § blue -> backup § green -> standard - controller on line §
+     * red -> standard/backup - controller out of line
      *
-     * @param stato
+     * @param condizione
      */
-    void setControllerIndicator(int stato) {
-        switch (stato) {
-            case 0 ->
+    void setControllerIndicator(int condizione) {
+        jLabelController.setForeground(Color.black);//Stand alone
+
+        switch (condizione) {
+            case 0 ->//Controller raggiungibile
                 jLabelController.setBackground(Color.green);
-            case 1 ->
-                jLabelController.setBackground(Color.yellow);
-            case 2 ->
+            case 1 ->//Controller BAD
+                jLabelController.setBackground(Color.magenta);
+            case 2 ->//Controller non raggiungibile
                 jLabelController.setBackground(Color.red);
+            case 3 -> {//Stand-Alone
+                jLabelController.setBackground(Color.black);
+                jLabelController.setForeground(Color.white);
+            }
+            case 4 -> { // Ruolo Controller
+                jLabelController.setBackground(Color.yellow);
+            }
+            case 5 -> { // Ruolo backup
+                jLabelController.setBackground(Color.blue);
+                jLabelController.setForeground(Color.white);
+            }
         }
     }
 
