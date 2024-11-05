@@ -59,8 +59,10 @@ public class JFileWorker extends Thread {
     private Path fileName;
     private WatchKey key;
     private int OldW_Level;
+    private String ruolo;
 
     public JFileWorker(JRivitMain mf) throws IOException {
+        this.ruolo = "";
         this.Rm = mf;
         Path dir = Paths.get(Static.PATH_WATCH);
         // create gpio controller by file (run bash script before !)     
@@ -149,17 +151,27 @@ public class JFileWorker extends Thread {
                                 readSetupWifi();
                             }
                             case Static.F_CONTROLLER_ONLINE -> {
-                                this.Rm.setControllerIndicator(0);  // Verde
+                                if (this.ruolo.equals("2")) {
+                                    this.Rm.setControllerIndicator(0);  // Verde
+                                }
+                                if (this.ruolo.equals("1")) {
+                                    this.Rm.setControllerIndicator(5);  // Blue
+                                }
                             }
                             case Static.F_CONTROLLER_BAD -> {
-                                this.Rm.setControllerIndicator(1);  // Giallo
+                                if (this.ruolo.equals("2")) {
+                                    this.Rm.setControllerIndicator(1);  // Magenta
+                                }
                             }
+                            case Static.F_RUOLO + "_ready" ->
+                                this.impostaRuolo();
                             case (Static.F_LISTA_NM_CON + "_ready") -> {
-                                readListaNMdevice();
-                                // Verificare se si può usare "nmcli monitor" per tenere sotto controllo la rete e avvisare in caso di cambiamenti
-                                //case (Static.F_INTERNET_STATUS + "_ready") ->
-                                readInternetStatus();
+                                this.readListaNMdevice();
+                                this.readInternetStatus();
+                                this.readEth0Status();
                             }
+                            case (Static.F_INTERNET_STATUS + "_ready") ->
+                                this.readInternetStatus();
                             case (Static.F_USB_LISTA_FILE + "_ready") -> {
                                 this.Rm.setInBackup(true);
                                 Rm.PanelUsb();
@@ -284,10 +296,14 @@ public class JFileWorker extends Thread {
                             case Static.F_CONFERMA_RISP_ERRORE ->
                                 this.Rm.setConfermaRispErrore(false);
                             case Static.F_CONTROLLER_ONLINE -> {
-                                this.Rm.setControllerIndicator(2);  // Rosso
+                                if (this.ruolo.equals("1") || this.ruolo.equals("2")) {
+                                    this.Rm.setControllerIndicator(2);  // Rosso
+                                }
                             }
                             case Static.F_CONTROLLER_BAD -> {
-                                this.Rm.setControllerIndicator(0);  // Verde
+                                if (this.ruolo.equals("1") || this.ruolo.equals("2")) {
+                                    this.Rm.setControllerIndicator(0);  // Verde
+                                }
                             }
                             case Static.F_RESET_REQUEST -> {
                                 this.Rm.setRichiesta("");
@@ -307,12 +323,12 @@ public class JFileWorker extends Thread {
                                 Rm.showPannelloErrore(false);
                                 Rm.restoreButtons();
                             }
-                            case (Static.F_USB_LISTA_FILE ) -> {
-                                if(  Rm.isBackup()){
+                            case (Static.F_USB_LISTA_FILE) -> {
+                                if (Rm.isBackup()) {
                                     Rm.PanelMain();
                                 }
                                 this.Rm.setInBackup(false);
-                            }                            
+                            }
                         }
                     }
 
@@ -454,7 +470,11 @@ public class JFileWorker extends Thread {
         this.leggiAbilitaCalibrazione();
         this.leggiConfermaRispErrore();
         this.leggiConfermaStopPausa();
-        this.leggiControllerOnline();
+        this.impostaRuolo();
+        this.readInternetStatus();
+        if (!ruolo.equals("3")) {
+            this.leggiControllerOnline();
+        }
         this.aggiornaContatori();
         this.aggiornaSensori();
         this.readLavori();//Se non esite il file imposta il default
@@ -665,7 +685,7 @@ public class JFileWorker extends Thread {
                 while (myReader.hasNextLine()) {
                     contenutoFile += myReader.nextLine();
                 }
-                if (!(contenutoFile.length() > 1)) {
+                if (contenutoFile.length() == 0) {
                     contenutoFile = "errore " + NomeFile;
                 }
             }
@@ -848,6 +868,9 @@ public class JFileWorker extends Thread {
             if (string.contains("AP_" + this.Rm.getSnCT()) && string.contains("ON")) {    // la prima riga che contiene "eth" e "ON" accende l'indicatore Lan
                 wifiIndicator = true;
             }
+            if (string.contains("ON")) {
+                lanIndicator = true;
+            }
         }
         this.Rm.setLanIndicator(lanIndicator);
         this.Rm.setVPNIndicator(vpnIndicator);
@@ -864,14 +887,9 @@ public class JFileWorker extends Thread {
     private void readInternetStatus() {
         String inetStatus = leggiFile(Static.F_INTERNET_STATUS);
         boolean internetIndicator = false;
-        boolean lanIndicator = false;
         if (inetStatus.contains("full")) {    // se l'ultima riga contiene "full" accende l'indicatore Internet
-            lanIndicator = true;
             internetIndicator = true;
-        } else if (inetStatus.contains("limited") || inetStatus.contains("portal")) {
-            lanIndicator = true;
         }
-        this.Rm.setLanIndicator(lanIndicator);
         this.Rm.setInternetIndicator(internetIndicator);
     }
 
@@ -1046,10 +1064,17 @@ public class JFileWorker extends Thread {
         }
     }
 
+    /**
+     * Verifica la presenza del file CONTROLLER_ONLINE , CONTROLLER_BAD on line
+     * ma configurato male
+     */
     private void leggiControllerOnline() {
         File inputFile = new File(Static.PATH_WATCH + Static.F_CONTROLLER_ONLINE);
+
         if (inputFile.exists()) {
-            this.Rm.setControllerIndicator(0);  // Verde
+            if (ruolo.equals("2")) {
+                this.Rm.setControllerIndicator(0);  // Verde
+            }
         } else {
             this.Rm.setControllerIndicator(2);  // Rosso
         }
@@ -1145,6 +1170,35 @@ public class JFileWorker extends Thread {
             this.Rm.setSnCT(leggiFile("hostname"));
         } catch (Exception ex) {
             Static.debug("Error reading UM", 2);
+        }
+    }
+
+    private void impostaRuolo() {
+        ruolo = leggiFile(Static.F_RUOLO);
+        //In base al ruolo imposto il colore di sfondo del Led
+        // che indica lo stato del Controller
+        switch (ruolo) {    // Il colore del ruolo standard viene gestito in real time
+            case "0" ->
+                this.Rm.setControllerIndicator(4);
+            case "1" ->
+                this.Rm.setControllerIndicator(5);
+            case "3" ->
+                this.Rm.setControllerIndicator(3);
+        }
+    }
+
+    /**
+     * il contenuto del file status_eth0 viene aggiornato dal bash status_lan.sh
+     * controlla se il cavo è collegato alla porta avviando il comando nmcli d
+     * show eth0 | grep -i general.state | awk '{print $3}'
+     *
+     */
+    private void readEth0Status() {
+        String ethStatus = leggiFile(Static.F_STATUS_ETH0);
+        if (ethStatus.equals("0")) {
+            this.Rm.setLanIndicator(false);
+        } else {
+            this.Rm.setLanIndicator(true);
         }
     }
 
