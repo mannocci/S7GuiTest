@@ -107,6 +107,7 @@ public class Static {
     final static String F_SENSORI = "sensori";
     final static String F_WARNING = "warning.txt";
     final static String F_STATUS_LAN = "status_lan";
+    final static String F_STATUS_ETH0 = "status_eth0";
     final static String F_STATUS_WIFI = "status_wifi";
     final static String F_NOME_DEVICE = "nome_device";
     final static String F_UM = "um"; // Bar o Newton
@@ -129,6 +130,7 @@ public class Static {
     final static String F_INTERNET_STATUS = "internet_status";
     final static String F_CONTROLLER_ONLINE = "controller_online";
     final static String F_CONTROLLER_BAD = "controller_bad";
+    final static String F_RUOLO = "ruolo";
     final static String F_POWEROFF = "poweroff";
     final static String F_REBOOT = "reboot";
     final static String F_FIRST_TIME = "first_time";
