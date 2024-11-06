@@ -170,8 +170,10 @@ public class JFileWorker extends Thread {
                                 this.readInternetStatus();
                                 this.readEth0Status();
                             }
-                            case (Static.F_INTERNET_STATUS + "_ready") ->
+                            case (Static.F_INTERNET_STATUS + "_ready") -> {
                                 this.readInternetStatus();
+                                this.updateSystemDateTime();
+                            }
                             case (Static.F_USB_LISTA_FILE + "_ready") -> {
                                 this.Rm.setInBackup(true);
                                 Rm.PanelUsb();
@@ -891,6 +893,15 @@ public class JFileWorker extends Thread {
             internetIndicator = true;
         }
         this.Rm.setInternetIndicator(internetIndicator);
+    }
+
+    public void updateSystemDateTime() {
+        try {
+            String[] stringa = new String[]{"/home/adminsb/bin/set_time.sh"};
+            Runtime.getRuntime().exec(stringa);
+        } catch (Exception e) {
+            Static.debug("Error setting date time: " + e, 2);
+        }
     }
 
     /**
