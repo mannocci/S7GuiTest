@@ -865,8 +865,6 @@ public class JRivitMain extends javax.swing.JFrame {
 
         listTools.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         listTools.setMaximumSize(new java.awt.Dimension(330, 277));
-        listTools.setMinimumSize(new java.awt.Dimension(330, 277));
-        listTools.setPreferredSize(new java.awt.Dimension(330, 277));
         listTools.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 listToolsMouseClicked(evt);
@@ -1040,10 +1038,9 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelVPN.setPreferredSize(new java.awt.Dimension(15, 20));
         jPanelBotton.add(jLabelVPN, new org.netbeans.lib.awtextra.AbsoluteConstraints(44, 5, 20, 20));
 
-        jLabelController.setBackground(javax.swing.UIManager.getDefaults().getColor("Actions.Red"));
+        jLabelController.setBackground(new java.awt.Color(0, 0, 0));
         jLabelController.setFont(new java.awt.Font("DejaVu Sans", 1, 13)); // NOI18N
         jLabelController.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabelController.setText("C");
         jLabelController.setToolTipText("");
         jLabelController.setOpaque(true);
         jLabelController.setPreferredSize(new java.awt.Dimension(15, 20));
@@ -2895,22 +2892,22 @@ public class JRivitMain extends javax.swing.JFrame {
                     }
                     try {
                         this.JTextAreaDescrizioneInfo.append(Static.dtf.format(LocalDateTime.now()) + "\n");
-                        
+
                         this.JTextAreaDescrizioneInfo.append("Air: " + df.format(this.pressione_aria_in) + " bar\n");
                         this.JTextAreaDescrizioneInfo.append("Vcpu: " + this.v_rpi.toString() + "V - Vin: " + this.v_in.toString() + "V\n");
                         this.JTextAreaDescrizioneInfo.append("Board T.: " + this.temp_io_board.toString() + "°C - CPU T.: " + this.temp_rpi.toString() + "°C\n");
                     } catch (Exception e) {
                         Static.debug("Error reading info file\n" + e.toString(), 3);
                     }
-                     try {//totale spazio disco 6, spazio usato 7, spazio libero 8
+                    try {//totale spazio disco 6, spazio usato 7, spazio libero 8
                         float free, tot, percent;
                         free = Float.parseFloat(arrayValori[8]);
                         tot = Float.parseFloat(arrayValori[6]);
-                        percent = (free / tot *100);
-                        this.JTextAreaDescrizioneInfo.append("Disk free " +arrayValori[8]  + "/"+arrayValori[6]+" GB ("+df.format(percent)+"%)" );
+                        percent = (free / tot * 100);
+                        this.JTextAreaDescrizioneInfo.append("Disk free " + arrayValori[8] + "/" + arrayValori[6] + " GB (" + df.format(percent) + "%)");
                     } catch (Exception e) {
                         Static.debug("Error reading info file\n" + e.toString(), 3);
-                    }                   
+                    }
 //                if (this.panCur.equals("info")) {
 //                   // this.JTextAreaDescrizioneInfo.repaint();
 //                }else{
@@ -4182,25 +4179,37 @@ public class JRivitMain extends javax.swing.JFrame {
      * @param condizione
      */
     void setControllerIndicator(int condizione) {
-        jLabelController.setForeground(Color.black);//Stand alone
+        //Colori background dei vari ruoli
+        Color controller = new Color(0xcc, 0x66, 0);//CC6600
+        Color backup = new Color(0x10, 0x4f, 0xcb);//104FCB
+        Color standard = new Color(0x97, 0xd0, 0x77);//97D077
+        Color standalone = new Color(0x00, 0x00, 0x00);
+        jLabelController.setForeground(Color.black);//Scritta nera di Default
+        jLabelController.setText("S");
 
         switch (condizione) {
             case 0 ->//Controller raggiungibile
-                jLabelController.setBackground(Color.green);
+                jLabelController.setBackground(standard);
             case 1 ->//Controller BAD
                 jLabelController.setBackground(Color.magenta);
-            case 2 ->//Controller non raggiungibile
+            case 2 ->{//Controller non raggiungibile
                 jLabelController.setBackground(Color.red);
-            case 3 -> {//Stand-Alone
-                jLabelController.setBackground(Color.black);
                 jLabelController.setForeground(Color.white);
+            }
+            case 3 -> {//Stand-Alone
+                jLabelController.setBackground(standalone);
+                jLabelController.setForeground(Color.white);
+                jLabelController.setText("");
             }
             case 4 -> { // Ruolo Controller
-                jLabelController.setBackground(Color.yellow);
+                jLabelController.setBackground(controller);
+                jLabelController.setForeground(Color.white);
+                jLabelController.setText("C");
             }
             case 5 -> { // Ruolo backup
-                jLabelController.setBackground(Color.blue);
+                jLabelController.setBackground(backup);
                 jLabelController.setForeground(Color.white);
+                jLabelController.setText("B");
             }
         }
     }
