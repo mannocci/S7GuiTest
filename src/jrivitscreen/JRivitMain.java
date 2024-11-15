@@ -1245,7 +1245,7 @@ public class JRivitMain extends javax.swing.JFrame {
                             this.esegui("calibrazione_test");
                         }
                         case Static.RICHIESTA_CALIBRAZIONE_SALVA -> {//Ok registra calibrazione
-                            this.gr.setPrimoGiro(true);
+                            this.gr.setPrimoGiro(2);
                             this.updateDescription(this.listLavori.getSelectedIndex());
                             esegui("salva_calibrazione");
                         }
@@ -1541,7 +1541,7 @@ public class JRivitMain extends javax.swing.JFrame {
                         PanelStart();
                     }
                     case Static.RICHIESTA_CALIBRAZIONE_SALVA -> {//Ritorna in scelta lavoro
-                        this.gr.setPrimoGiro(true);
+                        this.gr.setPrimoGiro(2);
                         PanelStart();
                     }
                     case Static.RICHIESTA_RESET_SYSTEM -> { // Ritorna in scelta lavoro
@@ -3525,7 +3525,7 @@ public class JRivitMain extends javax.swing.JFrame {
      * avvia la fase di calibrazione
      */
     void avviaCalibrazione() {
-        gr.setPrimoGiro(true);
+        gr.setPrimoGiro(2);
         gr.setCurvaDiRiferimento("0");
         PanelCanvas();
     }
@@ -3534,7 +3534,7 @@ public class JRivitMain extends javax.swing.JFrame {
      * avvia la fase di calibrazione
      */
     void avviaCalibrazioneTest() {
-        gr.setPrimoGiro(false);
+        gr.setPrimoGiro(0);
         this.set_jLabel_B_L("Cal. Test");
         gr.setCurvaDiRiferimento(Curva);
         PanelCanvas();

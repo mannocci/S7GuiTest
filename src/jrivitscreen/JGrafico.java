@@ -82,7 +82,7 @@ public class JGrafico extends JPanel {
     private int posizionePiccoRif;
     private int picco = 0;
     private int posizionePicco;
-    private boolean primoGiro;
+    private int primoGiro;
     private Font f;
     private JRivitMain Rm;
     private float fattoreX;
@@ -111,7 +111,7 @@ public class JGrafico extends JPanel {
         picco = 0;
         this.Rm = Rm;
         posizionePicco = 0;
-        primoGiro = false;
+        primoGiro = 0;
         this.setBounds(jPanelPosX, jPanelPosY, jPanelWidth, jPanelHeight);
         y0 = this.jPanelHeight - bordoInf;
         altezzaGraf = (y0 - bordoSup);
@@ -148,12 +148,18 @@ public class JGrafico extends JPanel {
                     gr = (Graphics2D) g;
 
                     if (this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE)) {
-                        if (!(this.curvaDiRiferimento.length() > 1)) {
-                            if (this.curva.length() > 1) {
-                                this.setCurvaDiRiferimento(this.curva);   // La curva appena letta diventa il riferimento
-                                this.piccoRif = this.picco;
-                                this.posizionePiccoRif = this.posizionePicco;
+                        if (primoGiro == 0) {
+                            if (!(this.curvaDiRiferimento.length() > 1)) {
+                                if (this.curva.length() > 1) {
+
+                                    this.setCurvaDiRiferimento(this.curva);   // La curva appena letta diventa il riferimento
+                                    this.piccoRif = this.picco;
+                                    this.posizionePiccoRif = this.posizionePicco;
+                                }
                             }
+                        } else {
+                            primoGiro--;
+                            this.setCurvaDiRiferimento("0");
                         }
                     }
 
@@ -161,7 +167,7 @@ public class JGrafico extends JPanel {
                     if (this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE_TEST)) {
 //                    if (primoGiro) {
 //                        primoGiro = false;
-////                    this.curvaDiRiferimento = this.curva;
+//                    this.curvaDiRiferimento = this.curva;
 //                        this.curva = "";
 //                    }
                     }
@@ -306,7 +312,7 @@ public class JGrafico extends JPanel {
         this.posizionePiccoRif = posizionePiccoRif;
     }
 
-    public void setPrimoGiro(boolean primoGiro) {
+    public void setPrimoGiro(int primoGiro) {
         this.primoGiro = primoGiro;
     }
 
@@ -393,7 +399,8 @@ public class JGrafico extends JPanel {
         gr.drawString(piccoStr + ((float) posizionePicco / 100) + "s", 5, 20);
         gr.setColor(oldColor);
     }
-    public void resetCurva () {
+
+    public void resetCurva() {
         this.curva = "";
         this.yCurvaChar = new String[]{""};
         this.picco = 0;
