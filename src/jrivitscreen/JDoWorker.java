@@ -120,8 +120,8 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     this.esegui_umount_usb();
                 case "usb_db_restore" ->
                     this.esegui_db_restore();
-                case "usb_file_restore" ->
-                    this.esegui_file_restore();
+                case "usb_firmware_update" ->
+                    this.esegui_firmware_update();
                 case "aggiorna_stato_wifi" ->
                     this.update_status_wifi();
 
@@ -369,32 +369,58 @@ public class JDoWorker extends SwingWorker<String, Object> {
         }
 
     }
-   /**
+
+    /**
      * esegue il restore dal file firmware.bin ...
      */
-    private void esegui_file_restore() {
-        String usbPath = "";
+    private void esegui_firmware_update() {
+        String usbPath = JFileWorker.leggiFile(Static.F_USB_PENDRIVE);
         this.Rm.setInBackup(true);
+        usbPath += "/" + this.Rm.getListUsbFile().getSelectedItem();
+        String[] cmd = {"/home/adminsb/bin/update_firmware.sh", ""};
+        cmd[1] = usbPath;
         this.Rm.getListUsbFile().removeAll();
         this.Rm.getListUsbFile().add("");
-        this.Rm.getListUsbFile().add("Copy files ....");
-        usbPath = this.Rm.getListInfo().getItem(0);
-        String[] cmd = {"/home/adminsb/bin/restore_from_usb.sh", ""};
-        cmd[1]=usbPath;
-        Process proces = run_system_bash(cmd);
-        if (proces.exitValue() == 0) {
+        this.Rm.getListUsbFile().add("Start firmware update  ....");
+
+        Process process = run_system_bash(cmd);
+        if (process.exitValue() == 0) {
             this.Rm.getListUsbFile().removeAll();
             this.Rm.getListUsbFile().add("");
-            this.Rm.getListUsbFile().add("Finish to copy file !");
-            this.Rm.getListUsbFile().add("Umounted pen drive");             
-        }else{
+            this.Rm.getListUsbFile().add("Firmware updated successfully !");
+        } else {
             this.Rm.getListUsbFile().removeAll();
             this.Rm.getListUsbFile().add("");
-            this.Rm.getListUsbFile().add("Error to copy file !");
-            this.Rm.getListUsbFile().add("Umounted pen drive");            
-        }     
+            this.Rm.getListUsbFile().add("Error updating firmware !");
+            this.Rm.getListUsbFile().add("Restoring previous firmware version...");
+            String[] cmdRestore = {"/home/adminsb/bin/rollback_firmware.sh", ""};
+            process = run_system_bash(cmdRestore);
+            if (process.exitValue() == 0) {
+                this.Rm.getListUsbFile().add("");
+                this.Rm.getListUsbFile().add("Firmware rollback successfully !");
+                this.Rm.getListUsbFile().add("Reboot System in 5 seconds");
+            } else {
+                this.Rm.getListUsbFile().add("");
+                this.Rm.getListUsbFile().add("Error rolling back firmware !");
+                return;
+            }
+        }
         esegui_umount_usb();
+        this.Rm.getListUsbFile().add("Reboot System in 5 seconds");
+        try {
+            Thread.sleep(4000);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(JDoWorker.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        JFileWorker.scriviFlag(Static.F_SYSTEM_FREEZE);
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(JDoWorker.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_SYSTEM_REBOOT);
     }
+
     /**
      * esegue il restore senza tabelle sec_* e testi ...
      */
@@ -446,7 +472,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
         cmd[1] = usbPath;
         run_system_bash(cmd);
         System.out.print("umounted " + usbPath);
-        this.Rm.getListUsbFile().add("Umounted pen drive " + usbPath+"!");
+        this.Rm.getListUsbFile().add("Umounted pen drive " + usbPath + "!");
     }
 
 }

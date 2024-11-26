@@ -474,7 +474,7 @@ public class JFileWorker extends Thread {
         this.leggiConfermaStopPausa();
         this.impostaRuolo();
         this.readInternetStatus();
-        if (!ruolo.equals("3")) {
+        if (!ruolo.equals("3") && !ruolo.equals("0") ) {
             this.leggiControllerOnline();
         }
         this.aggiornaContatori();

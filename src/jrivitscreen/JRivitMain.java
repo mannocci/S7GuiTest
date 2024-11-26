@@ -189,6 +189,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private String nomeDevice;
     private ImageIcon buttonSave[];
     private boolean inBackup;
+    private String nomeFirmware;
 
     /**
      * Creates new form JRivitMain
@@ -198,6 +199,7 @@ public class JRivitMain extends javax.swing.JFrame {
         this.ctCanStart = "1";
         this.panCur = "main";
         this.snCT = "";
+        this.nomeFirmware = "";
         this.cntCicli = 1;
         String beta = "β";
         initComponents();
@@ -988,8 +990,9 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabel_B_L.setOpaque(true);
         jPanelBotton.add(jLabel_B_L, new org.netbeans.lib.awtextra.AbsoluteConstraints(108, 5, 80, 20));
 
-        jLabel_B_R.setBackground(java.awt.Color.lightGray);
+        jLabel_B_R.setBackground(java.awt.Color.red);
         jLabel_B_R.setFont(new java.awt.Font("DejaVu Sans", 1, 14)); // NOI18N
+        jLabel_B_R.setForeground(new java.awt.Color(0, 0, 0));
         jLabel_B_R.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel_B_R.setText("Air OFF");
         jLabel_B_R.setOpaque(true);
@@ -1489,8 +1492,10 @@ public class JRivitMain extends javax.swing.JFrame {
                 if (this.listUsbFile.getSelectedItem().equals("backup_db.zip")) {
                     this.jButtonPL3.setEnabled(true);
                 }
-                if (this.listUsbFile.getSelectedItem().equals("firmware.bin")) {
+                if (this.listUsbFile.getSelectedItem().startsWith("firmware") 
+                        && this.listUsbFile.getSelectedItem().endsWith(".bin")) {
                     this.jButtonPR3.setEnabled(true);
+                    this.nomeFirmware= this.listUsbFile.getSelectedItem();
                 }
             }
             case "warning", "info", "setup lan", "setup wifi" ->
@@ -1600,8 +1605,8 @@ public class JRivitMain extends javax.swing.JFrame {
             case "setup lan", "setup wifi" -> {
                 PanelSetup();
             }
-            case "list_file_usb" -> {
-                this.esegui("usb_file_restore");
+            case "list_file_usb" -> {//Pulsante chiamato nel pannello list_file_usb
+                this.esegui("usb_firmware_update");//agiorna il firmware
             }
             case "cert" -> {
                 esegui("certi_cicloStart.sh");
