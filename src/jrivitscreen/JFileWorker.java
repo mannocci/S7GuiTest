@@ -967,6 +967,7 @@ public class JFileWorker extends Thread {
                 this.Rm.setInWl(true);
                 this.Rm.setWLConclusa(false);
                 this.Rm.setInErrore(false);
+                this.Rm.setLavoroConcluso(false);
                 this.aggiornaContatori();
                 this.Rm.PanelStarted();
             }

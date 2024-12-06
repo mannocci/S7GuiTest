@@ -56,6 +56,7 @@ package jrivitscreen;
 
 import java.awt.AWTException;
 import java.awt.Color;
+import java.awt.Image;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
@@ -190,6 +191,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private ImageIcon buttonSave[];
     private boolean inBackup;
     private String nomeFirmware;
+    private final ImageIcon Img_qrHome;
 
     /**
      * Creates new form JRivitMain
@@ -266,6 +268,7 @@ public class JRivitMain extends javax.swing.JFrame {
         Img_backup = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/backup.png"));
         Img_restore = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/restore.png"));
         Img_firmware = new javax.swing.ImageIcon(getClass().getResource("/jrivitscreen/images/firmware.png"));
+        Img_qrHome = new ImageIcon(new ImageIcon("/tmp/qrHome.png").getImage().getScaledInstance(64, 64, Image.SCALE_DEFAULT));
 
         elencoLavori = new ArrayList<>();
         elencoWl = new ArrayList<>();
@@ -336,6 +339,7 @@ public class JRivitMain extends javax.swing.JFrame {
             this.esegui("aggiorna_nm_list");
             this.stato = Static.STATO_STOP;
             this.PanelMain();
+            saveButtons();  // Salvataggio iniziale dei pulsanti per evitare che possano essere null in caso di restore
         }
     }
 
@@ -609,7 +613,7 @@ public class JRivitMain extends javax.swing.JFrame {
 
         jLabelDesContatorePezzi.setFont(new java.awt.Font("SansSerif", 0, 24)); // NOI18N
         jLabelDesContatorePezzi.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabelDesContatorePezzi.setText("Traction");
+        jLabelDesContatorePezzi.setText("Fastener");
         jLabelDesContatorePezzi.setToolTipText("");
         jPanelStarted.add(jLabelDesContatorePezzi, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 100, 160, 30));
 
@@ -626,7 +630,7 @@ public class JRivitMain extends javax.swing.JFrame {
 
         jLabelDesPezziNoLimits.setFont(new java.awt.Font("SansSerif", 0, 24)); // NOI18N
         jLabelDesPezziNoLimits.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabelDesPezziNoLimits.setText("Tractions");
+        jLabelDesPezziNoLimits.setText("Fastener");
         jLabelDesPezziNoLimits.setToolTipText("");
         jPanelStarted.add(jLabelDesPezziNoLimits, new org.netbeans.lib.awtextra.AbsoluteConstraints(84, 100, 160, 30));
 
@@ -1572,11 +1576,8 @@ public class JRivitMain extends javax.swing.JFrame {
         // Qual'è il nome del pannello in primo piano ?
         switch (this.panCur) {
             case "main" -> {
-                esegui("startCert");
-                this.PanelCert();
-
-//                per ora uso il pulsante per chiudere;
-//                this.exit();
+                //esegui("startCert"); //E' servito per la Certificazione
+                //this.PanelCert();
             }
             case "start" -> {
                 if (inSceltaTool) {
@@ -1746,18 +1747,18 @@ public class JRivitMain extends javax.swing.JFrame {
         } else {
             if (this.elencoDesWl != null) {
                 this.changeButtons(this.Img_Warning, this.Img_Info, this.Img_Setup,
-                        this.Img_W, this.Img_WL, this.Img_Nulla);
+                        this.Img_W, this.Img_WL, this.Img_qrHome);
             } else {
                 this.changeButtons(this.Img_Warning, this.Img_Info, this.Img_Setup,
-                        this.Img_W, this.Img_Nulla, this.Img_Nulla);
+                        this.Img_W, this.Img_Nulla, this.Img_qrHome);
             }
             if (this.ctCanStart.equals("0")) {
                 this.changeButtons(this.Img_Warning, this.Img_Info, this.Img_Setup,
-                        this.Img_Nulla, this.Img_Nulla, this.Img_Nulla);
+                        this.Img_Nulla, this.Img_Nulla, this.Img_qrHome);
             }
             if (this.inFreeze) {
                 this.changeButtons(this.Img_Warning, this.Img_Info, this.Img_Nulla,
-                        this.Img_Nulla, this.Img_Nulla, this.Img_Nulla);
+                        this.Img_Nulla, this.Img_Nulla, this.Img_qrHome);
             }
             cambiaPannello(this.jPanelMain);
         }
