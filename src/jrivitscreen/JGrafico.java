@@ -354,6 +354,11 @@ public class JGrafico extends JPanel {
         } else {
             valPicco = maxPicco * this.Rm.getConversion() / 10000;
         }
+        /*
+        if (this.Rm.getPressioneMax() > 0) {
+            valPicco = valPicco * this.Rm.getPressioneMax() / 400;
+        }
+*/
         int valore;
         String strValore;
         float distanzaY = (float) altezzaGraf / 8;    // Distanza tra le etichette sull'asse Y
@@ -391,6 +396,11 @@ public class JGrafico extends JPanel {
         if (picco < 0) {
             picco = 0;
         }
+/*
+        if (this.Rm.getPressioneMax() > 0) {
+            picco = picco * this.Rm.getPressioneMax() / 400;
+        }
+*/
         if (this.Rm.getUM().equals("Bar")) {
             piccoStr = Math.round((float) picco / 10) + " Bar ";
         } else {

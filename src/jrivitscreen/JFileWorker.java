@@ -921,7 +921,7 @@ public class JFileWorker extends Thread {
                 try {
                     Thread.sleep(this.Rm.getDurataPlcOk() * 100);
                 } catch (InterruptedException ex) {
-                    Static.debug("Error changing color background " + ex, 2);
+                    Static.debug("Error changing background color " + ex, 2);
                 }
                 this.Rm.getjPanelStarted().setBackground(oldColor);
             }
@@ -1035,7 +1035,7 @@ public class JFileWorker extends Thread {
             this.Rm.setLimPezzi(this.Rm.getElencoLavori().get(index)[2]);
             this.Rm.setUDLotti(this.Rm.getElencoLavori().get(index)[5]);
             this.Rm.setUDPezzi(this.Rm.getElencoLavori().get(index)[6]);
-            Rm.impostaLabelContatori();
+           
             // cerco il lavoro nell'elenco
             for (String[] elencoLavori : this.Rm.getElencoLavori()) {
                 if (elencoLavori[0].equals(nomeLavoro)) {   // lavoro trovato
@@ -1050,6 +1050,7 @@ public class JFileWorker extends Thread {
             String[] umArray = umString.split(",");
             this.Rm.setUM(umArray[0]);  // UM è di pertinenza del CT
             this.Rm.setConversion(Integer.parseInt(umArray[1]));    // Xf è di pertinenza del tool
+            this.Rm.setPressioneMax(Integer.parseInt(umArray[2]));          // Valore massimo di pressione gestita dal sensore tool
             this.Rm.lavoroPronto();
         } catch (Exception e) {
             Static.debug("w_scelto -> wrong parameters count", 2);

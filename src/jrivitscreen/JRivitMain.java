@@ -192,6 +192,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private boolean inBackup;
     private String nomeFirmware;
     private final ImageIcon Img_qrHome;
+    private int pressioneMax;
 
     /**
      * Creates new form JRivitMain
@@ -203,6 +204,7 @@ public class JRivitMain extends javax.swing.JFrame {
         this.snCT = "";
         this.nomeFirmware = "";
         this.cntCicli = 1;
+        this.pressioneMax = 400;
         String beta = "β";
         initComponents();
         try {
@@ -2065,6 +2067,8 @@ public class JRivitMain extends javax.swing.JFrame {
     public void PanelStarted() {
         String[] desWlScelta = null;
         this.jLabelNomeLavoro.setText(this.nomelavoro.trim());
+        this.jProgressBar.setVisible(true);
+        this.impostaLabelContatori();
         this.visualizzaContatori();
 
         if (this.lavoroConcluso) {
@@ -3458,7 +3462,6 @@ public class JRivitMain extends javax.swing.JFrame {
             } else {
                 this.jProgressBar.setMaximum(this.limLotti * this.limPezzi);
             }
-            this.jProgressBar.setVisible(true);
         }
     }
 
@@ -4267,4 +4270,11 @@ public class JRivitMain extends javax.swing.JFrame {
         this.inBackup = inBackup;
     }
 
+    void setPressioneMax(int pressioneMax) {
+        this.pressioneMax = pressioneMax;
+    }
+
+    public int getPressioneMax() {
+        return pressioneMax;
+    }
 }
