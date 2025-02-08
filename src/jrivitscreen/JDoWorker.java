@@ -174,7 +174,8 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     JFileWorker.scriviFile(Static.F_TOOL_SCELTO, tool[0]);
                     JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_IMPOSTA_TOOL);
                     this.Rm.setRichiesta(Static.RICHIESTA_IMPOSTA_TOOL);
-                    JFileWorker.cancellaFile(Static.F_FIRST_TIME);
+                    File f = new File("/home/adminsb/etc/"+Static.F_FIRST_TIME);
+                    f.delete();
                     this.Rm.setInSceltaTool(false);
                     this.Rm.PanelMain();
                 }
@@ -274,7 +275,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
     }
 
     /**
-     * Aggiorna lo stato del device ETH0
+     * Aggiorna lo stato della LAN e di Internet
      */
     void update_status_lan() {
         String[] cmd = {"/home/adminsb/bin/status_lan.sh"};
