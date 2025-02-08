@@ -107,9 +107,11 @@ public class Static {
     final static String F_INFO = "info.txt";
     final static String F_SENSORI = "sensori";
     final static String F_WARNING = "warning.txt";
+    final static String F_INFO_INTERFACES = "info_interfaces";
     final static String F_STATUS_LAN = "status_lan";
-    final static String F_STATUS_ETH0 = "status_eth0";
+    final static String F_STATUS_INTERNET = "status_internet";      
     final static String F_STATUS_WIFI = "status_wifi";
+    final static String F_STATUS_VPN = "status_vpn";
     final static String F_NOME_DEVICE = "nome_device";
     final static String F_UM = "um"; // Bar o Newton
     final static String F_ARIA = "aria";
@@ -128,7 +130,6 @@ public class Static {
     final static String F_LISTA_NM_CON = "lista_nm_con";
     final static String F_NM_CON = "nm_con";
     final static String F_NOME_CON = "nome_con";
-    final static String F_INTERNET_STATUS = "internet_status";
     final static String F_CONTROLLER_ONLINE = "controller_online";
     final static String F_CONTROLLER_BAD = "controller_bad";
     final static String F_RUOLO = "ruolo";
@@ -160,6 +161,7 @@ public class Static {
 
 //    final public static DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yy HH:mm:ss.SSS");  // per i messaggi di log
     final public static DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yy HH:mm:ss");  // per i messaggi di log
+    
     
 
     /**
