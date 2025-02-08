@@ -64,7 +64,13 @@ public class JButtonFile extends Thread {
     public JButtonFile(JRivitMain mf) throws IOException {
         this.Rm = mf;
         Path dir = Paths.get(Static.PATH_TASTI);
-        // create gpio controller by file (run bash script before !)     
+        // create gpio controller by file (run bash script before !)  
+        JFileWorker.cancellaFileGenerico(Static.PATH_TASTI + Static.F_GPIO21);
+        JFileWorker.cancellaFileGenerico(Static.PATH_TASTI + Static.F_GPIO16);
+        JFileWorker.cancellaFileGenerico(Static.PATH_TASTI + Static.F_GPIO20);
+        JFileWorker.cancellaFileGenerico(Static.PATH_TASTI + Static.F_GPIO26);
+        JFileWorker.cancellaFileGenerico(Static.PATH_TASTI + Static.F_GPIO19);
+        JFileWorker.cancellaFileGenerico(Static.PATH_TASTI + Static.F_GPIO12);
         try {
             watcher = FileSystems.getDefault().newWatchService();
         } catch (IOException ex) {
@@ -110,7 +116,7 @@ public class JButtonFile extends Thread {
                             case Static.F_GPIO12 ->
                                 this.Rm.pulsanteHw("PR3");
                         }
-                        JFileWorker.cancellaFileGenerico(Static.PATH_TASTI+fileName.toString());
+                        JFileWorker.cancellaFileGenerico(Static.PATH_TASTI + fileName.toString());
                     }
 
                 }//End For watchevent
