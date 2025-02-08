@@ -107,9 +107,12 @@ public class JFileWorker extends Thread {
                                 //Da riguardare
                                 //if (this.Rm.getStato().equals(Static.STATO_STOP)) {
                                 this.Rm.setSensoreCollegato(false);
-                                this.Rm.setCtCanStart("0");
+                                this.Rm.setCtCanStart(false);
                                 if (Rm.getPanCur().equals("main")) {
                                     this.Rm.PanelMain();
+                                }
+                                if (Rm.getPanCur().equals("start")) {
+                                    this.Rm.PanelStart();
                                 }
                                 //}
                             }
@@ -144,12 +147,18 @@ public class JFileWorker extends Thread {
                                 readCurvaDiRiferimento();
                             case Static.F_PICCORIF + "_ready" ->
                                 readPiccoRiferimento();
-                            case Static.F_STATUS_LAN + "_ready" -> {
-                                readSetupLan();
+                            case Static.F_STATUS_LAN + "_ready" ->
+                                readLanStatus();
+                            case Static.F_STATUS_INTERNET + "_ready" -> {
+                                this.readInternetStatus();
+                                this.updateSystemDateTime();
                             }
-                            case Static.F_STATUS_WIFI + "_ready" -> {
+                            case Static.F_STATUS_VPN + "_ready" ->
+                                readVpnStatus();
+                            case Static.F_INFO_INTERFACES + "_ready" ->
+                                this.readInfpInterfaces();
+                            case Static.F_STATUS_WIFI + "_ready" ->
                                 readSetupWifi();
-                            }
                             case Static.F_CONTROLLER_ONLINE -> {
                                 if (this.ruolo.equals("2")) {
                                     this.Rm.setControllerIndicator(0);  // Verde
@@ -167,12 +176,6 @@ public class JFileWorker extends Thread {
                                 this.impostaRuolo();
                             case (Static.F_LISTA_NM_CON + "_ready") -> {
                                 this.readListaNMdevice();
-                                this.readInternetStatus();
-                                this.readEth0Status();
-                            }
-                            case (Static.F_INTERNET_STATUS + "_ready") -> {
-                                this.readInternetStatus();
-                                this.updateSystemDateTime();
                             }
                             case (Static.F_USB_LISTA_FILE + "_ready") -> {
                                 this.Rm.setInBackup(true);
@@ -180,37 +183,32 @@ public class JFileWorker extends Thread {
                                 readListaFileUSB();
                             }
                             case Static.F_POWEROFF -> {
-                                Rm.getjLabelDeviceName().setText("POWERING OFF SYSTEM");
+                                Rm.setLockStatus("POWERING OFF SYSTEM");
                                 Rm.getJLabelLogo().setIcon(Rm.getImageIconSysStopped());
                                 Rm.setInFreeze(true);
-                                Rm.PanelMain();
+//                                Rm.PanelMain();
                                 Thread.sleep(3000);//Aggiunto un secondo per mostrare il pannello
                                 System.exit(0);
                             }
                             case Static.F_REBOOT -> {
-                                Rm.getjLabelDeviceName().setText("REBOOT SYSTEM");
+                                Rm.setLockStatus("REBOOT SYSTEM");
                                 Rm.getJLabelLogo().setIcon(Rm.getImageIconSysStopped());
                                 Rm.setInFreeze(true);
-                                Rm.PanelMain();
+//                                Rm.PanelMain();
                                 Thread.sleep(3000);//Aggiunto un secondo per mostrare il pannello
                                 System.exit(0);
                             }
                             case Static.F_SYSTEM_FREEZE -> {
                                 Rm.setInFreeze(true);
-                                Rm.showPannelloErrore(true);
-                                Rm.saveButtons();
-                                Rm.clearButtons();
+                                Rm.setLockStatus("SYSTEM IN MAINTENANCE");
                                 Rm.getjLabelVersioneLock().setText(Rm.getjLabelVersione().getText());
-                                Rm.getjLabelDeviceNameLock().setText("SYSTEM FREEZE");
-                                //Rm.getJLabelLogo().setIcon(Rm.getImageIconSysStopped());
+                                Rm.getjLabelDeviceNameLock().setText(Rm.getjLabelDeviceName().getText());
                             }
                             case Static.F_SYSTEM_LOCK_EMERGENCY -> {
                                 Rm.setInFreeze(true);
-                                Rm.showPannelloErrore(true);
-                                Rm.saveButtons();
-                                Rm.clearButtons();
+                                Rm.setLockStatus("EMERGENCY SYSTEM LOCK");
                                 Rm.getjLabelVersioneLock().setText(Rm.getjLabelVersione().getText());
-                                Rm.getjLabelDeviceNameLock().setText("EMERGENCY SYSTEM LOCK");
+                                Rm.getjLabelDeviceNameLock().setText(Rm.getjLabelDeviceName().getText());
                             }
 
                             case (Static.F_NOME_DEVICE + "_ready") -> {  // Il file F_UM viene creato dopo aver letto tutti i dati del CT
@@ -280,9 +278,15 @@ public class JFileWorker extends Thread {
                                 this.Rm.ariaChiusa();
                             case Static.F_NO_SENSORE -> {  // sensore collegato
                                 this.Rm.setSensoreCollegato(true);
-                                this.Rm.setCtCanStart("1");
+                                if (this.Rm.getPressioneAriaIn() > 2) { // aria in ingresso corretta
+                                    this.Rm.setCtCanStart(false);
+                                    this.Rm.PanelMain();
+                                }
                                 if (Rm.getPanCur().equals("main")) {
                                     this.Rm.PanelMain();
+                                }
+                                if (Rm.getPanCur().equals("start")) {
+                                    this.Rm.PanelStart();
                                 }
                             }
                             case Static.F_ERRORE ->
@@ -298,8 +302,10 @@ public class JFileWorker extends Thread {
                             case Static.F_CONFERMA_RISP_ERRORE ->
                                 this.Rm.setConfermaRispErrore(false);
                             case Static.F_CONTROLLER_ONLINE -> {
-                                if (this.ruolo.equals("1") || this.ruolo.equals("2")) {
-                                    this.Rm.setControllerIndicator(2);  // Rosso
+                                if (this.ruolo.equals("1")) {   // Backup
+                                    this.Rm.setControllerIndicator(6);  // Rosso - lettera B
+                                } else if (this.ruolo.equals("2")) {    // Standard
+                                    this.Rm.setControllerIndicator(2);  // Rosso - lettera C
                                 }
                             }
                             case Static.F_CONTROLLER_BAD -> {
@@ -315,15 +321,11 @@ public class JFileWorker extends Thread {
                             }
                             case Static.F_SYSTEM_FREEZE -> {
                                 Rm.setInFreeze(false);
-                                Rm.showPannelloErrore(false);
-                                Rm.restoreButtons();
-                                Rm.getjLabelDeviceName().setText(this.Rm.getNomeDevice());
-                                Rm.getJLabelLogo().setIcon(Rm.getImageIconLogo());
+                                Rm.PanelMain();
                             }
                             case Static.F_SYSTEM_LOCK_EMERGENCY -> {
                                 Rm.setInFreeze(false);
-                                Rm.showPannelloErrore(false);
-                                Rm.restoreButtons();
+                                Rm.PanelMain();
                             }
                             case (Static.F_USB_LISTA_FILE) -> {
                                 if (Rm.isBackup()) {
@@ -418,8 +420,8 @@ public class JFileWorker extends Thread {
      * Legge il file con la descrizione della configurazione della LAN DA FARE
      * Leggere il DB è meglio
      */
-    private void readSetupLan() {
-        this.Rm.aggiornaListLan(JFileWorker.leggiFileElenco(Static.F_STATUS_LAN));
+    private void readInfpInterfaces() {
+        this.Rm.aggiornaListLan(JFileWorker.leggiFileElenco(Static.F_INFO_INTERFACES));
     }
 
     /**
@@ -462,7 +464,9 @@ public class JFileWorker extends Thread {
      */
     public void initValues() {
         this.Rm.setSnCT(leggiFile("hostname"));
-        if (!leggiFile(Static.F_RESET_REQUEST).contains("error")) {
+        this.Rm.getjLabelSnCGLock().setText(this.Rm.getSnCT());
+
+        if (fileExists(Static.PATH_WATCH + Static.F_RESET_REQUEST)) {
             //Richiesta se si vuole fare reset del sistema
             this.Rm.setRichiesta(Static.RICHIESTA_RESET_SYSTEM);
             this.Rm.chiediConfermaReset();
@@ -473,15 +477,18 @@ public class JFileWorker extends Thread {
         this.leggiConfermaRispErrore();
         this.leggiConfermaStopPausa();
         this.impostaRuolo();
+        this.readLanStatus();
         this.readInternetStatus();
-        if (!ruolo.equals("3") && !ruolo.equals("0") ) {
+        this.readVpnStatus();
+
+        if (!ruolo.equals("3") && !ruolo.equals("0")) {
             this.leggiControllerOnline();
         }
         this.aggiornaContatori();
         this.aggiornaSensori();
         this.readLavori();//Se non esite il file imposta il default
         this.readWl();//Se non esiste il file ?
-        this.readTools();
+        this.readTools();//Se esiste il file /home/adminsb/etc/first_time, avvia la scelta del tool
 
         // this.WlPronta(); la WL pronta deve essere comandata da Control
         this.readInfo();// Se non esiste il file imposta a stringa info
@@ -490,7 +497,7 @@ public class JFileWorker extends Thread {
         //this.LeggiAriaInMinMax(); // Letto dal DB
         //this.LeggiSessione();// Se non esite il file imposta il file a "0"
 //        this.mostraStatoAria(Static.ARIA_CHIUSA);//Se non esiste il file imposta a "0"
-        this.readSetupLan();
+        this.readInfpInterfaces();
         this.readListaNMdevice();
         String rigaFile = leggiFile(Static.F_ARIA);
         if (rigaFile.contains("errore")) {
@@ -704,9 +711,9 @@ public class JFileWorker extends Thread {
         File noSensore = new File(Static.PATH_WATCH + Static.F_NO_SENSORE);
         this.Rm.setSensoreCollegato(!noSensore.exists());
         if (noSensore.exists()) {
-            this.Rm.setCtCanStart("0");
+            this.Rm.setCtCanStart(false);
         } else {
-            this.Rm.setCtCanStart("1");
+            this.Rm.setCtCanStart(true);
         }
     }
 
@@ -860,22 +867,12 @@ public class JFileWorker extends Thread {
         List<String> list_nm_con = leggiFileElenco(Static.F_LISTA_NM_CON);
         Collections.sort(list_nm_con, String.CASE_INSENSITIVE_ORDER);
         this.Rm.setListNmCon(list_nm_con);
-        boolean lanIndicator = false;
-        boolean vpnIndicator = false;
         boolean wifiIndicator = false;
         for (String string : list_nm_con) {
-            if ((string.contains("tun") || string.startsWith("VPN")) && string.contains("ON")) {    // la prima riga che contiene "tun" e "ON" accende l'indicatore VPN
-                vpnIndicator = true;
-            }
             if (string.contains("AP_" + this.Rm.getSnCT()) && string.contains("ON")) {    // la prima riga che contiene "eth" e "ON" accende l'indicatore Lan
                 wifiIndicator = true;
             }
-            if (string.contains("ON")) {
-                lanIndicator = true;
-            }
         }
-        this.Rm.setLanIndicator(lanIndicator);
-        this.Rm.setVPNIndicator(vpnIndicator);
         this.Rm.setWiFiIndicator(wifiIndicator);
         if (this.Rm.getPanCur().equals("setup")) {
             this.Rm.updateNmButtons();
@@ -883,16 +880,10 @@ public class JFileWorker extends Thread {
     }
 
     /**
-     * networkmanager crea una lista dei device Questo metodo la legge, è stato
-     * avviato un bash prima che ha creato il file con la lista
+     * leggere lo stato di connettività di Internet
      */
     private void readInternetStatus() {
-        String inetStatus = leggiFile(Static.F_INTERNET_STATUS);
-        boolean internetIndicator = false;
-        if (inetStatus.contains("full")) {    // se l'ultima riga contiene "full" accende l'indicatore Internet
-            internetIndicator = true;
-        }
-        this.Rm.setInternetIndicator(internetIndicator);
+        this.Rm.setInternetIndicator(leggiFile(Static.F_STATUS_INTERNET).equals("full"));
     }
 
     public void updateSystemDateTime() {
@@ -1035,7 +1026,7 @@ public class JFileWorker extends Thread {
             this.Rm.setLimPezzi(this.Rm.getElencoLavori().get(index)[2]);
             this.Rm.setUDLotti(this.Rm.getElencoLavori().get(index)[5]);
             this.Rm.setUDPezzi(this.Rm.getElencoLavori().get(index)[6]);
-           
+
             // cerco il lavoro nell'elenco
             for (String[] elencoLavori : this.Rm.getElencoLavori()) {
                 if (elencoLavori[0].equals(nomeLavoro)) {   // lavoro trovato
@@ -1154,8 +1145,7 @@ public class JFileWorker extends Thread {
     }
 
     private void readTools() {
-        String setFlagTools = leggiFile(Static.F_FIRST_TIME);
-        if (!setFlagTools.startsWith("error")) {    // siamo al primo avvio o al reset
+        if (fileExists("/home/adminsb/etc/" + Static.F_FIRST_TIME)) {    // siamo al primo avvio o al reset
             this.Rm.setInSceltaTool(true);
         }
         this.Rm.aggiornaTools(leggiFileElenco(Static.F_TOOLS));
@@ -1201,13 +1191,14 @@ public class JFileWorker extends Thread {
     }
 
     /**
-     * il contenuto del file status_eth0 viene aggiornato dal bash status_lan.sh
-     * controlla se il cavo è collegato alla porta avviando il comando nmcli d
-     * show eth0 | grep -i general.state | awk '{print $3}'
+     * il contenuto del file status_lan viene aggiornato dal bash status_lan.sh
+     * controlla se i dispositivi wifi, usb0/eth1, eth0 sono collegati o meno il
+     * cavo è collegato alla porta avviando il comando nmcli d show eth0 | grep
+     * -i general.state | awk '{print $3}'
      *
      */
-    private void readEth0Status() {
-        String ethStatus = leggiFile(Static.F_STATUS_ETH0);
+    private void readStatusLan() {
+        String ethStatus = leggiFile(Static.F_STATUS_LAN);
         if (ethStatus.equals("0")) {
             this.Rm.setLanIndicator(false);
         } else {
@@ -1215,4 +1206,30 @@ public class JFileWorker extends Thread {
         }
     }
 
+    /**
+     * Controlla l'esistenza o meno del file Occorre inserire la PATH completa
+     *
+     * @param fname (path+fname)
+     * @return true o false
+     */
+    public synchronized boolean fileExists(String fname) {
+        File inputFile = new File(fname);
+        if (!inputFile.exists()) {
+//            this.cr.debug("File " + inputFile.getAbsolutePath() + " not esists", 2);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Lettura dello stato della VPN verde, rosso, giallo se la VPN era attiva
+     * ma la rete Internet viene meno
+     */
+    private void readVpnStatus() {
+        this.Rm.setVPNIndicator(leggiFile(Static.F_STATUS_VPN));
+    }
+
+    private void readLanStatus() {
+        this.Rm.setLanIndicator(leggiFile(Static.F_STATUS_LAN).equals("1"));
+    }
 }
