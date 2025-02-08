@@ -222,6 +222,9 @@ public class JRivitMain extends javax.swing.JFrame {
         gr.setName("canvas");
         gr.setPreferredSize(new java.awt.Dimension(330, 277));
         gr.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        jProgressBar.setBackground(new java.awt.Color(230, 230, 230));
+        //jProgressBar.setBackground(Color.LIGHT_GRAY);
+        jProgressBar.setForeground(new java.awt.Color(201,70 ,38 ));      
         this.jLayeredPaneCenter.add(gr, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 330, 277));
         this.jLabelDesPezziNoLimits.setVisible(false);
         this.jLabelPezziNoLimits.setVisible(false);
@@ -579,7 +582,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelStarted.add(jLabelNomeDevice, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 5, 320, 30));
 
         jProgressBar.setBackground(new java.awt.Color(153, 153, 153));
-        jProgressBar.setFont(new java.awt.Font("Liberation Sans", 1, 18)); // NOI18N
+        jProgressBar.setFont(new java.awt.Font("Liberation Sans", 1, 20)); // NOI18N
         jProgressBar.setForeground(new java.awt.Color(0, 0, 0));
         jProgressBar.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jProgressBar.setFocusable(false);
@@ -1376,7 +1379,7 @@ public class JRivitMain extends javax.swing.JFrame {
             case "info", "setup lan", "setup wifi" ->
                 this.PulsanteSxDx(-1);//Sinistra
             case "setup" -> {
-                this.esegui("aggiorna_stato_lan");
+                this.esegui("leggi_stato_interfacce");
                 PanelSetupLan();
             }
             case "cert" -> {
@@ -1922,7 +1925,8 @@ public class JRivitMain extends javax.swing.JFrame {
 
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
+//                if ("Nimbus".equals(info.getName())) {
+                if ("Metal".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
