@@ -125,8 +125,8 @@ public class JDoWorker extends SwingWorker<String, Object> {
                 case "aggiorna_stato_wifi" ->
                     this.update_status_wifi();
 
-                case "aggiorna_stato_lan" ->
-                    this.update_status_lan();
+                case "leggi_stato_interfacce" ->
+                    this.updateInfoInterfaces();
 
                 case "on_of_nm_device" ->
                     this.on_of_nm_device();
@@ -275,10 +275,10 @@ public class JDoWorker extends SwingWorker<String, Object> {
     }
 
     /**
-     * Aggiorna lo stato della LAN e di Internet
+     * Legge lo stato delle interfacce attive
      */
-    void update_status_lan() {
-        String[] cmd = {"/home/adminsb/bin/status_lan.sh"};
+    void updateInfoInterfaces() {
+        String[] cmd = {"/home/adminsb/bin/info_interfaces.sh"};
         run_system_bash(cmd);
     }
 
