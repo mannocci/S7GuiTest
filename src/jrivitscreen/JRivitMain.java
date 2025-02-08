@@ -124,7 +124,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private Properties setup;
     public final String versione;
     public final String data_release;
-    private String ctCanStart;
+    private boolean ctCanStart;
     private List<String[]> elencoLavori;
     private List<String> elencoTools;
     private List<String[]> elencoWl;
@@ -134,7 +134,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private Float temp_io_board;
     private Float v_in;
     private Float v_rpi;
-    private Float pressione_aria_in;
+    private Float pressioneAriaIn;
     private String panCur;
     private boolean inErrore = false;
     private boolean in_pausa = false;
@@ -199,7 +199,7 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     public JRivitMain() {
         this.buttonSave = new ImageIcon[6];
-        this.ctCanStart = "1";
+        this.ctCanStart = true;
         this.panCur = "main";
         this.snCT = "";
         this.nomeFirmware = "";
@@ -299,7 +299,6 @@ public class JRivitMain extends javax.swing.JFrame {
 
         data_release = setup.getProperty("data_versione", "14/12/2022");
 
-        setup.getProperty("srvkey", "");
         Static.debug("JRivitScreen ver. " + versione + " release " + data_release, 1);
         if (Static.VMMODE) {
             Static.debug("virtual Mode ON", 1);
@@ -315,7 +314,7 @@ public class JRivitMain extends javax.swing.JFrame {
         this.temp_io_board = 0F;
         this.v_in = 0F;
         this.v_rpi = 0F;
-        this.pressione_aria_in = 0F;
+        this.pressioneAriaIn = 0F;
         this.in_pausa = false;
         this.richiesta = "";
         this.welcome = "Welcome for the first Time!          Select Tool before start working";
@@ -365,6 +364,7 @@ public class JRivitMain extends javax.swing.JFrame {
         listLavori = new java.awt.List();
         listWLavori = new java.awt.List();
         JTextAreaDescrizione = new javax.swing.JTextArea();
+        listTools = new java.awt.List();
         jPanelStarted = new javax.swing.JPanel();
         jLabelContatoreLotti = new javax.swing.JLabel();
         jLabelNomeDevice = new javax.swing.JLabel();
@@ -403,11 +403,9 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelVersioneLock = new javax.swing.JLabel();
         jLabelDeviceNameLock = new javax.swing.JLabel();
         jLabelSnCGLock = new javax.swing.JLabel();
+        jLabelErrore = new javax.swing.JLabel();
         jPanelUsb = new javax.swing.JPanel();
         listUsbFile = new java.awt.List();
-        jPanelTools = new javax.swing.JPanel();
-        JTextAreaDescTool = new javax.swing.JTextArea();
-        listTools = new java.awt.List();
         jPanelRight = new javax.swing.JPanel();
         jButtonPR1 = new javax.swing.JButton();
         jButtonPR2 = new javax.swing.JButton();
@@ -545,6 +543,21 @@ public class JRivitMain extends javax.swing.JFrame {
         JTextAreaDescrizione.setMinimumSize(new java.awt.Dimension(320, 80));
         jPanelStart.add(JTextAreaDescrizione, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 186, 328, 90));
 
+        listTools.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        listTools.setMaximumSize(new java.awt.Dimension(330, 277));
+        listTools.setVisible(false);
+        listTools.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                listToolsMouseClicked(evt);
+            }
+        });
+        listTools.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                listToolsItemStateChanged(evt);
+            }
+        });
+        jPanelStart.add(listTools, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 2, 326, 180));
+
         jLayeredPaneCenter.add(jPanelStart, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 330, 277));
 
         jPanelStarted.setBackground(new java.awt.Color(204, 204, 255));
@@ -565,8 +578,11 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelNomeDevice.setText("Nome Device");
         jPanelStarted.add(jLabelNomeDevice, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 5, 320, 30));
 
-        jProgressBar.setFont(new java.awt.Font("Liberation Sans", 1, 14)); // NOI18N
+        jProgressBar.setBackground(new java.awt.Color(153, 153, 153));
+        jProgressBar.setFont(new java.awt.Font("Liberation Sans", 1, 18)); // NOI18N
+        jProgressBar.setForeground(new java.awt.Color(0, 0, 0));
         jProgressBar.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jProgressBar.setFocusable(false);
         jProgressBar.setMaximumSize(new java.awt.Dimension(245, 40));
         jProgressBar.setMinimumSize(new java.awt.Dimension(245, 40));
         jProgressBar.setStringPainted(true);
@@ -701,6 +717,11 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelSetupWiFi.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         listWifi.setMaximumSize(new java.awt.Dimension(326, 273));
+        listWifi.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                listWifiActionPerformed(evt);
+            }
+        });
         jPanelSetupWiFi.add(listWifi, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 2, 326, 273));
 
         jLayeredPaneCenter.add(jPanelSetupWiFi, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 328, 276));
@@ -800,7 +821,7 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelLogoLock.setMaximumSize(new java.awt.Dimension(250, 250));
         jLabelLogoLock.setMinimumSize(new java.awt.Dimension(250, 250));
         jLabelLogoLock.setPreferredSize(new java.awt.Dimension(250, 250));
-        jPanelLock.add(jLabelLogoLock, new org.netbeans.lib.awtextra.AbsoluteConstraints(54, 23, 220, 230));
+        jPanelLock.add(jLabelLogoLock, new org.netbeans.lib.awtextra.AbsoluteConstraints(54, 23, 220, 170));
 
         jLabelVersioneLock.setFont(new java.awt.Font("Ubuntu Light", 1, 14)); // NOI18N
         jLabelVersioneLock.setForeground(java.awt.Color.blue);
@@ -829,6 +850,16 @@ public class JRivitMain extends javax.swing.JFrame {
         jLabelSnCGLock.setPreferredSize(new java.awt.Dimension(322, 32));
         jPanelLock.add(jLabelSnCGLock, new org.netbeans.lib.awtextra.AbsoluteConstraints(225, 233, 100, 20));
 
+        jLabelErrore.setBackground(new java.awt.Color(255, 255, 255));
+        jLabelErrore.setFont(new java.awt.Font("Ubuntu Light", 3, 18)); // NOI18N
+        jLabelErrore.setForeground(new java.awt.Color(153, 0, 0));
+        jLabelErrore.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelErrore.setMaximumSize(new java.awt.Dimension(320, 30));
+        jLabelErrore.setMinimumSize(new java.awt.Dimension(320, 30));
+        jLabelErrore.setOpaque(true);
+        jLabelErrore.setPreferredSize(new java.awt.Dimension(322, 32));
+        jPanelLock.add(jLabelErrore, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 200, 328, 20));
+
         jLayeredPaneCenter.add(jPanelLock, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 330, 277));
 
         jPanelUsb.setAlignmentX(1.0F);
@@ -853,39 +884,6 @@ public class JRivitMain extends javax.swing.JFrame {
         jPanelUsb.add(listUsbFile, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 2, 390, 290));
 
         jLayeredPaneCenter.add(jPanelUsb, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 330, 277));
-
-        jPanelTools.setAlignmentX(1.0F);
-        jPanelTools.setAlignmentY(1.0F);
-        jPanelTools.setMaximumSize(new java.awt.Dimension(330, 277));
-        jPanelTools.setMinimumSize(new java.awt.Dimension(330, 277));
-        jPanelTools.setName("start"); // NOI18N
-        jPanelTools.setPreferredSize(new java.awt.Dimension(330, 277));
-        jPanelTools.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        JTextAreaDescTool.setEditable(false);
-        JTextAreaDescTool.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
-        JTextAreaDescTool.setLineWrap(true);
-        JTextAreaDescTool.setRows(5);
-        JTextAreaDescTool.setFocusable(false);
-        JTextAreaDescTool.setMaximumSize(new java.awt.Dimension(320, 80));
-        JTextAreaDescTool.setMinimumSize(new java.awt.Dimension(320, 80));
-        jPanelTools.add(JTextAreaDescTool, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 186, 400, 110));
-
-        listTools.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
-        listTools.setMaximumSize(new java.awt.Dimension(330, 277));
-        listTools.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                listToolsMouseClicked(evt);
-            }
-        });
-        listTools.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                listToolsItemStateChanged(evt);
-            }
-        });
-        jPanelTools.add(listTools, new org.netbeans.lib.awtextra.AbsoluteConstraints(2, 2, 330, 277));
-
-        jLayeredPaneCenter.add(jPanelTools, new org.netbeans.lib.awtextra.AbsoluteConstraints(1, 1, 330, 277));
 
         getContentPane().add(jLayeredPaneCenter, new org.netbeans.lib.awtextra.AbsoluteConstraints(75, 2, -1, -1));
 
@@ -1498,10 +1496,10 @@ public class JRivitMain extends javax.swing.JFrame {
                 if (this.listUsbFile.getSelectedItem().equals("backup_db.zip")) {
                     this.jButtonPL3.setEnabled(true);
                 }
-                if (this.listUsbFile.getSelectedItem().startsWith("firmware") 
+                if (this.listUsbFile.getSelectedItem().startsWith("firmware")
                         && this.listUsbFile.getSelectedItem().endsWith(".bin")) {
                     this.jButtonPR3.setEnabled(true);
-                    this.nomeFirmware= this.listUsbFile.getSelectedItem();
+                    this.nomeFirmware = this.listUsbFile.getSelectedItem();
                 }
             }
             case "warning", "info", "setup lan", "setup wifi" ->
@@ -1586,12 +1584,16 @@ public class JRivitMain extends javax.swing.JFrame {
                     esegui("imposta_tool");
                     this.inSceltaTool = false;
                 } else {
-                    if (this.inWl) {
-                        impostaWLScelta();
-                        avviaWL();
+                    if (ctCanStart) {
+                        if (this.inWl) {
+                            impostaWLScelta();
+                            avviaWL();
+                        } else {
+                            impostaLavoroScelto();
+                            avviaLavoro();
+                        }
                     } else {
-                        impostaLavoroScelto();
-                        avviaLavoro();
+                        this.PanelWarning();
                     }
                 }
             }
@@ -1725,6 +1727,10 @@ public class JRivitMain extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_listUsbFileItemStateChanged
 
+    private void listSetupNMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listSetupNMActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_listSetupNMActionPerformed
+
     private void listToolsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listToolsMouseClicked
         // TODO add your handling code here:
     }//GEN-LAST:event_listToolsMouseClicked
@@ -1733,34 +1739,50 @@ public class JRivitMain extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_listToolsItemStateChanged
 
-    private void listSetupNMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listSetupNMActionPerformed
+    private void listWifiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listWifiActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_listSetupNMActionPerformed
+    }//GEN-LAST:event_listWifiActionPerformed
 
     /**
      * PanelMain Pannello che viene visualizzato all'avvio
      */
     public final void PanelMain() {
+        ImageIcon Img_PR3 = this.Img_Nulla;
 //        this.changeButtons(this.Img_Warning, this.Img_Info, this.Img_Setup,
 //                this.Img_W, this.Img_WL, this.Img_Exit);  // pannello precedente. La chiamata a System.exit() manda in crash la JVM. VERIFICARE
+        if (this.wifiIndicator) {
+            Img_PR3 = this.Img_qrHome;
+        }
         if (this.inSceltaTool) {    // Prima installazione -> scelta tool
             cambiaPannello(this.jPanelStart);
             PanelStart();
         } else {
             if (this.elencoDesWl != null) {
                 this.changeButtons(this.Img_Warning, this.Img_Info, this.Img_Setup,
-                        this.Img_W, this.Img_WL, this.Img_qrHome);
+                        this.Img_W, this.Img_WL, Img_PR3);
             } else {
                 this.changeButtons(this.Img_Warning, this.Img_Info, this.Img_Setup,
-                        this.Img_W, this.Img_Nulla, this.Img_qrHome);
+                        this.Img_W, this.Img_Nulla, Img_PR3);
             }
-            if (this.ctCanStart.equals("0")) {
-                this.changeButtons(this.Img_Warning, this.Img_Info, this.Img_Setup,
-                        this.Img_Nulla, this.Img_Nulla, this.Img_qrHome);
+            if (!this.ctCanStart) {
+                if (this.sensoreCollegato) {
+                    if (pressioneAriaIn <= 2) { // aria in ingresso non collegata
+                        this.setLockStatus("INC.AIR NOT PRESENT");
+                    } else if (pressioneAriaIn <= this.sogliaMin) {
+                        this.setLockStatus("INC.AIR LOW");
+                    } else if (pressioneAriaIn > this.sogliaMax) {
+                        this.setLockStatus("INC.AIR HIGH");
+                    } else if (pressioneAriaIn > this.sogliaMax) {
+                        this.setLockStatus("LOW POWER SUPPLY");
+                    }
+                } else {
+                    setLockStatus("SENSOR NOT CONNECTED");
+                }
+                return;
             }
             if (this.inFreeze) {
-                this.changeButtons(this.Img_Warning, this.Img_Info, this.Img_Nulla,
-                        this.Img_Nulla, this.Img_Nulla, this.Img_qrHome);
+//                setLockStatus("SYSTEM LOCKED");
+                return;
             }
             cambiaPannello(this.jPanelMain);
         }
@@ -1918,7 +1940,6 @@ public class JRivitMain extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextArea JTextAreaDescTool;
     private javax.swing.JTextArea JTextAreaDescrizione;
     private javax.swing.JTextArea JTextAreaDescrizioneInfo;
     private javax.swing.JButton jButtonPL1;
@@ -1938,6 +1959,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private javax.swing.JLabel jLabelDeviceNameLock;
     private javax.swing.JLabel jLabelDialog;
     private javax.swing.JLabel jLabelErrati;
+    private javax.swing.JLabel jLabelErrore;
     private javax.swing.JLabel jLabelInternet;
     private javax.swing.JLabel jLabelLan;
     private javax.swing.JLabel jLabelLogo;
@@ -1975,7 +1997,6 @@ public class JRivitMain extends javax.swing.JFrame {
     private javax.swing.JPanel jPanelSetupWiFi;
     private javax.swing.JPanel jPanelStart;
     private javax.swing.JPanel jPanelStarted;
-    private javax.swing.JPanel jPanelTools;
     private javax.swing.JPanel jPanelUsb;
     private javax.swing.JPanel jPanelWarning;
     private javax.swing.JProgressBar jProgressBar;
@@ -1998,15 +2019,26 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     public void PanelStart() {
         int selezionato = 0, i = 0;
-        ImageIcon reload = this.Img_Nulla;
-        if (this.in_pausa) {
-            reload = this.Img_restart;
+        ImageIcon img_PL2 = this.Img_Nulla;
+        ImageIcon img_PR3 = this.Img_Nulla;
+        ImageIcon img_PL3 = this.Img_Nulla;
+        if (!this.ctCanStart) {
+            img_PR3 = this.Img_Warning;
+            img_PL3 = this.Img_Nulla;
+        } else {
+            img_PR3 = this.Img_Play;
+            img_PL3 = this.Img_Calibrazione;
+        }
+
+        if (this.in_pausa && this.ctCanStart) {
+            img_PL2 = this.Img_restart;
         }
         java.awt.List lista;
         if (this.inSceltaTool) {
             this.listLavori.setVisible(false);
             this.listWLavori.setVisible(false);
             this.listTools.setVisible(true);
+            this.listTools.requestFocus();
             lista = this.listTools;
             this.JTextAreaDescrizione.setText(this.welcome);
             this.changeButtons(this.Img_Exit, this.Img_Nulla, this.Img_Nulla,
@@ -2018,43 +2050,44 @@ public class JRivitMain extends javax.swing.JFrame {
                 lista = this.listLavori;
             }
             if (this.abilitaCalibrazione) {
-                this.changeButtons(this.Img_Exit, this.Img_Nulla, this.Img_Calibrazione,
-                        this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Play);
+                this.changeButtons(this.Img_Exit, img_PL2, img_PL3,
+                        this.Img_Freccia_su, this.Img_Freccia_giu, img_PR3);
             } else {
-                this.changeButtons(this.Img_Exit, reload, this.Img_Nulla,
-                        this.Img_Freccia_su, this.Img_Freccia_giu, this.Img_Play);
+                this.changeButtons(this.Img_Exit, img_PL2, img_PL3,
+                        this.Img_Freccia_su, this.Img_Freccia_giu, img_PR3);
             }
         }
-        lista.requestFocus();
-
-        // Se sessione non contiene 0
-        // vuole dire che da una pausa si vuole riprendere un lavoro
-        if (this.panCur != "start") {
-            if (sessione == null) {
-                sessione = "0";
-            }
-            switch (sessione) {
-                case "0" -> {
-                    selezionato = lista.getSelectedIndex();
+        if (this.ctCanStart) {
+            lista.requestFocus();
+            // Se sessione non contiene 0
+            // vuole dire che da una pausa si vuole riprendere un lavoro
+            if (this.panCur != "start") {
+                if (sessione == null) {
+                    sessione = "0";
                 }
-                default -> {
-                    String[] items = lista.getSelectedItems();
-                    for (i = 0; i < items.length; i++) {
-                        if (items[i].startsWith(sessione + ",")) {
-                            break;
-                        }
+                switch (sessione) {
+                    case "0" -> {
+                        selezionato = lista.getSelectedIndex();
                     }
-                    selezionato = i;
+                    default -> {
+                        String[] items = lista.getSelectedItems();
+                        for (i = 0; i < items.length; i++) {
+                            if (items[i].startsWith(sessione + ",")) {
+                                break;
+                            }
+                        }
+                        selezionato = i;
+                    }
                 }
+                if (selezionato == -1) {
+                    selezionato = 1;
+                }
+                lista.select(selezionato);
+                lista.makeVisible(selezionato);
+                this.updateDescription(selezionato);
             }
-            if (selezionato == -1) {
-                selezionato = 1;
-            }
-            lista.select(selezionato);
-            lista.makeVisible(selezionato);
-            this.updateDescription(selezionato);
-            cambiaPannello(this.jPanelStart);
         }
+        cambiaPannello(this.jPanelStart);
     }
 
     /**
@@ -2868,42 +2901,55 @@ public class JRivitMain extends javax.swing.JFrame {
                 // Calcolo esatto della pressione in base al grafico di risposta del sensore emc
                 // dalle specifiche il fattore di riduzione doveva essere 4, ma confrontando i valori
                 // con un pressostato già tarato si è individuato un fattore di 3.85
-                this.pressione_aria_in = ((Float.parseFloat(arrayValori[4]) - 1) * 10 / 3.85f);
+                this.pressioneAriaIn = ((Float.parseFloat(arrayValori[4]) - 1) * 10 / 3.85f);
                 this.temp_rpi = Float.valueOf(arrayValori[0]);
                 this.temp_io_board = Float.valueOf(arrayValori[1]);
                 this.v_in = Float.valueOf(arrayValori[2]);
                 this.v_rpi = Float.valueOf(arrayValori[3]);
-                if (!(this.pressione_aria_in == null)) {
-                    if (this.pressione_aria_in < 0) {
-                        this.pressione_aria_in = 0f;
+                if (!(this.pressioneAriaIn == null)) {
+                    if (this.pressioneAriaIn < 0) {
+                        this.pressioneAriaIn = 0f;
                     }
-                    if (pressione_aria_in <= 2) { // aria in ingresso non collegata
+                    if (pressioneAriaIn <= 2) { // aria in ingresso non collegata
                         this.jLabel_msg.setBackground(java.awt.Color.BLACK);
                         this.jLabel_msg.setForeground(java.awt.Color.WHITE);
                         this.jLabel_msg.setText("INC.AIR NOT PRESENT ");
-                    } else if (pressione_aria_in <= this.sogliaMin) {
+                        this.ctCanStart = false;
+                    } else if (pressioneAriaIn <= this.sogliaMin) {
                         this.jLabel_msg.setBackground(java.awt.Color.RED);
                         this.jLabel_msg.setForeground(java.awt.Color.WHITE);
-                        this.jLabel_msg.setText("INC.AIR LOW: " + df.format(pressione_aria_in) + " Bar");
-                    } else if (pressione_aria_in > this.sogliaMax) {
+                        this.jLabel_msg.setText("INC.AIR LOW: " + df.format(pressioneAriaIn) + " Bar");
+                        if (!this.ctCanStart && this.sensoreCollegato) {
+                            this.ctCanStart = true;
+                            this.PanelMain();
+                        }
+                    } else if (pressioneAriaIn > this.sogliaMax) {
                         this.jLabel_msg.setBackground(java.awt.Color.YELLOW);
                         this.jLabel_msg.setForeground(java.awt.Color.BLACK);
-                        this.jLabel_msg.setText("INC.AIR HIGH: " + df.format(pressione_aria_in) + " Bar");
+                        this.jLabel_msg.setText("INC.AIR HIGH: " + df.format(pressioneAriaIn) + " Bar");
+                        if (!this.ctCanStart && this.sensoreCollegato) {
+                            this.ctCanStart = true;
+                            this.PanelMain();
+                        }
                     } else {
                         this.jLabel_msg.setBackground(java.awt.Color.GREEN);
                         this.jLabel_msg.setForeground(java.awt.Color.BLACK);
-                        this.jLabel_msg.setText("INC.AIR OK: " + df.format(pressione_aria_in) + " Bar");
+                        this.jLabel_msg.setText("INC.AIR OK: " + df.format(pressioneAriaIn) + " Bar");
+                        if (!this.ctCanStart && this.sensoreCollegato) {
+                            this.ctCanStart = true;
+                            this.PanelMain();
+                        }
                     }
                 }
                 if (this.panCur.equals("info")) {
                     this.JTextAreaDescrizioneInfo.setText("");
-                    if (this.pressione_aria_in == null) {
+                    if (this.pressioneAriaIn == null) {
                         this.JTextAreaDescrizioneInfo.append("Pressione aria Null");
                     }
                     try {
                         this.JTextAreaDescrizioneInfo.append(Static.dtf.format(LocalDateTime.now()) + "\n");
 
-                        this.JTextAreaDescrizioneInfo.append("Air: " + df.format(this.pressione_aria_in) + " bar\n");
+                        this.JTextAreaDescrizioneInfo.append("Air: " + df.format(this.pressioneAriaIn) + " bar\n");
                         this.JTextAreaDescrizioneInfo.append("Vcpu: " + this.v_rpi.toString() + "V - Vin: " + this.v_in.toString() + "V\n");
                         this.JTextAreaDescrizioneInfo.append("Board T.: " + this.temp_io_board.toString() + "°C - CPU T.: " + this.temp_rpi.toString() + "°C\n");
                     } catch (Exception e) {
@@ -2994,7 +3040,9 @@ public class JRivitMain extends javax.swing.JFrame {
         this.nomeDevice = nd;
         this.jLabelNomeDevice.setText(nd);
         this.jLabelDeviceName.setText(nd);
+        this.jLabelDeviceNameLock.setText(nd);
         this.jLabelVersione.setText("ver. " + versione + " rel. " + data_release);
+        this.jLabelVersioneLock.setText("ver. " + versione + " rel. " + data_release);
         this.repaint();
     }
 
@@ -3619,15 +3667,19 @@ public class JRivitMain extends javax.swing.JFrame {
     }
 
     /**
-     * Imposta il visualizzatore dello stato della VPN
+     * Imposta il visualizzatore dello stato della VPN se 1 il device esiste ma
+     * non esiste la connettività Intenret
      *
      * @param stato
      */
-    public void setVPNIndicator(boolean stato) {
-        if (stato) {
-            jLabelVPN.setBackground(Color.green);
-        } else {
-            jLabelVPN.setBackground(Color.red);
+    public void setVPNIndicator(String stato) {
+        switch (stato) {
+            case "0" ->
+                jLabelVPN.setBackground(Color.red);
+            case "1" ->
+                jLabelVPN.setBackground(Color.yellow);
+            case "2" ->
+                jLabelVPN.setBackground(Color.green);
         }
     }
 
@@ -4064,11 +4116,19 @@ public class JRivitMain extends javax.swing.JFrame {
         this.jLabelSnCT.setText(snCT);
     }
 
-    public String getCtCanStart() {
+    public JLabel getjLabelSnCGLock() {
+        return jLabelSnCGLock;
+    }
+
+    public void setjLabelSnCGLock(JLabel jLabelSnCGLock) {
+        this.jLabelSnCGLock = jLabelSnCGLock;
+    }
+
+    public boolean getCtCanStart() {
         return ctCanStart;
     }
 
-    public void setCtCanStart(String ctCanStart) {
+    public void setCtCanStart(boolean ctCanStart) {
         this.ctCanStart = ctCanStart;
     }
 
@@ -4167,19 +4227,6 @@ public class JRivitMain extends javax.swing.JFrame {
     }
 
     /**
-     * Mostra o nasconde il pannello di errore
-     *
-     * @param mostra boolean true/false
-     */
-    public void showPannelloErrore(boolean mostra) {
-        if (mostra) {
-            this.jLayeredPaneCenter.moveToFront(this.jPanelLock);
-        } else {
-            this.jLayeredPaneCenter.moveToBack(this.jPanelLock);
-        }
-    }
-
-    /**
      * Imposta il visualizzatore dello stato di raggiungibilità del Controller
      * Inoltre il colore evidenzia il ruolo: black -> Stand alone § yellow ->
      * Controller § blue -> backup § green -> standard - controller on line §
@@ -4194,18 +4241,22 @@ public class JRivitMain extends javax.swing.JFrame {
         Color standard = new Color(0x97, 0xd0, 0x77);//97D077
         Color standalone = new Color(0x00, 0x00, 0x00);
         jLabelController.setForeground(Color.black);//Scritta nera di Default
-        jLabelController.setText("S");
 
         switch (condizione) {
-            case 0 ->//Controller raggiungibile
+            case 0 -> { //Standard - Controller raggiungibile
                 jLabelController.setBackground(standard);
-            case 1 ->//Controller BAD
+                jLabelController.setText("S");
+            }
+            case 1 -> { //Standard - Controller BAD
                 jLabelController.setBackground(Color.magenta);
-            case 2 ->{//Controller non raggiungibile
+                jLabelController.setText("S");
+            }
+            case 2 -> { //Standard - Controller non raggiungibile
                 jLabelController.setBackground(Color.red);
                 jLabelController.setForeground(Color.white);
+                jLabelController.setText("S");
             }
-            case 3 -> {//Stand-Alone
+            case 3 -> { //Stand-Alone
                 jLabelController.setBackground(standalone);
                 jLabelController.setForeground(Color.white);
                 jLabelController.setText("");
@@ -4217,6 +4268,11 @@ public class JRivitMain extends javax.swing.JFrame {
             }
             case 5 -> { // Ruolo backup
                 jLabelController.setBackground(backup);
+                jLabelController.setForeground(Color.white);
+                jLabelController.setText("B");
+            }
+            case 6 -> { // Ruolo backup - controller offline
+                jLabelController.setBackground(Color.red);
                 jLabelController.setForeground(Color.white);
                 jLabelController.setText("B");
             }
@@ -4277,4 +4333,20 @@ public class JRivitMain extends javax.swing.JFrame {
     public int getPressioneMax() {
         return pressioneMax;
     }
+
+    void setLockStatus(String message) {
+        this.changeButtons(this.Img_Warning, this.Img_Info, this.Img_Setup,
+                this.Img_Nulla, this.Img_Nulla, this.Img_Nulla);
+        this.jLabelErrore.setText(message);
+        cambiaPannello(jPanelLock);
+    }
+
+    public Float getPressioneAriaIn() {
+        return pressioneAriaIn;
+    }
+
+    public void setPressioneAriaIn(Float pressioneAriaIn) {
+        this.pressioneAriaIn = pressioneAriaIn;
+    }
+
 }
