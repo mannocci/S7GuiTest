@@ -43,7 +43,7 @@ public class Static {
     final static String RICHIESTA_RIAVVIO_WL = "185";
     final static String RICHIESTA_CALIBRAZIONE_SALVA = "86";
     final static String RICHIESTA_CALIBRAZIONE_ANNULLA = "87";
-    final static String RICHIESTA_RESET_SYSTEM = "88";
+    final static String RICHIESTA_SYSTEM_RESET = "12";
     final static String RICHIESTA_BACKUP_DB = "89";
     final static String RICHIESTA_RESTORE_DB = "90";
     final static String RICHIESTA_IMPOSTA_TOOL = "91";

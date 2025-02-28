@@ -339,7 +339,7 @@ public class JRivitMain extends javax.swing.JFrame {
         doWorker = new JDoWorker(this, fileWorker);
 
         this.esegui("init");
-        if (!this.richiesta.equals(Static.RICHIESTA_RESET_SYSTEM)) {
+        if (!this.richiesta.equals(Static.RICHIESTA_SYSTEM_RESET)) {
             this.esegui("aggiorna_nm_list");
             this.stato = Static.STATO_STOP;
             this.PanelMain();
@@ -1259,7 +1259,7 @@ public class JRivitMain extends javax.swing.JFrame {
                             this.updateDescription(this.listLavori.getSelectedIndex());
                             esegui("salva_calibrazione");
                         }
-                        case Static.RICHIESTA_RESET_SYSTEM -> {//Ok RESET SYSTEM
+                        case Static.RICHIESTA_SYSTEM_RESET -> {//Ok RESET SYSTEM
                             esegui("reset_system");
                         }
                         case Static.RICHIESTA_PAUSA ->
@@ -1556,7 +1556,7 @@ public class JRivitMain extends javax.swing.JFrame {
                         this.gr.setPrimoGiro(2);
                         PanelStart();
                     }
-                    case Static.RICHIESTA_RESET_SYSTEM -> { // Ritorna in scelta lavoro
+                    case Static.RICHIESTA_SYSTEM_RESET -> { 
                         esegui("annulla_reset");
                         PanelStart();
                     }
@@ -4060,7 +4060,7 @@ public class JRivitMain extends javax.swing.JFrame {
     }
 
     public void chiediConfermaReset() {
-        scelta = Static.RICHIESTA_RESET_SYSTEM;
+        scelta = Static.RICHIESTA_SYSTEM_RESET;
         this.AlertDialogWhat = "Confirm FACTORY RESET ?";
         this.jLabelDialog.setText(AlertDialogWhat);
         PanelDialog();

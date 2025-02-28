@@ -468,7 +468,7 @@ public class JFileWorker extends Thread {
 
         if (fileExists(Static.PATH_WATCH + Static.F_RESET_REQUEST)) {
             //Richiesta se si vuole fare reset del sistema
-            this.Rm.setRichiesta(Static.RICHIESTA_RESET_SYSTEM);
+            this.Rm.setRichiesta(Static.RICHIESTA_SYSTEM_RESET);
             this.Rm.chiediConfermaReset();
         }
         this.leggiNoSensore();

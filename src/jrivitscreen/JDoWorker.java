@@ -166,8 +166,8 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     getRuntime().exec(cmd);//Non Server il programma certSens con Arduino si chiude da solo
                 }
                 case "reset_system" -> {
-                    JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_RESET_SYSTEM);
-                    this.Rm.setRichiesta(Static.RICHIESTA_RESET_SYSTEM);
+                    JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_SYSTEM_RESET);
+                    this.Rm.setRichiesta(Static.RICHIESTA_SYSTEM_RESET);
                 }
                 case "imposta_tool" -> {
                     String tool[] = this.Rm.getListTools().getSelectedItem().split(",");
