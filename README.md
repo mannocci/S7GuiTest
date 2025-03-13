@@ -4,6 +4,7 @@
 
 Progetto pannello di controllo per il device RivitControl
 Data inizio del progetto 23/05/2023
+Data primo rilascio ver. 1.0.0 08/02/2025
 =======
 # rivit-control
 ![Image](https://user-images.githubusercontent.com/35871303/227468749-b1190343-1498-477a-92b6-160e16d4fa10.png)
