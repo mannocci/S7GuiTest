@@ -1591,6 +1591,7 @@ public class JRivitMain extends javax.swing.JFrame {
                         if (this.inWl) {
                             impostaWLScelta();
                             avviaWL();
+                            this.esegui("scelta_wl");
                         } else {
                             impostaLavoroScelto();
                             avviaLavoro();
@@ -1709,6 +1710,7 @@ public class JRivitMain extends javax.swing.JFrame {
         if (evt.getClickCount() == 2) { // doppio click -> avvio work list
             impostaWLScelta();
             avviaWL();
+            this.esegui("scelta_wl");
         }
     }//GEN-LAST:event_listWLavoriMouseClicked
 
@@ -3400,8 +3402,6 @@ public class JRivitMain extends javax.swing.JFrame {
                     break;
                 }
             }
-            avviaWL();
-            this.esegui("scelta_wl");
         } catch (NumberFormatException e) {
             Static.debug("nome WLCicli null !\n", 2);
             this.limLotti = 1;

@@ -243,6 +243,7 @@ public class JFileWorker extends Thread {
 
                             case (Static.F_WL_SCELTA + "_ready") -> {
                                 this.Rm.setWLscelta(leggiFile(Static.F_WL_SCELTA));
+                                Rm.impostaWLScelta();
                             }
                             /*Aggiungere la gestione della curva, contatori, stato con 
                                 * la creazione dei file F_CURVA_READY, F_LAVORO_READY. F_PULSANTE_READY
