@@ -180,6 +180,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     this.Rm.PanelMain();
                 }
                 case "reset_wl" -> {
+                    JFileWorker.scriviFileConReady(Static.F_WL_SCELTA, this.Rm.getWLscelta());
                     JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_RESET_WL);
                     this.Rm.setRichiesta(Static.RICHIESTA_RESET_WL);
                 }
@@ -188,11 +189,9 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     this.Rm.setRichiesta(Static.RICHIESTA_RESET_WORK);
                 }
                 case "sono_in_wl" -> {
-                    JFileWorker.cancellaFile(Static.F_SONO_IN);
                     JFileWorker.scriviFileConReady(Static.F_SONO_IN, "wl");
                 }
                 case "sono_in_work" -> {
-                    JFileWorker.cancellaFile(Static.F_SONO_IN);
                     JFileWorker.scriviFileConReady(Static.F_SONO_IN, "work");
                 }
                 case "annulla_reset" ->

@@ -56,10 +56,12 @@ public class JFileWorker extends Thread {
 //    String a = Statica.RICHIESTA_STOP_LAVORO;
     private final JRivitMain Rm;
     private WatchService watcher;
-    private Path fileName;
+    private String fileName;
     private WatchKey key;
     private int OldW_Level;
     private String ruolo;
+    private boolean incoerente = false;
+    private Path pathName;
 
     public JFileWorker(JRivitMain mf) throws IOException {
         this.ruolo = "";
@@ -81,16 +83,22 @@ public class JFileWorker extends Thread {
             while (null != (key = watcher.take())) {
                 for (WatchEvent<?> event : key.pollEvents()) {
                     WatchEvent.Kind<?> kind = event.kind();
-
-                    fileName = (Path) event.context();
+                    pathName = (Path) event.context();
+                    /*Conviene pensare di inserire l'elenco dei file gestiti così da evitare di avviare un task 
+                    di JTask se la cartella innavvertitamente viene popolata da file inutili
+                     */
+                    if (pathName != null) { // Ci sono casi in cui event.context() restituisce null
+                        this.fileName = pathName.toString();
+                    }
+                   // fileName = (Path) event.context();
 
                     Static.debug(kind.name() + ": " + fileName, 4);
                     if (kind == ENTRY_CREATE) {
-                        if (!fileName.toString().startsWith(Static.F_SENSORI)
-                                && !fileName.toString().startsWith("certSens")) {
+                        if (!fileName.startsWith(Static.F_SENSORI)
+                                && !fileName.startsWith("certSens")) {
                             Static.debug("Creato: " + fileName, 3);
                         }
-                        switch (fileName.toString()) {
+                        switch (fileName) {
                             case "certSens_ready" -> {
                                 String certSens = leggiFile("certSens.txt");
                                 this.Rm.aggiornaListSens(certSens);
@@ -125,6 +133,8 @@ public class JFileWorker extends Thread {
                                 readLavori();
                             case Static.F_WL + "_ready" ->
                                 readWl();
+                            case Static.F_SONO_IN + "_ready" ->
+                                readSonoIn();
                             case Static.F_ABILITA_CALIBRAZIONE -> {
                                 this.Rm.abilitaCalibrazione(true);
                                 if (this.Rm.getPanCur().equals("start")) {
@@ -245,6 +255,7 @@ public class JFileWorker extends Thread {
                                 this.Rm.setWLscelta(leggiFile(Static.F_WL_SCELTA));
                                 Rm.impostaWLScelta();
                             }
+                     
                             /*Aggiungere la gestione della curva, contatori, stato con 
                                 * la creazione dei file F_CURVA_READY, F_LAVORO_READY. F_PULSANTE_READY
                              */
@@ -959,7 +970,7 @@ public class JFileWorker extends Thread {
                 this.Rm.PanelStarted();
             }
             case Static.STATO_AVVIATA_WL -> {
-                this.Rm.setInWl(true);
+                //this.Rm.setInWl(true);
                 this.Rm.setWLConclusa(false);
                 this.Rm.setInErrore(false);
                 this.Rm.setLavoroConcluso(false);
@@ -967,7 +978,7 @@ public class JFileWorker extends Thread {
                 this.Rm.PanelStarted();
             }
             case Static.STATO_AVVIATO_W -> {
-                this.Rm.setInWl(false);
+                //this.Rm.setInWl(false); è sbagliato cambiare stato della WL va impostato true/false al momento della richiesta di tipo di avvio di atività W
                 this.Rm.setLavoroConcluso(false);
                 this.Rm.setInErrore(false);
                 this.aggiornaContatori();
@@ -980,16 +991,15 @@ public class JFileWorker extends Thread {
                 this.Rm.avviaCalibrazioneTest();
             }
             case Static.STATO_STOP -> {
-                /*
-                if (this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE)) {
-                    this.Rm.fineCalibrazione();
-                } else {
-//                    scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_STOP);
-                    this.Rm.PanelStart();
-                }*/
                 this.Rm.setWLConclusa(false);
-                if (Rm.getPanCur().equals("started") || Rm.getPanCur().equals("canvas") || Rm.getPanCur().equals("dialog")) {
-                    this.Rm.PanelStart();
+                if (this.incoerente) {
+                    this.Rm.PanelMain();
+                } else {
+                    if (Rm.getPanCur().equals("started")
+                            || Rm.getPanCur().equals("canvas")
+                            || Rm.getPanCur().equals("dialog")) {
+                        this.Rm.PanelStart();
+                    }
                 }
             }
             case Static.RICHIESTA_RIAVVIO -> {
@@ -1218,11 +1228,7 @@ public class JFileWorker extends Thread {
      */
     public synchronized boolean fileExists(String fname) {
         File inputFile = new File(fname);
-        if (!inputFile.exists()) {
-//            this.cr.debug("File " + inputFile.getAbsolutePath() + " not esists", 2);
-            return false;
-        }
-        return true;
+        return inputFile.exists();
     }
 
     /**
@@ -1233,7 +1239,20 @@ public class JFileWorker extends Thread {
         this.Rm.setVPNIndicator(leggiFile(Static.F_STATUS_VPN));
     }
 
+    /**
+     * Serve per indicare lo stato attivo o meno della LAN
+     */
     private void readLanStatus() {
         this.Rm.setLanIndicator(leggiFile(Static.F_STATUS_LAN).equals("1"));
+    }
+
+    /**
+     * Server per aggiornare lo stato di scelta fatto da altre "fonti"
+     *
+     */
+    private void readSonoIn() {
+        String tipoLavoro = leggiFile(Static.F_SONO_IN);
+        this.incoerente = (!this.Rm.getInWl().equals(tipoLavoro));
+        this.Rm.setInWl(tipoLavoro);
     }
 }
