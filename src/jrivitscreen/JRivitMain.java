@@ -193,6 +193,7 @@ public class JRivitMain extends javax.swing.JFrame {
     private String nomeFirmware;
     private final ImageIcon Img_qrHome;
     private int pressioneMax;
+    private int totPezziWL;
 
     /**
      * Creates new form JRivitMain
@@ -203,6 +204,7 @@ public class JRivitMain extends javax.swing.JFrame {
         this.panCur = "main";
         this.snCT = "";
         this.inWl = "";
+        this.totPezziWL = 0;
         this.nomeFirmware = "";
         this.cntCicli = 1;
         this.pressioneMax = 400;
@@ -346,6 +348,10 @@ public class JRivitMain extends javax.swing.JFrame {
             this.PanelMain();
             saveButtons();  // Salvataggio iniziale dei pulsanti per evitare che possano essere null in caso di restore
         }
+    }
+
+    public void setTotPezziWL(int totPezziWL) {
+        this.totPezziWL = totPezziWL;
     }
 
     /**
@@ -2664,7 +2670,9 @@ public class JRivitMain extends javax.swing.JFrame {
                         + a.getInt("indice") + "§"//10
                         + a.getInt("totLavori") + "§"//11
                         + a.getInt("cntTotPezzi") + "§"//12
-                        + a.getBoolean("inPausa")).split("§");//13
+                        + a.getBoolean("inPausa")+ "§"//13
+                        + a.getInt("totPezziWL")//14
+                        ).split("§");//13
                 this.elencoWl.add(OldDesWL);//Elenco di stringhe da visualizzare
                 if (this.WLscelta.equals(nomeWl)) {
                     this.indiceWLScelta = contatoreRighe - 1;
@@ -2883,7 +2891,7 @@ public class JRivitMain extends javax.swing.JFrame {
             // totale dei tiri validi + errati 
             int valore = 0;
             if (getInWl().equals("wl")) {
-                valore = this.tiriErrati + this.tiriValidi;
+                valore = this.tiriErrati + this.tiriValidi + this.totPezziWL;
             } else {
                 valore = this.tiriNelLotto + ((this.lotto - 1) * this.limPezzi);
             }
@@ -3398,6 +3406,7 @@ public class JRivitMain extends javax.swing.JFrame {
             this.nomelavoro = this.elencoWl.get(idWL)[5];
             this.tiriTotali = Integer.parseInt(this.elencoWl.get(idWL)[12]);//totale dei pezzi da lavorare
             this.nrDiLavori = Integer.parseInt(this.elencoWl.get(idWL)[11]);//totale dei lavori da fare
+            this.totPezziWL = Integer.parseInt(this.elencoWl.get(idWL)[14]);//totale dei pezzi della wl tirati
             //Dalla Lista dei lavori quale lavoro è associato quello da avviare
             //Non è detto che sia il primo se è una WL in pausa
             this.nomelavoro = this.elencoWl.get(idWL)[5];
