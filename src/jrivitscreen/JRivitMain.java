@@ -122,7 +122,8 @@ public class JRivitMain extends javax.swing.JFrame {
 //    private int DialogQ = 100;
     private String lavoroScelto;
     private Properties setup;
-    public final String versione;
+    public  String versione;
+    public  String versione_generica;
     public final String data_release;
     private boolean ctCanStart;
     private List<String[]> elencoLavori;
@@ -330,6 +331,8 @@ public class JRivitMain extends javax.swing.JFrame {
         } catch (IOException ex) {
             Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
         }
+        this.versione_generica = fileWorker.leggiFile(Static.PATH_ETC+"/"+Static.F_VERSIONE);
+        Static.debug("JRivitScreen ver. gen. " + versione_generica , 1);
         if (!Static.VMMODE) {
             try {
                 //Lo start() non serve

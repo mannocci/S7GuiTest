@@ -73,6 +73,7 @@ public class Static {
     final static String ARIA_APERTA = "1";
 
     // Nomi dei file
+    final static String F_VERSIONE = "versione.txt";
     final static String F_STATO = "stato";
     final static String F_SONO_IN = "sono_in";
     final static String F_RESET_REQUEST = "reset_request";
@@ -151,13 +152,13 @@ public class Static {
     
     static String PATH_WATCH = "/tmp/CT/";
     static String PATH_LCK = "/tmp/CTLock/";
-    static String PATH_TASTI = "/tmp/CTTASTI/";
-    static long ATTESA_SCRITTURA_FILE = 1000L;
+    final static String PATH_TASTI = "/tmp/CTTASTI/";
+    final static String PATH_ETC = "/home/adminsb/etc/";
     // da utilizzare per impostare il livello di debug
     // 0:debug disattivato 1:errore 2:warning 3:info 4:verbose
     static int DEBUGLEVEL = 3;
     static boolean VMMODE = false;
-    static float MAX_VARIAZIONE_PRESSIONE = 9.0f;   // Massima variazione di pressione ammessa da una lettura all'altra
+    // Massima variazione di pressione ammessa da una lettura all'altra
 
 //    final public static DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yy HH:mm:ss.SSS");  // per i messaggi di log
     final public static DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yy HH:mm:ss");  // per i messaggi di log
