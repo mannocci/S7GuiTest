@@ -1,0 +1,579 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Form version="1.3" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
+  <Properties>
+    <Property name="defaultCloseOperation" type="int" value="3"/>
+    <Property name="title" type="java.lang.String" value="Controlriv GEN3 - S7 protocol tester"/>
+  </Properties>
+  <SyntheticProperties>
+    <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
+    <SyntheticProperty name="generateCenter" type="boolean" value="false"/>
+  </SyntheticProperties>
+  <AuxValues>
+    <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_generateFQN" type="java.lang.Boolean" value="true"/>
+    <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_i18nAutoMode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_layoutCodeTarget" type="java.lang.Integer" value="1"/>
+    <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
+  </AuxValues>
+
+  <Layout>
+    <DimensionLayout dim="0">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Group type="102" attributes="0">
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="1" attributes="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="jLabelAddress" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabelConnect" alignment="0" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="-2" pref="23" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="jTextAddress" min="-2" pref="137" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
+                              <Component id="jButtonConnect" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="jLabelConnectedLed" min="-2" pref="20" max="-2" attributes="0"/>
+                              <EmptySpace min="104" max="32767" attributes="0"/>
+                          </Group>
+                      </Group>
+                  </Group>
+                  <Group type="102" attributes="0">
+                      <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                          <Component id="jPanelledStato" max="32767" attributes="0"/>
+                          <Group type="102" attributes="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="jLabelDB4" alignment="0" min="-2" pref="40" max="-2" attributes="0"/>
+                                  <Component id="jLabelDB2" alignment="1" min="-2" pref="40" max="-2" attributes="0"/>
+                                  <Component id="jLabelDB1" alignment="1" min="-2" pref="40" max="-2" attributes="0"/>
+                                  <Component id="jLabelDB3" alignment="1" min="-2" pref="40" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="jComboBoxDB4" alignment="0" min="-2" pref="480" max="-2" attributes="0"/>
+                                  <Component id="jComboBoxDB2" alignment="0" min="-2" pref="480" max="-2" attributes="0"/>
+                                  <Component id="jComboBoxDB1" alignment="0" min="-2" pref="480" max="-2" attributes="0"/>
+                                  <Component id="jComboBoxDB3" alignment="0" min="-2" pref="480" max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
+                      </Group>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="jButtonReadDB4" min="-2" pref="72" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="jButtonWriteDB2" alignment="1" min="-2" pref="72" max="-2" attributes="0"/>
+                              <Component id="jButtonReadDB1" alignment="1" min="-2" pref="72" max="-2" attributes="0"/>
+                              <Component id="jButtonReadDB3" alignment="1" min="-2" pref="72" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Component id="jTextFieldDB4" linkSize="1" alignment="0" min="-2" pref="60" max="-2" attributes="0"/>
+                          <Component id="jTextFieldDB3" linkSize="1" alignment="0" min="-2" pref="60" max="-2" attributes="0"/>
+                          <Component id="jTextFieldDB2" linkSize="1" alignment="0" min="-2" pref="60" max="-2" attributes="0"/>
+                          <Component id="jTextFieldDB1" linkSize="1" alignment="0" pref="74" max="32767" attributes="0"/>
+                          <Component id="jButtonExit" alignment="0" max="32767" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="32767" attributes="0"/>
+                  </Group>
+              </Group>
+          </Group>
+      </Group>
+    </DimensionLayout>
+    <DimensionLayout dim="1">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Group type="102" alignment="1" attributes="0">
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="jLabelAddress" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jTextAddress" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jButtonConnect" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jButtonExit" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="jLabelConnect" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jLabelConnectedLed" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="jPanelledStato" max="32767" attributes="0"/>
+              <EmptySpace type="separate" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="jLabelDB1" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jComboBoxDB1" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jButtonReadDB1" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jTextFieldDB1" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="jLabelDB2" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jComboBoxDB2" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jButtonWriteDB2" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jTextFieldDB2" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
+                      <Component id="jLabelDB3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="103" alignment="0" groupAlignment="3" attributes="0">
+                      <Component id="jComboBoxDB3" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jButtonReadDB3" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jTextFieldDB3" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+              <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="jComboBoxDB4" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jLabelDB4" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jButtonReadDB4" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jTextFieldDB4" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
+          </Group>
+      </Group>
+    </DimensionLayout>
+  </Layout>
+  <SubComponents>
+    <Container class="javax.swing.JPanel" name="jPanelledStato">
+      <Properties>
+        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="c0" green="c0" id="lightGray" palette="1" red="c0" type="palette"/>
+        </Property>
+        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+          <Border info="org.netbeans.modules.form.compat2.border.EtchedBorderInfo">
+            <EtchetBorder/>
+          </Border>
+        </Property>
+        <Property name="name" type="java.lang.String" value="JPanelStato" noResource="true"/>
+      </Properties>
+
+      <Layout>
+        <DimensionLayout dim="0">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace min="-2" pref="44" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" alignment="1" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="jLabelSelectWL" alignment="1" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabelSelectW" alignment="1" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabelStatus" alignment="1" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                              <Component id="jTextStatus" max="32767" attributes="0"/>
+                              <Component id="jTextSelectWL" max="32767" attributes="0"/>
+                              <Component id="jTextSelectWork" min="-2" pref="77" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                              <Component id="jButtonWriteWL" max="32767" attributes="0"/>
+                              <Component id="jButtonWriteWork" max="32767" attributes="0"/>
+                              <Component id="jTextStatusHEX" min="-2" pref="83" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                      <Group type="102" alignment="1" attributes="0">
+                          <EmptySpace min="-2" pref="200" max="-2" attributes="0"/>
+                          <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="69" max="-2" attributes="0"/>
+                          <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
+                  <EmptySpace max="32767" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+        <DimensionLayout dim="1">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="1" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="32767" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="jLabelStatus" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jTextStatus" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jTextStatusHEX" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace min="-2" pref="44" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="103" alignment="0" groupAlignment="3" attributes="0">
+                          <Component id="jTextSelectWork" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jButtonWriteWork" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <Component id="jLabelSelectW" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="103" alignment="0" groupAlignment="3" attributes="0">
+                          <Component id="jTextSelectWL" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jButtonWriteWL" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <Component id="jLabelSelectWL" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+      </Layout>
+      <SubComponents>
+        <Component class="javax.swing.JLabel" name="jLabelSelectW">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Select work ID (DB1 - 110)"/>
+            <Property name="toolTipText" type="java.lang.String" value=""/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="jLabelSelectWL">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Select worklist ID (DB1 - 150)"/>
+            <Property name="toolTipText" type="java.lang.String" value=""/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JButton" name="jButtonWriteWork">
+          <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="ff" green="ff" id="cyan" palette="1" red="0" type="palette"/>
+            </Property>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Segoe UI" size="12" style="1"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Write"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonWriteWorkActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JTextField" name="jTextSelectWork">
+          <Properties>
+            <Property name="horizontalAlignment" type="int" value="4"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JButton" name="jButtonWriteWL">
+          <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="ff" green="ff" id="cyan" palette="1" red="0" type="palette"/>
+            </Property>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Segoe UI" size="12" style="1"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Write"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonWriteWLActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JTextField" name="jTextSelectWL">
+          <Properties>
+            <Property name="horizontalAlignment" type="int" value="4"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="jLabelStatus">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="STATUS (OR_FUNC) (DB1 - 100)"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JTextField" name="jTextStatus">
+          <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Segoe UI" size="14" style="1"/>
+            </Property>
+            <Property name="horizontalAlignment" type="int" value="4"/>
+            <Property name="disabledTextColor" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="0" green="0" id="black" palette="1" red="0" type="palette"/>
+            </Property>
+            <Property name="enabled" type="boolean" value="false"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JTextField" name="jTextStatusHEX">
+          <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Segoe UI" size="14" style="1"/>
+            </Property>
+            <Property name="horizontalAlignment" type="int" value="4"/>
+            <Property name="disabledTextColor" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="0" green="0" id="black" palette="1" red="0" type="palette"/>
+            </Property>
+            <Property name="enabled" type="boolean" value="false"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="jLabel1">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="decimal"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="jLabel2">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="HEX"/>
+          </Properties>
+        </Component>
+      </SubComponents>
+    </Container>
+    <Component class="javax.swing.JLabel" name="jLabelDB1">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="DB1"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JComboBox" name="jComboBoxDB1">
+      <Properties>
+        <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+          <StringArray count="10">
+            <StringItem index="0" value="100 - Status"/>
+            <StringItem index="1" value="110 - Current Work"/>
+            <StringItem index="2" value="120 - Current batch number in the current job"/>
+            <StringItem index="3" value="130 - Current number of pieces in the job"/>
+            <StringItem index="4" value="140 - Code of the piece chosen in the work"/>
+            <StringItem index="5" value="150 - Current worklist code"/>
+            <StringItem index="6" value="160 - Current repetition number in the worklist"/>
+            <StringItem index="7" value="170 - Current job batch limit"/>
+            <StringItem index="8" value="180 - Current work piece limit"/>
+            <StringItem index="9" value="190 - Repetition limit in the worklist"/>
+          </StringArray>
+        </Property>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+      </AuxValues>
+    </Component>
+    <Component class="javax.swing.JTextField" name="jTextFieldDB1">
+      <Properties>
+        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+          <Font name="Segoe UI" size="14" style="1"/>
+        </Property>
+        <Property name="horizontalAlignment" type="int" value="0"/>
+        <Property name="disabledTextColor" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="0" green="0" id="black" palette="1" red="0" type="palette"/>
+        </Property>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JButton" name="jButtonReadDB1">
+      <Properties>
+        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="0" green="ff" id="green" palette="1" red="0" type="palette"/>
+        </Property>
+        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+          <Font name="Segoe UI" size="12" style="1"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="Read"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonReadDB1ActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabelDB2">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="DB2"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JComboBox" name="jComboBoxDB2">
+      <Properties>
+        <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+          <StringArray count="14">
+            <StringItem index="0" value="110 - Start work or worklist"/>
+            <StringItem index="1" value="120 - Stop/Abort work or worklist"/>
+            <StringItem index="2" value="130 - Suspend work or worklist"/>
+            <StringItem index="3" value="140 - Reset current job"/>
+            <StringItem index="4" value="150 - Reset current worklist"/>
+            <StringItem index="5" value="160 - Abort last job after an error (corresponds to the &#x201c;Stop&#x201d; choice)"/>
+            <StringItem index="6" value="170 - Continue work after an error (corresponds to the &#x201c;Continue&#x201d; choice)"/>
+            <StringItem index="7" value="180 - Accept last job after an error (corresponds to the &#x201c;Accept&#x201d; choice)"/>
+            <StringItem index="8" value="200 - Cancel processing after an error (corresponds to the &#x201c;Cancel&#x201d; choice)"/>
+            <StringItem index="9" value="100 - External block of work"/>
+            <StringItem index="10" value="  20 - Reboot Controlriv"/>
+            <StringItem index="11" value="  30 - ControlRiv shutdown (WARNING the system will need to be restarted manually)"/>
+            <StringItem index="12" value=" "/>
+            <StringItem index="13" value=" "/>
+          </StringArray>
+        </Property>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+      </AuxValues>
+    </Component>
+    <Component class="javax.swing.JButton" name="jButtonWriteDB2">
+      <Properties>
+        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="ff" green="ff" id="cyan" palette="1" red="0" type="palette"/>
+        </Property>
+        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+          <Font name="Segoe UI" size="12" style="1"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="Write"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonWriteDB2ActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JTextField" name="jTextFieldDB2">
+      <Properties>
+        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+          <Font name="Segoe UI" size="14" style="1"/>
+        </Property>
+        <Property name="horizontalAlignment" type="int" value="0"/>
+        <Property name="text" type="java.lang.String" value="1"/>
+        <Property name="disabledTextColor" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="0" green="0" id="black" palette="1" red="0" type="palette"/>
+        </Property>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabelDB3">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="DB3"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JComboBox" name="jComboBoxDB3">
+      <Properties>
+        <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+          <StringArray count="4">
+            <StringItem index="0" value="10 - Copy Block from PLC"/>
+            <StringItem index="1" value="20 - Copy PLC1 Input - GO ON ANYWAY (the issue will be fixed later)"/>
+            <StringItem index="2" value="30 - Copy PLC2 Input - GO ON (it&apos;s not an issue)"/>
+            <StringItem index="3" value="40 - Copy PLC3 Input - IGNORE ACTION and TRY ANOTHER TIME"/>
+          </StringArray>
+        </Property>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+      </AuxValues>
+    </Component>
+    <Component class="javax.swing.JButton" name="jButtonReadDB3">
+      <Properties>
+        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="0" green="ff" id="green" palette="1" red="0" type="palette"/>
+        </Property>
+        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+          <Font name="Segoe UI" size="12" style="1"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="Read"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonReadDB3ActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JTextField" name="jTextFieldDB3">
+      <Properties>
+        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+          <Font name="Segoe UI" size="14" style="1"/>
+        </Property>
+        <Property name="horizontalAlignment" type="int" value="0"/>
+        <Property name="disabledTextColor" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="0" green="0" id="black" palette="1" red="0" type="palette"/>
+        </Property>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabelDB4">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="DB4"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JComboBox" name="jComboBoxDB4">
+      <Properties>
+        <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+          <StringArray count="4">
+            <StringItem index="0" value="10 - Relay related to the green signal"/>
+            <StringItem index="1" value="20 - Relay related to the yellow signal"/>
+            <StringItem index="2" value="30 - Relay related to the red signal"/>
+            <StringItem index="3" value="40 - Relay related to the air ON/OFF state"/>
+          </StringArray>
+        </Property>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+      </AuxValues>
+    </Component>
+    <Component class="javax.swing.JButton" name="jButtonReadDB4">
+      <Properties>
+        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="0" green="ff" id="green" palette="1" red="0" type="palette"/>
+        </Property>
+        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+          <Font name="Segoe UI" size="12" style="1"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="Read"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonReadDB4ActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JTextField" name="jTextFieldDB4">
+      <Properties>
+        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+          <Font name="Segoe UI" size="14" style="1"/>
+        </Property>
+        <Property name="horizontalAlignment" type="int" value="0"/>
+        <Property name="disabledTextColor" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="0" green="0" id="black" palette="1" red="0" type="palette"/>
+        </Property>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabelAddress">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Address"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabelConnect">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Connected"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="jTextAddress">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="192.168.1.52"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JButton" name="jButtonConnect">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="CONNECT"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonConnectActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabelConnectedLed">
+      <Properties>
+        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="0" green="0" id="red" palette="1" red="ff" type="palette"/>
+        </Property>
+        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+          <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
+            <LineBorder/>
+          </Border>
+        </Property>
+        <Property name="opaque" type="boolean" value="true"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JButton" name="jButtonExit">
+      <Properties>
+        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="66" green="66" red="ff" type="rgb"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="EXIT"/>
+        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+          <Border info="org.netbeans.modules.form.compat2.border.BevelBorderInfo">
+            <BevelBorder/>
+          </Border>
+        </Property>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonExitActionPerformed"/>
+      </Events>
+    </Component>
+  </SubComponents>
+</Form>
