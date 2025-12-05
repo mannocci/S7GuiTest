@@ -331,7 +331,7 @@ public class JRivitMain extends javax.swing.JFrame {
         } catch (IOException ex) {
             Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
         }
-        this.versione_generica = fileWorker.leggiFile(Static.PATH_ETC+"/"+Static.F_VERSIONE);
+        this.versione_generica = fileWorker.leggiFileNormal(Static.PATH_ETC+Static.F_VERSIONE);
         Static.debug("JRivitScreen ver. gen. " + versione_generica , 1);
         if (!Static.VMMODE) {
             try {
@@ -3065,8 +3065,8 @@ public class JRivitMain extends javax.swing.JFrame {
         this.jLabelNomeDevice.setText(nd);
         this.jLabelDeviceName.setText(nd);
         this.jLabelDeviceNameLock.setText(nd);
-        this.jLabelVersione.setText("ver. " + versione + " rel. " + data_release);
-        this.jLabelVersioneLock.setText("ver. " + versione + " rel. " + data_release);
+        this.jLabelVersione.setText("ver. " + versione_generica );
+        this.jLabelVersioneLock.setText("ver. " + versione_generica );
         this.repaint();
     }
 

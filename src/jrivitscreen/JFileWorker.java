@@ -722,6 +722,43 @@ public class JFileWorker extends Thread {
         return contenutoFile;
     }
 
+/**
+     * Metodo che utilizza il controllo del Lock per leggere una riga dal file
+     *
+     * @param NomeFile
+     * @return La riga letta del file
+     */
+    public static String leggiFileNormal(String NomeFile) {
+        String contenutoFile = "";
+        Scanner myReader;
+        boolean lock;
+        try {
+            File inputFile = new File(NomeFile);
+            if (!inputFile.exists()) {
+                Static.debug("File " + inputFile.getAbsolutePath() + " does not exists", 2);
+                contenutoFile = "errore " + NomeFile;
+                return contenutoFile;
+            }
+            lock = lockFile(NomeFile);
+            if (lock) {
+                FileReader fr = new FileReader(NomeFile);
+                myReader = new Scanner(fr);
+                while (myReader.hasNextLine()) {
+                    contenutoFile += myReader.nextLine();
+                }
+                if (contenutoFile.length() == 0) {
+                    contenutoFile = "errore " + NomeFile;
+                }
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(JFileWorker.class.getName()).log(Level.SEVERE, null, ex);
+            unLock(NomeFile);
+            return "errore ";
+        }
+        unLock(NomeFile);
+        return contenutoFile;
+    }
+    
     private void leggiNoSensore() {
         File noSensore = new File(Static.PATH_WATCH + Static.F_NO_SENSORE);
         this.Rm.setSensoreCollegato(!noSensore.exists());
