@@ -1,2 +1,3 @@
 # S7GuiTest
-test Rivit System by S7 protocol
+Test for dialogue with the S7 server for controlling the ControlRiv
+
