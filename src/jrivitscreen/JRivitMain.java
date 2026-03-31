@@ -122,8 +122,8 @@ public class JRivitMain extends javax.swing.JFrame {
 //    private int DialogQ = 100;
     private String lavoroScelto;
     private Properties setup;
-    public  String versione;
-    public  String versione_generica;
+    public String versione;
+    public String versione_generica;
     public final String data_release;
     private boolean ctCanStart;
     private List<String[]> elencoLavori;
@@ -195,6 +195,8 @@ public class JRivitMain extends javax.swing.JFrame {
     private final ImageIcon Img_qrHome;
     private int pressioneMax;
     private int totPezziWL;
+    private JPanel jpanCur;
+    private JPanel jpannelloPrecedente;
 
     /**
      * Creates new form JRivitMain
@@ -331,8 +333,8 @@ public class JRivitMain extends javax.swing.JFrame {
         } catch (IOException ex) {
             Logger.getLogger(JRivitMain.class.getName()).log(Level.SEVERE, null, ex);
         }
-        this.versione_generica = fileWorker.leggiFileNormal(Static.PATH_ETC+Static.F_VERSIONE);
-        Static.debug("JRivitScreen ver. gen. " + versione_generica , 1);
+        this.versione_generica = fileWorker.leggiFileNormal(Static.PATH_ETC + Static.F_VERSIONE);
+        Static.debug("JRivitScreen ver. gen. " + versione_generica, 1);
         if (!Static.VMMODE) {
             try {
                 //Lo start() non serve
@@ -1133,6 +1135,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 this.inWl = "l";
                 this.listLavori.setVisible(true);
                 this.listWLavori.setVisible(false);
+                this.esegui("crea_elenco_work");
                 // this.esegui("sono_in_work");
 //                if (this.in_pausa) {
 ////                   List<String> elencoTxt =  new ArrayList<>();
@@ -1494,6 +1497,7 @@ public class JRivitMain extends javax.swing.JFrame {
                     this.set_jLabel_B_L("WL");
                     this.listLavori.setVisible(false);
                     this.listWLavori.setVisible(true);
+                    this.esegui("crea_elenco_wl");
                     //this.esegui("sono_in_wl");
                     this.JTextAreaDescrizione.setText(this.elencoDesWl.get(0).toString());
                     PanelStart();
@@ -2080,7 +2084,7 @@ public class JRivitMain extends javax.swing.JFrame {
             lista.requestFocus();
             // Se sessione non contiene 0
             // vuole dire che da una pausa si vuole riprendere un lavoro
-            if (this.panCur != "start") {
+            if (!"start".equals(this.panCur)) {
                 if (sessione == null) {
                     sessione = "0";
                 }
@@ -2205,6 +2209,7 @@ public class JRivitMain extends javax.swing.JFrame {
             lavoroScelto = "0";
         }
         this.nomelavoro = this.lavoroScelto = lavoroScelto;
+        setWscelto(this.nomelavoro);
     }
 
     /**
@@ -2673,7 +2678,7 @@ public class JRivitMain extends javax.swing.JFrame {
                         + a.getInt("indice") + "§"//10
                         + a.getInt("totLavori") + "§"//11
                         + a.getInt("cntTotPezzi") + "§"//12
-                        + a.getBoolean("inPausa")+ "§"//13
+                        + a.getBoolean("inPausa") + "§"//13
                         + a.getInt("totPezziWL")//14
                         ).split("§");//13
                 this.elencoWl.add(OldDesWL);//Elenco di stringhe da visualizzare
@@ -2934,18 +2939,35 @@ public class JRivitMain extends javax.swing.JFrame {
                     if (this.pressioneAriaIn < 0) {
                         this.pressioneAriaIn = 0f;
                     }
-                    if (pressioneAriaIn <= 2) { // aria in ingresso non collegata
+                    if (pressioneAriaIn > this.sogliaMin && pressioneAriaIn < this.sogliaMax) {
+                        this.jLabel_msg.setBackground(java.awt.Color.GREEN);
+                        this.jLabel_msg.setForeground(java.awt.Color.BLACK);
+                        this.jLabel_msg.setText("INC.AIR OK: " + df.format(pressioneAriaIn) + " Bar");
+                        if (!this.ctCanStart && this.sensoreCollegato) {
+                            this.ctCanStart = true;
+                            if (this.pannelloPrecedente.equalsIgnoreCase("started")) {
+                                this.PanelStarted();
+                            } else {
+                                this.PanelMain();
+                            }
+                        }
+                    } else if (pressioneAriaIn <= 2) { // aria in ingresso non collegata
                         this.jLabel_msg.setBackground(java.awt.Color.BLACK);
                         this.jLabel_msg.setForeground(java.awt.Color.WHITE);
                         this.jLabel_msg.setText("INC.AIR NOT PRESENT ");
-                        this.ctCanStart = false;
+                        if (this.ctCanStart && this.sensoreCollegato) {
+                            this.ctCanStart = false;
+                            this.setLockStatus("Air not present");
+                            // this.PanelMain();
+                        }
+
                     } else if (pressioneAriaIn <= this.sogliaMin) {
                         this.jLabel_msg.setBackground(java.awt.Color.RED);
                         this.jLabel_msg.setForeground(java.awt.Color.WHITE);
                         this.jLabel_msg.setText("INC.AIR LOW: " + df.format(pressioneAriaIn) + " Bar");
                         if (!this.ctCanStart && this.sensoreCollegato) {
                             this.ctCanStart = true;
-                            this.PanelMain();
+                            // this.PanelMain();
                         }
                     } else if (pressioneAriaIn > this.sogliaMax) {
                         this.jLabel_msg.setBackground(java.awt.Color.YELLOW);
@@ -2953,15 +2975,7 @@ public class JRivitMain extends javax.swing.JFrame {
                         this.jLabel_msg.setText("INC.AIR HIGH: " + df.format(pressioneAriaIn) + " Bar");
                         if (!this.ctCanStart && this.sensoreCollegato) {
                             this.ctCanStart = true;
-                            this.PanelMain();
-                        }
-                    } else {
-                        this.jLabel_msg.setBackground(java.awt.Color.GREEN);
-                        this.jLabel_msg.setForeground(java.awt.Color.BLACK);
-                        this.jLabel_msg.setText("INC.AIR OK: " + df.format(pressioneAriaIn) + " Bar");
-                        if (!this.ctCanStart && this.sensoreCollegato) {
-                            this.ctCanStart = true;
-                            this.PanelMain();
+                            //this.PanelMain();
                         }
                     }
                 }
@@ -3065,8 +3079,8 @@ public class JRivitMain extends javax.swing.JFrame {
         this.jLabelNomeDevice.setText(nd);
         this.jLabelDeviceName.setText(nd);
         this.jLabelDeviceNameLock.setText(nd);
-        this.jLabelVersione.setText("ver. " + versione_generica );
-        this.jLabelVersioneLock.setText("ver. " + versione_generica );
+        this.jLabelVersione.setText("ver. " + versione_generica);
+        this.jLabelVersioneLock.setText("ver. " + versione_generica);
         this.repaint();
     }
 
@@ -3799,7 +3813,9 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     private void cambiaPannello(JPanel nuovoPannello) {
         this.pannelloPrecedente = this.panCur;
+        this.jpannelloPrecedente = this.jpanCur;
         this.jLayeredPaneCenter.moveToFront(nuovoPannello);
+        this.jpanCur = nuovoPannello;
         this.panCur = nuovoPannello.getName();
         this.set_jLabel_B_L(this.panCur);
         // se dovesse servire conoscere qual'è il pannello in primo piano,
@@ -3872,11 +3888,11 @@ public class JRivitMain extends javax.swing.JFrame {
      * Se esternamente viene impostato l'avvio di una Lavoro deve essere
      * cooerente con la lista di scelta dei lavori in Screen
      *
-     * @param lavoro scelto
+     * @param Wscelto
      *
      */
     public void setWscelto(String Wscelto) {
-        String w = "";
+        String w ;
         if (Wscelto.contains("Errore")) {
             Wscelto = "0";
         }
