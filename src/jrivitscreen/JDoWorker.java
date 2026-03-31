@@ -174,7 +174,7 @@ public class JDoWorker extends SwingWorker<String, Object> {
                     JFileWorker.scriviFile(Static.F_TOOL_SCELTO, tool[0]);
                     JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_IMPOSTA_TOOL);
                     this.Rm.setRichiesta(Static.RICHIESTA_IMPOSTA_TOOL);
-                    File f = new File("/home/adminsb/etc/"+Static.F_FIRST_TIME);
+                    File f = new File("/home/adminsb/etc/" + Static.F_FIRST_TIME);
                     f.delete();
                     this.Rm.setInSceltaTool(false);
                     this.Rm.PanelMain();
@@ -187,6 +187,15 @@ public class JDoWorker extends SwingWorker<String, Object> {
                 case "reset_work" -> {
                     JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_RESET_WORK);
                     this.Rm.setRichiesta(Static.RICHIESTA_RESET_WORK);
+                }
+                //crea_elenco_wl
+                case "crea_elenco_wl" -> {
+                    JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_ELENCO_WL);
+                    this.Rm.setRichiesta(Static.RICHIESTA_ELENCO_WL);
+                }
+                case "crea_elenco_work" -> {
+                    JFileWorker.scriviFileConReady(Static.F_RICHIESTA, Static.RICHIESTA_ELENCO_WORK);
+                    this.Rm.setRichiesta(Static.RICHIESTA_ELENCO_WORK);
                 }
                 case "sono_in_wl" -> {
                     JFileWorker.scriviFileConReady(Static.F_SONO_IN, "wl");
