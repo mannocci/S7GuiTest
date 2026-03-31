@@ -166,7 +166,7 @@ public class JFileWorker extends Thread {
                             case Static.F_STATUS_VPN + "_ready" ->
                                 readVpnStatus();
                             case Static.F_INFO_INTERFACES + "_ready" ->
-                                this.readInfpInterfaces();
+                                this.readInfoInterfaces();
                             case Static.F_STATUS_WIFI + "_ready" ->
                                 readSetupWifi();
                             case Static.F_CONTROLLER_ONLINE -> {
@@ -435,7 +435,7 @@ public class JFileWorker extends Thread {
      * Legge il file con la descrizione della configurazione della LAN DA FARE
      * Leggere il DB è meglio
      */
-    private void readInfpInterfaces() {
+    private void readInfoInterfaces() {
         this.Rm.aggiornaListLan(JFileWorker.leggiFileElenco(Static.F_INFO_INTERFACES));
     }
 
@@ -512,7 +512,7 @@ public class JFileWorker extends Thread {
         //this.LeggiAriaInMinMax(); // Letto dal DB
         //this.LeggiSessione();// Se non esite il file imposta il file a "0"
 //        this.mostraStatoAria(Static.ARIA_CHIUSA);//Se non esiste il file imposta a "0"
-        this.readInfpInterfaces();
+        this.readInfoInterfaces();
         this.readListaNMdevice();
         String rigaFile = leggiFile(Static.F_ARIA);
         if (rigaFile.contains("errore")) {
