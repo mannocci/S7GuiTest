@@ -59,7 +59,7 @@ public class JButtonFile extends Thread {
     private WatchService watcher;
     private Path fileName;
     private WatchKey key;
-    private int OldW_Level;
+    private int  OldW_Level;
 
     public JButtonFile(JRivitMain mf) throws IOException {
         this.Rm = mf;
