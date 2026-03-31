@@ -51,6 +51,8 @@ public class Static {
     final static String RICHIESTA_AGGIORNA_WIFI_STATUS = "93";
     final static String RICHIESTA_RESET_WL = "94";
     final static String RICHIESTA_RESET_WORK = "95";
+    final static String RICHIESTA_ELENCO_WL = "194";
+    final static String RICHIESTA_ELENCO_WORK = "195";   
     final static String RICHIESTA_SYSTEM_REBOOT = "11";
     // Stati
     final static String STATO_AVVIATA_WL = "90";
