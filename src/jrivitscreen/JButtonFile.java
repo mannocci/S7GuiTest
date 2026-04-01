@@ -18,7 +18,7 @@
  * repository Privato, visibile da personale della Rivit, oltre a Luca Mannocci,
  * Fabio Fragapane, Mannocci Enrico
  * @versione 1.0 maggio/giugno 2023
- * 
+ *  
  */
 package jrivitscreen;
 
