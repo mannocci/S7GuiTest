@@ -1135,7 +1135,7 @@ public class JRivitMain extends javax.swing.JFrame {
                 this.inWl = "l";
                 this.listLavori.setVisible(true);
                 this.listWLavori.setVisible(false);
-                this.esegui("crea_elenco_work");
+                //this.esegui("crea_elenco_work"); // E' fatta da work
                 // this.esegui("sono_in_work");
 //                if (this.in_pausa) {
 ////                   List<String> elencoTxt =  new ArrayList<>();
@@ -1497,7 +1497,7 @@ public class JRivitMain extends javax.swing.JFrame {
                     this.set_jLabel_B_L("WL");
                     this.listLavori.setVisible(false);
                     this.listWLavori.setVisible(true);
-                    this.esegui("crea_elenco_wl");
+                    //this.esegui("crea_elenco_wl"); // E' fatta da Control
                     //this.esegui("sono_in_wl");
                     this.JTextAreaDescrizione.setText(this.elencoDesWl.get(0).toString());
                     PanelStart();
