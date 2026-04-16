@@ -90,7 +90,7 @@ public class JFileWorker extends Thread {
                     if (pathName != null) { // Ci sono casi in cui event.context() restituisce null
                         this.fileName = pathName.toString();
                     }
-                   // fileName = (Path) event.context();
+                    // fileName = (Path) event.context();
 
                     Static.debug(kind.name() + ": " + fileName, 4);
                     if (kind == ENTRY_CREATE) {
@@ -112,17 +112,8 @@ public class JFileWorker extends Thread {
                             case Static.F_SENSORI + "_ready" ->
                                 aggiornaSensori();
                             case Static.F_NO_SENSORE -> { // sensore scollegato
-                                //Da riguardare
-                                //if (this.Rm.getStato().equals(Static.STATO_STOP)) {
                                 this.Rm.setSensoreCollegato(false);
-                                this.Rm.setCtCanStart(false);
-                                if (Rm.getPanCur().equals("main")) {
-                                    this.Rm.PanelMain();
-                                }
-                                if (Rm.getPanCur().equals("start")) {
-                                    this.Rm.PanelStart();
-                                }
-                                //}
+                                Rm.updLockUnlock(true);
                             }
 
                             case Static.F_ERRORE ->
@@ -193,7 +184,8 @@ public class JFileWorker extends Thread {
                                 readListaFileUSB();
                             }
                             case Static.F_POWEROFF -> {
-                                Rm.setLockStatus("POWERING OFF SYSTEM");
+                                Rm.setLockMessage("POWERING OFF SYSTEM");
+                                Rm.PanelLock();
                                 Rm.getJLabelLogo().setIcon(Rm.getImageIconSysStopped());
                                 Rm.setInFreeze(true);
 //                                Rm.PanelMain();
@@ -201,7 +193,8 @@ public class JFileWorker extends Thread {
                                 System.exit(0);
                             }
                             case Static.F_REBOOT -> {
-                                Rm.setLockStatus("REBOOT SYSTEM");
+                                Rm.setLockMessage("REBOOT SYSTEM");
+                                Rm.PanelLock();
                                 Rm.getJLabelLogo().setIcon(Rm.getImageIconSysStopped());
                                 Rm.setInFreeze(true);
 //                                Rm.PanelMain();
@@ -210,15 +203,18 @@ public class JFileWorker extends Thread {
                             }
                             case Static.F_SYSTEM_FREEZE -> {
                                 Rm.setInFreeze(true);
-                                Rm.setLockStatus("SYSTEM IN MAINTENANCE");
+                                Rm.setLockMessage("SYSTEM IN MAINTENANCE");
+                                Rm.PanelLock();
                                 Rm.getjLabelVersioneLock().setText(Rm.getjLabelVersione().getText());
                                 Rm.getjLabelDeviceNameLock().setText(Rm.getjLabelDeviceName().getText());
                             }
                             case Static.F_SYSTEM_LOCK_EMERGENCY -> {
                                 Rm.setInFreeze(true);
-                                Rm.setLockStatus("EMERGENCY SYSTEM LOCK");
+                                Rm.setLockMessage("EMERGENCY SYSTEM LOCK");
+                                Rm.PanelLock();
                                 Rm.getjLabelVersioneLock().setText(Rm.getjLabelVersione().getText());
                                 Rm.getjLabelDeviceNameLock().setText(Rm.getjLabelDeviceName().getText());
+                                Rm.updLockUnlock(true);
                             }
 
                             case (Static.F_NOME_DEVICE + "_ready") -> {  // Il file F_UM viene creato dopo aver letto tutti i dati del CT
@@ -255,7 +251,7 @@ public class JFileWorker extends Thread {
                                 this.Rm.setWLscelta(leggiFile(Static.F_WL_SCELTA));
                                 Rm.impostaWLScelta();
                             }
-                     
+
                             /*Aggiungere la gestione della curva, contatori, stato con 
                                 * la creazione dei file F_CURVA_READY, F_LAVORO_READY. F_PULSANTE_READY
                              */
@@ -293,16 +289,7 @@ public class JFileWorker extends Thread {
                                 this.Rm.ariaChiusa();
                             case Static.F_NO_SENSORE -> {  // sensore collegato
                                 this.Rm.setSensoreCollegato(true);
-                                if (this.Rm.getPressioneAriaIn() > 2) { // aria in ingresso corretta
-                                    this.Rm.setCtCanStart(false);
-                                    this.Rm.PanelMain();
-                                }
-                                if (Rm.getPanCur().equals("main")) {
-                                    this.Rm.PanelMain();
-                                }
-                                if (Rm.getPanCur().equals("start")) {
-                                    this.Rm.PanelStart();
-                                }
+                                Rm.updLockUnlock(false);
                             }
                             case Static.F_ERRORE ->
                                 errore(false);
@@ -340,7 +327,8 @@ public class JFileWorker extends Thread {
                             }
                             case Static.F_SYSTEM_LOCK_EMERGENCY -> {
                                 Rm.setInFreeze(false);
-                                Rm.PanelMain();
+                                Rm.updLockUnlock(false);
+                                //Rm.PanelMain();
                             }
                             case (Static.F_USB_LISTA_FILE) -> {
                                 if (Rm.isBackup()) {
@@ -486,6 +474,7 @@ public class JFileWorker extends Thread {
             this.Rm.setRichiesta(Static.RICHIESTA_SYSTEM_RESET);
             this.Rm.chiediConfermaReset();
         }
+
         this.leggiNoSensore();
         this.leggiAriaInMinMax();   // Valori scritti nei files da Control
         this.leggiAbilitaCalibrazione();
@@ -526,6 +515,7 @@ public class JFileWorker extends Thread {
         this.Rm.set_jLabel_B_L("Main");
         this.Rm.repaint();
 //        this.Rm.esegui("aggiorna_nm_list");
+        
     }
 
     /**
@@ -722,7 +712,7 @@ public class JFileWorker extends Thread {
         return contenutoFile;
     }
 
-/**
+    /**
      * Metodo che utilizza il controllo del Lock per leggere una riga dal file
      *
      * @param NomeFile
@@ -758,7 +748,7 @@ public class JFileWorker extends Thread {
         unLock(NomeFile);
         return contenutoFile;
     }
-    
+
     private void leggiNoSensore() {
         File noSensore = new File(Static.PATH_WATCH + Static.F_NO_SENSORE);
         this.Rm.setSensoreCollegato(!noSensore.exists());
@@ -1291,5 +1281,16 @@ public class JFileWorker extends Thread {
         String tipoLavoro = leggiFile(Static.F_SONO_IN);
         this.incoerente = (!this.Rm.getInWl().equals(tipoLavoro));
         this.Rm.setInWl(tipoLavoro);
+    }
+
+    public void leggiLockEmergency() {
+        if (fileExists(Static.PATH_WATCH + Static.F_SYSTEM_LOCK_EMERGENCY)) {
+            Rm.setInFreeze(true);
+            Rm.setLockMessage("EMERGENCY SYSTEM LOCK");
+            Rm.PanelLock();
+            Rm.getjLabelVersioneLock().setText(Rm.getjLabelVersione().getText());
+            Rm.getjLabelDeviceNameLock().setText(Rm.getjLabelDeviceName().getText());
+            Rm.updLockUnlock(true);
+        }
     }
 }
