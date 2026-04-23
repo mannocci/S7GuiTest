@@ -2137,7 +2137,7 @@ public class JRivitMain extends javax.swing.JFrame {
         if (this.inErrore) {
             this.jPanelStarted.setBackground(Color.RED);
             this.changeButtons(this.Img_Ok, this.Img_Annulla, this.Img_Continua,
-                    this.Img_Stop, this.Img_Pause, this.Img_Grafico);
+                    this.Img_Stop, this.Img_Nulla, this.Img_Grafico);
         }
         if (!this.inErrore && !(this.lavoroConcluso || this.wlConclusa)) {
             if (this.jPanelStarted.getBackground() != Color.green) {
@@ -2464,7 +2464,7 @@ public class JRivitMain extends javax.swing.JFrame {
 
             if (this.inErrore) {
                 this.changeButtons(this.Img_Ok, this.Img_Annulla, this.Img_Continua,
-                        this.Img_Stop, this.Img_Pause, this.Img_Estende);
+                        this.Img_Stop, this.Img_Nulla, this.Img_Estende);
             } else if (this.lavoroConcluso) {
                 this.changeButtons(this.Img_Nulla, this.Img_Nulla, this.Img_Nulla,
                         this.Img_Exit, this.Img_reloadWork, this.Img_Estende);
@@ -2970,7 +2970,8 @@ public class JRivitMain extends javax.swing.JFrame {
 //            }
 //            this.ctCanStart = this.sensoreCollegato;
 
-            if (this.pannelloPrecedente.equalsIgnoreCase("started")) {
+//            if (this.pannelloPrecedente.equalsIgnoreCase("started")) {
+            if (this.stato.equals(Static.STATO_AVVIATO_W) || this.stato.equals(Static.STATO_AVVIATA_WL)) {
                 this.PanelStarted();
             } else {
                 this.PanelMain();
@@ -3711,7 +3712,7 @@ public class JRivitMain extends javax.swing.JFrame {
      */
     void avviaCalibrazione() {
         gr.setPrimoGiro(2);
-        gr.setCurvaDiRiferimento("0");
+        gr.setCurvaDiRiferimento(getCurvaDiRiferimento());
         PanelCanvas();
     }
 

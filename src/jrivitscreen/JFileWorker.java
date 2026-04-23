@@ -146,6 +146,8 @@ public class JFileWorker extends Thread {
                                 gestisciCurva();
                             case Static.F_CURVA_DI_RIFERIMENTO + "_ready" ->
                                 readCurvaDiRiferimento();
+                            case Static.F_CURVA + "_ready" ->
+                                gestisciCurva();
                             case Static.F_PICCORIF + "_ready" ->
                                 readPiccoRiferimento();
                             case Static.F_STATUS_LAN + "_ready" ->
@@ -1012,6 +1014,7 @@ public class JFileWorker extends Thread {
                 this.Rm.PanelStarted();
             }
             case Static.STATO_CALIBRAZIONE -> {
+                this.readCurvaDiRiferimento();
                 this.Rm.avviaCalibrazione();
             }
             case Static.STATO_CALIBRAZIONE_TEST -> {
