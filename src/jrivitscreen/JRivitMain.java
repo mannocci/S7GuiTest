@@ -3711,8 +3711,10 @@ public class JRivitMain extends javax.swing.JFrame {
      * avvia la fase di calibrazione
      */
     void avviaCalibrazione() {
-        gr.setPrimoGiro(2);
-        gr.setCurvaDiRiferimento(getCurvaDiRiferimento());
+        gr.setPrimoGiro(1);
+//        gr.setCurvaDiRiferimento(getCurvaDiRiferimento());
+        gr.setCurvaDiRiferimento("0");
+        gr.setCurva("");
         PanelCanvas();
     }
 

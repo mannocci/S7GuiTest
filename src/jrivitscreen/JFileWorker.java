@@ -115,7 +115,6 @@ public class JFileWorker extends Thread {
                                 this.Rm.setSensoreCollegato(false);
                                 Rm.updLockUnlock(true);
                             }
-
                             case Static.F_ERRORE ->
                                 errore(true);
                             case Static.F_POSIZIONE_ERRORI + "_ready" ->
@@ -146,8 +145,8 @@ public class JFileWorker extends Thread {
                                 gestisciCurva();
                             case Static.F_CURVA_DI_RIFERIMENTO + "_ready" ->
                                 readCurvaDiRiferimento();
-                            case Static.F_CURVA + "_ready" ->
-                                gestisciCurva();
+//                            case Static.F_CURVA + "_ready" ->
+//                                gestisciCurva();
                             case Static.F_PICCORIF + "_ready" ->
                                 readPiccoRiferimento();
                             case Static.F_STATUS_LAN + "_ready" ->
@@ -517,7 +516,7 @@ public class JFileWorker extends Thread {
         this.Rm.set_jLabel_B_L("Main");
         this.Rm.repaint();
 //        this.Rm.esegui("aggiorna_nm_list");
-        
+
     }
 
     /**
@@ -943,6 +942,7 @@ public class JFileWorker extends Thread {
      * legge il file curva per costruire il grafico mostrato nel Pannello Canvas
      */
     private void gestisciCurva() {
+        Color oldColor;
         this.Rm.setRispostaErrore("");
         leggiCurva();
         this.Rm.setEsitoTiro(leggiFile(Static.F_ESITO_TIRO));
@@ -951,7 +951,7 @@ public class JFileWorker extends Thread {
                 || this.Rm.getStato().equals(Static.STATO_CALIBRAZIONE_TEST))) {
 
             if (this.Rm.getDurataPlcOk() > 0) {
-                Color oldColor = this.Rm.getjPanelStarted().getBackground();
+                oldColor = this.Rm.getjPanelStarted().getBackground();
                 this.Rm.getjPanelStarted().setBackground(Color.green);
                 try {
                     Thread.sleep(this.Rm.getDurataPlcOk() * 100);
