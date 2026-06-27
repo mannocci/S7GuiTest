@@ -120,7 +120,6 @@
                   <Component id="jButtonWriteDB2" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="jTextFieldDB2" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
@@ -184,7 +183,6 @@
                           </Group>
                       </Group>
                       <Group type="102" alignment="1" attributes="0">
-                          <EmptySpace min="-2" pref="200" max="-2" attributes="0"/>
                           <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="69" max="-2" attributes="0"/>
                           <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
@@ -393,8 +391,8 @@
             <StringItem index="7" value="180 - Accept last job after an error (corresponds to the &#x201c;Accept&#x201d; choice)"/>
             <StringItem index="8" value="200 - Cancel processing after an error (corresponds to the &#x201c;Cancel&#x201d; choice)"/>
             <StringItem index="9" value="100 - External block of work"/>
-            <StringItem index="10" value="  20 - Reboot Controlriv"/>
-            <StringItem index="11" value="  30 - ControlRiv shutdown (WARNING the system will need to be restarted manually)"/>
+            <StringItem index="10" value="20   - Reboot Controlriv"/>
+            <StringItem index="11" value="30   - ControlRiv shutdown (WARNING the system will need to be restarted manually)"/>
             <StringItem index="12" value=" "/>
             <StringItem index="13" value=" "/>
           </StringArray>

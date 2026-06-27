@@ -151,7 +151,6 @@ public class JConsole extends javax.swing.JFrame {
                             .addComponent(jButtonWriteWork, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jTextStatusHEX, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelledStatoLayout.createSequentialGroup()
-                        .addGap(200, 200, 200)
                         .addComponent(jLabel1)
                         .addGap(69, 69, 69)
                         .addComponent(jLabel2)
@@ -205,7 +204,7 @@ public class JConsole extends javax.swing.JFrame {
 
         jLabelDB2.setText("DB2");
 
-        jComboBoxDB2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "110 - Start work or worklist", "120 - Stop/Abort work or worklist", "130 - Suspend work or worklist", "140 - Reset current job", "150 - Reset current worklist", "160 - Abort last job after an error (corresponds to the “Stop” choice)", "170 - Continue work after an error (corresponds to the “Continue” choice)", "180 - Accept last job after an error (corresponds to the “Accept” choice)", "200 - Cancel processing after an error (corresponds to the “Cancel” choice)", "100 - External block of work", "  20 - Reboot Controlriv", "  30 - ControlRiv shutdown (WARNING the system will need to be restarted manually)", " ", " " }));
+        jComboBoxDB2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "110 - Start work or worklist", "120 - Stop/Abort work or worklist", "130 - Suspend work or worklist", "140 - Reset current job", "150 - Reset current worklist", "160 - Abort last job after an error (corresponds to the “Stop” choice)", "170 - Continue work after an error (corresponds to the “Continue” choice)", "180 - Accept last job after an error (corresponds to the “Accept” choice)", "200 - Cancel processing after an error (corresponds to the “Cancel” choice)", "100 - External block of work", "20   - Reboot Controlriv", "30   - ControlRiv shutdown (WARNING the system will need to be restarted manually)", " ", " " }));
 
         jButtonWriteDB2.setBackground(java.awt.Color.cyan);
         jButtonWriteDB2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -367,7 +366,6 @@ public class JConsole extends javax.swing.JFrame {
                     .addComponent(jComboBoxDB2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButtonWriteDB2)
                     .addComponent(jTextFieldDB2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(6, 6, 6)
