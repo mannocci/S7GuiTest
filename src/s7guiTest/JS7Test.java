@@ -63,7 +63,7 @@ public class JS7Test {
                 if (s7.ReadArea(S7.S7AreaDB, dbNumber, start, 2, buffer) != 0) {
                     System.out.println("S7 Read failed: " + S7Client.ErrorText(s7.LastError));
                 } else {
-                    System.out.println("DBRead " + dbNumber + " data:" + Arrays.toString(buffer));
+                    //System.out.println("DBRead " + dbNumber + " data:" + Arrays.toString(buffer));
                 }
                 return S7.GetWordAt(buffer, 0);
             }

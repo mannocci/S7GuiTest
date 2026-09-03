@@ -263,19 +263,31 @@ public class JConsole extends javax.swing.JFrame {
         });
 
         jLabelConnectedLedRosso.setBackground(java.awt.Color.lightGray);
-        jLabelConnectedLedRosso.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jLabelConnectedLedRosso.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabelConnectedLedRosso.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelConnectedLedRosso.setText("RED");
+        jLabelConnectedLedRosso.setBorder(javax.swing.BorderFactory.createLineBorder(java.awt.Color.red));
         jLabelConnectedLedRosso.setOpaque(true);
 
         jLabelConnectedLedGiallo.setBackground(java.awt.Color.lightGray);
-        jLabelConnectedLedGiallo.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jLabelConnectedLedGiallo.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabelConnectedLedGiallo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelConnectedLedGiallo.setText("YEL");
+        jLabelConnectedLedGiallo.setBorder(javax.swing.BorderFactory.createLineBorder(java.awt.Color.yellow));
         jLabelConnectedLedGiallo.setOpaque(true);
 
         jLabelConnectedLedVerde.setBackground(java.awt.Color.lightGray);
-        jLabelConnectedLedVerde.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jLabelConnectedLedVerde.setFont(new java.awt.Font("Segoe UI", 0, 10)); // NOI18N
+        jLabelConnectedLedVerde.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelConnectedLedVerde.setText("GREEN");
+        jLabelConnectedLedVerde.setBorder(javax.swing.BorderFactory.createLineBorder(java.awt.Color.green));
         jLabelConnectedLedVerde.setOpaque(true);
 
         jLabelConnectedLedBlu.setBackground(java.awt.Color.lightGray);
-        jLabelConnectedLedBlu.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jLabelConnectedLedBlu.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabelConnectedLedBlu.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelConnectedLedBlu.setText("AIR");
+        jLabelConnectedLedBlu.setBorder(javax.swing.BorderFactory.createLineBorder(java.awt.Color.blue));
         jLabelConnectedLedBlu.setOpaque(true);
 
         jLabel3.setText("LED");
@@ -285,30 +297,31 @@ public class JConsole extends javax.swing.JFrame {
         jPanelledStatoLayout.setHorizontalGroup(
             jPanelledStatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelledStatoLayout.createSequentialGroup()
+                .addGap(5, 5, 5)
                 .addGroup(jPanelledStatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanelledStatoLayout.createSequentialGroup()
-                        .addGap(5, 5, 5)
-                        .addGroup(jPanelledStatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelledStatoLayout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addGap(69, 69, 69)
-                                .addComponent(jLabel2)
-                                .addGap(27, 27, 27))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelledStatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelledStatoLayout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(69, 69, 69)
+                        .addComponent(jLabel2)
+                        .addGap(27, 27, 27))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelledStatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanelledStatoLayout.createSequentialGroup()
+                            .addGroup(jPanelledStatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(jPanelledStatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabelSelectWL, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jLabelSelectW, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jLabelStatus, javax.swing.GroupLayout.Alignment.TRAILING))
                                 .addGroup(jPanelledStatoLayout.createSequentialGroup()
-                                    .addComponent(jLabelRispostaRivettoErr, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(26, 26, 26)
-                                    .addComponent(jButtonRispTiroErrOK, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel3)
                                     .addGap(18, 18, 18)
-                                    .addComponent(jButtonRispTiroErrAnnulla, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabelConnectedLedBlu, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addGap(18, 18, 18)
-                                    .addComponent(jButtonRispTiroErrAccetta, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(jLabelConnectedLedVerde, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(jLabelConnectedLedGiallo, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(jPanelledStatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addGroup(jPanelledStatoLayout.createSequentialGroup()
-                                    .addGroup(jPanelledStatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jLabelSelectWL, javax.swing.GroupLayout.Alignment.TRAILING)
-                                        .addComponent(jLabelSelectW, javax.swing.GroupLayout.Alignment.TRAILING)
-                                        .addComponent(jLabelStatus, javax.swing.GroupLayout.Alignment.TRAILING))
-                                    .addGap(18, 18, 18)
+                                    .addGap(0, 0, Short.MAX_VALUE)
                                     .addGroup(jPanelledStatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                         .addComponent(jTextStatus)
                                         .addComponent(jTextSelectWL)
@@ -317,19 +330,20 @@ public class JConsole extends javax.swing.JFrame {
                                     .addGroup(jPanelledStatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                         .addComponent(jButtonWriteWL, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(jButtonWriteWork, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(jTextStatusHEX, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE))))))
-                    .addGroup(jPanelledStatoLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel3)
-                        .addGap(12, 12, 12)
-                        .addComponent(jLabelConnectedLedRosso, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabelConnectedLedGiallo, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabelConnectedLedVerde, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabelConnectedLedBlu, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jTextStatusHEX, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGroup(jPanelledStatoLayout.createSequentialGroup()
+                                    .addGap(18, 18, 18)
+                                    .addComponent(jLabelConnectedLedRosso, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(0, 0, Short.MAX_VALUE))))
+                        .addGroup(jPanelledStatoLayout.createSequentialGroup()
+                            .addComponent(jLabelRispostaRivettoErr, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(26, 26, 26)
+                            .addComponent(jButtonRispTiroErrOK, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(18, 18, 18)
+                            .addComponent(jButtonRispTiroErrAnnulla, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(18, 18, 18)
+                            .addComponent(jButtonRispTiroErrAccetta, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(90, 90, 90)
                 .addGroup(jPanelledStatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelledStatoLayout.createSequentialGroup()
                         .addGroup(jPanelledStatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -365,6 +379,8 @@ public class JConsole extends javax.swing.JFrame {
 
         jPanelledStatoLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabelCT_ALR, jLabelCT_FLAGAIR_ON, jLabelCT_GO, jLabelCT_LOCK, jLabelCT_RUN, jLabelCT_STOPPD, jLabelCT_YEL, jLabelLAV_DONE, jLabelLAV_NO, jLabelLAV_RDY, jLabelLAV_STR, jLabelLAV_UNC, jLabelWL_DONE, jLabelWL_RDY, jLabelWL_STR, jLabelWL_UNC});
 
+        jPanelledStatoLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabelConnectedLedBlu, jLabelConnectedLedGiallo, jLabelConnectedLedRosso, jLabelConnectedLedVerde});
+
         jPanelledStatoLayout.setVerticalGroup(
             jPanelledStatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelledStatoLayout.createSequentialGroup()
@@ -380,30 +396,26 @@ public class JConsole extends javax.swing.JFrame {
                             .addComponent(jTextStatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jTextStatusHEX, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
+                        .addGroup(jPanelledStatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                            .addComponent(jLabelConnectedLedBlu, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabelConnectedLedVerde, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabelConnectedLedGiallo, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabelConnectedLedRosso, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel3))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(jPanelledStatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jButtonRispTiroErrOK)
+                            .addComponent(jButtonRispTiroErrAnnulla)
+                            .addComponent(jButtonRispTiroErrAccetta)
+                            .addComponent(jLabelRispostaRivettoErr))
+                        .addGap(48, 48, 48)
                         .addGroup(jPanelledStatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanelledStatoLayout.createSequentialGroup()
-                                .addGroup(jPanelledStatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabelConnectedLedRosso, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabelConnectedLedVerde, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabelConnectedLedBlu, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGroup(jPanelledStatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jButtonRispTiroErrOK)
-                                    .addComponent(jButtonRispTiroErrAnnulla)
-                                    .addComponent(jButtonRispTiroErrAccetta)
-                                    .addComponent(jLabelRispostaRivettoErr))
-                                .addGap(48, 48, 48)
-                                .addGroup(jPanelledStatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanelledStatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(jTextSelectWork, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jButtonWriteWork))
-                                    .addComponent(jLabelSelectW)))
-                            .addGroup(jPanelledStatoLayout.createSequentialGroup()
-                                .addComponent(jLabelConnectedLedGiallo, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))))
+                            .addGroup(jPanelledStatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jTextSelectWork, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jButtonWriteWork))
+                            .addComponent(jLabelSelectW)))
                     .addGroup(jPanelledStatoLayout.createSequentialGroup()
-                        .addGap(0, 18, Short.MAX_VALUE)
+                        .addGap(0, 22, Short.MAX_VALUE)
                         .addGroup(jPanelledStatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabelWL_DONE)
                             .addGroup(jPanelledStatoLayout.createSequentialGroup()
@@ -446,6 +458,8 @@ public class JConsole extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
+        jPanelledStatoLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {jLabelConnectedLedBlu, jLabelConnectedLedGiallo, jLabelConnectedLedRosso, jLabelConnectedLedVerde});
+
         jLabelDB1.setText("DB1");
 
         jComboBoxDB1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "100 - Status", "110 - Current Work", "120 - Current batch number in the current job", "130 - Current number of pieces in the job", "140 - Code of the piece chosen in the work", "150 - Current worklist code", "160 - Current repetition number in the worklist", "170 - Current job batch limit", "180 - Current work piece limit", "190 - Repetition limit in the worklist" }));
@@ -481,7 +495,6 @@ public class JConsole extends javax.swing.JFrame {
         jTextFieldDB2.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         jTextFieldDB2.setText("1");
         jTextFieldDB2.setDisabledTextColor(java.awt.Color.black);
-        jTextFieldDB2.setEnabled(false);
 
         jLabelDB3.setText("DB3");
 
@@ -523,7 +536,13 @@ public class JConsole extends javax.swing.JFrame {
 
         jLabelConnect.setText("Connected");
 
-        jTextAddress.setText("192.168.1.52");
+        jTextAddress.setText("CG-9999-24.local");
+        jTextAddress.setToolTipText("");
+        jTextAddress.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextAddressActionPerformed(evt);
+            }
+        });
 
         jButtonConnect.setText("CONNECT");
         jButtonConnect.addActionListener(new java.awt.event.ActionListener() {
@@ -596,7 +615,7 @@ public class JConsole extends javax.swing.JFrame {
                                     .addComponent(jTextFieldDB2, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jTextFieldDB1, javax.swing.GroupLayout.DEFAULT_SIZE, 74, Short.MAX_VALUE)
                                     .addComponent(jButtonExit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addGap(0, 0, Short.MAX_VALUE)))
+                                .addGap(0, 11, Short.MAX_VALUE)))
                         .addContainerGap())))
         );
 
@@ -622,27 +641,29 @@ public class JConsole extends javax.swing.JFrame {
                     .addComponent(jComboBoxDB1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButtonReadDB1)
                     .addComponent(jTextFieldDB1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabelDB2)
-                    .addComponent(jComboBoxDB2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButtonWriteDB2)
-                    .addComponent(jTextFieldDB2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addComponent(jLabelDB3))
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jComboBoxDB3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jButtonReadDB3)
-                        .addComponent(jTextFieldDB3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(15, 15, 15)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jComboBoxDB4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabelDB4)
-                    .addComponent(jButtonReadDB4)
-                    .addComponent(jTextFieldDB4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(9, 9, 9))
+                        .addComponent(jLabelDB2)
+                        .addComponent(jButtonWriteDB2)
+                        .addComponent(jTextFieldDB2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jComboBoxDB2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jTextFieldDB3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextFieldDB4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabelDB4, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jComboBoxDB3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButtonReadDB3)
+                            .addComponent(jLabelDB3))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jComboBoxDB4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jButtonReadDB4, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addContainerGap())
         );
 
         pack();
@@ -771,6 +792,10 @@ public class JConsole extends javax.swing.JFrame {
         s7.writeInteger(DB2, 130, Byte.parseByte("1"));
     }//GEN-LAST:event_jButtonPauseActionPerformed
 
+    private void jTextAddressActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextAddressActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextAddressActionPerformed
+
     private void startTimer() {
         timer = new Timer();
 
@@ -794,8 +819,10 @@ public class JConsole extends javax.swing.JFrame {
                     int LettoStatoLedAria = s7.readInteger(DB4, 40);
                     if (LettoStatoLedRosso == 1) {
                         jLabelConnectedLedRosso.setBackground(Color.red);
+                        jLabelConnectedLedRosso.setForeground(Color.white);
                     } else {
                         jLabelConnectedLedRosso.setBackground(Color.lightGray);
+                        jLabelConnectedLedRosso.setForeground(Color.black);
                     }
                     if (LettoStatoLedVerde == 1) {
                         jLabelConnectedLedVerde.setBackground(Color.green);
@@ -809,8 +836,10 @@ public class JConsole extends javax.swing.JFrame {
                     }
                     if (LettoStatoLedAria == 1) {
                         jLabelConnectedLedBlu.setBackground(Color.blue);
+                        jLabelConnectedLedBlu.setForeground(Color.white);
                     } else {
                         jLabelConnectedLedBlu.setBackground(Color.lightGray);
+                        jLabelConnectedLedBlu.setForeground(Color.black);
                     }                    
                 });
             }
