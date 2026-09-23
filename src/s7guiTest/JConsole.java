@@ -87,6 +87,7 @@ public class JConsole extends javax.swing.JFrame {
         jLabelConnectedLedVerde = new javax.swing.JLabel();
         jLabelConnectedLedBlu = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
+        jLabelCALIBR = new javax.swing.JLabel();
         jLabelDB1 = new javax.swing.JLabel();
         jComboBoxDB1 = new javax.swing.JComboBox<>();
         jTextFieldDB1 = new javax.swing.JTextField();
@@ -197,7 +198,7 @@ public class JConsole extends javax.swing.JFrame {
         jLabelCT_GO.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jLabelCT_GO.setOpaque(true);
 
-        jLabelCT_FLAGAIR_ON.setText("240 CT_FLAGAIR_ON");
+        jLabelCT_FLAGAIR_ON.setText("240 FLAGAIR_ON");
         jLabelCT_FLAGAIR_ON.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jLabelCT_FLAGAIR_ON.setOpaque(true);
 
@@ -292,6 +293,10 @@ public class JConsole extends javax.swing.JFrame {
 
         jLabel3.setText("LED");
 
+        jLabelCALIBR.setText("270 CALIBR");
+        jLabelCALIBR.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jLabelCALIBR.setOpaque(true);
+
         javax.swing.GroupLayout jPanelledStatoLayout = new javax.swing.GroupLayout(jPanelledStato);
         jPanelledStato.setLayout(jPanelledStatoLayout);
         jPanelledStatoLayout.setHorizontalGroup(
@@ -321,7 +326,7 @@ public class JConsole extends javax.swing.JFrame {
                                     .addComponent(jLabelConnectedLedGiallo, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(jPanelledStatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addGroup(jPanelledStatoLayout.createSequentialGroup()
-                                    .addGap(0, 0, Short.MAX_VALUE)
+                                    .addGap(0, 18, Short.MAX_VALUE)
                                     .addGroup(jPanelledStatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                         .addComponent(jTextStatus)
                                         .addComponent(jTextSelectWL)
@@ -343,9 +348,15 @@ public class JConsole extends javax.swing.JFrame {
                             .addComponent(jButtonRispTiroErrAnnulla, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGap(18, 18, 18)
                             .addComponent(jButtonRispTiroErrAccetta, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(90, 90, 90)
                 .addGroup(jPanelledStatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanelledStatoLayout.createSequentialGroup()
+                        .addGap(108, 108, 108)
+                        .addComponent(jButtonStop)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButtonPause)
+                        .addGap(57, 57, 57))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelledStatoLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanelledStatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanelledStatoLayout.createSequentialGroup()
                                 .addGroup(jPanelledStatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
@@ -368,13 +379,10 @@ public class JConsole extends javax.swing.JFrame {
                             .addGroup(jPanelledStatoLayout.createSequentialGroup()
                                 .addComponent(jLabelWL_STR, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabelCT_GO, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(43, 43, 43))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelledStatoLayout.createSequentialGroup()
-                        .addComponent(jButtonStop)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButtonPause)
-                        .addGap(57, 57, 57))))
+                                .addGroup(jPanelledStatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jLabelCALIBR, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jLabelCT_GO, javax.swing.GroupLayout.DEFAULT_SIZE, 94, Short.MAX_VALUE))))
+                        .addGap(42, 42, 42))))
         );
 
         jPanelledStatoLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabelCT_ALR, jLabelCT_FLAGAIR_ON, jLabelCT_GO, jLabelCT_LOCK, jLabelCT_RUN, jLabelCT_STOPPD, jLabelCT_YEL, jLabelLAV_DONE, jLabelLAV_NO, jLabelLAV_RDY, jLabelLAV_STR, jLabelLAV_UNC, jLabelWL_DONE, jLabelWL_RDY, jLabelWL_STR, jLabelWL_UNC});
@@ -408,14 +416,8 @@ public class JConsole extends javax.swing.JFrame {
                             .addComponent(jButtonRispTiroErrAnnulla)
                             .addComponent(jButtonRispTiroErrAccetta)
                             .addComponent(jLabelRispostaRivettoErr))
-                        .addGap(48, 48, 48)
-                        .addGroup(jPanelledStatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanelledStatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jTextSelectWork, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jButtonWriteWork))
-                            .addComponent(jLabelSelectW)))
+                        .addGap(48, 48, 48))
                     .addGroup(jPanelledStatoLayout.createSequentialGroup()
-                        .addGap(0, 22, Short.MAX_VALUE)
                         .addGroup(jPanelledStatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabelWL_DONE)
                             .addGroup(jPanelledStatoLayout.createSequentialGroup()
@@ -447,7 +449,15 @@ public class JConsole extends javax.swing.JFrame {
                         .addGap(6, 6, 6)
                         .addGroup(jPanelledStatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabelWL_STR)
-                            .addComponent(jLabelCT_GO))))
+                            .addComponent(jLabelCT_GO))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabelCALIBR)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)))
+                .addGroup(jPanelledStatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanelledStatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jTextSelectWork, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jButtonWriteWork))
+                    .addComponent(jLabelSelectW))
                 .addGroup(jPanelledStatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanelledStatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jTextSelectWL, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -615,7 +625,7 @@ public class JConsole extends javax.swing.JFrame {
                                     .addComponent(jTextFieldDB2, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jTextFieldDB1, javax.swing.GroupLayout.DEFAULT_SIZE, 74, Short.MAX_VALUE)
                                     .addComponent(jButtonExit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addGap(0, 11, Short.MAX_VALUE)))
+                                .addGap(0, 21, Short.MAX_VALUE)))
                         .addContainerGap())))
         );
 
@@ -634,7 +644,7 @@ public class JConsole extends javax.swing.JFrame {
                         .addComponent(jLabelConnect))
                     .addComponent(jLabelConnectedLed, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanelledStato, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanelledStato, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabelDB1)
@@ -847,7 +857,7 @@ public class JConsole extends javax.swing.JFrame {
     }
 
     private void updateSingoliRegistri() {
-        for (int i = 0; i < 16; i++) {
+        for (int i = 0; i < 18; i++) {
             //int regLetto = this.s7.readInteger(4, 100 + i * 10);
             int regLetto = s7.readInteger(DB4, 100 + i * 10);
 
@@ -885,6 +895,8 @@ public class JConsole extends javax.swing.JFrame {
                         this.jLabelCT_FLAGAIR_ON.setBackground(Color.green);
                     case 15 ->
                         this.jLabelCT_GO.setBackground(Color.green);
+                    case 17 ->
+                        this.jLabelCALIBR.setBackground(Color.green);                        
                 }
             } else {
                 switch (i) {
@@ -920,6 +932,8 @@ public class JConsole extends javax.swing.JFrame {
                         this.jLabelCT_FLAGAIR_ON.setBackground(Color.white);
                     case 15 ->
                         this.jLabelCT_GO.setBackground(Color.white);
+                    case 17 ->
+                        this.jLabelCALIBR.setBackground(Color.white);                          
                 }
             }
         }
@@ -984,6 +998,7 @@ public class JConsole extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabelAddress;
+    private javax.swing.JLabel jLabelCALIBR;
     private javax.swing.JLabel jLabelCT_ALR;
     private javax.swing.JLabel jLabelCT_FLAGAIR_ON;
     private javax.swing.JLabel jLabelCT_GO;
