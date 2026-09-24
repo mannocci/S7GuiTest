@@ -30,7 +30,7 @@ public class JConsole extends javax.swing.JFrame {
      * Creates new form JConsole
      */
     public JConsole() {
-        s7 = new JS7Test();
+        s7 = new JS7Test(this);
         initComponents();
 
         this.jButtonReadDB1.setEnabled(false);
@@ -850,10 +850,28 @@ public class JConsole extends javax.swing.JFrame {
                     } else {
                         jLabelConnectedLedBlu.setBackground(Color.lightGray);
                         jLabelConnectedLedBlu.setForeground(Color.black);
-                    }                    
+                    }
                 });
             }
         }, 0L, 500L);
+    }
+
+    public void disconnectMio() {
+
+        this.jLabelConnectedLed.setBackground(Color.red);
+        this.jButtonConnect.setText("CONNECT");
+        this.jTextSelectWork.setEnabled(false);
+        this.jTextSelectWL.setEnabled(false);
+        this.jButtonWriteWork.setEnabled(false);
+        this.jButtonWriteWL.setEnabled(false);
+        this.jButtonReadDB1.setEnabled(false);
+        this.jButtonWriteDB2.setEnabled(false);
+        this.jButtonReadDB3.setEnabled(false);
+        this.jButtonReadDB4.setEnabled(false);
+        this.jTextStatus.setText("");
+        this.jTextStatusHEX.setText("");
+        s7.disconnectCRIV();
+
     }
 
     private void updateSingoliRegistri() {
@@ -879,8 +897,10 @@ public class JConsole extends javax.swing.JFrame {
                         this.jLabelWL_RDY.setBackground(Color.green);
                     case 7 ->
                         this.jLabelWL_STR.setBackground(Color.green);
-                    case 8 ->
+                    case 8 -> {
                         this.jLabelWL_DONE.setBackground(Color.blue);
+                        this.jLabelWL_DONE.setForeground(Color.white);
+                    }
                     case 9 ->
                         this.jLabelCT_STOPPD.setBackground(Color.green);
                     case 10 ->
@@ -896,7 +916,7 @@ public class JConsole extends javax.swing.JFrame {
                     case 15 ->
                         this.jLabelCT_GO.setBackground(Color.green);
                     case 17 ->
-                        this.jLabelCALIBR.setBackground(Color.green);                        
+                        this.jLabelCALIBR.setBackground(Color.green);
                 }
             } else {
                 switch (i) {
@@ -916,8 +936,10 @@ public class JConsole extends javax.swing.JFrame {
                         this.jLabelWL_RDY.setBackground(Color.white);
                     case 7 ->
                         this.jLabelWL_STR.setBackground(Color.white);
-                    case 8 ->
+                    case 8 -> {
                         this.jLabelWL_DONE.setBackground(Color.white);
+                        this.jLabelWL_DONE.setForeground(Color.black);
+                    }
                     case 9 ->
                         this.jLabelCT_STOPPD.setBackground(Color.white);
                     case 10 ->
@@ -933,7 +955,7 @@ public class JConsole extends javax.swing.JFrame {
                     case 15 ->
                         this.jLabelCT_GO.setBackground(Color.white);
                     case 17 ->
-                        this.jLabelCALIBR.setBackground(Color.white);                          
+                        this.jLabelCALIBR.setBackground(Color.white);
                 }
             }
         }

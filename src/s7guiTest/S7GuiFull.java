@@ -153,6 +153,10 @@ public class S7GuiFull extends Frame {
         if (s7.Connected) {
             if (s7.ReadArea(S7.S7AreaDB, dbNumber, start, 2, buffer) != 0) {
                 System.out.println("S7 Read failed: " + S7Client.ErrorText(s7.LastError));
+                if (S7Client.ErrorText(s7.LastError).contains("TCP Sending error") || 
+                        S7Client.ErrorText(s7.LastError).contains("Invalid ISO PDU receive")) {
+                    s7.ConnectionLost();
+                }
             } else {
                 System.out.println("DBRead " + dbNumber + " data:" + Arrays.toString(buffer));
             }
